@@ -1,0 +1,20 @@
+{% trans_default_domain 'member_site' %}
+
+{% if user is defined and user.activeMembership is defined %}
+    <div class="account-balance">
+        <div style="font-size: 18px" class="pull-left">
+            {% trans %}public_item.account_balance_is{% endtrans %} <strong>{{ tenantInformation.currencySymbol }} {{ contact.balance|number_format(2) }}</strong>
+        </div>
+
+        {% if path(app.request.attributes.get('_route')) != '/member/add-credit' %}
+            {% if tenantInformation.getStripePublicApiKey %}
+                <a href="{{ path('add_credit', {'c': user.id}) }}" class="btn btn-primary btn-xs pull-right">{% trans %}button_add_credit{% endtrans %}</a>
+            {% endif %}
+        {% endif %}
+    </div>
+    <br>
+{% else %}
+    <div class="alert alert-info">
+        {% trans %}text_no_membership{% endtrans %}
+    </div>
+{% endif %}

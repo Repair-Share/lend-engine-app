@@ -1,0 +1,149 @@
+{# app/Resources/views/lists/setup_list.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block primaryButton %}
+    {% if secondaryMenu is defined %}
+        {{ secondaryMenu|raw }}
+    {% endif %}
+    {% if modalUrl %}
+        {% if tenantInformation.feature(entityName) %}
+            <a type="button" class="btn bg-green modal-link" href="{{ modalUrl }}">{{ addButtonText }}</a>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="row" id="{{ entityName }}-list">
+
+        <div class="col-md-2">
+            {{ knp_menu_render('settingsMenu') }}
+        </div>
+
+        <div class="col-md-10">
+
+            {% if help is defined %}
+            <div class="page-help">
+                {{ help|raw }}
+            </div>
+                <br>
+            {% endif %}
+
+            {#Hide previously added data#}
+            {% if tenantInformation.feature(entityName) == false and entityName != 'Site' %}
+                {% set tableRows = [] %}
+            {% endif %}
+
+            {% if tableRows|length > 0 %}
+            <table cellspacing="0"
+                   class="table table-hover table-striped
+                   {% if (noActions is defined) %}no-actions{% else %}has-actions{% endif %}
+                   {% if (sortable is defined) and sortable == true %}table-sortable{% endif %}"
+                   id="data-table">
+                <thead>
+                {% if (sortable is defined) and sortable == true %}
+                    <th></th>
+                {% endif %}
+                {% for column in tableHeader %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+                </thead>
+
+                {% for row in tableRows %}
+                    <tr id="tr{{ row.id }}" {% if row.class is defined %}class="{{ row.class }}"{% endif %}>
+                        {% if (sortable is defined) and sortable == true %}
+                            <td class="drag-handle"><i class="fa fa-bars"></i></td>
+                        {% endif %}
+                        {% for column in row.data %}
+                            <td>{{ column|raw }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+                <div class="" style="padding: 40px 0; font-size: 20px;">
+                    You don't have any {{ pageTitle|lower }}.
+                </div>
+            {% endif %}
+
+            {% if tenantInformation.feature(entityName) == false %}
+                <br><br>
+                <div class="upgrade">
+                    {% if entityName == 'Site' %}
+                        Your plan only allows one site.
+                    {% else %}
+                        This feature is not available on your plan.
+                    {% endif %}
+                    <a href="{{ path('billing') }}">Upgrade / see plans</a>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block pagejs %}
+    <script src="/plugins/tablednd/jquery.tablednd.js"></script>
+    <script>
+        $(document).ready(function(){
+
+            var tableRows = $("table.has-actions tr");
+            $(tableRows).each(function(i, tr) {
+                var rowId = tr.id.replace('tr','');
+                var html = '<a class="modal-link row-edit" href="{{ modalUrl }}/'+rowId+'">Edit</a>';
+                html = html + '&nbsp;|&nbsp;<a href="" class="row-delete" onClick="deleteTableRow(\'{{ entityName }}\','+tr.id+'); return false;">Delete</a>';
+                $(tr).find("td:last").html(html);
+            });
+
+            $(".table-sortable").tableDnD({
+                dragHandle: ".drag-handle",
+                onDragClass: "myDragClass",
+                onDrop: function(table, row) {
+                    var rows = table.tBodies[0].rows;
+                    var newSequence = "";
+                    for (var i=0; i<rows.length; i++) {
+                        newSequence += rows[i].id.replace('tr','')+"+";
+                    }
+                    $.get(
+                            "{{ path('table_sort') }}",
+                            { sequence:newSequence, entity:"{{ entityName }}" },
+                            function(data){
+                                if (data == "OK") {
+                                    $.growl.notice({title: "", message: "Updated display order OK."});
+                                } else {
+                                    $.growl.error({title: "", message: "There was a problem updating display order."});
+                                }
+                            },
+                            "json"
+                    );
+                }
+            });
+
+        });
+
+        function deleteTableRow(entityName, row) {
+            var rowId = $(row).attr('id').replace('tr','');
+            console.log("Deleting "+entityName+" : " + rowId );
+            if (window.confirm("Are you sure you want to delete this?")) {
+                $.get(
+                        "{{ path('ajax_delete') }}",
+                        { id:rowId, entity:entityName },
+                        function(data){
+                            if (data == "OK") {
+                                $(row).remove();
+                                $.growl.notice({title: "", message: "Deleted OK."});
+                            } else {
+                                $.growl.error({title: "", message: "Sorry! Couldn't delete ... "+data});
+                            }
+                            console.log(data);
+                        },
+                        "json"
+                );
+            }
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,46 @@
+imports:
+    - { resource: config.yml }
+
+#framework:
+#    validation:
+#        cache: validator.mapping.cache.apc
+#    serializer:
+#        cache: serializer.mapping.cache.apc
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                driver:   pdo_mysql
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_name%"
+                user:     "%database_user%"
+                password: "%database_password%"
+                schema_filter: ~^(?!ru_)~
+                charset:  utf8mb4
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+
+monolog:
+    handlers:
+        main:
+            type:         fingers_crossed
+            action_level: debug
+            handler:      nested
+        nested:
+            type:  stream
+            path:  "php://stderr"
+            level: debug
+        console:
+            type:  console
+
+staffim_rollbar:
+    access_token: "%rollbar_access_token%"
+    # PHP error level (see http://php.net/manual/en/function.error-reporting.php)
+    error_level: -1

@@ -1,0 +1,35 @@
+{% if contact.loans|length > 0 %}
+    <table width="100%" class="table table-hover table-striped tab-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Status</th>
+            <th>Reference</th>
+            <th>Fee</th>
+            <th>Check out</th>
+            <th>Check in</th>
+            <th></th>
+        </tr>
+        </thead>
+        {% for loan in contact.loans %}
+            <tr>
+                <td><a href="{{ path('public_loan', {loanId: loan.id}) }}">{{ loan.id }}</a></td>
+                <td>{{ loan.status }}</td>
+                <td>{{ loan.reference }}</td>
+                <td>{{ loan.totalFee|number_format(2) }}</td>
+                <td>{{ loan.timeOut|date("d M Y") }}</td>
+                <td>{{ loan.timeIn|date("d M Y") }}</td>
+                <td><a href="{{ path('public_loan', {loanId: loan.id}) }}">View</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <div class="page-help">
+        No loans yet.
+        {% if contact.id %}
+            To lend an item to {{ contact.firstName }}, start by browsing items on your Lend Engine site as this member.
+            <br><br>
+            <a href="{{ path('switch_contact', {contactId: contact.id}) }}" class="btn btn-primary">Browse as {{ contact.name }}</a>
+        {% endif %}
+    </div>
+{% endif %}

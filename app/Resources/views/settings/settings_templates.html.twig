@@ -1,0 +1,153 @@
+{# app/Resources/views/settings/settings_templates.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Email templates{% endblock %}
+
+{% block pageTitle %}Email templates{% endblock %}
+
+{% block primaryButton %}{% endblock %}
+
+{% block body %}
+
+    <style>
+        h2 { margin: 20px 0 10px; padding-bottom: 10px; border-bottom: 3px solid #dedede; }
+    </style>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row">
+
+        <div class="col-md-2">
+            {{ knp_menu_render('settingsMenu') }}
+        </div>
+
+        <div class="col-md-8">
+
+            <div class="page-help">
+                Use these fields to add HTML header and footer to outbound emails. Line breaks are automatically converted to HTML.
+                <br>
+                <br>If your library isn't using English as the default language, the text in the non-templated section of the emails will be sent using the member's choice of language.
+                You can choose which languages are available for your members on the settings screen.
+            </div>
+
+            <h2>All emails</h2>
+            <p>Use this for your contact information, links to terms and conditions, your address etc.</p>
+            {{ form_row(form.org_email_footer) }}
+
+            <h2>Welcome email</h2>
+            <p>Sent when a user fills out the registration form on your public site,
+                or when you choose to send a welcome email when adding them in admin.</p>
+            <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "welcome"}) }}">Send me a test email</a></p>
+
+            {{ form_row(form.email_welcome_subject) }}
+            {{ form_row(form.email_welcome_head) }}
+            {{ form_row(form.email_welcome_foot) }}
+
+            <h2>Loan reminder</h2>
+            <p>Sent the day before a loan is due to be returned.</p>
+            <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "reminder"}) }}">Send me a test email</a></p>
+
+            <strong>Subject: </strong>
+            "Your loan is due tomorrow"<br><br>
+
+            {{ form_row(form.email_loan_reminder_head) }}
+            {{ form_row(form.email_loan_reminder_foot) }}
+
+            <h2>Loan confirmation</h2>
+            <p>Sent when a loan is checked out.</p>
+            <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "checkout"}) }}">Send me a test email</a></p>
+
+            {{ form_row(form.email_loan_confirmation_subject) }}
+            {{ form_row(form.email_loan_confirmation_head) }}
+            {{ form_row(form.email_loan_confirmation_foot) }}
+
+            <h2>Loan overdue</h2>
+            <p>Sent X days <strong>after</strong> an item is due back, if it has not yet been checked in.
+                Choose the number of days on the automation section of the general settings screen.</p>
+            <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "overdue"}) }}">Send me a test email</a></p>
+
+            <strong>Subject: </strong>
+            "Your item is overdue"<br><br>
+
+            {{ form_row(form.email_loan_overdue_head) }}
+            {{ form_row(form.email_loan_overdue_foot) }}
+
+            <h2>Loan extension</h2>
+            <p>Sent when loan dates are extended.</p>
+            <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "extend"}) }}">Send me a test email</a></p>
+
+            {{ form_row(form.email_loan_extension_subject) }}
+            {{ form_row(form.email_loan_extension_head) }}
+            {{ form_row(form.email_loan_extension_foot) }}
+
+            <h2>Reservation confirmation</h2>
+            <p>Sent when a reservation is created via public website, or when you send a confirmation from admin.</p>
+            <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "reserve"}) }}">Send me a test email</a></p>
+
+            {{ form_row(form.email_reserve_confirmation_subject) }}
+            {{ form_row(form.email_reserve_confirmation_head) }}
+            {{ form_row(form.email_reserve_confirmation_foot) }}
+
+            <h2>Reservation reminder</h2>
+            <p>Sent the day before a reservation is due to be picked up.</p>
+            <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "reservation_reminder"}) }}">Send me a test email</a></p>
+
+            <strong>Subject: </strong>
+            "Your reservation will be ready tomorrow"<br><br>
+
+            {{ form_row(form.email_reservation_reminder_head) }}
+            {{ form_row(form.email_reservation_reminder_foot) }}
+
+            <h2>Membership expired notification</h2>
+            <p>Sent on the day a membership has expired.</p>
+            <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "expired"}) }}">Send me a test email</a></p>
+
+            <strong>Subject: </strong>
+            "Your membership has expired"<br><br>
+
+            {{ form_row(form.email_membership_expiry_head) }}
+            {{ form_row(form.email_membership_expiry_foot) }}
+
+            <br />
+
+        </div>
+
+    </div>
+
+    <div class="page-controls">
+        <button type="submit" id="save-settings" class="btn bg-green">Save templates</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block pagejs %}
+<script>
+    $(document).ready(function() {
+        $(".limited").limiter(2055);
+    });
+</script>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    var saveFirst = false;
+    $(".form-control").on("keyup", function() {
+        saveFirst = true;
+    });
+    $(".send-email").on("click", function() {
+        if (saveFirst == true) {
+            alert("Please save changes first");
+            return false;
+        }
+        return true;
+    });
+</script>
+{% endblock %}

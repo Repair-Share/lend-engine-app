@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block pageCss %}
+{% endblock %}
+
+{% block title %}{{ pageTitle }}{% endblock %}
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+        <div id="report-filter">
+            <form method="GET">
+                <div class="col-md-11">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Search</label>
+                            <input type="text" name="search" class="form-control" value="{{ app.request.get('search') }}"
+                                   placeholder="Notes, member name">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="payment_method">Payment method</label>
+                            <select id="payment_method" name="payment_method" class="form-control">
+                                <option value=""></option>
+                                {% for method in paymentMethods %}
+                                    <option {% if method.id == app.request.get('payment_method') %}SELECTED{% endif %} value="{{ method.id }}">{{ method.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="payment_type">Type</label>
+                            <select id="payment_type" name="payment_type" class="form-control">
+                                <option value="">All</option>
+                                <option {% if 'loan' == app.request.get('payment_type') %}SELECTED{% endif %} value="loan">Loan</option>
+                                <option {% if 'membership' == app.request.get('payment_type') %}SELECTED{% endif %} value="membership">Membership</option>
+                                <option {% if 'other' == app.request.get('payment_type') %}SELECTED{% endif %} value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Date range</label>
+                            <input type="text" id="date_picker" class="form-control report-date-picker">
+                            <input type="hidden" name="date_from" id="date_from" value="{{ date_from }}">
+                            <input type="hidden" name="date_to" id="date_to" value="{{ date_to }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn bg-green pull-right form-control">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 table-responsive">
+            <table cellspacing="0" class="table table-hover table-striped" id="payment-report-table">
+                <thead>
+                {% for column in tableHeader %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+                </thead>
+
+                {% for row in tableRows %}
+                    <tr id="tr{{ row.id }}">
+                        {% for column in row.data %}
+                            <td>{{ column|raw }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+
+                <tfoot>
+                {% for column in tableHeader %}
+                    <td style="border-top:1px solid #aaa; font-weight:bold"></td>
+                {% endfor %}
+                </tfoot>
+
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        var dateFrom = "{{ date_from|date('M d Y') }}";
+        var dateTo = "{{ date_to|date('M d Y') }}";
+    </script>
+    <script src="/js/pages/report.js"></script>
+{% endblock %}

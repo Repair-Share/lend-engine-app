@@ -1,0 +1,74 @@
+{# app/Resources/views/modals/choose_member.html.twig #}
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+{% block modalSubTitle %}{{ subTitle|raw }}{% endblock %}
+
+{% block modalBody %}
+
+    <style>
+        #member-search-results .member-search-wrap { clear:both; padding:10px; margin: 10px 0; overflow: hidden; border-radius: 6px; }
+        #member-search-results .member-search-wrap:hover { background-color: #FAFAFA; }
+        #member-search-results .member-name-wrap { display: block; float: left; width: 40%; }
+        #member-search-results .member-name { display: block; font-size: 16px; }
+        #member-search-results .member-email { display:block; font-size: 12px; color: #8c8c8c; }
+        #member-search-results .member-info { display: block; float: left; }
+        #member-search-results .member-choose { float: right; }
+    </style>
+    <div>
+        <div class="row">
+            <div class="col-md-12">
+                <input type="text" placeholder="Start typing member information" name="find-member" id="find-member" class="form-control" value="">
+                <input type="hidden" name="waitListItemId" id="waitListItemId" value="{{ app.request.get('waitListItemId') }}">
+            </div>
+        </div>
+        <div id="member-search-results" style="min-height: 100px; max-height:400px; overflow: scroll;"></div>
+    </div>
+
+    <div id="no-results" style="display:none;">
+        <br />
+        <h4>Sorry, no members match that search ...</h4>
+        <br />
+        <a class="btn bg-green pull-left" href="{{ path('contact', {'next': 'membership'}) }}">Create a new member</a>
+    </div>
+
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <script>
+        $(document).ready(function () {
+            setUpSelectMenus();
+            $("#find-member").focus();
+            $(".modal-content").on('keyup', "#find-member", function() {
+                searchMembers( $(this).val() );
+            });
+        });
+
+        var searchMembers = debounce(function(searchString) {
+            var searchResults = '';
+            if (searchString.length > 0) {
+                $.get(
+                        searchMemberPath,
+                        {
+                            q: searchString,
+                            waitListItemId: $("#waitListItemId").val()
+                        },
+                        function(data){
+                            if (data.length > 0) {
+                                $(".modal-content").find("#member-search-results").html(data);
+                            } else {
+                                $(".modal-content").find("#member-search-results").html( $("#no-results").html() );
+                            }
+
+                        },
+                        "html"
+                );
+            } else if (searchString.length == 0) {
+                $(".modal-content").find("#member-search-results").html('');
+            }
+        }, 250);
+
+    </script>
+{% endblock %}
+

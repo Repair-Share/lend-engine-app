@@ -1,0 +1,21 @@
+<div class="note-wrapper {% if note.adminOnly %}admin-only{% endif %}" id="note-{{ note.id }}">
+    <div class="note-head pull-left">
+        {% if note.adminOnly %}
+            <i class="fa fa-user-secret session-user" data-toggle="tooltip" title="Visible for administrators only"></i>
+        {% endif %}
+        <strong>{{ note.createdBy.firstName }}</strong>,
+        {{ note.createdAt|date('d M Y g:i a') }}
+        {% if note.loan %}
+            : loan {{ note.loan.id }}
+        {% endif %}
+    </div>
+    <div class="pull-right">
+        {% if app.user.id == note.createdBy.id %}
+            {#<a href="#" class="note-delete" data-id="{{ note.id }}"><i class="fa fa-remove"></i></a>#}
+        {% endif %}
+    </div>
+    <div class="clearfix"></div>
+    <div class="note-body">
+        {{ note.text | raw | nl2br }}
+    </div>
+</div>

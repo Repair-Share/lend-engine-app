@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block pageCss %}
+{% endblock %}
+
+{% block title %}{{ pageTitle }}{% endblock %}
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-12 table-responsive">
+            <table cellspacing="0" class="table table-hover table-striped" id="waiting-list-table">
+                <thead>
+                {% for column in tableHeader %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+                </thead>
+
+                {% for row in tableRows %}
+                    <tr id="tr{{ row.id }}">
+                        {% for column in row.data %}
+                            <td>{{ column|raw }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+
+                <tfoot>
+                {% for column in tableHeader %}
+                    <td style="border-top:1px solid #aaa; font-weight:bold"></td>
+                {% endfor %}
+                </tfoot>
+
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block pageHelp %}
+    <br>
+    <div class="page-help">
+        If an item is not available to borrow on the public website, your members can add themselves to this waiting list.
+        When that item is later checked in, these members are sent an email and the item is removed from the list.
+        Time added to list and time removed from list are stored in the Lend Engine database and will be available to
+        report on in the future, so you can see which items go onto the waiting list most often, and how long they are there for.
+    </div>
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        $(document).ready(function(){
+            var dataTable = $('#waiting-list-table').DataTable({
+                dom: 'lfBrtip',
+                ordering: true,
+                autoWidth: false,
+                "bLengthChange": false,
+                "bPaginate": false,
+                "order": [[ 0, "asc" ]],
+                "columns": [
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                buttons: [
+                    {
+                        extend: 'csv',
+                        text: 'Export CSV'
+                    }
+                ]
+            });
+            dataTable.buttons().container().appendTo('#waiting-list-table_length').css('padding-right', '20px');
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,94 @@
+# Group
+group:
+    edit:
+        submit: Update group
+    show:
+        name: Group name
+    new:
+        submit: Create group
+    flash:
+        updated: The group has been updated
+        created: The group has been created
+        deleted: The group has been deleted
+
+# Security
+"Invalid credentials." : Invalid username or password
+
+security:
+    login:
+        username: "Username:"
+        email: "Email address:"
+        password: "Password:"
+        remember_me: Remember me
+        submit: Login
+        forgot_password: I forgot my password
+
+# Profile
+profile:
+    show:
+        firstName: First name
+        lastName: Last name
+        email: Email
+    edit:
+        submit: Update
+    flash:
+        updated: Your profile has been updated
+
+# Password change
+change_password:
+    submit: Change password
+    flash:
+        success: Your password has been changed
+
+# Registration
+registration:
+    check_email: ... pop along to your inbox and see if it's there.
+    confirmed: Your account is activated and you're logged in!
+    back: Continue...
+    submit: Register
+    flash:
+        user_created: An email has been sent to you. It contains an activation link you must click to activate your account.
+    email:
+        subject: Welcome!
+        message: |
+            To finish activating your account, please visit <br><br>
+            %confirmationUrl%
+
+# Password resetting
+resetting:
+    password_already_requested: The password for this user has already been requested within the last 24 hours.
+    check_email: |
+            An email has been sent. It contains a link you must click to reset your password.
+            If you don't get an email, check your spam folder or wait 5 minutes and then try again.
+    request:
+        invalid_username: The username or email address "%username%" does not exist.
+        username: "Username or email address:"
+        submit: Reset password
+    reset:
+        submit: Change password
+    flash:
+        success: The password has been reset successfully
+    email:
+        subject: Reset Password
+        message: |
+            <br>
+            To reset your password - please click the link below:<br><br>
+            <a href="%confirmationUrl%">%confirmationUrl%</a>
+
+# Global strings
+layout:
+    logout: Logout
+    login: Login
+    register: Register
+    logged_in_as: Logged in as %username%
+
+# Form field labels
+form:
+    group_name: "Group name:"
+    username: "Username:"
+    email: "Email:"
+    current_password: "Current password:"
+    password: "Password:"
+    password_confirmation: "Repeat password:"
+    new_password: "New password:"
+    new_password_confirmation: "Repeat new password:"

@@ -1,0 +1,101 @@
+{# app/Resources/views/modals/membership.html.twig #}
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}New membership for {{ contact.name }}{% endblock %}
+{% block modalSubTitle %}{% endblock %}
+
+{% block modalBody %}
+
+    {% if contact.activeMembership %}
+        <div class="alert alert-danger">
+            This contact already has an active membership. Please cancel it before adding a new one.
+        </div>
+    {% else %}
+
+        {{ form_start(form, { 'attr' : { 'class': 'payment-form' } }) }}
+
+        {{ form_errors(form) }}
+        {% if help is defined %}
+            <span class="help">{{ help }}</span>
+        {% endif %}
+
+        <input type="hidden" name="contactId" id="contactId" value="{{ contact.id }}">
+        <input type="hidden" name="contactEmail" id="contactEmail" class="contact-email" value="{{ contact.email }}">
+
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(form.membershipType) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.price) }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <h4>Take payment now</h4>
+                <div class="help-block">
+                    Choosing Stripe will prompt you for card details at the next step.
+                </div>
+            </div>
+        </div>
+
+        {{ include('partials/credit-cards.html.twig') }}
+
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(form.paymentMethod) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.paymentAmount) }}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                {{ form_row(form.paymentNote) }}
+
+                {% if tenantInformation.stripeFee > 0 %}
+                    <div style="color:#ff4930">
+                        {{ tenantInformation.stripeFee|number_format(2, '.') }} fee will be added to Stripe payments
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {{ form_end(form) }}
+
+        <div class="help-block">
+            If you need to create a membership retrospectively, you can edit the start and end dates once the membership has been created.
+        </div>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+
+{% if contact.activeMembership %}
+
+{% else %}
+    <button class="payment-submit btn btn-success">Create membership</button>
+{% endif %}
+
+    <script>
+        $(document).ready(function () {
+
+            var membershipTypePrices = [];
+            {% for type in membershipTypePrices %}
+            membershipTypePrices[{{ type.id }}] = {{ type.price }};
+            {% endfor %}
+
+            $(".modal-body").on("change", "#membership_membershipType", function () {
+                var membershipTypeId = $(this).val();
+                $("#membership_price").val(membershipTypePrices[membershipTypeId].toFixed(2));
+            });
+
+        });
+    </script>
+{% endblock %}
+

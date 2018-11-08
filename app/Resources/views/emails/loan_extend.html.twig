@@ -1,0 +1,20 @@
+{# app/Resources/views/emails/loan_extend.html.twig #}
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}{{ 'le_email.extend.title'|trans() }}{% endblock %}
+
+{% block content %}
+
+    <p>{{ tenantInformation.getEmailLoanExtensionHeader|raw }}</p>
+    <br>
+
+    "{{ loanRow.inventoryItem.name }}" {{ 'le_email.extend.due_back'|trans() }}
+    <strong>{{ loanRow.dueInAt|date('d F g:i a') }}</strong>
+
+    <br>
+    <br>
+    <p>{{ tenantInformation.getEmailLoanExtensionFooter|raw }}</p>
+
+{% endblock %}

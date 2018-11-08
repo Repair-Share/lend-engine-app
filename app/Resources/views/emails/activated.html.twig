@@ -1,0 +1,28 @@
+{# app/Resources/views/emails/welcome.html.twig #}
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}We've activated your Lend Engine account.{% endblock %}
+
+{% block content %}
+
+    Here's your login information:
+    <br><br>
+
+    <table cellpadding="10" cellspacing="0">
+        <tr>
+            <td>{{ 'le_email.url'|trans() }}:</td>
+            <td><a href="http://{{ tenantInformation.accountCode }}.lend-engine-app.com/admin">http://{{ tenantInformation.accountCode }}.lend-engine-app.com/admin</a></td>
+        </tr>
+        <tr>
+            <td>{{ 'le_email.email'|trans() }}:</td>
+            <td>{{ email }}</td>
+        </tr>
+        <tr>
+            <td>{{ 'le_email.password'|trans() }}:</td>
+            <td>{{ password }}</td>
+        </tr>
+    </table>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: sk-SK, Slovak (Slovakia)
+# Tagged: Emails
+# Exported by: Chris
+# Exported at: Tue, 25 Jul 2017 22:35:29 +0100
+---
+le_email.item_description: Popis
+le_email.item_contains: Obsahuje
+le_email.see_attachment: Viď prílohu
+le_email.return_sites: Vec prosíme vrátiť na nasledovné miesto
+le_email.th_item: Vec
+le_email.th_fee: Poplatok
+le_email.th_due_back: Vrátiť do
+le_email.url: Prihlasovacia URL
+le_email.email: Email
+le_email.password: Heslo
+le_email.assign.title: Bola ti pridelená vec
+le_email.assign.message: '%firstName%, bola ti pridelená vec "%itemName%" používateľom %assignorName%.'
+le_email.assign.added_note: pridal poznámku
+le_email.assign.all_items: Pozri všetky svoje pridelené veci
+le_email.assign.current_location: Súčasné miesto uloženia
+le_email.checkout.subject: Informácie o výpožičke
+le_email.checkout.title: Informácie o výpožičke
+le_email.extend.subject: Tvoja výpožičná lehota bola zmenená
+le_email.extend.title: Zmenili sme tvoju výpožičnú lehotu
+le_email.extend.due_back: treba vrátiť do
+le_email.reminder.subject: Tvoja výpožička %loanId% končí zajtra
+le_email.reminder.title: Tvoja výpožičná lehota sa blíži ku koncu
+le_email.reservation_reminder.subject: Vyzdvihni si svoju rezerváciu zajtra
+le_email.reservation_reminder.title: Vyzdvihni si svoju rezerváciu zajtra
+le_email.membership_expired.subject: Platnosť členského vypršala
+le_email.membership_expired.title: Platonsť členského vypršala
+le_email.login_details.subject: Tvoje prihlasovacie údaje pre %accountName%
+le_email.login_details.title: Prihlasovacie údaje
+le_email.login_details.message: Tu sú tvoje prihlasovacie údaje do nášho výpožičkového systému
+le_email.new_password.title: Tvoje nové heslo
+le_email.new_password.message: Toto je tvoje nové heslo pre %accountName%
+le_email.reservation_confirm.subject: Potvrdenie tvojej rezervácie
+le_email.reservation_confirm.title: Potvrdenie rezervácie
+le_email.site_welcome.subject: Vitaj v %accountName%
+le_email.site_welcome.title: Vitaj

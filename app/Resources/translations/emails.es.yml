@@ -1,0 +1,43 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: es-ES, Spanish (Spain)
+# Tagged: Emails
+# Exported by: Chris
+# Exported at: Tue, 17 Oct 2017 21:53:43 +0100
+---
+le_email.item_description: Descripción
+le_email.item_contains: Consta de
+le_email.see_attachment: Ver adjunto
+le_email.return_sites: Por favor devuelve este objeto a
+le_email.th_item: Objeto
+le_email.th_fee: Tarifa
+le_email.th_due_back: Vence
+le_email.url: URL de inicio de sesión
+le_email.email: Correo electrónico
+le_email.password: Contraseña
+le_email.assign.title: Se te ha asignado un objeto
+le_email.assign.message: '%firstName%, %assignorName% te ha asignado el objeto "%itemName%".'
+le_email.assign.added_note: también ha añadido una nota
+le_email.assign.all_items: Ver todos los objetos asignados
+le_email.assign.current_location: Localización actual
+le_email.checkout.subject: Información de tu prestamo
+le_email.checkout.title: Información de tu préstamo
+le_email.extend.subject: Se ha actualizado la fecha de devolución de tu préstamo
+le_email.extend.title: Se ha modificado la fecha de devolución de un objeto
+le_email.extend.due_back: ahora vence el
+le_email.reminder.subject: Tu préstamos loanId vence mañana
+le_email.reminder.title: Tienes algún préstamo que vence pronto
+le_email.reservation_reminder.subject: Recoge tu reserva mañana
+le_email.reservation_reminder.title: Recoge tu reserva mañana
+le_email.membership_expired.subject: Tu suscripción se ha terminado.
+le_email.membership_expired.title: 'Tu suscripción se ha terminado. '
+le_email.login_details.subject: Información de inicio de sesión para %accountName%
+le_email.login_details.title: Detalles de inicio de sesión
+le_email.login_details.message: Ésta es la información para el inicio de sesión en nuestro sistema de préstamo
+le_email.new_password.title: Nueva contraseña
+le_email.new_password.message: La nueva contraseña para %accountName% es
+le_email.reservation_confirm.subject: Confirmación de tu reserva
+le_email.reservation_confirm.title: Confirmación de la reserva
+le_email.site_welcome.subject: Te damos la bienvenida a %accountName%
+le_email.site_welcome.title: Te damos la bienvenida!

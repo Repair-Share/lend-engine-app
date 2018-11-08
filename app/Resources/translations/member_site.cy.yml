@@ -1,0 +1,165 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: cy-GB, Welsh (Wales)
+# Tagged: Member site
+# Exported by: Chris
+# Exported at: Fri, 18 Aug 2017 08:58:53 +0100
+---
+Loan: Benthyciad
+Loans: Benthyciadau
+Reservation: Archeb
+Reservations: Archebion
+Brand: Brand
+Payment: Taliad
+Payments: Taliadau
+Fee: Ffi
+loan_status.pending: Disgwyl cadarnhad
+loan_status.on_loan: Ar fenthyciad
+loan_status.reserved: Wedi archebu
+loan_status.cancelled: Wedi'i ganslo
+loan_status.overdue: Yn hwyr
+loan_status.closed: Ar gau
+note_reservation_fee: Ffi archeb
+note_reservation_fee_will_be_added: mi fydd ffi yn cael ei ychwanegu gyda phob archeb
+th.date: Dyddiad
+th.payment_method: Dull talu
+th.fee: Ffi
+th.payment: Taliad
+th.ref: Cyfeirnod
+th.items: Eitemau
+th.date_from: Gan
+th.date_to: I
+th.status: Statws
+Reference: Cyfeirnod
+Items: Eitemau
+Status: Statws
+STATUS_PENDING: Disgwyl cadarnhad
+STATUS_ACTIVE: Ar fenthyciad
+STATUS_OVERDUE: Yn hwyr
+STATUS_RESERVED: Wedi archebu
+STATUS_CANCELLED: Wedi'i ganslo
+STATUS_CLOSED: Ar gau
+days: '{1}diwrnod|[2,Inf[diwrnodau'
+per_day: y dydd
+per_n_days: ar gyfer %count% diwrnod
+button_cancel: Canslo
+button_cancel_reservation: Canslo archeb
+button_add_credit: 'Ychwanegu credyd'
+button_go: Ewch
+I forgot my password: Rydw i wedi anghofio fy nghyfrinair
+Log out: 'Allgofnodi'
+My account: Fy nghyfrif
+Login with Facebook: Mewngofnodi gyda Facebook
+Login with Google: Mewngofnodi gyda Google
+form.firstName: Enw cyntaf
+form.lastName: Cyfenw
+form.email: Cyfeiriad e-bost
+form.telephone: 'Rhif ffon'
+form.address1: Rhif tŷ / stryd
+form.address2: Dinas
+form.address3: Sir
+form.postcode: Cod Post
+form.country: Gwlad
+form.locale: Eich dewis iaith
+public_misc.link_admin: Gweinyddu
+public_misc.link_home: Hafan
+public_misc.link_recent_items: Ychwanegwyd yn ddiweddar
+public_misc.link_all_items: Pob eitem
+public_misc.search_items: Chwiliwch ein eitemau
+public_misc.no_results: Dim byd wedi'i ganfod
+public_misc.filter_items: Hidlo eitemau
+public_misc.any_site: Unrhyw wefan
+public_footer.find_us: Dewch o hyd i ni / oriau agor
+public_footer.choose_lang: Dewiswch iaith
+public_footer.powered_by: Wedi'i bweru gan
+public_footer.logged_in_as: 'Rydych wedi mewngofnodi fel'
+public_account.title: Fy nghyfrif
+public_account.contact_subtitle: Manylion cyswllt
+public_account.membership_subtitle: 'Manylion aelodaeth'
+public_account.button_edit_details: Golygu fy manylion
+public_account.button_change_password: 'Newid fy nghyfrinair'
+public_item_list.pages: Dangos %x% i %y% o %z% eitemau
+public_item.location: Lleoliad
+public_item.brand: Brand
+public_item.code: Cod
+public_item.serial: Cyfres
+public_item.condition: Cyflwr
+public_item.contains: Cynnwys
+public_item.downloads: Lawrlwythau
+public_item.log_in_to_download: "mewngofnodi i lawrlwytho"
+public_item.log_in_to_borrow: Mewngofnodi i fenthyg neu cadw wrth gefn
+public_item.borrow_now: Benthyg / cadw wrth gefn
+public_item.not_available: Ddim ar gael
+public_item.available: Ar gael
+public_item.on_loan: Ar fenthyciad
+public_item.pickup_date_error: "Mae eitemau yn eich basged yn diffinio dyddiad codi sy'n gwrthdaro gydag archebion ar gyfer yr eitem yma. Ni fyddwch yn gallu benthyg yr eitem hon ar yr un benthyciad. "
+public_item.pickup_site_error: "Dydi'r eitem hon ddim ar gael o'r safle lle mae'r eitemau eraill yn eich basged i gael eu codi. Ni fyddwch yn gallu benthyg yr eitem hon ar yr un benthyciad. "
+public_item.basket_exists: Mae'r eitem hon yn eich basged yn barod. <br> Bydd angen i chi eu casglu gyda'i gilydd, felly rydym wedi gosod dyddiad casglu ar eich cyfer chi.
+public_item.account_balance_is: Balans ar gael yw
+public_item.add_credit: Ychwanegu credyd
+public_item.pickup_at: Codi yn
+public_item.return_by: Dychwelyd erbyn
+public_item.choose_pickup_first: Dewiswch codi gyntaf
+public_item.button_choose_pickup: Dewiswch amser codi
+public_item.button_choose_return: 'Dewiswch amser dychwelyd'
+public_item.cancel: Canslo
+public_item.basket_add: Ychwanegu eitem i'r fasged
+public_item.locations: Lleoliadau ar gael
+public_item.maps_link: Agorwch yn mapiau Google
+public_item.similar_items: eitemau tebyg ar gael
+public_item.see_all: Gweld pob un
+public_item.not_reservable: "Dydi'r eitem yma ddim ar gael i archebu ar-lein. Cysylltwch a ni."
+calendar.pickup_day: Codi
+calendar.my_booking: FY ARCHEB
+calendar.reserved: WEDI'I ARCHEBU
+calendar.on_loan: AR FENTHYCIAD
+calendar.text_clash_date: Mae'r cyfnod a ddewiswyd yn gwrthdaro gyda archeb sydd eisoes yn bodoli. Dewiswch ddiwrnod arall.
+calendar.text_return_after_pickup: Dewiswch ddyddiad dychwelyd ar ôl y dyddiad codi
+calendar.alert_already_booked: Ni allwch ddewis y dyddiad yma oherwydd archeb arall.
+calendar.alert_not_your_booking: Dim ond eich archebion eich hun y gallwch chi weld.
+calendar.alert_day_warning: Dim ond am luosrifau o Ddiwndau Benghyg Eitem y gallwch ei fenthyg. \nDewiswch ddyddiad dychwelyd arall.
+calendar.alert_min_loan_days: Mae'n rhaid i chi fenthyg yr eitem hon am o leiaf isafswm diwrnodau.
+calendar.alert_max_loan_days: Gallwch fenthyg yr eitem hon am hyd at uchafswm diwrnodau.
+public_basket.title: Basged
+public_basket.name: Basged
+public_basket.due_at: Yn ddyledus yn
+public_basket.return_to: Dychwelyd i
+public_basket.pickup_after: Codi ar ôl
+public_basket.from: o
+public_basket.add_credit_message: Ychwanegwch gredyd gyntaf os gwelwch yn dda
+public_basket.empty: Gwagio basged
+public_basket.confirm_reservation: Archebu
+public_basket.remove_item: Tynnu
+public_basket.total: Cyfanswm
+public_basket.balance: Dyledus i godi
+public_basket.no_items: <h3>Dim eitemau yn y fasged</h3> Chwiliwch am eitem i'w ychwanegu.
+public_basket.full_charge: bydd yn cael eich godi ar eich cyfrif
+public_basket.delay_charge: bydd yn cael ei godi ar eich cyfrif yn awr, gyda'r gweddill yn ddyledus pan yn casglu eitemau
+public_loan.title: Benthyciad
+public_user_menu.contact_info: Proffil
+text_borrow_with_membership: Gydag aelodaeth lawn, mi fyddwch yn gallu benthyg a chadw'r eitem yma ar-lein.
+text_no_membership: Nid oes gennym aelodaeth weithredol ar eich cyfer
+public_add_credit.title: Ychwanegwch gredyd
+public_add_credit.choose_card: "Dewiswch un o'r cardiau uchod sy'n bodoli'n barod, neu parhewch i ychwanegu credyd isod i ddefnyddio cerdyn newydd"
+public_add_credit.use_this_card: "Defnyddio'r cerdyn yma"
+public_add_credit.amount_to_add: "Swm i'w ychwanegu"
+public_add_credit.payment_method: Dull talu
+public_add_credit.min_amount: Swm lleiaf cerdyn
+public_add_credit.processing_fee: Bydd ffi prosesu yn cael ei ychwanegu ar gyfer trafodion cerdyn
+public_loans.no_loans: Nid ydych wedi benthyg unrhyw beth eto
+public_payments.no_payment: Dim taliadau na ffioedd eto
+public_payments.title: Ffioedd a Thaliadau
+public_registration.newsletter: "Tanysgrifiwch i'n cylchlythyr"
+public_registration.terms_link: Edrychwch ar ein Telerau ac Amodau
+public_registration.terms_label: "Rydw i'n cytuno gyda'r Telerau ac Amodau"
+public_become_member.title: Dewch yn aelod
+msg_success.payment_ok: "Taliad wedi'i wneud yn iawn. Diwygiwyd balans eich cyfrif."
+msg_success.reservation_create: Archebwyd! Rydym newydd anfon cadarnhad e-bost.
+msg_success.reservation_cancel: Cafodd eich archeb ei ganslo.
+msg_success.basket_item_removed: Tynnwyd yr eitem o'ch basged.
+msg_success.basket_item_added: ychwanegwyd at eich basged.
+msg_success.basket_item_exists: eisoes yn eich basged.
+msg_fail.general_fail: "Sori, aeth rhywbeth o'i le. Ceisiwch eto neu cysylltwch gyda ni."
+msg_fail.reservation_create: "Aeth rhywbeth o'i le, nid oeddem yn gallu creu'ch archeb."
+msg_fail.reservation_cancel: "Nid oeddem yn gallu canslo'ch archeb. Cysylltwch gyda ni os gwelwch yn dda."

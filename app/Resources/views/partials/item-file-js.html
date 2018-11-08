@@ -1,0 +1,16 @@
+<script id="file-attachment-template" type="text/x-handlebars-template">
+    <div class="file-attachment">
+        <i class="file-icon fa fa-file-text-o"></i>
+        <a href="{{ filePath }}" target="_blank" class="file-name">
+            {{ fileName }}
+            <i class="fa fa-external-link" style="font-size: 10px;"></i>
+        </a>
+        <span class="file-size">{{ fileSize }} Kb</span>
+        <span class="file-send">
+            <label class="toggle-send">
+                <input type="checkbox" {{ sendToMember }} file-id="{{ fileId }}" class="send-to-member"> Send to member on checkout
+            </label>
+        </span>
+        <span class="file-delete" id="{{ fileId }}"><i class="fa fa-trash"></i></span>
+    </div>
+</script>

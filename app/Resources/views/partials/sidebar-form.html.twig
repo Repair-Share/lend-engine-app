@@ -1,0 +1,50 @@
+<div id="nav-search" style="padding-top:8px">
+
+    <form method="GET" class="sidebar-form" action="{{ path('item_list') }}">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search items ..." value="{{ app.request.query.get("search1") }}">
+            <span class="input-group-btn">
+                <button type="submit" name="search-form" id="search-btn1" class="btn btn-flat">
+                    <i class="fa fa-search"></i>
+                </button>
+            </span>
+        </div>
+    </form>
+
+    <form method="GET" class="sidebar-form" action="{{ path('contact_list') }}">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search contacts ..." value="{{ app.request.query.get("search2") }}">
+            <span class="input-group-btn">
+                <button type="submit" name="search-form" id="search-btn2" class="btn btn-flat">
+                    <i class="fa fa-search"></i>
+                </button>
+            </span>
+        </div>
+    </form>
+
+    <form method="GET" class="sidebar-form" action="{{ path('loan_search') }}">
+        <div class="input-group">
+            <input type="text" name="loan-search" class="form-control" placeholder="Search loans ...">
+            <span class="input-group-btn">
+                <button type="submit" name="search-form" id="search-btn3" class="btn btn-flat">
+                    <i class="fa fa-search"></i>
+                </button>
+            </span>
+        </div>
+    </form>
+
+    <div class="sidebar-collapse " style="padding:0 10px 10px 10px;">
+
+        <div class="btn-group btn-block">
+            <button type="button" class="btn btn-default btn-block dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-plus"></i> Quick add <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu btn-block">
+                <li><a href="{{ path('item_type') }}">Item</a></li>
+                <li><a href="{{ path('contact') }}">Contact</a></li>
+                <li><a href="{{ path('member_search') }}">Loan <span style="font-size: 11px; color: #aaa;">(via member site)</span></a></li>
+            </ul>
+        </div>
+
+    </div>
+</div>

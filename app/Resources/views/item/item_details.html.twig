@@ -1,0 +1,35 @@
+<div class="item-info item-note">
+    <span class="item-info-label">Fee:</span> {{ item.loanFee }} for {{ item.maxLoanDays }} days
+</div>
+
+{% if item.condition %}
+    <div class="item-info item-code">
+        <span class="item-info-label">Condition:</span> {{ item.condition.name }}
+    </div>
+{% endif %}
+
+{% if item.sku %}
+    <div class="item-info item-code">
+        <span class="item-info-label">Code:</span> {{ item.sku }}
+    </div>
+{% endif %}
+
+{% if item.serial %}
+    <div class="item-info item-serial">
+        <span class="item-info-label">Serial:</span> {{ item.serial }}
+    </div>
+{% endif %}
+
+{% if item.note %}
+    <div class="item-info item-note">
+        <span class="item-info-label">Item note:</span> {{ item.note }}
+    </div>
+{% endif %}
+
+{% if item.tags is defined %}
+    <div class="item-info item-tags">
+        {% for tag in item.tags %}
+            <span class="label label-default bg-brown item-tag">{{ tag.name }}</span>
+        {% endfor %}
+    </div>
+{% endif %}

@@ -1,0 +1,26 @@
+{# app/Resources/views/modals/add_note.html.twig #}
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}Where are you working today?{% endblock %}
+{% block modalSubTitle %}{% endblock %}
+
+{% block modalBody %}
+    <div class="row">
+        <div class="col-md-12">
+
+            {% for site in sites %}
+            <div style="padding: 10px">
+                <a href="{{ path('choose_site', {id: site.id}) }}" style="font-size: 18px">
+                    {{ site.name }}
+                </a>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block modalFooter %}
+
+{% endblock %}
+

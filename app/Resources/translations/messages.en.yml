@@ -1,0 +1,8 @@
+# Loan statuses
+loan_status:
+  pending: Pending
+  on_loan: On loan
+  reserved: Reserved
+  cancelled: Cancelled
+  overdue: Overdue
+  closed: Closed

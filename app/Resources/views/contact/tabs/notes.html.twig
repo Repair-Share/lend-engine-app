@@ -1,0 +1,17 @@
+{% if contact.id %}
+<div class="row">
+    <div class="col-md-10">
+        {% for note in contact.notes %}
+            {{ include('partials/note.html.twig') }}
+        {% endfor %}
+    </div>
+    <div class="col-md-2">
+        <a href="{{ path('add_note') }}?&contactId={{ contact.id }}&goto=contact" class="modal-link btn btn-default pull-right">Add note</a>
+    </div>
+</div>
+{% else %}
+    <div class="page-help">
+        Once you've saved the contact, here's where you'll be able to add notes.
+    </div>
+{% endif %}
+

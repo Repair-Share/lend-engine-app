@@ -1,0 +1,10 @@
+{% extends 'shared/modal.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block title %}
+    Refund a payment
+{% endblock %}
+
+{% block body %}
+    {{ include('cores/refund_core.html.twig') }}
+{% endblock %}

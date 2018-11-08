@@ -1,0 +1,125 @@
+{% if tenantInformation.feature('ContactField') %}
+<div class="row" id="item-files">
+    {% if contact.fileAttachments|length == 0 %}
+        <div class="col-md-12">
+            No files uploaded yet
+        </div>
+    {% endif %}
+    <div id="item-files-closer"></div>
+</div>
+
+<div class="row">
+    <div class="col-md-12" style="margin-top:10px">
+        {% if contact.id %}
+            <div id="fileUploader" class="dropzone" style="height: 20px;"></div>
+        {% else %}
+            Save contact before uploading files.
+        {% endif %}
+    </div>
+</div>
+
+{{ source('partials/contact-file-js.html') }}
+
+<script>
+
+    var contactId = {% if contact.id %}{{ contact.id }}{% else %}null{% endif %};
+
+    // Insert existing files
+    {% if contact.fileAttachments | length > 0 %}
+    {% for file in contact.fileAttachments %}
+    insertFileAttachment("{{ file.id }}", "{{ file.fileName }}", "{{ file.fileSize }}", "0");
+    {% endfor %}
+    {% endif %}
+
+    var fileUploader = new Dropzone("div#fileUploader", {
+        method: "post",
+        paramName: "file", // The name that will be used to transfer the file
+        url: "{{ oneup_uploader_endpoint('files') }}",
+        maxFilesize: 2, // MB
+        accept: function (file, done) {
+            done();
+        },
+        init: function () {
+            this.on("sending", function (file, xhr, formData) {
+                formData.append("contactId", contactId);
+                console.log("Uploading file ... " + file.name);
+                startFilesUploading();
+            });
+            this.on("success", function (file, serverResponse) {
+                console.log(serverResponse);
+                if (file.status == "success") {
+                    console.log("Uploaded OK");
+                    insertFileAttachment(serverResponse.fileId, serverResponse.fileName, serverResponse.fileSize, false);
+                }
+            });
+            this.on("complete", function (file) {
+                fileUploader.removeFile(file);
+            });
+            this.on("queuecomplete", function (file) {
+                console.log("All files have finished uploading");
+                finishFilesUploading();
+            });
+        }
+    });
+
+    function insertFileAttachment(fileId, fileName, fileSize, sendToMember) {
+        var source = $("#file-attachment-template").html();
+        var template = Handlebars.compile(source);
+        fileSize = fileSize / 1000;
+        if (sendToMember == true) {
+            sendToMemberCheckbox = "checked";
+        } else {
+            sendToMemberCheckbox = "";
+        }
+        var file = {
+            fileName: fileName,
+            fileId: fileId,
+            fileSize: fileSize.toFixed(2),
+            filePath: "{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/files/" + fileName,
+            sendToMember: sendToMemberCheckbox
+        };
+        var html = template(file);
+        $("#item-files-closer").before(html);
+    }
+
+    function startFilesUploading() {
+        $("#save-item").attr('disabled', true).html("Files uploading ...");
+        $("#save-and-new").hide();
+    }
+
+    function finishFilesUploading() {
+        $("#save-item").attr('disabled', false).html("Save item");
+        $("#save-and-new").show();
+    }
+
+    // Remove a file
+    $("#item-files").on("click", ".file-delete", function () {
+        var fileId = $(this).attr('id');
+        var fileDiv = $(this).parent();
+        if (window.confirm("Are you sure you want to delete this file?")) {
+            $(this).html('<img src="/images/ajax-loader.gif">');
+            $.get(
+                    "/admin/file/" + fileId + "/remove",
+                    {item: "{{ contact.id }}"},
+                    function (data) {
+                        if (data == "ok") {
+                            console.log("removing file " + fileId);
+                            fileDiv.fadeOut(500).remove();
+                        }
+                    },
+                    "json");
+        }
+
+    });
+
+</script>
+{% else %}
+
+    <br>
+    <div class="upgrade">
+        Member file attachments are not available on your pay plan.
+        <a href="{{ path('billing') }}">Upgrade / view plans</a>
+    </div>
+    <br>
+
+{% endif %}

@@ -1,0 +1,168 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: sk-SK, Slovak (Slovakia)
+# Tagged: Member site
+# Exported by: Chris
+# Exported at: Wed, 23 May 2018 10:24:15 +0100
+---
+Loan: Výpožička
+Loans: Výpožičky
+Reservation: Rezervácia
+Reservations: Rezervácie
+Brand: Značka
+Payment: Platba
+Payments: Platby
+Fee: Poplatok
+loan_status.pending: Čakajúce
+loan_status.on_loan: Požičané
+loan_status.reserved: Rezervované
+loan_status.cancelled: Zrušené
+loan_status.overdue: Po termíne
+loan_status.closed: Uzavreté
+note_reservation_fee: Rezervačný poplatok
+note_reservation_fee_will_be_added: Poplatok bude započítaný pre každú rezerváciu
+th.date: Dátum
+th.payment_method: Platobná metóda
+th.fee: Poplatok
+th.payment: Platba
+th.ref: Referencia
+th.items: Veci
+th.date_from: Od
+th.date_to: Do
+th.status: Stav
+Reference: Referencia
+Items: Veci
+Status: Stav
+STATUS_PENDING: Čakajúce
+STATUS_ACTIVE: Požičané
+STATUS_OVERDUE: Po termíne
+STATUS_RESERVED: Rezervované
+STATUS_CANCELLED: Zrušené
+STATUS_CLOSED: Uzavreté
+days: "{1}deň|{2,3,4}dni|[5,Inf[dní"
+per_day: za deň
+per_n_days: za %count% dní
+button_cancel: Zrušiť
+button_cancel_reservation: Zrušiť rezerváciu
+button_add_credit: Dobiť kredit
+button_go: Hľadaj
+I forgot my password: Zabuduté heslo
+Log out: Odhlásiť
+My account: Môj účet
+Login with Facebook: Prihlásenie cez Facebook
+Login with Google: Prihlásenie cez Google
+form.firstName: Meno
+form.lastName: Priezvisko
+form.email: E-mail
+form.telephone: Telefón
+form.address1: Ulica a číslo domu
+form.address2: Mesto
+form.address3: Kraj
+form.postcode: PSČ
+form.country: Štát
+form.locale: Preferovaný jazyk
+public_misc.link_admin: Admin
+public_misc.link_home: Domov
+public_misc.link_recent_items: Naposledy pridané
+public_misc.link_all_items: Všetky veci
+public_misc.search_items: Hľadaj vo veciach
+public_misc.no_results: Nič sa nenašlo :(
+public_misc.filter_items: Filter vecí
+public_misc.any_site: Hocikde
+public_footer.find_us: Kde sme / otváracie hodiny
+public_footer.choose_lang: Vybrať jazyk
+public_footer.powered_by: Powered by
+public_footer.logged_in_as: Si prihlásený/á ako
+public_account.title: Môj účet
+public_account.contact_subtitle: Kontaktné údaje
+public_account.membership_subtitle: Členské údaje
+public_account.button_edit_details: Upraviť moje údaje
+public_account.button_change_password: Zmeniť moje heslo
+public_item_list.pages: Zobrazenie %x% do %y% z %z% položiek
+public_item.location: Miesto uloženia
+public_item.brand: Značka
+public_item.code: Kód
+public_item.serial: Sériové čislo
+public_item.condition: Stav
+public_item.contains: Obsahuje
+public_item.downloads: Sťahovania
+public_item.log_in_to_download: prihlás sa na stiahnutie
+public_item.log_in_to_borrow: Prihlás sa pre výpožičku alebo rezerváciu
+public_item.borrow_now: Požičaj si / rezervuj si
+public_item.not_available: Nedostupné
+public_item.available: Dostupné
+public_item.on_loan: Požičané
+public_item.pickup_date_error: Veci v tvojom košíku majú dátum vyzdvihnutia, ktorý koliduje s rezerváciou tejto veci. Preto si nebudeš môcť požičať túto vec v aktuálnej výpožičke.
+public_item.pickup_site_error: Táto vec nie je dostupná na mieste, z ktorého si budeš môcť vyzdvihnúť ostatné veci v tvojom košíku. Preto si nebudeš môcť požičať túto vec v aktuálnej výpožičke.
+public_item.basket_exists: V tvojom košíku už máš nejaké veci. <br>Budeš si ich musieť vyzdvihnúť naraz, takže sme ti určili dátum vyzdvihnutia.
+public_item.account_balance_is: Dostupný zostatok je
+public_item.add_credit: Dobi kredit
+public_item.pickup_at: Vyzdvihnutie v
+public_item.return_by: Vrátenie do
+public_item.choose_pickup_first: Zvoľ si odberné miesto ako prvé
+public_item.button_choose_pickup: Vyber čas vyzdvihnutia
+public_item.button_choose_return: Vyber čas vrátania
+public_item.cancel: Zruš
+public_item.basket_add: Pridaj vec do košíka
+public_item.locations: Miesta uloženia
+public_item.maps_link: Otvor v Google mapách
+public_item.similar_items: podobné veci
+public_item.see_all: Pozri všetky
+public_item.not_reservable: Túto vec nie je možné rezervovať online.
+calendar.pickup_day: Vyzdvihnutie
+calendar.my_booking: MOJA REZERVÁCIA
+calendar.reserved: REZERVOVANÉ
+calendar.on_loan: POŽIČANÉ
+calendar.text_clash_date: Tvoja zvolená rezervácia je v rozpore z už existujúcou rezerváciou. Prosím zvoľ si iný dátum.
+calendar.text_return_after_pickup: Prosím zvoľ si dátum vrátenia po dátume vyzdvihnutia.
+calendar.alert_already_booked: Nemôžeš si zvoliť tento dátum kôli inej rezervácii.
+calendar.alert_not_your_booking: Smieš si prezrieť len detaily tvojich rezervácií.
+calendar.alert_day_warning: Táto položka môže byť požičaná na násobky itemLoanDays dní. \nProsím zvoľ si iný dátum vrátenia.
+calendar.alert_min_loan_days: Túto položku si musíš požičať na minimálne minLoanDays dní.
+calendar.alert_max_loan_days: Túto položku si môžeš požičať na maximálne maxLoanDays dní.
+public_basket.title: Košík
+public_basket.name: Košík
+public_basket.due_at: Do
+public_basket.return_to: Vrátiť do
+public_basket.pickup_after: Vyzdvihnutie od
+public_basket.from: z
+public_basket.add_credit_message: Prosíme, najprv si dobi kredit.
+public_basket.empty: Prázdny košík
+public_basket.confirm_reservation: Rezervuj
+public_basket.remove_item: Odstráň
+public_basket.total: Spolu
+public_basket.balance: Na zaplatenie
+public_basket.no_items: <h3>Prázdny košík</h3> Použi vyhľadávanie pre pridanie veci do košíka.
+public_basket.full_charge: bude účtovaný na Tvoj účet
+public_basket.delay_charge: bude účtovaný na Tvoj účet teraz, zvyšok bude splatný pri odovzdaní položiek
+public_loan.title: Výpožička
+public_user_menu.contact_info: Profil
+text_borrow_with_membership: |
+  S plným členstvom si budeš môcť túto vec požičať a rezervovať online.
+text_no_membership: |
+  Nemáš aktivované členstvo.
+  Prosíme, príď nás navštíviť s platným dokladom totožnosti pre aktiváciu tvojho členstva.
+public_add_credit.title: Dobi kredit
+public_add_credit.choose_card: Vyber existujúcu kartu alebo pokračuj s dobíjaním kreditu použitím novej karty
+public_add_credit.use_this_card: Použi túto kartu
+public_add_credit.amount_to_add: Suma, ktorú chceš pridať
+public_add_credit.payment_method: Platobná metóda
+public_add_credit.min_amount: Minimálna suma pri platbe kartou
+public_add_credit.processing_fee: pri kartových transakciách bude zarátaný spracovateľský poplatok
+public_loans.no_loans: Zatiaľ si si nič nepožičal
+public_payments.no_payment: Zatiaľ žiadne platby ani poplatky
+public_payments.title: Poplatky a Platby
+public_registration.newsletter: Prihlás sa na odber noviniek
+public_registration.terms_link: Zobraz podmienky používania
+public_registration.terms_label: Súhlasím s podmienkami používania
+public_become_member.title: Staň sa členom
+msg_success.payment_ok: Platba prebehla v poriadku. Tvoj zostatok bol navýšený.
+msg_success.reservation_create: Rezervované! E-mailom sme ti poslali žiadosť o potvrdenie.
+msg_success.reservation_cancel: Tvoja rezervácia bola zrušená.
+msg_success.basket_item_removed: Vec bola odstránená z košíka.
+msg_success.basket_item_added: bolo pridané do košíka.
+msg_success.basket_item_exists: sa už nachádza v tvojom košíku.
+msg_fail.general_fail: Prepáč, niečo sa pokazilo. Skús to znovu alebo nás kontaktuj.
+msg_fail.reservation_create: Nepodarilo sa vytvoriť tvoju rezerváciu.
+msg_fail.reservation_cancel: Nepodarilo sa zrušiť tvoju rezerváciu. Prosíme, kontaktuj nás.

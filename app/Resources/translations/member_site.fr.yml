@@ -1,0 +1,188 @@
+# Loco yaml export: Symfony YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: fr-FR, French (France)
+# Tagged: Member site
+# Status: Translated
+# Exported by: Chris
+# Exported at: Wed, 19 Jul 2017 10:18:41 +0100
+---
+Loan: Prêt
+Loans: Prêts
+Reservation: Réservation
+Reservations: Réservations
+Brand: Marque
+Payment: Paiement
+Payments: Paiements
+Fee: Frais
+loan_status:
+  pending: En attente
+  on_loan: En prêt
+  reserved: Réservé
+  cancelled: Annulé
+  overdue: En retard
+  closed: Fermé
+note_reservation_fee: Frais de réservation
+note_reservation_fee_will_be_added: frais ajouté par réservation
+th:
+  date: Date
+  payment_method: Mode de paiement
+  fee: Frais
+  payment: Paiement
+  ref: Référence
+  items: Articles
+  date_from: De
+  date_to: À
+  status: Statut
+Reference: Référence
+Items: Articles
+Status: Statut
+STATUS_PENDING: En attente
+STATUS_ACTIVE: En prêt
+STATUS_OVERDUE: En retard
+STATUS_RESERVED: Réservé
+STATUS_CANCELLED: Annulé
+STATUS_CLOSED: Fermé
+days: '{1}jour|[2,Inf[jours'
+per_day: par jour
+per_n_days: pour %count% jours
+button_cancel: Annuler
+button_cancel_reservation: Annuler la réservation
+button_add_credit: Ajouter du crédit
+button_go: Aller
+I forgot my password: J’ai oublié mon mot de passe
+Log out: Fermer la session
+My account: Mon compte
+Login with Facebook: Connexion avec Facebook
+Login with Google: Connexion avec Google
+form:
+  firstName: Prénom
+  lastName: Nom de famille
+  email: Adresse de courriel
+  telephone: Téléphone
+  address1: Adresse (rue / numéro)
+  address2: Ville
+  address3: Région
+  postcode: Code postal
+  country: Pays
+  locale: Votre langue de préférence
+public_misc:
+  link_admin: Admin
+  link_home: Accueil
+  link_recent_items: Récemment ajouté
+  link_all_items: Tous les articles
+  search_items: Rechercher nos articles
+  no_results: Rien trouvé
+  filter_items: Filtrer les articles
+  any_site: N’importe quel site
+public_footer:
+  find_us: Nous trouver / heures d'ouverture
+  choose_lang: Choisir la langue
+  powered_by: Alimenté par
+  logged_in_as: Vous êtes identifié comme
+public_account:
+  title: Mon compte
+  contact_subtitle: Coordonnées de contact
+  membership_subtitle: Détails de l'adhésion
+  button_edit_details: Modifier mes coordonnées
+  button_change_password: Changer mon mot de passe
+public_item_list:
+  pages: Affichage des articles %x% à %y% sur %z%
+public_item:
+  location: Emplacement
+  brand: Marque
+  code: Code
+  serial: Numéro de série
+  condition: État
+  contains: Contient
+  downloads: Téléchargements
+  log_in_to_download: connectez-vous pour télécharger
+  log_in_to_borrow: Connectez-vous pour emprunter ou réserver
+  borrow_now: Emprunter/réserver
+  not_available: Non disponible
+  available: Disponible
+  on_loan: En prêt
+  pickup_date_error: Des articles dans votre panier sont définis avec une date d'enlèvement qui entre en conflit avec les réservation de l'un d'entre eux. Vous ne serez pas capable d'emprunter cet article dans la même transaction.
+  pickup_site_error: Cet article n'est pas disponible sur le même site que les autres articles de votre panier. Vous ne serez pas capable d'emprunter cet article dans la même transaction.
+  basket_exists: Vous avez déjà des articles dans votre panier. <br>Vous devrez les enlever ensemble, et nous avons dès lors défini une date d'enlèvement pour vous.
+  account_balance_is: Le crédit disponible est de
+  add_credit: Ajouter du crédit
+  pickup_at: Enlèvement à
+  return_by: Retour à
+  choose_pickup_first: Choose pickup first
+  button_choose_pickup: Choisir
+  button_choose_return: Choisir le moment de retour
+  cancel: Annuler
+  basket_add: Ajouter un article au panier
+  locations: Localisations disponibles
+  maps_link: Ouvrir dans Google Maps
+  similar_items: articles similaires disponibles
+  see_all: Voir tout
+  not_reservable: Cet article n'est pas disponible pour une réservation en ligne.
+calendar:
+  pickup_day: Enlèvement
+  my_booking: MA RÉSERVATION
+  reserved: RÉSERVÉ
+  on_loan: EN PRÊT
+  text_clash_date: La période que vous avez sélectionnée entre en conflit avec une réservation existante. Merci de choisir une autre date.
+  text_return_after_pickup: Merci de choisir une date de retour postérieure à votre date d'enlèvement
+  alert_already_booked: Vous ne pouvez pas sélectionner cette date à cause d'une autre réservation.
+  alert_not_your_booking: Vous ne pouvez voir le détail que de vos propres réservations.
+  alert_day_warning: Cet article ne peut être réservé que par multiple de itemLoanDays jours. \nMerci de choisir une autre date de retour.
+  alert_min_loan_days: Vous devez emprunter cet article pour au minimum minLoanDays jours.
+  alert_max_loan_days: Vous pouvez emprunter cet article pour maximum maxLoanDays jours.
+public_basket:
+  title: Panier
+  name: Panier
+  due_at: Dû à
+  return_to: Retourner à
+  pickup_after: Enlèvement après
+  from: de
+  add_credit_message: Merci d'ajouter du crédit d'abord.
+  empty: Vider le panier
+  confirm_reservation: Réserver
+  remove_item: Retirer
+  total: Total
+  balance: A imputer
+  no_items: <h3>Pas d'article dans le panier</h3>Cherchez un article à ajouter.
+  full_charge: sera imputé sur votre compte
+  delay_charge: sera chargé maintenant sur votre compte, et le solde sera dû à la collecte des articles
+public_loan:
+  title: Prêt
+public_user_menu:
+  contact_info: Profil
+text_borrow_with_membership: |
+  Si vous adhérez au système, vous serez capable d'emprunter et réserver cet article en ligne.
+text_no_membership: |
+  Nous n’avons pas d'adhésion active pour vous.
+  S’il vous plaît venez nous rendre visite avec une photo d’identité pour compléter votre adhésion.
+public_add_credit:
+  title: Ajouter du crédit
+  choose_card: Choisissez une carte ci-dessus, ou continuez d'ajouter du crédit ci-dessous pour utiliser une nouvelle carte
+  use_this_card: Utiliser cette carte
+  amount_to_add: Montant à ajouter
+  payment_method: Mode de paiement
+  min_amount: Montant minimum de la carte
+  processing_fee: des frais de transaction seront ajoutés pour les règlements par carte
+public_loans:
+  no_loans: Vous n’avez pas encore rien emprunté
+public_payments:
+  no_payment: Encore aucune paiement ni aucun frais
+  title: Frais et paiements
+public_registration:
+  newsletter: Vous affilier à notre newsletter
+  terms_link: Voir nos Termes et Conditions
+  terms_label: J'accepte les conditions générales
+public_become_member:
+  title: Devenir membre
+msg_success:
+  payment_ok: Paiement en ordre. Le solde de votre compte a été mis à jour.
+  reservation_create: Réservé! Nous venons de vous envoyer un courriel de confirmation.
+  reservation_cancel: Votre réservation a été annulée.
+  basket_item_removed: L'article a été retiré de votre panier.
+  basket_item_added: a été ajoute à votre panier.
+  basket_item_exists: est déjà dans votre panier.
+msg_fail:
+  general_fail: Désolé, un problème est survenu. Merci de ré-essayer, ou de nous contacter.
+  reservation_create: Un problème est survenu, nous n'avons pas pu créer votre réservation.
+  reservation_cancel: Nous ne pouvons pas annuler votre réservation. Merci de nous contacter.

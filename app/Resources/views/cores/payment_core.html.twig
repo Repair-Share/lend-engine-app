@@ -1,0 +1,79 @@
+{% trans_default_domain 'member_site' %}
+
+{{ include('public/partials/account_balance.html.twig') }}
+
+<div class="row">
+    <div class="col-md-12 add-credit">
+
+        {{ include('partials/credit-cards.html.twig') }}
+
+        <form method="POST" name="payment" class="payment-form" action="{{ path('add_credit') }}">
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                        <label>{% trans %}public_add_credit.amount_to_add{% endtrans %}</label>
+                        <div class="input-group">
+                            <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
+                            <input type="text" value="{{ initialPaymentAmount|number_format(2) }}" data-number-to-fixed="2" class="form-control payment-amount col-xs-2" name="paymentAmount" id="payment-amount" />
+                        </div>
+                        {% if tenantInformation.minimumPaymentAmount > 0 %}
+                            <div class="help-block">
+                                {% trans %}public_add_credit.min_amount{% endtrans %}: {{ tenantInformation.currencySymbol }} {{ tenantInformation.minimumPaymentAmount|number_format(2) }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="paymentMethod" class="control-label">{% trans %}public_add_credit.payment_method{% endtrans %}</label>
+                            <select name="paymentMethod" id="paymentMethod" class="form-control payment-method">
+                                {% for method in paymentMethods %}
+                                    <option value="{{ method.id }}">{{ method.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                {% else %}
+                    <input type="hidden" class="payment-method" name="paymentMethod" id="paymentMethod" value="{{ tenantInformation.stripePaymentMethodId }}">
+                {% endif %}
+
+            </div>
+
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="help-block">
+                    <i class="fa fa-info-circle session-user"></i> Refunds are now processed using the "refund" button on the payments list in admin.
+                </div>
+
+                <br>
+
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            <label class="control-label">Add an optional note for this payment</label>
+                            <textarea name="paymentNote" placeholder="Note will be visible to member" class="form-control" size="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <input type="hidden" name="c" value="{{ contact.id }}">
+            <input type="hidden" name="return" value="{{ app.request.get('return') }}">
+            <input type="hidden" class="contact-email" id="contact-email" name="contactEmail" value="{{ contact.email }}">
+            <input type="hidden" class="stripe-card-id" id="stripe-card-id" name="stripeCardId" value="">
+            <input type="hidden" class="stripe-token" id="stripe-token" name="stripeToken" value="">
+
+            {% if tenantInformation.stripeFee > 0 %}
+                <div style="color:#ff4930; padding: 10px 0;">
+                    {{ tenantInformation.currencySymbol }} {{ tenantInformation.stripeFee|number_format(2, '.') }} {% trans %}public_add_credit.processing_fee{% endtrans %}.
+                </div>
+            {% endif %}
+
+            <button type="button" class="btn btn-success payment-submit">{% trans %}button_add_credit{% endtrans %}</button>
+
+        </form>
+
+    </div>
+</div>

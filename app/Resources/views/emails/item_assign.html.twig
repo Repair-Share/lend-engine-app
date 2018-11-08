@@ -1,0 +1,31 @@
+{# app/Resources/views/emails/item_assign.html.twig #}
+{% trans_default_domain 'emails' %}
+
+{% extends 'emails/template.html.twig' %}
+
+{% block heading %}{% trans %}le_email.assign.title{% endtrans %}{% endblock %}
+
+{% block content %}
+
+    {{ 'le_email.assign.message'|trans({"%firstName%": assignee.firstName, '%itemName%': item.name, '%assignorName%': assignor.Name}) }}
+    <br><br>
+
+    <div>{% trans %}le_email.assign.current_location{% endtrans %}:</div>
+    <div style="font-size: 20px; padding-bottom: 10px;">
+        {{ item.inventoryLocation.Name }}
+    </div>
+
+    {% if notes %}
+        <div>{{ assignor.firstName }} {% trans %}le_email.assign.added_note{% endtrans %}:</div>
+        <div style="font-size: 20px; font-style: italic; padding-bottom: 10px;">
+            {{ notes | nl2br }}
+        </div>
+    {% endif %}
+
+    <div>
+        <a href="http://{{ tenantInformation.accountCode }}.lend-engine-app.com/admin/item/list?filtered=1&filterAssignedTo={{ assignee.id }}">
+            {% trans %}le_email.assign.all_items{% endtrans %}
+        </a>
+    </div>
+
+{% endblock %}

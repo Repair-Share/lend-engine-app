@@ -1,0 +1,42 @@
+{# app/Resources/views/modals/add_note.html.twig #}
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+{% block modalSubTitle %}{{ subTitle|raw }}{% endblock %}
+
+{% block modalBody %}
+
+    <form method="POST" action="{{ path('add_note') }}">
+
+    <input type="hidden" name="contactId" value="{{ app.request.get('contactId') }}">
+    <input type="hidden" name="loanId" value="{{ app.request.get('loanId') }}">
+    <input type="hidden" name="goto" value="{{ app.request.get('goto') }}">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <textarea name="note_text" id="note_text" rows="6" class=form-control></textarea>
+            </div>
+            <div class="form-group" {% if is_granted('ROLE_SUPER_USER') != true %}style="display:none"{% endif %}>
+                <label>
+                    <input type="checkbox" name="adminOnly" value="1"> Show only for administrators
+                </label>
+            </div>
+        </div>
+    </div>
+
+    </form>
+
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="modal-submit btn bg-green">Add note</button>
+
+    <script>
+        $(document).ready(function () {
+            setUpSelectMenus();
+        });
+    </script>
+{% endblock %}
+

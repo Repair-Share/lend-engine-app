@@ -1,0 +1,54 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: sk-SK, Slovak (Slovakia)
+# Tagged: FOSUserBundle
+# Exported by: Chris
+# Exported at: Wed, 23 May 2018 10:17:43 +0100
+---
+group.edit.submit: Aktualizovať skupinu
+group.show.name: Názov skupiny
+group.new.submit: Vytvoriť skupinu
+group.flash.updated: Skupina bola aktualizovaná
+group.flash.created: Skupina bola vytvorená
+group.flash.deleted: Skupina bola vymazaná
+Invalid credentials.: Nesprávne meno alebo heslo
+security.login.username: 'Používateľské meno:'
+security.login.password: 'Heslo:'
+security.login.remember_me: Zapamätaj si ma
+security.login.submit: Prihlásenie
+profile.show.firstName: Meno
+profile.show.lastName: Priezvisko
+profile.show.email: Email
+profile.edit.submit: Aktualizovať
+profile.flash.updated: Tvoj profil bol aktualizovaný
+change_password.submit: Zmeniť heslo
+change_password.flash.success: Tvoje heslo bolo zmenené
+registration.check_email: '... skontroluj si svoju doručenú poštu '
+registration.confirmed: Tvoj účet bol aktivovaný a teraz si prihlásený!
+registration.back: Pokračovať...
+registration.submit: Registrovať
+registration.flash.user_created: Bol ti odoslaný email v ktorom nájdeš aktivačný odkaz na ktorý je potrebné kliknúť.
+registration.email.subject: Vitaj!
+registration.email.message: Pre dokončenie aktivácie tvojho konta prosím navštív %confirmationUrl%
+resetting.password_already_requested: Heslo pre tohoto používateľa už bolo vyžiadané v posledných 24h
+resetting.check_email: Email bol odoslaný. Obsahuje odkaz na ktorý je potrebné kliknúť pre nastavenie nového hesla.
+resetting.request.invalid_username: Používateľské meno alebo email "%username%" neexistuje.
+resetting.request.username: 'Používateľské meno alebo email:'
+resetting.request.submit: Reset hesla
+resetting.reset.submit: Zmena hesla
+resetting.flash.success: Heslo bolo úspešne resetované.
+resetting.email.subject: Reset hesla
+resetting.email.message: 'Pre rest hesla - porosím klikni na odkaz nižšie: %confirmationUrl%'
+layout.logout: Odhlásiť
+layout.login: Prihlásiť
+layout.register: Registrovať sa
+layout.logged_in_as: Prihlásený ako %username%
+form.group_name: Názov skupiny
+form.username: 'Používateľské meno:'
+form.current_password: 'Súčasné heslo:'
+form.password: 'Heslo:'
+form.password_confirmation: 'Zadaj heslo znova:'
+form.new_password: 'Nové heslo:'
+form.new_password_confirmation: 'Zopakuj nové heslo:'
+security.login.forgot_password: Zabudol som heslo

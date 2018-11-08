@@ -1,0 +1,125 @@
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+{% block modalSubTitle %}{{ subTitle|raw }}{% endblock %}
+
+
+{% block modalBody %}
+
+
+    {{ form_start(form, {'attr': {'id': 'site_openings'}}) }}
+
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-5">
+            {{ form_row(form.name) }}
+
+            {{ form_row(form.address) }}
+
+            {{ form_row(form.post_code) }}
+
+            {{ form_row(form.country) }}
+
+            {% if site.id %}
+                {{ form_row(form.isActive) }}
+                {{ form_row(form.default_check_in_location) }}
+            {% else %}
+                <p>
+                    We'll create the first location for this site automatically called "in stock".
+                    To add further locations, just head to the locations settings screen.
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="siteOpenings col-md-7" data-prototype="{% filter escape %}{% include 'form/siteOpening.html.twig' with { 'siteOpening': form.siteOpenings.vars.prototype } %}{% endfilter %}">
+
+            <label class="control-label required" for="site_name">Opening hours</label>
+
+            <div class="help-block">
+                You'll need to determine opening hours so that we can set loan start and end times,
+                and so that members can reserve items online for times when you will actually be open.<br><br>
+                <strong>Enter times in 24 hour format, eg "1600"</strong>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-4" style="">
+
+                </div>
+                <div class="col-md-2" style="padding-left:5px; font-size: 11px">
+                    From
+                </div>
+                <div class="col-md-2" style="padding-left:5px; font-size: 11px">
+                    To
+                </div>
+                <div class="col-md-2" style="padding-left:5px; font-size: 11px">
+                    Changeover*
+                </div>
+                <div class="col-md-1" style="">
+
+                </div>
+            </div>
+
+            {% for siteOpening in form.siteOpenings %}
+                {{ include('form/siteOpening.html.twig') }}
+            {% endfor %}
+
+            <div class="row" id="add_opening_li">
+                <div class="col-md-12">
+                    <a href="#" class="add_opening_link btn btn-default">Add opening hours</a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 help-block">
+                    * read the help information about changeover hours on the site list screen.
+                </div>
+            </div>
+
+            <br>
+            {{ form_row(form.colour) }}
+
+        </div>
+
+    </div>
+
+    {{ form_end(form) }}
+
+    <script>
+        $(document).ready(function() {
+            var $collectionHolder;
+            $collectionHolder = $('div.siteOpenings');
+            $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+            $(".add_opening_link").on('click', function(e) {
+                e.preventDefault();
+                addOpeningForm($collectionHolder);
+            });
+
+            $(".siteOpenings").on('click', '.removeOpening', function() {
+                $(this).closest('.siteOpening').remove();
+            });
+        });
+
+        function addOpeningForm($collectionHolder) {
+            var prototype = $collectionHolder.data('prototype');
+            var index     = $collectionHolder.data('index');
+            var newForm   = prototype.replace(/__name__/g, index);
+            $collectionHolder.data('index', index + 1);
+            var $newFormLi = $('<div class="siteOpening"></div>').append(newForm);
+            $("#add_opening_li").before($newFormLi);
+            setUpSelectMenus();
+        }
+
+    </script>
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="modal-submit btn bg-green">Save</button>
+{% endblock %}
+

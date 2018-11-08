@@ -1,0 +1,68 @@
+{# app/Resources/views/modals/payment.html.twig #}
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+{% block modalSubTitle %}
+    Current balance:
+    {% if contact.balance > 0 %}
+        <span class="label bg-green" id="account-balance">
+            {{ contact.balance|number_format(2) }}
+        </span>
+    {% else %}
+        <span class="label bg-red" id="account-balance">
+            {{ contact.balance|number_format(2) }}
+        </span>
+    {% endif %}
+{% endblock %}
+
+{% block modalBody %}
+
+    {{ form_start(form, { 'attr' : { 'class': 'payment-form' } }) }}
+
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <input type="hidden" name="contactId" id="contactId" value="{{ contact.id }}">
+    <input type="hidden" name="contactEmail" id="contactEmail" class="contact-email" value="{{ contact.email }}">
+
+    {{ include('partials/credit-cards.html.twig') }}
+
+    <div class="row">
+        <div class="col-md-4">
+            {{ form_row(form.paymentMethod) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(form.amount) }}
+        </div>
+        <div class="col-md-4">
+            {{ form_row(form.paymentDate) }}
+            <input type="hidden" name="payment_paymentDate_data" id="payment_paymentDate_data" value="">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {{ form_row(form.note) }}
+
+            {% if tenantInformation.stripeFee > 0 %}
+                <div style="color:#ff4930">
+                    {{ tenantInformation.stripeFee|number_format(2, '.') }} fee will be added to Stripe payments
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="payment-submit btn bg-green btn-loading">Take payment</button>
+    <script>
+
+    </script>
+{% endblock %}
+

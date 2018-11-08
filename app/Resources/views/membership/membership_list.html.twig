@@ -1,0 +1,59 @@
+{# app/Resources/views/membership/membership_list.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Memberships{% endblock %}
+
+{% block pageTitle %}Memberships{% endblock %}
+
+{% block primaryButton %}
+    <a href="{{ path('membership') }}" class="btn bg-green modal-link">Add a membership</a>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12 table-responsive">
+            <table cellspacing="0" class="table table-hover table-striped has-actions" id="data-table-membership">
+                <thead>
+                <th>Contact</th>
+                <th>Membership type</th>
+                <th>Created</th>
+                <th>Starts</th>
+                <th>Expires</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Action</th>
+                </thead>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        // The report needs more updates to work nicely with export button
+        $(document).ready(function() {
+            var dataTable = $('#data-table-membership').DataTable({
+                ordering: false,
+                serverSide: true,
+                autoWidth: false,
+                pageLength: 50,
+                ajax: "{{ path('dt_membership_list') }}",
+                "oSearch": {
+                    "sSearch": "{{ searchString }}"
+                },
+                "language": {
+                    "infoFiltered": ""
+                },
+                buttons: [
+                    {
+                        extend: 'csv',
+                        text: 'Export CSV'
+                    }
+                ]
+            });
+
+            $("#data-table-membership_filter label input").attr("placeholder", "Name, Email, Status, Type");
+            $("#data-table-membership_filter label input").css("width", "220px");
+        });
+    </script>
+{% endblock %}

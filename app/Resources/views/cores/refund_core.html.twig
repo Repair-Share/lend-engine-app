@@ -1,0 +1,52 @@
+{% trans_default_domain 'member_site' %}
+
+<div class="row">
+    <div class="col-md-12">
+        The original payment of {{ tenantInformation.currencySymbol }}{{ payment.amount }} was taken on {{ payment.paymentDate|date("d M Y H:i") }} with {{ payment.paymentMethod.name }}
+        {% if payment.deposit %}
+        <br>This was a deposit payment and the refund will not affect the member account balance.
+        {% endif %}
+    </div>
+</div>
+
+<br>
+
+<div class="row">
+    <div class="col-md-6">
+        {{ form_start(form) }}
+
+        {{ form_errors(form) }}
+        {% if help is defined %}
+            <span class="help">{{ help }}</span>
+        {% endif %}
+
+        {{ form_row(form.paymentMethod) }}
+
+        {{ form_row(form.note) }}
+
+        <button type="submit" class="btn btn-success">Refund</button>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<br>
+
+<div class="row">
+    <div class="col-md-12 help-block">
+        If you need to keep part of a deposit as a fee for damage, first refund the whole deposit and then add a fee during the check in process, or by adding a fee to a loan on the loan screen.
+    </div>
+</div>
+
+{% block modalFooter %}
+    <script>
+        $(document).ready(function () {
+            var originalPaymentMethodId = {{ payment.paymentMethod.id }};
+            if (originalPaymentMethodId == stripePaymentMethodId) {
+                $("#refund_paymentMethod").val(stripePaymentMethodId);
+            } else {
+                $("#refund_paymentMethod option[value='"+stripePaymentMethodId+"']").remove();
+            }
+        });
+    </script>
+{% endblock %}

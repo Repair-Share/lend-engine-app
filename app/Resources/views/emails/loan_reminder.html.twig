@@ -1,0 +1,66 @@
+{# app/Resources/views/emails/loan_reminder.html.twig #}
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}{{ 'le_email.reminder.title'|trans() }}{% endblock %}
+
+{% block content %}
+
+    <p>{{ tenantInformation.getEmailLoanReminderHeader|raw }}</p>
+    <br>
+
+    <table style="width:100%; background-color: #fff;" cellpadding="0" cellspacing="0" border="0">
+        <thead>
+            <tr>
+                <th align="left" style="padding-right: 15px">&nbsp;</th>
+                <th align="left" style="padding-right: 15px">{{ 'le_email.th_due_back'|trans() }}</th>
+            </tr>
+        </thead>
+
+        {% for item in items %}
+            <tr>
+                <td valign="top" style="padding-right: 15px">
+
+                    {% if item.imageName %}
+                        <div style="">
+                            <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ schema }}/thumbs/{{ item.imageName }}">
+                        </div>
+                    {% endif %}
+
+                    <strong>{{ item.name }}</strong>
+
+                    {% if item.componentInformation|length > 0 %}
+                        <div style="padding: 6px 0; font-size: 12px;">
+                            <strong>{{ 'le_email.item_contains'|trans() }}:</strong><br />
+                            {{ item.componentInformation|nl2br }}
+                        </div>
+                    {% endif %}
+
+                    {% if item.sites|length > 0 %}
+                        <div style="padding: 6px 0; font-size: 12px; color: #CC0000;">
+                            {{ 'le_email.return_sites'|trans() }}:
+                            <ul style="padding-left: 0">
+                                {% for site in item.sites %}
+                                    <li>
+                                        <strong>{{ site.name }}</strong><br>
+                                        {{ site.address }}<br>
+                                        {{ site.postCode }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                </td>
+            <td valign="top" style="padding-right: 15px">
+                    {{ dueDate|date('d F g:i a') }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <br>
+    <p>{{ tenantInformation.getEmailLoanReminderFooter|raw }}</p>
+
+{% endblock %}

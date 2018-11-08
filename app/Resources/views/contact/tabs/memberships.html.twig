@@ -1,0 +1,61 @@
+{% if contact.memberships|length > 0 %}
+    <table width="100%" class="table table-hover table-striped tab-table">
+        <thead>
+        <tr>
+            <th>Status</th>
+            <th>Type</th>
+            <th>Paid</th>
+            <th>Starts</th>
+            <th>Expires</th>
+            <th></th>
+        </tr>
+        </thead>
+        {% for membership in contact.memberships %}
+            <tr>
+                <td>
+                    {% if membership.status == constant('\\AppBundle\\Entity\\Membership::SUBS_STATUS_ACTIVE') %}
+                        {% set labelcolor = 'bg-green' %}
+                    {% elseif membership.status == constant('\\AppBundle\\Entity\\Membership::SUBS_STATUS_EXPIRED') %}
+                        {% set labelcolor = 'bg-red' %}
+                    {% else %}
+                        {% set labelcolor = 'bg-gray' %}
+                    {% endif %}
+                    <div class="label {{ labelcolor }}">
+                        {{ membership.status }}
+                    </div>
+                </td>
+                <td>{{ membership.membershipType.name }}</td>
+                <td>{{ membership.price|number_format(2) }}</td>
+                <td>{{ membership.startsAt|date("d M Y") }}
+                    {% if membership.status == constant('\\AppBundle\\Entity\\Membership::SUBS_STATUS_ACTIVE') %}
+                        <a href="{{ path('membership_edit', {id: membership.id}) }}" class="modal-link" title="Change start date"><i class="fa fa-edit"></i></a>
+                    {% endif %}
+                </td>
+                <td>{{ membership.expiresAt|date("d M Y") }}
+                    {% if membership.status == constant('\\AppBundle\\Entity\\Membership::SUBS_STATUS_ACTIVE') %}
+                        <a href="{{ path('membership_extend', {id: membership.id}) }}" class="modal-link" title="Change expiry date"><i class="fa fa-edit"></i></a>
+                    {% endif %}
+                </td>
+                <td align="right">
+                {% if membership.status == constant('\\AppBundle\\Entity\\Membership::SUBS_STATUS_ACTIVE') %}
+                    <a href="{{ path('membership_cancel', {id: membership.id}) }}" style="margin-right: 20px;">Cancel</a>
+                {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% else %}
+    <div class="page-help">
+        No memberships yet ...
+        {% if not contact.id %}
+            you'll be able to add a membership once you've saved the contact.
+        {% endif %}
+    </div>
+{% endif %}
+
+{% if contact.id and contact.activeMembership is null %}
+    <a href="{{ path('membership', {contactId : contact.id}) }}" id="addMembership" class="btn bg-green modal-link">
+        Add membership
+    </a>
+{% endif %}

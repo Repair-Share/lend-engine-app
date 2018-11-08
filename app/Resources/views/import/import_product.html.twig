@@ -1,0 +1,56 @@
+{# app/Resources/views/import/import_product.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block pageTitle %}Bulk update items{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+
+        <div class="col-md-12 help-block">
+            Use this screen to update lots of items at once.<br>
+            The <strong>code</strong> column will be used to find an existing item in your database,
+            and if there's a match the item values will be updated.<br>
+            The best way to get tab-separated data is simply to copy/paste from a spreadsheet.
+            <br><br>
+            <span style="font-style: italic">This tool is currently in beta. Please let us know if you experience any trouble.</span>
+        </div>
+
+        <div class="col-md-10">
+
+            {% set reportText = app.session.flashbag.get('report') %}
+
+            {% if reportText|length > 0 %}
+                <div class="alert alert-info disabled">
+                {% for flash_message in reportText %}
+                    <div>{{ flash_message }}</div>
+                {% endfor %}
+                </div>
+            {% endif %}
+
+            {{ form_start(form) }}
+
+            {{ form_errors(form) }}
+
+            {{ form_end(form) }}
+        </div>
+        <div class="col-md-2">
+            <p>
+                Paste tab-separated text with a header row.
+                The following item fields can be updated.
+            </p>
+            <ul class="nav">
+                {% for key,value in headerKeys %}
+                    <li>{{ key }}</li>
+                {% endfor %}
+            </ul>
+
+            <br>
+            <p>
+                More fields coming soon ...
+            </p>
+        </div>
+    </div>
+
+{% endblock %}

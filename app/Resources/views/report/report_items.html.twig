@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block pageCss %}
+{% endblock %}
+
+{% block title %}{{ pageTitle }}{% endblock %}
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div id="report-filter">
+            <form method="GET">
+                <div class="col-md-11">
+                    <div class="row">
+                        <div class="col-md-4 form-group">
+                            <label for="group_by">Report by</label>
+                            <select id="group_by" name="group_by" class="form-control">
+                                <option value="product" {% if app.request.get('group_by') == 'product' %}SELECTED{% endif %}>Item</option>
+                                {% for field in productFields %}
+                                    <option value="customField{{ field.id }}" {% if app.request.get('group_by') == "customField#{field.id}" %}SELECTED{% endif %}>{{ field.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label>Date range</label>
+                            <input type="text" id="date_picker" class="form-control report-date-picker">
+                            <input type="hidden" name="date_from" id="date_from" value="{{ date_from }}">
+                            <input type="hidden" name="date_to" id="date_to" value="{{ date_to }}">
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label>Filter by item name, code</label>
+                            <input type="text" name="search" class="form-control" value="{{ app.request.get('search') }}" placeholder="Item name or code">
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label for="tag_ids">Filter by tag</label>
+                            <select id="tag_ids" name="tag_ids[]" class="form-control" multiple="multiple">
+                                {% for tag in tags %}
+                                    <option {% if tag.id in app.request.get('tag_ids') %}SELECTED{% endif %} value="{{ tag.id }}">{{ tag.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label for="statuses">Filter by loan status</label>
+                            <select id="statuses" name="statuses[]" class="form-control" multiple="multiple">
+                                {% for status in statuses %}
+                                    <option {% if status.id in app.request.get('statuses') %}SELECTED{% endif %} value="{{ status.id }}">{{ status.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn bg-green pull-right form-control">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 table-responsive">
+            <table cellspacing="0" class="table table-hover table-striped" id="report-items-table">
+                <thead>
+                {% for column in tableHeader %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+                </thead>
+
+                {% for row in tableRows %}
+                    <tr id="tr{{ row.id }}">
+                        {% for column in row.data %}
+                            <td>{{ column }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+
+                <tfoot>
+                {% for column in tableHeader %}
+                    <td style="border-top:1px solid #aaa; font-weight:bold"></td>
+                {% endfor %}
+                </tfoot>
+
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        var dateFrom = "{{ date_from|date('M d Y') }}";
+        var dateTo = "{{ date_to|date('M d Y') }}";
+    </script>
+    <script src="/js/pages/report.js"></script>
+{% endblock %}

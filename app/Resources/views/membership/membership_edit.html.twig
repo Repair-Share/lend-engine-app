@@ -1,0 +1,72 @@
+{# app/Resources/views/membership/membership_edit.html.twig #}
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+{% block modalSubTitle %}{{ subTitle|raw }}{% endblock %}
+
+{% block modalBody %}
+    <form method="POST" action="{{ path('membership_edit', {id: membership.id}) }}">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="hidden" name="new_start_date" id="date-start">
+                <div id="date-start-container"></div>
+            </div>
+            <div class="col-md-4">
+                <div style="padding-bottom: 10px">
+                    <label>Original start date</label>
+                    <div class="text-large">
+                        {{ membership.startsAt|date('D M d Y') }}
+                    </div>
+                </div>
+                <div style="padding-bottom: 10px">
+                    <label>New start date</label>
+                    <div>
+                        <span id="new_start_text" class="text-large">
+                            {{ membership.startsAt|date('D M d Y') }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button type="button" id="apply_change" class="btn bg-green pull-right modal-submit">Update membership</button>
+    <script>
+        $(document).ready(function () {
+
+            // Datepicker
+            var dateChangeField = $("#date-start");
+            dateChangeField.dateRangePicker({
+                format: 'ddd MMM D YYYY',
+                autoClose: true,
+                singleDate: true,
+                singleMonth: true,
+                showShortcuts: false,
+                inline: true,
+                alwaysOpen: true,
+                container: '#date-start-container',
+                setValue: function (s) {
+                    if (!$(this).attr('readonly') && !$(this).is(':disabled') && s != $(this).val()) {
+                        console.log($(this).val(s));
+                    }
+                }
+            }).bind('datepicker-change', function (event, obj) {
+                var newTimeIn = moment(obj.date1).format('YYYY-MM-DD');
+                var start = moment("{{ membership.startsAt|date('Y-m-d') }}");
+                var end = moment(newTimeIn);
+                var duration = moment.duration(end.diff(start));
+                var days = duration.asDays();
+                $("#new_start_text").html(end.format('ddd MMM DD YYYY'));
+                $("#new_start_date").val(end.format('YYYY-MM-DD'));
+            });
+
+            dateChangeField.data('dateRangePicker').setDateRange('{{ membership.startsAt|date('D M d Y') }}', '{{ membership.startsAt|date('D M d Y') }}', true);
+
+        });
+    </script>
+{% endblock %}
+
+

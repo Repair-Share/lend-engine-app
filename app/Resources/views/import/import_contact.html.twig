@@ -1,0 +1,38 @@
+{# app/Resources/views/import/import_contact.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block pageTitle %}Import contacts{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+
+        <div class="col-md-12 help-block">
+            Use this screen to import a list of contacts from other software. You'll need to add extra information to each contact manually once imported, but this will save a lot of time while setting up a new account.<br>
+            The best way to get tab-separated data is simply to copy/paste from a spreadsheet.
+            <br><br>
+            <span style="font-style: italic">This tool is currently in beta. Please let us know if you experience any trouble.</span>
+        </div>
+
+        <div class="col-md-10">
+
+            {% set reportText = app.session.flashbag.get('report') %}
+
+            {% if reportText|length > 0 %}
+                <div class="alert alert-info disabled">
+                    {% for flash_message in reportText %}
+                        <div>{{ flash_message|nl2br }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {{ form_start(form) }}
+
+            {{ form_errors(form) }}
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}

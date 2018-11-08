@@ -1,0 +1,30 @@
+<div>
+    <a href="{{ path('member_search', {itemId: itemId, new: 'reservation'}) }}" class="btn btn-success pull-right">Lend / reserve via member site</a>
+</div>
+
+{% if reservations|length > 0 %}
+    <table width="100%" class="table table-hover table-striped tab-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Member</th>
+            <th>From</th>
+            <th>To</th>
+            <th></th>
+        </tr>
+        </thead>
+        {% for reservation in reservations %}
+            <tr>
+                <td><a href="{{ path('public_loan', {loanId: reservation.loan.id}) }}">{{ reservation.loan.id }}</a></td>
+                <td>{{ reservation.loan.contact.name }}</td>
+                <td>{{ reservation.dueOutAt|date("d M Y H:i") }}</td>
+                <td>{{ reservation.dueInAt|date("d M Y H:i") }}</td>
+                <td><a href="{{ path('public_loan', {loanId: reservation.loan.id}) }}">View</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <div class="page-help">
+        No reservations.
+    </div>
+{% endif %}

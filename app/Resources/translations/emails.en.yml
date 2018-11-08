@@ -1,0 +1,65 @@
+# Automated emails:
+le_email:
+  item_description: Description
+  item_contains: Contains
+  see_attachment: See attachment
+  return_sites: Please return this item to the following location(s)
+  th_item: Item
+  th_fee: Fee
+  th_due_back: Due back
+  url: Login URL
+  email: Email
+  password: Password
+  login_to_view_this_loan: Log in to view this loan online
+
+  assign: # When a team member is assigned an item (eg for repair)
+    subject:
+    title: You've been assigned an item
+    message: %firstName%, you have been assigned item "%itemName%" by %assignorName%.
+    added_note: also added a note
+    all_items: See all items assigned to you
+    current_location: Current location
+
+  checkout: # when a loan is checked out
+    subject: Your loan information
+    title: Your loan information
+
+  extend:
+    subject: Your loan return date has been updated
+    title: We've changed the return date of an item
+    due_back: is now due back on
+
+  reminder:
+    subject: Your loan loanId is due tomorrow
+    title: Your item(s) are due back soon
+
+  overdue:
+    subject: An item is overdue
+    title: Please return this item
+
+  reservation_reminder:
+    subject: "Pick up your reservation tomorrow"
+    title: "Pick up your reservation tomorrow"
+
+  membership_expired:
+    subject: "Your membership has expired"
+    title: "Your membership has expired"
+
+  login_details:
+    subject: Your login details for %accountName%
+    title: Login details
+    message: Here are your login details for our lending system
+
+  new_password:
+    title: Your new password
+    message: This is your new password for %accountName%
+
+  reservation_confirm:
+    subject: Your reservation confirmation
+    title: Reservation confirmation
+
+  site_welcome:
+    subject: Welcome to %accountName%
+    title: Welcome
+
+

@@ -1,0 +1,7 @@
+{% if product.notes|length > 0 %}
+    {% for note in product.notes|reverse %}
+        {{ include('partials/note.html.twig') }}
+    {% endfor %}
+{% else %}
+    No notes for this item
+{% endif %}

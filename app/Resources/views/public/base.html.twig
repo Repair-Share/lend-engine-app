@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="all,follow">
+    <meta name="googlebot" content="index,follow,snippet,archive">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        {% if pageTitle is defined %}
+            {{ pageTitle }}
+        {% else %}
+            {{ tenantInformation.companyName }}
+        {% endif %}
+    </title>
+
+    <meta name="keywords" content="">
+
+    {% stylesheets
+    '@AppBundle/Resources/css/bootstrap.css'
+    '@AppBundle/Resources/css/member_site.css'
+    '@AppBundle/Resources/css/fullcalendar.css'
+    '@AppBundle/Resources/css/bootstrap-social.css'
+    '@AppBundle/Resources/css/shared.css'
+    filter='cssrewrite'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+
+    {% block pageCss %}{% endblock %}
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+    <script>
+        var stripePaymentMethodId = "{{ tenantInformation.stripePaymentMethodId }}";
+        var stripePaymentFee = "{{ tenantInformation.stripeFee }}";
+        var stripePublicApiKey = "{{ tenantInformation.stripePublicApiKey }}";
+        var currencyIsoCode = "{{ tenantInformation.currency }}";
+        var minimumPaymentAmount = {{ tenantInformation.minimumPaymentAmount|number_format(2) }};
+        var orgName = "{{ tenantInformation.companyName }}";
+        var isAdmin = {% if is_granted('ROLE_ADMIN') %}true{% else %}false{% endif %};
+        var currentUserId = {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ app.user.id }}{% else %}0{% endif %};
+        var userType = '{% if is_granted('ROLE_ADMIN') %}admin{% else %}member{% endif %}';
+    </script>
+
+    {% if tenantInformation.stripeAccessToken|length > 0 %}
+        <script src="https://checkout.stripe.com/checkout.js"></script>
+    {% endif %}
+
+    {% javascripts
+    '@AppBundle/Resources/js/jQuery-2.1.4.min.js'
+    '@AppBundle/Resources/js/bootstrap.js'
+    '@AppBundle/Resources/js/payment.js'
+    '@AppBundle/Resources/js/moment.js'
+    '@AppBundle/Resources/js/fullcalendar.js'
+    '@AppBundle/Resources/js/member_site.js'
+    '@AppBundle/Resources/js/jquery.mark.min.js'
+    filter='uglifyjs2' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    {% if app.request.locale != 'en' %}
+    <script src='/js/fullcalendar/locale/{{ app.request.locale }}.js'></script>
+    {% endif %}
+
+    {% if tenantInformation.siteFontName %}
+    <link href="https://fonts.googleapis.com/css?family={{ tenantInformation.siteFontName|replace({" ": "+"}) }}" rel="stylesheet">
+    <style>
+        body {  font-family: '{{ tenantInformation.siteFontName }}', serif;  }
+    </style>
+    {% endif %}
+
+</head>
+
+<body>
+
+<!-- Load Facebook SDK for JavaScript -->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9&appId=1034379130011054";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+{% trans_default_domain 'member_site' %}
+
+<style type="text/css">
+    {{ tenantInformation.siteCSS|raw }}
+
+    {% if tenantInformation.isMultiSite != 1 %}
+    .multi-site {
+        display: none;
+    }
+    {% endif %}
+</style>
+
+<div id="all">
+
+    <header>
+
+        <div class="container">
+            <div class="row">
+
+                <div id="nav-org-name" class="col-md-4 hidden-xs">
+                    {% if tenantInformation.logoUrl %}
+                        <a href="{{ path('home') }}" style="float: left;"><img style="width: 240px; height: 120px;" src="{{ tenantInformation.logoUrl }}"></a>
+                    {% else %}
+                        <a class="" href="{{ path('home') }}">
+                            {{ tenantInformation.companyName }}
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div id="nav-menu" class="col-md-8 col-xs-12">
+
+                    <div class="navbar-buttons pull-right">
+                        <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#leftNavigation">
+                            <span class="sr-only">Toggle navigation</span>
+                            <i class="fa fa-align-justify"></i>
+                        </button>
+                    </div>
+
+                    <div class="pull-right">
+                        <a href="{{ path('home') }}" style="padding: 0 10px"><i class="fa fa-home"></i><span class="hidden-xs"> {% trans %}public_misc.link_home{% endtrans %}</span></a>
+
+                        {% if tenantInformation.basket is defined and tenantInformation.basket %}
+                            <a href="{{ path('basket_show') }}" style="padding: 0 10px;"><i class="fa fa-shopping-basket"></i><span class="hidden-xs"> Basket</span> ({{ tenantInformation.basket.loanRows|length }} items)</a>
+                        {% endif %}
+
+                        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('homepage') }}" style="padding: 0 10px"><i class="fa fa-wrench"></i><span class="hidden-xs"> {% trans %}public_misc.link_admin{% endtrans %}</span></a>
+                            {% endif %}
+                            <a href="{{ path('fos_user_profile_show') }}" style="padding: 0 10px"><i class="fa fa-user"></i><span class="hidden-xs"> {% trans %}My account{% endtrans %}</span></a>
+                            <a href="{{ path('fos_user_security_logout') }}" style="padding: 0 10px"><i class="fa fa-sign-out"></i><span class="hidden-xs"> {% trans %}Log out{% endtrans %}</span></a>
+
+                        {% else %}
+
+                            {% if tenantInformation.allowRegistration %}
+                                <a href="{{ path('fos_user_registration_register') }}" style="padding: 0 10px">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a>
+                            {% endif %}
+
+                            <a href="{{ path('fos_user_security_login') }}" style="padding: 0 10px">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </header>
+
+    <div id="content" style="margin-bottom: 100px;">
+
+        <div class="container">
+
+            {% block search %}
+                {{ include('public/partials/search.html.twig') }}
+            {% endblock %}
+
+            <div class="row">
+
+                <div class="col-sm-3" role="navigation" id="leftnavbar">
+
+                    {#For inserting sites nav when reserving items#}
+                    {% block topleft %}{% endblock %}
+
+                    <div class="navbar-collapse collapse" id="leftNavigation">
+                        {{ knp_menu_render('pagesMenu') }}
+                        {{ knp_menu_render('siteMenu') }}
+                    </div>
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="help-block hidden-xs" style="padding: 15px;">
+                            <i class="fa fa-question-circle"></i>
+                            Add item categories to your member site using Tags.<br>
+                            <a href="{{ path('tags_list') }}">Create one now</a>
+                        </div>
+                    {% endif %}
+
+                    <br>
+                </div>
+
+                <div class="col-sm-9" id="page-body">
+
+                    {% for flashMessage in app.session.flashbag.get('success') %}
+                        <div class="alert alert-success">
+                            {{ flashMessage | raw }}
+                        </div>
+                    {% endfor %}
+
+                    {% set errors = app.session.flashbag.get('error') %}
+                    {% if errors|length > 0 %}
+                        <div class="alert alert-error">
+                        {% for flashMessage in errors %}
+                            <div>{{ flashMessage | raw }}</div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% block accountNav %}{% endblock %}
+
+                    {% block body %}
+                        {{ include('public/pages/home.html.twig') }}
+                    {% endblock %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <br/>
+
+    <footer id="footer">
+        <div class="container">
+
+            <div class="footer-div"></div>
+
+            <div class="row footer-block" style="padding-bottom: 40px;">
+
+                <div class="col-sm-4">
+                    <h5>{{ tenantInformation.companyName }}</h5>
+                    {{ tenantInformation.companyEmail }}<br>
+                    <a href="{{ path('public_site_list') }}">{% trans %}public_footer.find_us{% endtrans %}</a>
+
+                    <br><br>
+                    {% trans %}public_footer.powered_by{% endtrans %}
+                    <a href="http://www.lend-engine.com" target="_blank">The Lend Engine</a>
+                </div>
+
+                <div class="col-sm-4">
+
+                    {% if tenantInformation.languages|length > 1 %}
+
+                        <h5>{% trans %}public_footer.choose_lang{% endtrans %}</h5>
+
+                        {% set languages = {
+                            en: {code: 'en', name: 'English'},
+                            fr: {code: 'fr', name: 'Francais'},
+                            es: {code: 'es', name: 'Espanol'},
+                            is: {code: 'is', name: 'íslensku'},
+                            nl: {code: 'nl', name: 'Nederlands'},
+                            ro: {code: 'ro', name: 'Română'},
+                            sk: {code: 'sk', name: 'Slovak'},
+                            se: {code: 'se', name: 'Svenska'},
+                            cy: {code: 'cy', name: 'Cymraeg'},
+                        } %}
+
+                        {% for lCode in tenantInformation.languages %}
+                            <a {% if app.request.locale == lCode %}class="active"{% endif %} href="{{ path('set_locale', {loc: lCode}) }}">{{ languages[lCode].name }}</a>
+                        {% endfor %}
+
+                        <br><br>
+
+                    {% endif %}
+
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                        {% trans %}public_footer.logged_in_as{% endtrans %} {{ app.user.firstName }} {{ app.user.lastName }}.
+                        {% if app.user.activeSite %}
+                            <br>
+                            Working at {{ app.user.activeSite.name }}
+                            <br>
+                            <a href="{{ path('choose_site') }}" class="modal-link">Change site</a>
+                        {% endif %}
+                    {% endif %}
+
+                </div>
+
+                <div class="col-sm-4">
+                    {#{{ knp_menu_render('pagesMenu') }}#}
+                </div>
+
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+<div class="modal fade" id="modal-wrapper" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content"></div>
+    </div>
+</div>
+
+{% block pagejs %}{% endblock %}
+
+{% if app.environment == 'prod' %}
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-71257503-2', 'auto', {'allowLinker': true});
+        ga('require', 'linker');
+        ga('linker:autoLink', ['{{ tenantInformation.accountDomain }}'] );
+        ga('send', 'pageview', {'dimension1': userType, 'dimension2': '{{ tenantInformation.accountCode }}'});
+    </script>
+{% endif %}
+
+{% if tenantInformation.siteJs %}
+    <script>
+        {{ tenantInformation.siteJs|raw }}
+    </script>
+{% endif %}
+
+</body>
+
+</html>

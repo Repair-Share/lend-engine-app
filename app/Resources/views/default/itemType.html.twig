@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block pageCss %}
+    <link rel="stylesheet" href="/plugins/type/jquery.selective.css">
+    <link rel="stylesheet" href="/plugins/type/jquery.cascadingList.css">
+    <link rel="stylesheet" href="/plugins/typeahead/typeahead.css">
+{% endblock %}
+
+{% block pageTitle %}
+    Choose item type
+{% endblock %}
+
+{% block body %}
+
+    <style>
+        #scrollable-list {
+            height: 500px;
+            border: 0;
+        }
+        ul.selective {
+            height: 500px;
+        }
+        ul.selective li {
+            height: 24px;
+            padding: 4px 20px;
+        }
+    </style>
+
+    <div class="row" id="search-type">
+        <div class="col-md-12">
+            <div class="help-block">
+                <i class="fa fa-question-circle"></i>
+                Item type is used internally across the Lend Engine network to learn more about what people are lending and borrowing.
+                Members don't see this information.
+            </div>
+            <input class="form-control typeahead" type="text" placeholder="Search ...">
+            <p>
+                ... or browse:
+            </p>
+        </div>
+    </div>
+
+    <br />
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="scrollable-list"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            {% if itemId is defined %}
+                <form method="GET" action="{{ path('change_item_type', {'itemId': itemId}) }}">
+                    <input type="hidden" name="typeId" value="" id="item-type">
+                    <input type="hidden" name="itemId" value="{{ itemId }}" id="item-type">
+                    <button type="submit" class="btn bg-green" id="submit-button" disabled>Choose a type</button>
+                </form>
+            {% else %}
+                <form method="GET" action="{{ path('item') }}">
+                    <input type="hidden" name="typeId" value="" id="item-type">
+                    <button type="submit" class="btn bg-green" id="submit-button" disabled>Choose a type</button>
+                </form>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block pagejs %}
+
+    <script src="/plugins/type/jquery.selective.js" type="text/javascript"></script>
+    <script src="/plugins/type/jquery.cascadingList.js" type="text/javascript"></script>
+    <script src="/plugins/type/itemTypes.js" type="text/javascript"></script>
+    <script src="/plugins/typeahead/jquery.typeahead.js" type="text/javascript"></script>
+
+    <script>
+
+        $(function(){
+
+            var folders_dict    = [];
+            var types_map       = [];
+            var parents         = [];
+            var typeAheadData   = [];
+
+            var substringMatcher = function(strs) {
+                return function findMatches(q, cb) {
+                    var matches, substrRegex;
+                    matches = [];
+                    substrRegex = new RegExp(q, 'i');
+                    $.each(strs, function(i, str) {
+                        if (substrRegex.test(str)) {
+                            matches.push(str);
+                        }
+                    });
+                    cb(matches);
+                };
+            };
+
+            for(var i = 0; i < folders.length; i++){
+                var folder = folders[i];
+                folders_dict[folder.id] = folder;
+                types_map[folder.name] = folder.id;
+                if (parents[folder.parent] == undefined) {
+                    parents[folder.parent] = folder.parent;
+                }
+            }
+
+            for(var n = 0; n < folders.length; n++){
+                if (parents[folders[n].id]) {
+                    // has children so cannot be used in typeahead
+                } else {
+                    typeAheadData.push(folders[n].name);
+                }
+            }
+
+            var cList = $("#scrollable-list");
+
+            var listHeight = "20";
+
+            cList.cascadingList({
+                data: folders,
+                display: 'name',
+                value: 'id',
+                parent: 'parent',
+                scrollable: true
+            }).change(function(){
+                var value = $(this).cascadingList('value');
+                var folderId = folders_dict[value].id;
+                setItemType(folderId);
+            });
+
+            $('.typeahead').typeahead({
+                        hint: false,
+                        highlight: true,
+                        minLength: 2
+                    },
+                    {
+                        name: 'folders',
+                        source: substringMatcher(typeAheadData),
+                        limit: 30
+                    });
+
+            $('.typeahead').bind('typeahead:select', function(ev, suggestion) {
+                var typeId = types_map[suggestion];
+                cList.cascadingList('value',typeId);
+                setItemType(typeId);
+            });
+
+            function setItemType(id) {
+//                if (parents[id] == undefined) {
+                    type = folders_dict[id];
+                    $(".typeahead").val(type.name);
+                    $("#submit-button").html('Use "'+type.name+'"').attr('disabled', false);
+                    $("#item-type").val(id);
+//                } else {
+//                    $("#submit-button").html("Choose an item type").attr('disabled', true);
+//                    $("#item-type").val("");
+//                }
+            }
+
+        });
+
+    </script>
+{% endblock %}
+

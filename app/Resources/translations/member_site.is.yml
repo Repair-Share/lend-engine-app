@@ -1,0 +1,165 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: is-IS, Icelandic (Iceland)
+# Tagged: Member site
+# Exported by: Chris
+# Exported at: Wed, 23 May 2018 10:12:00 +0100
+---
+Loan: lán
+Loans: Lán
+Reservation: Bókun
+Reservations: Bókanir
+Brand: Framleiðandi
+Payment: Greiðsla
+Payments: Greiðsla
+Fee: Gjald
+loan_status.pending: Í vinnslu
+loan_status.on_loan: Í útláni
+loan_status.reserved: Frátekið
+loan_status.cancelled: Afbókað
+loan_status.overdue: Skilafrestur útrunnin
+loan_status.closed: Lokað
+note_reservation_fee: Staðfestingargjald
+note_reservation_fee_will_be_added: Staðfestingargjald verður bætt á hverja pöntun fyrir sig
+th.date: Dagsetning
+th.payment_method: Greiðslumáti
+th.fee: Gjald
+th.payment: Greiðsla
+th.ref: Til upplýsinga
+th.items: Hlutir
+th.date_from: Frá
+th.date_to: Til
+th.status: Staða
+Reference: Til upplýsinga
+Items: Hlutir
+Status: Staða
+STATUS_PENDING: Í vinnslu
+STATUS_ACTIVE: Í útláni
+STATUS_OVERDUE: Skilafrestur útrunnin
+STATUS_RESERVED: Frátekið
+STATUS_CANCELLED: Afbókað
+STATUS_CLOSED: Lokað
+days: '{1}dagur|[2,Inf[dagar'
+per_day: á dag
+per_n_days: í %count% daga
+button_cancel: Hætta við
+button_cancel_reservation: Afbóka pöntun
+button_add_credit: Bæta á inneign
+button_go: Áfram
+I forgot my password: Man ekki lykilorðið mitt
+Log out: Útskráning
+My account: Mínar síður
+Login with Facebook: Innskrá með Facebook
+Login with Google: Innskrá með Google
+form.firstName: Nafn
+form.lastName: Eftirnafn
+form.email: 'Netfang:'
+form.telephone: Farsími
+form.address1: Skóli / leikskóli / frístundarheimili
+form.address2: Heimilisfang skóla
+form.address3: Sími skóla
+form.postcode: Póstnúmer
+form.country: Land
+form.locale: Tungumál
+public_misc.link_admin: Admin
+public_misc.link_home: Heim
+public_misc.link_recent_items: Nýtt
+public_misc.link_all_items: Allt
+public_misc.search_items: Leitaðu
+public_misc.no_results: Ekkert fannst
+public_misc.filter_items: Hlutir síaðir
+public_misc.any_site: Hvað síða sem er
+public_footer.find_us: Heimilisfang / opnunartímar
+public_footer.choose_lang: Veldu tungumál
+public_footer.powered_by: Kerfi
+public_footer.logged_in_as: 'Þú ert skráð/ur inn sem '
+public_account.title: Mínar síður
+public_account.contact_subtitle: Notenda upplýsingar
+public_account.membership_subtitle: Aðildar upplýsingar
+public_account.button_edit_details: Breyta upplýsingum
+public_account.button_change_password: Breyta lykilorði
+public_item_list.pages: Sýnir %x% til %y% af %z% hlutum
+public_item.location: Staðsetning
+public_item.brand: Framleiðandi
+public_item.code: Númer
+public_item.serial: Framleiðslunúmer
+public_item.condition: Ástand
+public_item.contains: 'Innihald:'
+public_item.downloads: Til niðurhals
+public_item.log_in_to_download: Skráðu þig inn til að hlaða niður
+public_item.log_in_to_borrow: Skráðu þig inn til að panta eða fá að láni
+public_item.borrow_now: Panta / fá að láni
+public_item.not_available: Ekki í boði
+public_item.available: Í boði
+public_item.on_loan: Í útláni
+public_item.pickup_date_error: Hlutir í körfunni þinn krefjast afhendingar dagsetningar sem rekst á við bókun þessa hluts.  Þú munt ekki geta fengið þá lánaða á sama tíma.
+public_item.pickup_site_error: Þessi hlutur er ekki í boði á þeim afhendingarstað þar sem aðrir hlutir í körfu þinni eiga að vera sóttir á.  Þú getur því ekki tekið þetta í sömu pöntun.
+public_item.basket_exists: Þú hefur nú þegar hluti í körfunni. <br> Þú munt þurfa að sækja þá á sama tíma, þannig að við höfum valið afhendingartíma fyrir þig.
+public_item.account_balance_is: Inneign
+public_item.add_credit: Bættu á inneign
+public_item.pickup_at: Sæktu
+public_item.return_by: Skilaðu fyrir
+public_item.choose_pickup_first: Veldu afhendingarstað
+public_item.button_choose_pickup: Veldu afhendingartíma
+public_item.button_choose_return: Veldu skilatíma
+public_item.cancel: Hætta við
+public_item.basket_add: Setja í körfu
+public_item.locations: Mögulegir afhendingastaðir
+public_item.maps_link: Opna í Google Maps
+public_item.similar_items: svipaðir hlutir í boði
+public_item.see_all: Sjá allt
+public_item.not_reservable: Þetta er ekki hægt að panta á netinu.  Vinasamlegast hafðu samband.
+calendar.pickup_day: Afhending
+calendar.my_booking: MÍN PÖNTUN
+calendar.reserved: FRÁTEKIÐ
+calendar.on_loan: Í ÚTLÁNI
+calendar.text_clash_date: Tíminn sem þú hefur valið stangast á við aðra pöntun.  Vinsamlegast veldu annann tíma.
+calendar.text_return_after_pickup: Vinsamlegast veldur skilatíma eftir að þú velur afthendingartíma
+calendar.alert_already_booked: Þú getur ekki valið þessa dagsetningu vegna annarar bókunar.
+calendar.alert_not_your_booking: Þú getur aðeins séð þín eigin bókun.
+calendar.alert_day_warning: Þetta er aðeins hægt að fá lánað í itemLoanDays daga.   \nVinsamlegast veldu aðra skiladagsetningu.
+calendar.alert_min_loan_days: Lámarks lánstími er minLoanDays  dagar.
+calendar.alert_max_loan_days: Hámarks lánstími er maxLoanDays dagar.
+public_basket.title: Karfa
+public_basket.name: Karfa
+public_basket.due_at: Skiladagur
+public_basket.return_to: Skilaðu til
+public_basket.pickup_after: Sæktu eftir
+public_basket.from: frá
+public_basket.add_credit_message: Vinsamlegast bættu á inneignina
+public_basket.empty: Karfan er tóm
+public_basket.confirm_reservation: Panta
+public_basket.remove_item: Fjarlægja
+public_basket.total: Alls
+public_basket.balance: Til greiðslu
+public_basket.no_items: Karfa er tóm.  Leitaðu að hlutum til að setja í körfu.
+public_basket.full_charge: verður dregið af inneign þinni
+public_basket.delay_charge: verður dregið af inneign þinni núna, eftistöðvar greiðist við afhendingu
+public_loan.title: Lán
+public_user_menu.contact_info: Þínar stillingar
+text_borrow_with_membership: Með fullri aðild getur þú pantað á netinu og fengið þennan hlut að láni.
+text_no_membership: Þú finnst ekki sem virkur notandi í kerfinu.
+public_add_credit.title: Bættu á inneign
+public_add_credit.choose_card: Veldur kort hér að ofan eða bættu á inneignina með nýju korti
+public_add_credit.use_this_card: Nota þetta kort
+public_add_credit.amount_to_add: Upphæð sem á að bæta á reikning
+public_add_credit.payment_method: Greiðsluháttur
+public_add_credit.min_amount: Lámarks kortagreiðsla
+public_add_credit.processing_fee: Vinnslugjaldi verður bætt ofan á kortafærsluna
+public_loans.no_loans: Þú hefur enn ekki fengið neitt að láni
+public_payments.no_payment: Engin greiðsla eða gjöld upp að þessu
+public_payments.title: Gjöld og greiðslur
+public_registration.newsletter: Skráðu þig á póstlistann okkar
+public_registration.terms_link: Sjá skilmála okkar
+public_registration.terms_label: Ég samþykki skilmálana
+public_become_member.title: Gerðust aðili
+msg_success.payment_ok: Greiðsla leiðrétt.  Inneign hefur verið löguð.
+msg_success.reservation_create: Pantað!  Við sendum þér staðfestingarpóst um hæl.
+msg_success.reservation_cancel: Pöntun þín hefur verið afbókuð.
+msg_success.basket_item_removed: Hlutur var fjarlægður úr körfu.
+msg_success.basket_item_added: var bætt í körfu.
+msg_success.basket_item_exists: er nú þegar komið í körfuna þína.
+msg_fail.general_fail: Afsakið, eitthvað fór útskeiðis.  Vinsamlegast reyndu aftur eða hafðu samband.
+msg_fail.reservation_create: Eitthvað fór úrskeiðis, ekki var hægt að ganga frá pöntun þinni.
+msg_fail.reservation_cancel: Við gátum því miður ekki fellt niður pöntun þína.  Vinsamlegast hafðu samband.

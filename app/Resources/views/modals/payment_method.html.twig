@@ -1,0 +1,29 @@
+{# app/Resources/views/modals/payment_method.html.twig #}
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+{% block modalSubTitle %}{{ subTitle|raw }}{% endblock %}
+
+{% block modalBody %}
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    {{ form_row(form.name) }}
+
+    {% if paymentMethod.id %}
+        {{ form_row(form.isActive) }}
+    {% endif %}
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="modal-submit btn bg-green">Save payment method</button>
+{% endblock %}
+

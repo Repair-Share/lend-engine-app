@@ -1,0 +1,19 @@
+{% extends 'public/base.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block accountNav %}
+    {{ include('public/partials/account_nav.html.twig') }}
+{% endblock %}
+
+{% block body %}
+
+    <h2>
+        {% trans %}public_add_credit.title{% endtrans %}
+        {% if user is defined and user.id != app.user.id %}
+            {{ include('public/partials/session_user.html.twig') }}
+        {% endif %}
+    </h2>
+
+    {{ include('cores/payment_core.html.twig') }}
+
+{% endblock %}

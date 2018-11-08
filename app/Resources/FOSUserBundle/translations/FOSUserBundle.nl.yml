@@ -1,0 +1,61 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: nl-NL, Dutch (Netherlands)
+# Tagged: FOSUserBundle
+# Exported by: Chris
+# Exported at: Wed, 23 May 2018 10:18:27 +0100
+---
+group.edit.submit: Groep bijwerken
+group.show.name: Naam groep
+group.new.submit: Maak groep aan
+group.flash.updated: De groep werd bijgewerkt
+group.flash.created: De groep werd aangemaakt
+group.flash.deleted: De groep werd verwijderd
+Invalid credentials.: Ongeldige gebruikersnaam of wachtwoord
+security.login.username: 'Gebruikersnaam:'
+security.login.password: 'Wachtwoord:'
+security.login.remember_me: Onthoud mij
+security.login.submit: Login
+profile.show.firstName: Voornaam
+profile.show.lastName: Achternaam
+profile.show.email: Email
+profile.edit.submit: Bijwerken
+profile.flash.updated: Uw profiel werd bijgewerkt
+change_password.submit: Wijzig wachtwoord
+change_password.flash.success: Uw wachtwoord werd gewijzigd
+registration.check_email: '... ga naar uw inbox en kijk of het er is.'
+registration.confirmed: Uw account is geactiveerd en u bent ingelogd!
+registration.back: Verdergaan
+registration.submit: Registreren
+registration.flash.user_created: We hebben u een email gestuurd. Deze mail bevat een link waar u op moet klikken om uw account te activeren.
+registration.email.subject: Welkom!
+registration.email.message: |-
+  Om uw account te activeren, klik op <br><br>
+  %confirmationUrl%
+resetting.password_already_requested: Het wachtwoord voor deze gebruiker werd al opgevraagd in de laatste 24 uur.
+resetting.check_email: |-
+  Er werd een mail verstuurd. Deze bevat een link waarop u moet klikken om uw wachtwoord opnieuw in te stellen.
+  Als u geen mail ontvangt, controleer uw spamfolder of wacht 5 minuten en probeer het opnieuw.
+resetting.request.invalid_username: De gebruikersnaam of het mailadres "% username%" bestaat niet.
+resetting.request.username: 'Gebruikersnaam of mailadres:'
+resetting.request.submit: Stel wachtwoord opnieuw in
+resetting.reset.submit: Wijzig wachtwoord
+resetting.flash.success: Het wachtwoord werd succesvol hernieuwd
+resetting.email.subject: Stel wachtwoord opnieuw in
+resetting.email.message: |
+  <br>
+  Om uw wachtwoord opnieuw in te stellen, klik op de onderstaande link:<br><br>
+  <a href="%confirmationUrl%">%confirmationUrl%</a>
+layout.logout: Logout
+layout.login: Login
+layout.register: Registreren
+layout.logged_in_as: Ingelogd als %username%
+form.group_name: 'Groepsnaam:'
+form.username: 'Gebruikersnaam:'
+form.current_password: 'Huidig wachtwoord:'
+form.password: 'Wachtwoord:'
+form.password_confirmation: 'Herhaal wachtwoord:'
+form.new_password: Nieuw wachtwoord
+form.new_password_confirmation: 'Herhaal nieuw wachtwoord:'
+security.login.forgot_password: ""

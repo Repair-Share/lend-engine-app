@@ -1,0 +1,185 @@
+# Loco yaml export: Symfony YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: nl-NL, Dutch (Netherlands)
+# Tagged: Member site
+# Status: Translated
+# Exported by: Chris
+# Exported at: Wed, 19 Jul 2017 10:17:58 +0100
+---
+Loan: Lening
+Loans: Leningen
+Reservation: Reservering
+Reservations: Reserveringen
+Brand: Merk
+Payment: Betaling
+Payments: Betalingen
+Fee: Vergoeding
+loan_status:
+  pending: Hangende
+  on_loan: Uitgeleend
+  reserved: Gereserveerd
+  cancelled: Geannuleerd
+  overdue: Over tijd
+  closed: Gesloten
+note_reservation_fee: Reservatie kosten
+note_reservation_fee_will_be_added: Kosten worden per reservering toegevoegd
+th:
+  date: Datum
+  payment_method: Betaalmethode
+  fee: Vergoeding
+  payment: Betaling
+  ref: Referentie
+  items: Artikelen
+  date_from: Van
+  date_to: Aan
+  status: Status
+Reference: Referentie
+Items: Artikelen
+Status: Status
+STATUS_PENDING: In behandeling
+STATUS_ACTIVE: Bruikleen
+STATUS_OVERDUE: Te laat
+STATUS_RESERVED: Gereserveerd
+STATUS_CANCELLED: Geannuleerd
+STATUS_CLOSED: Gesloten
+days: '{1}dag|[2,Inf[dagen'
+per_day: per dag
+per_n_days: voor %count% dagen
+button_cancel: Annuleren
+button_cancel_reservation: Annuleer reservering
+button_add_credit: Krediet toevoegen
+button_go: Gaan
+I forgot my password: Ik ben mijn wachtwoord vergeten
+Log out: Uitloggen
+My account: Mijn account
+Login with Facebook: Inloggen met Facebook
+Login with Google: Inloggen met Google
+form:
+  firstName: Voornaam
+  lastName: Achternaam
+  email: Mailadres
+  telephone: Telefoon
+  address1: Huisnummer / straat
+  address2: Stad
+  address3: Provincie
+  postcode: Postcode
+  country: Land
+  locale: Uw voorkeurstaal
+public_misc:
+  link_admin: Admin
+  link_home: Home
+  link_recent_items: Onlangs toegevoegd
+  link_all_items: Alle artikels
+  search_items: Zoeken in onze artikelen
+  no_results: Niets gevonden
+  filter_items: Filter artikelen
+  any_site: Elke locatie
+public_footer:
+  find_us: Vind ons / openingstijden
+  choose_lang: Taalkeuze
+  powered_by: Mogelijk gemaakt door
+  logged_in_as: U bent ingelogd als
+public_account:
+  title: Mijn account
+  contact_subtitle: Contact details
+  membership_subtitle: Lidmaatschap details
+  button_edit_details: Wijzig mijn gegevens
+  button_change_password: Wijzig mijn wachtwoord
+public_item_list:
+  pages: '%x% tot %y% van %z% artikels worden getoond'
+public_item:
+  location: Locatie
+  brand: Merk
+  code: Code
+  serial: Serie
+  condition: Voorwaarde
+  contains: Bevat
+  downloads: Downloads
+  log_in_to_download: Log in om te downloaden
+  log_in_to_borrow: Log in om te lenen
+  borrow_now: Nu lenen
+  not_available: Niet beschikbaar
+  available: Beschikbaar
+  on_loan: Bruikleen
+  pickup_date_error: De afhaaldatum van sommige artikels in uw winkelwagentje is in conflict met andere boekingen voor dit artikel. U kan dit artikel niet tezelfdertijd lenen.
+  pickup_site_error: Dit artikel is niet beschikbaar op dezelfde locatie als de andere artikels in uw winkelmandje. U kan dit artikel niet op dezelfde lening plaatsen.
+  basket_exists: U heeft al artikels in uw winkelmandje. U moet ze samen ophalen, dus hebben we de afhaaldatum voor u vastgesteld.
+  account_balance_is: Beschikbaar saldo is
+  add_credit: Voeg krediet toe
+  pickup_at: Haal op om
+  return_by: Breng terug tegen
+  choose_pickup_first: Kies eerst ophaling
+  button_choose_pickup: Kies tijd van ophaling
+  button_choose_return: Kies retour tijd
+  cancel: Annuleer
+  basket_add: Voeg artikel toe aan het winkelmandje
+  locations: Beschikbare plaatsen
+  maps_link: Open in Google maps
+  similar_items: Vergelijkbare beschikbare artikels
+  see_all: Zie alles
+  not_reservable: Dit artikel is niet beschikbaar voor online reservering. Gelieve contact met ons op te nemen.
+calendar:
+  pickup_day: afhaling
+  my_booking: MIJN RESERVERING
+  reserved: GERESERVEERD
+  on_loan: UITGELEEND
+  text_clash_date: De door u geselecteerde periode is in conflict met een bestaande boeking. Gelieve een andere datum te kiezen.
+  text_return_after_pickup: Gelieve een een retourdatum na uw afhaaldatum te kiezen
+  alert_already_booked: U kan deze datum niet selecteren omwille van een andere boeking.
+  alert_not_your_booking: U kunt enkel de details van uw eigen boekingen bekijken.
+  alert_day_warning: Dit artikel kan enkel geleend worden voor veelvouden van itemLoanDays dagen. Gelieve een andere retourdatum te kiezen.
+  alert_min_loan_days: U moet dit artikel voor minimum minLoanDays dagen lenen.
+  alert_max_loan_days: U kunt dit item lenen voor maximaal maximaal dagen.
+public_basket:
+  title: Winkelmandje
+  name: Winkelmandje
+  due_at: Terug te brengen tegen
+  return_to: Terugbrengen naar
+  pickup_after: Afhalen na
+  from: van
+  add_credit_message: Voeg eerst credit toe.
+  empty: Leeg winkelmandje
+  confirm_reservation: Reserveren
+  remove_item: Verwijderen
+  total: Totaal
+  balance: Toe te rekenen
+  no_items: Geen artikels in het mandje. Zoek een object om toe te voegen.
+  full_charge: Wordt in rekening gebracht op uw account
+  delay_charge: Wordt nu in rekening gebracht op uw account. De rest is verschuldigd bij ophaling van de artikels.
+public_loan:
+  title: lening
+public_user_menu:
+  contact_info: Contact informatie
+text_borrow_with_membership: Met volledig lidmaatschap kan u dit artikel online lenen en reserveren.
+text_no_membership: We hebben geen actief lidmaatschap voor u. Kom om ons bezoeken met een identiteitsfoto om uw lidmaatschap te voltooien.
+public_add_credit:
+  title: Krediet toevoegen
+  choose_card: Kies hierboven een kaart of ga verder met het toevoegen van krediet hieronder om een nieuwe kaart te gebruiken
+  use_this_card: Gebruik deze kaart
+  amount_to_add: Toe te voegen bedrag
+  payment_method: Betaalmiddel
+  min_amount: Minimum bedrag
+  processing_fee: verwerkingsprijs voor gebruik van de kaart zal toegevoegd worden
+public_loans:
+  no_loans: U hebt iets nog niets geleend
+public_payments:
+  no_payment: Nog geen betalingen of vergoedingen
+  title: Vergoedingen en betalingen
+public_registration:
+  newsletter: Abonneer u op onze nieuwsbrief
+  terms_link: Onze Algemene voorwaarden bekijken
+  terms_label: Ik ga akkoord met de Algemene Voorwaarden
+public_become_member:
+  title: Lid worden
+msg_success:
+  payment_ok: Betaling gemaakt OK. Uw account balans werd aangepast.
+  reservation_create: Gereserveerd! We hebben zojuist een email ter bevestiging gestuurd.
+  reservation_cancel: Uw reservering werd geannuleerd.
+  basket_item_removed: Het artikel werd uit uw winkelmandje verwijderd.
+  basket_item_added: werd aan uw winkelmandje toegevoegd.
+  basket_item_exists: ligt al in uw winkelmandje.
+msg_fail:
+  general_fail: Sorry, er liep iets mis. Probeer het opnieuw of neem contact met ons op.
+  reservation_create: Er is iets fout gelopen, we kunnen uw reservering niet aanmaken.
+  reservation_cancel: We konden uw reservering niet annuleren. Neem alstublieft contact met ons op.

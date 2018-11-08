@@ -1,0 +1,15 @@
+<script id="image-thumbnail-template" type="text/x-handlebars-template">
+    <div class="col-md-4 item-image" id="image_{{ imageId }}">
+        <img src="{{ imagePath }}" class="img-thumbnail img-responsive">
+        <div class="image-selector" image-name="{{ imageName }}" id="set_{{ imageId }}">Set as main image</div>
+        <span class="image-control image-remove" image-name="{{ imageName }}" id="remove_{{ imageId }}" title="Remove">
+            <i class="fa fa-trash-o"></i>
+        </span>
+        <span class="image-control image-rotate go-left" image-name="{{ imageName }}" title="Rotate left">
+            <i class="fa fa-rotate-left"></i>
+        </span>
+        <span class="image-control image-rotate go-right" image-name="{{ imageName }}" title="Rotate right">
+            <i class="fa fa-rotate-right"></i>
+        </span>
+    </div>
+</script>

@@ -1,0 +1,10 @@
+{# app/Resources/TwigBundle/views/Exception/error404.html.twig #}
+{% extends 'error.html.twig' %}
+
+{% block body %}
+    <h1>Page not found</h1>
+    <p>
+        The requested page couldn't be located. Checkout for any URL
+        misspelling or <a href="{{ path('homepage') }}">return to the homepage</a>.
+    </p>
+{% endblock %}

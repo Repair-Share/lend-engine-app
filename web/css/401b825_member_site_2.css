@@ -1,0 +1,258 @@
+/* HEADER */
+
+header {
+    margin-bottom: 20px;
+}
+
+#nav-org-name {
+    font-size: 24px;
+    line-height: 40px;
+    margin-top: 10px;
+}
+
+#nav-org-name a {
+    color: #000;
+}
+
+/* Top nav */
+
+#nav-menu {
+    line-height: 40px;
+    margin-top: 10px;
+}
+#nav-menu .fa {
+
+}
+#nav-menu .fa-shopping-basket {
+    font-size: 15px;
+}
+
+/* Left nav controls */
+
+.navbar-collapse {
+    padding-left: 0;
+}
+.navbar-toggle {
+    padding: 0 0 0 10px;
+    margin: 0;
+}
+#leftNavigation {
+    clear: left;
+}
+.custom-nav {
+    border-bottom: 1px #CCC solid;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+/* ACCOUNT NAV */
+
+#account-nav {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #666;
+    padding-bottom: 10px;
+}
+
+/* GENERAL SITE STUFF */
+
+h2 {
+    font-size: 1.5em;
+    padding-bottom: 5px;
+    margin-top: 5px;
+}
+
+.alert-error {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+.alert-error hr {
+    border-top-color: #e4b9c0;
+}
+
+.alert-error .alert-link {
+    color: #843534;
+}
+
+.nav > li > a {
+    padding: 6px 15px;
+}
+
+/* LABELS */
+
+.bg-brown {
+    background-color: #8A8982;
+    color: #fff
+}
+
+.bg-yellow {
+    background-color: #F7DD13 !important;
+}
+
+.bg-gray {
+    color: #000;
+    background-color: #d2d6de !important;
+}
+
+.bg-dim {
+    background-color: transparent;
+    color: #D4D3D3;
+}
+
+.bg-red {
+    background-color: #dd4b39 !important;
+}
+
+.bg-teal {
+    background-color: #39cccc !important;
+}
+
+.bg-orange {
+    background-color: #ff851b !important;
+}
+
+.bg-green {
+    background-color: #00a65a !important;
+}
+
+.label {
+    font-weight: normal;
+}
+
+/* ITEM LIST */
+
+div#item-list-filter {
+    margin-bottom: 15px;
+}
+div#item-list-filter ul {
+    list-style-type: none;
+    padding: 0;
+    overflow: hidden;
+}
+div#item-list-filter ul li {
+    float: left;
+    padding: 4px 20px 4px 0;
+}
+div#item-list-filter ul li.active a {
+    color: #000;
+    font-weight: bold;
+}
+.item-list-serial {
+    font-weight: normal;
+    font-size: 12px;
+    color: #aaa;
+}
+.item-list-fee {
+    padding-left: 10px;
+    font-size: 12px;
+    color: #aaa;
+}
+.site-item-tile .img-thumbnail {
+    position: relative;
+}
+.site-item-tile .sku-label {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+}
+
+/* ITEM DETAIL */
+
+.block-borrow {
+    display: none;
+}
+
+/* CALENDAR */
+td.fc-event-container a:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Hide the time on the month view, but show on week view */
+div.fc-month-view .fc-time {
+    display:none;
+}
+
+.site {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 6px;
+    background-color: #fafafa;
+    margin-bottom: 10px;
+}
+.location-title {
+    padding-bottom: 8px;
+    overflow: hidden;
+}
+.similar-items {
+    padding-bottom: 12px;
+}
+.similar-items i {
+    font-size: 20px;
+    padding-right: 10px;
+    color: #4390ff;
+}
+
+.item-info {
+    font-size: 13px;
+}
+
+.item-info .item-info-label {
+    color: #acacac;
+    width: 100px;
+    display: block;
+    float: left;
+}
+
+/* LOAN RELATED */
+
+.search-result {
+    padding: 10px 0 14px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.loan-row {
+    padding: 6px 0;
+}
+
+mark{
+    background: #ffdf5b;
+    color: black;
+}
+
+/* FOOTER */
+
+#footer .footer-div {
+    border-top: 1px solid #CCC;
+    padding: 10px;
+}
+
+#footer a {
+    padding-right: 6px;
+}
+
+#footer a.active {
+    background: none;
+    color: #000;
+    font-weight: bold;
+}
+
+#footer .col-sm-4 {
+    padding-left: 30px;
+    padding-bottom: 30px;
+}
+
+/* OTHER */
+
+@media (min-width: 768px) {
+    #search-box {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 767px) {
+    #search-box {
+        margin-bottom: 20px;
+    }
+}

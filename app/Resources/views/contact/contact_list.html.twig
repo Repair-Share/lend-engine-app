@@ -1,0 +1,144 @@
+{# app/Resources/views/contact/contact_list.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact list{% endblock %}
+
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block primaryButton %}
+
+    {% if app.request.get('hasMembership') == 1 %}
+        <span class="secondary-link">
+            <a href="{{ path('contact_list') }}">Show contacts only</a>
+        </span>
+        <a href="{{ path('contact') }}?next=membership" class="btn bg-green pull-right">Add a new member</a>
+    {% else %}
+        <span class="secondary-link">
+            <a href="{{ path('contact_list', { hasMembership: 1 }) }}">Show members only</a>
+        </span>
+        <a href="{{ path('contact') }}" class="btn bg-green pull-right">Add a contact</a>
+    {% endif %}
+
+    {% if is_granted('ROLE_SUPER_USER') %}
+        <a class="btn btn-default pull-right" href="{{ path('export_contacts') }}" style="margin-right: 10px">Export</a>
+    {% endif %}
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="row" id="primary-filter" {% if app.request.get('filtered') == 1 %}style="display:block"{% endif %}>
+        <div id="primary-filter-inner">
+            <form method="GET">
+                <input type="hidden" name="hasMembership" value="{{ app.request.get('hasMembership') }}">
+                <input type="hidden" name="filtered" value="1">
+                <div class="col-md-11 filter-fields">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Date added</label>
+                            <input type="text" id="date_picker" class="form-control date-filter">
+                            <input type="hidden" name="date_from" id="date_from" value="{{ date_from }}">
+                            <input type="hidden" name="date_to" id="date_to" value="{{ date_to }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn bg-green pull-right form-control">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 table-responsive">
+            <table cellspacing="0" class="table table-hover table-striped has-actions" id="data-table-contact">
+                <thead>
+                <th>Name</th>
+                <th>Membership</th>
+                <th style="width:10px"></th>
+                <th>Email address</th>
+                <th>Telephone</th>
+                {% for field in customFields %}
+                    {% if field.showOnContactList == true %}
+                        <th>{{ field.name }}</th>
+                    {% endif %}
+                {% endfor %}
+                </thead>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+
+        var dateFrom = "{{ date_from|date('M d Y') }}";
+        var dateTo   = "{{ date_to|date('M d Y') }}";
+
+        $(document).ready(function() {
+
+            // https://rawgit.com/longbill/jquery-date-range-picker/master/index.html
+            var datePickerField = $(".date-filter");
+            datePickerField.dateRangePicker({
+                format: 'MMM D YYYY',
+                autoClose: true,
+                selectForward: true,
+                setValue: function (s) {
+                    if (!$(this).attr('readonly') && !$(this).is(':disabled') && s != $(this).val()) {
+                        console.log($(this).val(s));
+                    }
+                },
+                showShortcuts: true,
+                customShortcuts:
+                    [
+                        {
+                            name: 'Today',
+                            dates : function()
+                            {
+                                var start = moment().toDate();
+                                var end   = moment().toDate();
+                                return [start,end];
+                            }
+                        }
+                    ]
+            }).bind('datepicker-change', function (event, obj) {
+                $("#date_from").val(moment(obj.date1).format('YYYY-MM-DD'));
+                $("#date_to").val(moment(obj.date2).format('YYYY-MM-DD'));
+            });
+
+            datePickerField.data('dateRangePicker').setDateRange(dateFrom, dateTo, true);
+
+            var dataTable = $('#data-table-contact').DataTable({
+                ordering: false,
+                serverSide: true,
+                autoWidth: false,
+                pageLength: 50,
+                ajax: {
+                    url: "{{ path('dt_contact_list') }}",
+                    "data": function (d) {
+                        return $.extend({}, d, {
+                            "date_from": "{{ app.request.get('date_from') }}",
+                            "date_to": "{{ app.request.get('date_to') }}",
+                            "hasMembership": "{{ app.request.get('hasMembership') }}"
+                        });
+                    }
+                },
+                "oSearch": {
+                    "sSearch": "{{ searchString }}"
+                },
+                "language": {
+                    "infoFiltered": ""
+                }
+            });
+
+            $("#data-table-contact_filter label input").attr("placeholder", "Name, Email, Postcode");
+            $("#data-table-contact_filter label input").css("width", "220px");
+
+            {% if app.request.get('filtered') != 1 %}
+            $("#data-table-contact_filter label").after('<a href="#" style="padding-left:10px;" id="show-filters">more filters</a>');
+            {% endif %}
+
+        });
+    </script>
+{% endblock %}

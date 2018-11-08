@@ -1,0 +1,165 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: es-ES, Spanish (Spain)
+# Tagged: Member site
+# Exported by: Chris
+# Exported at: Tue, 17 Oct 2017 21:55:24 +0100
+---
+Loan: Préstamo
+Loans: Préstamos
+Reservation: Reserva
+Reservations: Reservas
+Brand: Marca
+Payment: Pago
+Payments: Pagos
+Fee: Cargo
+loan_status.pending: Pendiente
+loan_status.on_loan: En préstamo
+loan_status.reserved: Reservado
+loan_status.cancelled: Cancelado
+loan_status.overdue: Vencido
+loan_status.closed: Cerrado
+note_reservation_fee: Cargos por reserva
+note_reservation_fee_will_be_added: de cargo se añadirán por reseva
+th.date: Fecha
+th.payment_method: Método de pago
+th.fee: Tarifa
+th.payment: Pago
+th.ref: Referencia
+th.items: Objetos
+th.date_from: De
+th.date_to: Para
+th.status: Estado
+Reference: Referencia
+Items: Objetos
+Status: Estado
+STATUS_PENDING: Pendiente
+STATUS_ACTIVE: En préstamo
+STATUS_OVERDUE: Vencido
+STATUS_RESERVED: Reservado
+STATUS_CANCELLED: Cancelado
+STATUS_CLOSED: Cerrado
+days: '{1}día|[2,Inf[días'
+per_day: por día
+per_n_days: durante %count% días
+button_cancel: Cancelar
+button_cancel_reservation: Cancelar reserva
+button_add_credit: Añadir crédito
+button_go: Ir
+I forgot my password: He olvidado mi contraseña
+Log out: Cerrar sesión
+My account: Mi cuenta
+Login with Facebook: Iniciar sesión con Facebook
+Login with Google: Iniciar sesión con Google
+form.firstName: Nombre
+form.lastName: Apellido
+form.email: 'Correo electrónico:'
+form.telephone: Teléfono
+form.address1: Calle
+form.address2: Ciudad
+form.address3: País
+form.postcode: Código postal
+form.country: País
+form.locale: Idioma por defecto
+public_misc.link_admin: Gestión
+public_misc.link_home: Inicio
+public_misc.link_recent_items: Añadidos recientemente
+public_misc.link_all_items: Todos los objetos
+public_misc.search_items: Busca entre nuestros objetos
+public_misc.no_results: Ningún resultado coincide con la búsqueda
+public_misc.filter_items: Filtrar objetos
+public_misc.any_site: Cualquier lugar
+public_footer.find_us: Dónde estamos / horario
+public_footer.choose_lang: Idioma
+public_footer.powered_by: Desarrollado por
+public_footer.logged_in_as: Sesión iniciada como
+public_account.title: Mi cuenta
+public_account.contact_subtitle: Detalles de contacto
+public_account.membership_subtitle: Detalles de afiliación
+public_account.button_edit_details: Editar mis detalles
+public_account.button_change_password: Cambiar contraseña
+public_item_list.pages: '%x% a %y% de %z% objetos'
+public_item.location: Lugar
+public_item.brand: Marca
+public_item.code: Código
+public_item.serial: Número de serie
+public_item.condition: Estado
+public_item.contains: Consta de
+public_item.downloads: Descargas
+public_item.log_in_to_download: inicia sesión para descargar
+public_item.log_in_to_borrow: Inicia sesión para seleccionar objetos o reservar.
+public_item.borrow_now: Seleccionar / reservar
+public_item.not_available: No disponible
+public_item.available: Disponible
+public_item.on_loan: En préstamo
+public_item.pickup_date_error: La fecha de recogida de los objetos que has seleccionado coincide con la reserva para este objeto  .No podrás llevártelo como parte del mismo préstamo.
+public_item.pickup_site_error: Este objeto no está disponible en el mismo lugar del que tienes que recoger el resto de objetos que has seleccionado. No podrás llevártelo como parte del mismo préstamo.
+public_item.basket_exists: Ya hay objetos en tu cesta. <br>Es necesario que te los lleves juntos así que te hemos seleccionado la fecha de recogida.
+public_item.account_balance_is: El saldo disponible es
+public_item.add_credit: Añadir crédito
+public_item.pickup_at: Recogida
+public_item.return_by: Devolución
+public_item.choose_pickup_first: Elegir primero fecha de recogida
+public_item.button_choose_pickup: Elegir fecha de recogida
+public_item.button_choose_return: Elegir fecha de devolución
+public_item.cancel: Cancelar
+public_item.basket_add: Añadir objeto a la cesta
+public_item.locations: Lugares disponibles
+public_item.maps_link: Abrir en Google Maps
+public_item.similar_items: Objetos similares disponibles
+public_item.see_all: Ver todo
+public_item.not_reservable: Este objeto no se puede reservar online. Por favor ponte en contacto con nosotros.
+calendar.pickup_day: Recogida
+calendar.my_booking: MI RESERVA
+calendar.reserved: RESERVADA
+calendar.on_loan: EN PRÉSTAMO
+calendar.text_clash_date: Las fechas que has elegido coinciden con otra reserva. Por favor elige una fecha diferente.
+calendar.text_return_after_pickup: Por favor selecciona una fecha de devolución posterior a la fecha de inicio del préstamo
+calendar.alert_already_booked: No puedes elegir esta fecha debido a otra reserva.
+calendar.alert_not_your_booking: Solamente puedes ver los detalles de tus propias reservas.
+calendar.alert_day_warning: Este objeto sólo puede prestarse múltiplos de itemLoanDays días. Por favor elige una fecha de devolución diferente.
+calendar.alert_min_loan_days: Si te llevas este objeto debes hacerlo durante al menos minLoanDays días.
+calendar.alert_max_loan_days: Puedes llevarte este objeto hasta maxLoanDays días.
+public_basket.title: Cesta
+public_basket.name: Cesta
+public_basket.due_at: 'A devolver el '
+public_basket.return_to: Devolver a
+public_basket.pickup_after: 'Recoger a partir del '
+public_basket.from: de
+public_basket.add_credit_message: Áñade crédito primero, por favor.
+public_basket.empty: Cesta vacía
+public_basket.confirm_reservation: Reservar
+public_basket.remove_item: Eliminar
+public_basket.total: Total
+public_basket.balance: Por cargar
+public_basket.no_items: <h3>Tu cesta está vacía</h3> Busca un objeto para llenarla
+public_basket.full_charge: se cargarán en tu cuenta
+public_basket.delay_charge: se cargarán en tu cuenta ahora, y el resto al recoger los objetos
+public_loan.title: Préstamos
+public_user_menu.contact_info: Perfil
+text_borrow_with_membership: Si te asocias podrás seleccionar objetos y hacer reservas online.
+text_no_membership: No estás en nuestra lista de socios.
+public_add_credit.title: Añadir crédito
+public_add_credit.choose_card: Elige una de las tarjetas disponibles arriba, o sigue añadiendo crédito debajo para usar una nueva tarjeta
+public_add_credit.use_this_card: Usar esta tarjeta
+public_add_credit.amount_to_add: Cantidad para añadir
+public_add_credit.payment_method: Método de pago
+public_add_credit.min_amount: Cantidad mínima con tarjeta
+public_add_credit.processing_fee: las operaciones con tarjeta tendrán un cargo adicional
+public_loans.no_loans: Aún no has seleccionado ningún objeto para llevarte
+public_payments.no_payment: No hay pagos ni cargos todavía
+public_payments.title: Cargos y pagos.
+public_registration.newsletter: Suscribirse a nuestro boletín
+public_registration.terms_link: Ver bases y condiciones
+public_registration.terms_label: Acepto bases y condiciones
+public_become_member.title: Hacerse miembro
+msg_success.payment_ok: Pago realizado con éxito. Tu saldo ha sido modificado.
+msg_success.reservation_create: Reserva hecha! Acabamos de mandarte un correo electrónico de confirmación.
+msg_success.reservation_cancel: Tu reserva ha sido cancelada.
+msg_success.basket_item_removed: Objeto eliminado de tu cesta.
+msg_success.basket_item_added: está ahora en tu cesta.
+msg_success.basket_item_exists: ya está en tu cesta.
+msg_fail.general_fail: Algo ha fallado, lo sentimos. Por favor Inténtalo de nuevo o ponte en contacto con nosotros.
+msg_fail.reservation_create: Algo ha fallado, no ha sido posible hacer tu reserva.
+msg_fail.reservation_cancel: No ha sido posible cancelar tu reserva. Por favor ponte en contacto con nosotros.

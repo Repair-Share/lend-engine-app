@@ -1,0 +1,27 @@
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}{{ 'le_email.membership_expired.title'|trans() }}{% endblock %}
+
+{% block content %}
+
+    <p>{{ tenantInformation.getEmailMembershipExpiryHeader|raw }}</p>
+    <br>
+
+    <p>
+        Your membership expired on {{ expiresAt|date("d F") }}.
+    </p>
+
+    {% if canSelfRenew == true %}
+        <br>
+        <p>
+            <a href="http://{{ tenant.domain }}/member/subscribe">Click here to renew</a>.
+        </p>
+    {% endif %}
+
+    <br>
+    <br>
+    <p>{{ tenantInformation.getEmailMembershipExpiryFooter|raw }}</p>
+
+{% endblock %}

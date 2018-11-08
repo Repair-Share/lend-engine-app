@@ -1,0 +1,151 @@
+{% trans_default_domain 'member_site' %}
+
+{% if filter.sites|length > 1 %}
+<div id="item-list-filter" class="multi-site">
+    {% trans %}public_misc.filter_items{% endtrans %}:
+    <ul>
+        {% for site in filter.sites %}
+        <li class="{% if app.request.get('siteId') == site.id %}active{% endif %}" id="site-{{ site.id }}">
+            <a href="{{ path('public_products',
+            {
+                tagId: app.request.get('tagId'),
+                e: app.request.get('e'),
+                siteId: site.id,
+                show: app.request.get('show'),
+                search: app.request.get('search')
+            }) }}">
+                {{ site.name }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="clearfix"></div>
+
+{% if products|length > 0 %}
+
+    <div class="row products" id="site-item-list">
+        {% for product in products %}
+            <div class="col-md-3 col-sm-6 col-xs-6">
+                <div class="product site-item-tile">
+                    {% if product.imageName %}
+                        <div class="img-thumbnail img-responsive">
+                            <a href="{{ absolute_url(path('public_product', {productId: product.id})) }}" {% if app.request.get('e') %}target="_blank"{% endif %}>
+                                <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/large/{{ product.imageName }}" alt="" class="img-responsive image1">
+                            </a>
+                            <span class="sku-label">
+                                <label class="label bg-gray">{{ product.sku }}</label>
+                            </span>
+                        </div>
+                    {% else %}
+                        <div class="img-thumbnail img-responsive">
+                            <a href="{{ absolute_url(path('public_product', {productId: product.id})) }}" {% if app.request.get('e') %}target="_blank"{% endif %}>
+                                <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" alt="" class="img-responsive image1">
+                            </a>
+                            <span class="sku-label">
+                                <label class="label bg-gray">{{ product.sku }}</label>
+                            </span>
+                        </div>
+                    {% endif %}
+
+                    <div class="text" style="min-height: 120px">
+
+                        <div style="padding: 10px 0">
+                            {% if product.inventoryLocation.id == 1 %}
+                                <span class="label label-info">{% trans %}public_item.on_loan{% endtrans %}</span>
+                            {% elseif product.inventoryLocation.isAvailable == 1 %}
+                                <span class="label label-success">{% trans %}public_item.available{% endtrans %}</span>
+                            {% else %}
+                                <span class="label label-warning">{% trans %}public_item.not_available{% endtrans %}</span>
+                            {% endif %}
+
+                            {% if product.loanFee > 0 %}
+                                <span class="item-list-fee">
+                                    {{ tenantInformation.currencySymbol }} {{ product.loanFee|number_format(2) }}
+                                    {% if product.maxLoanDays == 1 %}
+                                        {% trans %}per_day{% endtrans %}
+                                    {% else %}
+                                        {% trans with {'%count%': product.maxLoanDays } %}per_n_days{% endtrans %}
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <strong>
+
+                            {% if not product.showOnWebsite %}
+                                <i class="fa fa-exclamation-circle" data-toggle="tooltip" style="color: #ff741e" title="This item is not shown to members"></i>
+                            {% endif %}
+                            <a href="{{ absolute_url(path('public_product', {productId: product.id})) }}" {% if app.request.get('e') %}target="_blank"{% endif %}>{{ product.name }}</a>
+                            <div class="item-list-serial">
+                                {% if product.serial %}
+                                    {% trans %}public_item.serial{% endtrans %}: {{ product.serial }}
+                                {% endif %}
+                            </div>
+                        </strong>
+                    </div>
+                    <!-- /.text -->
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="paginator" style="border-top: 1px solid #ccc; padding: 15px;">
+
+        <span class="pull-left">
+            {% trans with {'%x%': from, '%y%': to, '%z%': totalRecords } %}public_item_list.pages{% endtrans %}
+             by
+            <a {% if app.request.get('sortBy') == 'item.name' %}class="strong"{% endif %} href="{{ path('public_products',
+            {
+                tagId: app.request.get('tagId'),
+                e: app.request.get('e'),
+                siteId: app.request.get('siteId'),
+                show: app.request.get('show'),
+                search: app.request.get('search'),
+                sortBy: 'item.name',
+                sortDir: sortDir
+            }) }}">
+                name</a> |
+
+            <a {% if app.request.get('sortBy') == 'item.sku' %}class="strong"{% endif %} href="{{ path('public_products',
+            {
+                tagId: app.request.get('tagId'),
+                e: app.request.get('e'),
+                siteId: app.request.get('siteId'),
+                show: app.request.get('show'),
+                search: app.request.get('search'),
+                sortBy: 'item.sku',
+                sortDir: sortDir
+            }) }}">
+                code</a>
+        </span>
+
+        {% if products|length < totalRecords %}
+        <span class="pull-right">
+            Go to page:
+            <div class="btn-group">
+                {% for page in pages %}
+                    <a href="{{ path('public_products', {
+                        tagId: app.request.get('tagId'),
+                        show: app.request.get('show'),
+                        search: app.request.get('search'),
+                        e: app.request.get('e'),
+                        f: page.f
+                    }) }}" class="btn btn-default {% if app.request.get('f') == page.f %}active{% endif %}">
+                        {{ loop.index }}
+                    </a>
+                {% endfor %}
+            </div>
+        </span>
+        {% endif %}
+
+    </div>
+
+{% else %}
+    <p class="text-muted lead" id="site-item-list">
+        {% trans %}public_misc.no_results{% endtrans %}
+    </p>
+{% endif %}
+

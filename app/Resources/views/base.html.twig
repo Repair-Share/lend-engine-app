@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>{% block title %}Lend Engine{% endblock %}</title>
+
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    {% stylesheets
+        '@AppBundle/Resources/css/bootstrap.css'
+        '@AppBundle/Resources/admin/css/plugins/select2.css'
+        '@AppBundle/Resources/admin/css/plugins/jquery.growl.css'
+        '@AppBundle/Resources/admin/css/plugins/datatables.css'
+        '@AppBundle/Resources/admin/css/plugins/dataTables.fontAwesome.css'
+        '@AppBundle/Resources/admin/css/plugins/buttons.dataTables.min.css'
+        '@AppBundle/Resources/admin/css/AdminLTE.css'
+        '@AppBundle/Resources/admin/css/skin-black-light.css'
+        '@AppBundle/Resources/admin/css/main.css'
+        '@AppBundle/Resources/admin/css/plugins/daterange.css'
+        '@AppBundle/Resources/admin/css/plugins/dropzone.css'
+        '@AppBundle/Resources/admin/css/plugins/pace.css'
+        '@AppBundle/Resources/css/shared.css'
+        filter='cssrewrite'
+        %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+    {% block pageCss %}{% endblock %}
+
+    {% if app.environment == "prod" %}
+    <script>
+        var _rollbarConfig = {
+            accessToken: "{{ rollbar_client_token }}",
+            captureUncaught: true,
+            captureUnhandledRejections: false,
+            payload: {
+                environment: "{{ app.environment }}",
+                tenant: "{{ tenantInformation.accountCode }}"
+            }
+        };
+        // Rollbar Snippet
+        !function(r){function e(t){if(o[t])return o[t].exports;var n=o[t]={exports:{},id:t,loaded:!1};return r[t].call(n.exports,n,n.exports,e),n.loaded=!0,n.exports}var o={};return e.m=r,e.c=o,e.p="",e(0)}([function(r,e,o){"use strict";var t=o(1).Rollbar,n=o(2);_rollbarConfig.rollbarJsUrl=_rollbarConfig.rollbarJsUrl||"https://d37gvrvc0wt4s1.cloudfront.net/js/v1.9/rollbar.min.js";var a=t.init(window,_rollbarConfig),i=n(a,_rollbarConfig);a.loadFull(window,document,!_rollbarConfig.async,_rollbarConfig,i)},function(r,e){"use strict";function o(r){return function(){try{return r.apply(this,arguments)}catch(e){try{console.error("[Rollbar]: Internal error",e)}catch(o){}}}}function t(r,e,o){window._rollbarWrappedError&&(o[4]||(o[4]=window._rollbarWrappedError),o[5]||(o[5]=window._rollbarWrappedError._rollbarContext),window._rollbarWrappedError=null),r.uncaughtError.apply(r,o),e&&e.apply(window,o)}function n(r){var e=function(){var e=Array.prototype.slice.call(arguments,0);t(r,r._rollbarOldOnError,e)};return e.belongsToShim=!0,e}function a(r){this.shimId=++c,this.notifier=null,this.parentShim=r,this._rollbarOldOnError=null}function i(r){var e=a;return o(function(){if(this.notifier)return this.notifier[r].apply(this.notifier,arguments);var o=this,t="scope"===r;t&&(o=new e(this));var n=Array.prototype.slice.call(arguments,0),a={shim:o,method:r,args:n,ts:new Date};return window._rollbarShimQueue.push(a),t?o:void 0})}function l(r,e){if(e.hasOwnProperty&&e.hasOwnProperty("addEventListener")){var o=e.addEventListener;e.addEventListener=function(e,t,n){o.call(this,e,r.wrap(t),n)};var t=e.removeEventListener;e.removeEventListener=function(r,e,o){t.call(this,r,e&&e._wrapped?e._wrapped:e,o)}}}var c=0;a.init=function(r,e){var t=e.globalAlias||"Rollbar";if("object"==typeof r[t])return r[t];r._rollbarShimQueue=[],r._rollbarWrappedError=null,e=e||{};var i=new a;return o(function(){if(i.configure(e),e.captureUncaught){i._rollbarOldOnError=r.onerror,r.onerror=n(i);var o,a,c="EventTarget,Window,Node,ApplicationCache,AudioTrackList,ChannelMergerNode,CryptoOperation,EventSource,FileReader,HTMLUnknownElement,IDBDatabase,IDBRequest,IDBTransaction,KeyOperation,MediaController,MessagePort,ModalWindow,Notification,SVGElementInstance,Screen,TextTrack,TextTrackCue,TextTrackList,WebSocket,WebSocketWorker,Worker,XMLHttpRequest,XMLHttpRequestEventTarget,XMLHttpRequestUpload".split(",");for(o=0;o<c.length;++o)a=c[o],r[a]&&r[a].prototype&&l(i,r[a].prototype)}return e.captureUnhandledRejections&&(i._unhandledRejectionHandler=function(r){var e=r.reason,o=r.promise,t=r.detail;!e&&t&&(e=t.reason,o=t.promise),i.unhandledRejection(e,o)},r.addEventListener("unhandledrejection",i._unhandledRejectionHandler)),r[t]=i,i})()},a.prototype.loadFull=function(r,e,t,n,a){var i=function(){var e;if(void 0===r._rollbarPayloadQueue){var o,t,n,i;for(e=new Error("rollbar.js did not load");o=r._rollbarShimQueue.shift();)for(n=o.args,i=0;i<n.length;++i)if(t=n[i],"function"==typeof t){t(e);break}}"function"==typeof a&&a(e)},l=!1,c=e.createElement("script"),d=e.getElementsByTagName("script")[0],p=d.parentNode;c.crossOrigin="",c.src=n.rollbarJsUrl,c.async=!t,c.onload=c.onreadystatechange=o(function(){if(!(l||this.readyState&&"loaded"!==this.readyState&&"complete"!==this.readyState)){c.onload=c.onreadystatechange=null;try{p.removeChild(c)}catch(r){}l=!0,i()}}),p.insertBefore(c,d)},a.prototype.wrap=function(r,e){try{var o;if(o="function"==typeof e?e:function(){return e||{}},"function"!=typeof r)return r;if(r._isWrap)return r;if(!r._wrapped){r._wrapped=function(){try{return r.apply(this,arguments)}catch(e){throw e._rollbarContext=o()||{},e._rollbarContext._wrappedSource=r.toString(),window._rollbarWrappedError=e,e}},r._wrapped._isWrap=!0;for(var t in r)r.hasOwnProperty(t)&&(r._wrapped[t]=r[t])}return r._wrapped}catch(n){return r}};for(var d="log,debug,info,warn,warning,error,critical,global,configure,scope,uncaughtError,unhandledRejection".split(","),p=0;p<d.length;++p)a.prototype[d[p]]=i(d[p]);r.exports={Rollbar:a,_rollbarWindowOnError:t}},function(r,e){"use strict";r.exports=function(r,e){return function(o){if(!o&&!window._rollbarInitialized){var t=window.RollbarNotifier,n=e||{},a=n.globalAlias||"Rollbar",i=window.Rollbar.init(n,r);i._processShimQueue(window._rollbarShimQueue||[]),window[a]=i,window._rollbarInitialized=!0,t.processPayloads()}}}}]);
+        // End Rollbar Snippet
+    </script>
+    {% endif %}
+
+    <script>
+        var pageLoadComplete = false; // prevent modals from opening until page has loaded. Unset by Pace.js
+        var selectContactPath = "{{ path('select_contact') }}";
+        var searchMemberPath = "{{ path('search_member') }}";
+        var noteDeletePath = "{{ path('note_delete') }}";
+        var ajaxDeletePath = "{{ path('ajax_delete') }}";
+        var stripePublicApiKey = "{{ tenantInformation.stripePublicApiKey }}";
+        var stripePaymentMethodId = "{{ tenantInformation.stripePaymentMethodId }}";
+        var stripePaymentFee = "{{ tenantInformation.stripeFee }}";
+        var currencyIsoCode = "{{ tenantInformation.currency }}";
+        var minimumPaymentAmount = {{ tenantInformation.minimumPaymentAmount|number_format(2) }};
+        var orgName = "{{ tenantInformation.companyName }}";
+    </script>
+
+</head>
+
+<body class="hold-transition skin-black-light sidebar-mini fixed">
+
+<div class="wrapper">
+
+    <header class="main-header">
+
+        <a href="{{ path('homepage') }}" class="logo hidden-xs">
+            <span class="logo-mini"> </span>
+            <span class="logo-lg">
+                <strong style="color:#3f3b55">Lend</strong> Engine
+                <span style="font-size: 11px;">Admin</span>
+            </span>
+        </a>
+
+        <nav class="navbar navbar-static-top" role="navigation">
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+
+            <div style="display: inline; font-size: 22px; line-height: 50px; padding-left:20px; ">{% block pageTitle %}Lend Engine{% endblock %}</div>
+            <div class="pull-right" style="display: inline; padding:10px; ">
+                {% block primaryButton %}{% endblock %}
+            </div>
+        </nav>
+
+    </header>
+
+    <aside class="main-sidebar">
+        <section class="sidebar">
+            {{ include('partials/sidebar-form.html.twig') }}
+            {% block left %}
+                {{ knp_menu_render('adminMenu', {'depth': 2}) }}
+            {% endblock %}
+        </section>
+    </aside>
+
+    <div class="content-wrapper">
+
+        {% if tenantInformation.trialExpiresAt|date("Y-m-d") > date()|date("Y-m-d") and tenantInformation.accountStatus == 'TRIAL' %}
+            <div class="trial" style="background-color: #fff7a4; color: #c6c07b; padding: 10px; ">
+                Your free trial expires on {{ tenantInformation.trialExpiresAt|date("M jS") }}.
+                <a href="{{ path('billing') }}">See plans</a>
+            </div>
+        {% endif %}
+
+        {% if tenantInformation.trialExpiresAt|date("Y-m-d") < date()|date("Y-m-d") and tenantInformation.accountStatus == 'TRIAL' %}
+            <div class="trial" style="background-color: #fff7a4; color: #ff6519; padding: 10px; ">
+                <i class="fa fa-exclamation-triangle" style="font-size: 18px; color: #ff6519"></i>
+                Your trial expired on {{ tenantInformation.trialExpiresAt|date("M jS") }},
+                so your account is in read-only mode.
+
+                {% if app.request.attributes.get('_route') != 'billing' %}
+                <div style="padding: 10px 20px">
+                    <a href="{{ path('billing') }}" class="btn btn-xs btn-success">Sign up now</a> (there's a free plan)
+                </div>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <section class="content">
+
+            {% for flash_message in app.session.flashbag.get('info') %}
+                <div class="alert alert-info disabled">{{ flash_message }}</div>
+            {% endfor %}
+
+            {% set errors = app.session.flashbag.get('error') %}
+
+            {% if errors|length > 0 %}
+                <div class="alert alert-danger">
+                {% for flash_message in errors %}
+                    <p>{{ flash_message }}</p>
+                {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block body %}{% endblock %}
+            {% block pageHelp %}{% endblock %}
+            {% block modal %}{% endblock %}
+        </section>
+
+        <div class="modal fade demo-modal" id="modal-wrapper" role="dialog" aria-labelledby="mySmallModalLabel">
+            <div class="modal-dialog">
+                <div class="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+
+        {% set debugs = app.session.flashbag.get('debug') %}
+        {% if debugs|length > 0 %}
+            <div class="alert alert-info">
+                {% for flash_message in debugs %}
+                    <p>{{ flash_message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="pull-right hidden-xs">
+            <span style="padding-right: 15px;">
+                {% if tenantInformation.plan %}
+                    Plan: <a href="{{ path('billing') }}">{{ tenantInformation.plan|capitalize }}</a>
+                {% else %}
+                    No pay plan yet
+                {% endif %}
+            </span>
+            <strong>{{ tenantInformation.companyName }}</strong>&nbsp;&nbsp;
+            ({{ tenantInformation.serverName }})&nbsp;&nbsp;
+        </div>
+        Logged in as <strong>{{ app.user.firstName }} {{ app.user.lastName }}</strong>
+        <a href="{{ path('clear_site') }}">Sign out</a> |
+        <a href="{{ path('user', {'id': app.user.id}) }}" class="modal-link">My profile</a> |
+        <a href="{{ path("change_password", {'id': app.user.id}) }}" class="modal-link">Change my password</a>
+    </footer>
+
+    <aside class="control-sidebar control-sidebar-light">
+        sidebar
+    </aside>
+    <div class="control-sidebar-bg"></div>
+
+</div>
+
+{% javascripts
+'@AppBundle/Resources/js/jQuery-2.1.4.min.js'
+'@AppBundle/Resources/js/bootstrap.js'
+'@AppBundle/Resources/js/jquery.slimscroll.js'
+'@AppBundle/Resources/admin/js/plugins/adminLTE.js'
+'@AppBundle/Resources/js/moment.js'
+'@AppBundle/Resources/admin/js/plugins/datatables.js'
+'@AppBundle/Resources/admin/js/plugins/datatables.buttons.js'
+'@AppBundle/Resources/admin/js/plugins/datatables.buttons.html5.js'
+'@AppBundle/Resources/admin/js/plugins/select2.js'
+'@AppBundle/Resources/admin/js/plugins/jquery.growl.js'
+'@AppBundle/Resources/admin/js/plugins/daterangepicker.min.js'
+'@AppBundle/Resources/admin/js/plugins/dropzone.js'
+'@AppBundle/Resources/admin/js/plugins/zoom.js'
+'@AppBundle/Resources/admin/js/plugins/handlebars.js'
+'@AppBundle/Resources/admin/js/plugins/pace.min.js'
+filter='uglifyjs2'
+%}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+
+{% if tenantInformation.stripeAccessToken|length > 0 %}
+<script src="https://checkout.stripe.com/checkout.js"></script>
+{% endif %}
+
+{% javascripts
+'@AppBundle/Resources/js/payment.js'
+'@AppBundle/Resources/js/admin.js'
+filter='uglifyjs2'
+%}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+
+{% block pagejs %}{% endblock %}
+
+{% block javascripts %}{% endblock %}
+
+<script>
+    Pace.on("done", function(){
+        pageLoadComplete = true;
+        // Dashboard choose site link
+        if ($("#choose-site-link").html()) {
+            $("#choose-site-link").click();
+        }
+        // Contact mage / new membership process
+        {% if app.request.get('open') == 'membership' %}
+        $("#addMembership").click();
+        {% endif %}
+    });
+    {% for flash_message in app.session.flashbag.get('success') %}
+    $.growl.notice({title: "", message: "{{ flash_message }}"});
+    {% endfor %}
+</script>
+
+{% if app.environment == 'prod' %}
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-71257503-2', 'auto', {'allowLinker': true});
+    ga('require', 'linker');
+    ga('linker:autoLink', ['{{ tenantInformation.accountDomain }}'] );
+    ga('send', 'pageview', {'dimension1': 'admin', 'dimension2': '{{ tenantInformation.accountCode }}'});
+</script>
+{#<script src="https://cdn.smooch.io/smooch.min.js"></script>#}
+{#<script>#}
+    {#Smooch.init({#}
+        {#appToken: 'clvriixr1lv5cw9cm5yztryo1',#}
+        {#givenName: "{{ app.user.firstName }}",#}
+        {#surname: "{{ app.user.lastName }} ({{ tenantInformation.companyName }})",#}
+        {#email: "{{ app.user.email }}"#}
+    {#});#}
+{#</script>#}
+{% endif %}
+
+</body>
+</html>

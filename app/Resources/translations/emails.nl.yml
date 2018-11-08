@@ -1,0 +1,55 @@
+# Loco yaml export: Symfony YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: nl-NL, Dutch (Netherlands)
+# Tagged: Emails
+# Status: Translated
+# Exported by: Chris
+# Exported at: Wed, 19 Jul 2017 10:16:57 +0100
+---
+le_email:
+  item_description: Beschrijving
+  item_contains: Bevat
+  see_attachment: Zie bijlage
+  return_sites: Gelieve dit artikel terug te brengen naar de volgende plaats
+  th_item: Artikel
+  th_fee: Vergoeding
+  th_due_back: Moet terug gebracht worden
+  url: Aanmelding via URL
+  email: E-mail
+  password: Wachtwoord
+  assign:
+    title: Er werd u een artikel toegewezen
+    message: '%firstName%, het artikel "%itemName%" werd u toegewezen door %assignorName%.'
+    added_note: heeft ook een opmerking toegevoegd
+    all_items: Bekijk alle artikels die u werden toegewezen
+    current_location: Huidige locatie
+  checkout:
+    subject: Informatie over uw lening
+    title: Informatie over uw lening
+  extend:
+    subject: De retourdatum van uw lening werd bijgewerkt
+    title: We hebben de retourdatum van een artikel gewijzigd
+    due_back: moet nu teruggebracht worden op
+  reminder:
+    subject: Het geleend artikel %loanId% moet morgen terugbezorgd worden
+    title: Uw artikel(s) moet(en) spoedig teruggebracht worden
+  reservation_reminder:
+    subject: Haal uw reservering morgen op
+    title: Haal uw reservering morgen op
+  membership_expired:
+    subject: Uw lidmaatschap is vervallen
+    title: Uw lidmaatschap is vervallen
+  login_details:
+    subject: Uw Inloggegevens voor %accountName%
+    title: Inloggegevens
+    message: Dit zijn uw inloggegevens voor ons uitleensysteem
+  new_password:
+    title: Uw nieuw wachtwoord
+    message: Dit is het nieuw wachtwoord voor %accountName%
+  reservation_confirm:
+    subject: Bevestiging van uw reservering
+    title: Bevestiging van reservering
+  site_welcome:
+    subject: Welkom bij %accountName%
+    title: Welkom

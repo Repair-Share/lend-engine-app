@@ -1,0 +1,82 @@
+{# app/Resources/views/membership/membership_extend.html.twig #}
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+{% block modalSubTitle %}{{ subTitle|raw }}{% endblock %}
+
+{% block modalBody %}
+    <form method="POST" action="{{ path('membership_extend', {id: membership.id}) }}">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="hidden" name="new_expiry_date" id="date-extend">
+                <div id="date-extend-container"></div>
+            </div>
+            <div class="col-md-4">
+                <div style="padding-bottom: 10px">
+                    <label>Original expiry date</label>
+                    <div class="text-large">
+                        {{ membership.expiresAt|date('D M d Y') }}
+                    </div>
+                </div>
+                <div style="padding-bottom: 10px">
+                    <label>New expiry date</label>
+                    <div>
+                        <span id="new_expiry_text" class="text-large">
+                            {{ membership.expiresAt|date('D M d Y') }}
+                        </span>
+                    </div>
+                </div>
+                <div style="padding-bottom: 10px">
+                    <label>Extending by</label>
+                    <div class="text-large"><span id="extend-days">0</span> days</div>
+                </div>
+                <div class="help-block">
+                    If the extension requires that you take extra payment, do this as a separate step from the
+                    Charges and Payments tab on the member screen.
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button type="button" id="apply_extension" class="btn bg-green pull-right modal-submit">Update membership</button>
+    <script>
+        $(document).ready(function () {
+
+            // Datepicker for extension (in modal)
+            var dateExtendField = $("#date-extend");
+            dateExtendField.dateRangePicker({
+                format: 'ddd MMM D YYYY',
+                autoClose: true,
+                singleDate: true,
+                singleMonth: true,
+                showShortcuts: false,
+                inline: true,
+                alwaysOpen: true,
+                container: '#date-extend-container',
+                setValue: function (s) {
+                    if (!$(this).attr('readonly') && !$(this).is(':disabled') && s != $(this).val()) {
+                        console.log($(this).val(s));
+                    }
+                }
+            }).bind('datepicker-change', function (event, obj) {
+                var newTimeIn = moment(obj.date1).format('YYYY-MM-DD');
+                var start = moment("{{ membership.expiresAt|date('Y-m-d') }}");
+                var end = moment(newTimeIn);
+                var duration = moment.duration(end.diff(start));
+                var days = duration.asDays();
+                $("#extend-days").html(days);
+                $("#new_expiry_text").html(end.format('ddd MMM DD YYYY'));
+                $("#new_expiry_date").val(end.format('YYYY-MM-DD'));
+            });
+
+            dateExtendField.data('dateRangePicker').setDateRange('{{ membership.expiresAt|date('D M d Y') }}', '{{ membership.expiresAt|date('D M d Y') }}', true);
+
+
+        });
+    </script>
+{% endblock %}
+
+

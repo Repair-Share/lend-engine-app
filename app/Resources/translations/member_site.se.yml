@@ -1,0 +1,165 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: sv-SE, Swedish (Sweden)
+# Tagged: Member site
+# Exported by: Chris
+# Exported at: Thu, 23 Aug 2018 21:04:02 +0100
+---
+Loan: Lån
+Loans: Lån
+Reservation: Reservation
+Reservations: Reservationer
+Brand: Varumärke
+Payment: Betalning
+Payments: Betalningar
+Fee: Avgift
+loan_status.pending: Inväntar
+loan_status.on_loan: Utlånad
+loan_status.reserved: Reserverad
+loan_status.cancelled: Avbokad
+loan_status.overdue: Förfallen
+loan_status.closed: Stängt
+note_reservation_fee: Reservationskostnad
+note_reservation_fee_will_be_added: avgift kommer att tas ut för varje reservation
+th.date: Datum
+th.payment_method: Betalningsmetod
+th.fee: Avgift
+th.payment: Betalning
+th.ref: Referens
+th.items: Artiklar
+th.date_from: Från
+th.date_to: Till
+th.status: Status
+Reference: Referens
+Items: Artiklar
+Status: Status
+STATUS_PENDING: Inväntar
+STATUS_ACTIVE: Utlånad
+STATUS_OVERDUE: Förfallen
+STATUS_RESERVED: Reserverad
+STATUS_CANCELLED: Avbokad
+STATUS_CLOSED: Stängt
+days: '{1}dag|[2,Inf[dagar'
+per_day: per dag
+per_n_days: för %count% dagar
+button_cancel: Avboka
+button_cancel_reservation: Avboka reservation
+button_add_credit: Lägg till kredit
+button_go: Okej
+I forgot my password: Jag har glömt mitt lösenord
+Log out: Logga ut
+My account: Mitt konto
+Login with Facebook: Logga in med Facebook
+Login with Google: Logga in med Google
+form.firstName: Förnamn
+form.lastName: Efternamn
+form.email: 'E-post:'
+form.telephone: Telefon
+form.address1: Adress
+form.address2: Stad
+form.address3: Land
+form.postcode: Postnummer
+form.country: Land
+form.locale: Ditt föredragna språk
+public_misc.link_admin: Admin
+public_misc.link_home: Hem
+public_misc.link_recent_items: Nyligen tillagda
+public_misc.link_all_items: Alla artiklar
+public_misc.search_items: Sök bland våra artiklar
+public_misc.no_results: Ingenting hittades
+public_misc.filter_items: Filtera artiklar
+public_misc.any_site: Vilken plats som helst
+public_footer.find_us: Hitta hit/öppettider
+public_footer.choose_lang: Välj språk
+public_footer.powered_by: Drivs av
+public_footer.logged_in_as: Du är inlpggad som
+public_account.title: Mitt Konto
+public_account.contact_subtitle: Kontaktuppgifter
+public_account.membership_subtitle: Medlemskapsuppgifter
+public_account.button_edit_details: Ändra mina uppgifter
+public_account.button_change_password: Ändra mitt lösenord
+public_item_list.pages: Visar %x% till %y% of %z% artiklar
+public_item.location: Plats
+public_item.brand: Varumärke
+public_item.code: Kod
+public_item.serial: Serie
+public_item.condition: Skick
+public_item.contains: Innehåller
+public_item.downloads: Nedladdningar
+public_item.log_in_to_download: logga in för att ladda ner
+public_item.log_in_to_borrow: Logga in för att låna eller reservera
+public_item.borrow_now: Låna/reservera
+public_item.not_available: Inte tillgänglig
+public_item.available: Tillgänglig
+public_item.on_loan: Utlånad
+public_item.pickup_date_error: Artiklar i din varukorg har ett upphämtningsdatum som krockar med bokningar av denna artikel. Du kommer inte kunna låna denna artikel på samma lån.
+public_item.pickup_site_error: 'Denna artikel är inte tillgänglig på den plats som de andra artuklarna i din varukorg ska hämtas ifrån. Du kommer inte ha möjlighet att låna denna artikel på samma lån. '
+public_item.basket_exists: 'Du har redan artiklar i din varukorg. Du kommer att behöva hämta dem samtidigt, så vi har satt upp ett upphämtningsdatum för dig. '
+public_item.account_balance_is: 'Tillgängliga balansen är '
+public_item.add_credit: Lägg till kredit
+public_item.pickup_at: Hämtas på
+public_item.return_by: Lämnas på
+public_item.choose_pickup_first: Välj upphämtning först
+public_item.button_choose_pickup: 'Välj upphämtningstid '
+public_item.button_choose_return: Välj återlämningstid
+public_item.cancel: Avboka
+public_item.basket_add: Lägg till artikel i varukorg
+public_item.locations: Tillgängliga platser
+public_item.maps_link: Öppna i Google maps
+public_item.similar_items: liknande artiklar tillgängliga
+public_item.see_all: Se alla
+public_item.not_reservable: 'Denna artikel är inte tillgänglig för reservation online. Vänligen kontaka oss. '
+calendar.pickup_day: Hämta
+calendar.my_booking: MIN BOKNING
+calendar.reserved: RESERVERAD
+calendar.on_loan: UTLÅNAD
+calendar.text_clash_date: Din valda period krockar med en existrande bokning. Vänligen välj andra datum.
+calendar.text_return_after_pickup: Vänligen ange ett återlämningsdatum efter uppphämtningsdatumet
+calendar.alert_already_booked: 'Du kan inte välja detta datum på grund av en annan bokning. '
+calendar.alert_not_your_booking: Du kan bara se detaljer för din egen bokning.
+calendar.alert_day_warning: Denna artikel kan bara lånas för flera av itemLoanDays dagarna. Vänligen välj ett annat återlämningsdatum.
+calendar.alert_min_loan_days: Du måste låna denna artikel minLoanDays dagar.
+calendar.alert_max_loan_days: Du kan låna denna artikel i upp till maxLoanDays dagar.
+public_basket.title: Varukorg
+public_basket.name: Varukorg
+public_basket.due_at: 'Förfaller på '
+public_basket.return_to: Återlämna till
+public_basket.pickup_after: Hämta efter
+public_basket.from: från
+public_basket.add_credit_message: Vänligen lägg till kredit först
+public_basket.empty: Tom varukorg
+public_basket.confirm_reservation: Reservera
+public_basket.remove_item: Ta bort
+public_basket.total: Totalt
+public_basket.balance: Betalning förfaller
+public_basket.no_items: <h3>Inga artiklar i varukorgen</h3> Sök för att lägga till.
+public_basket.full_charge: ditt konto kommer att debiteras
+public_basket.delay_charge: kommer att debiteras ditt konto nu, med påminnelse vid upphämtning av artiklar
+public_loan.title: Lån
+public_user_menu.contact_info: Profil
+text_borrow_with_membership: 'Med fullt medlemskap kommer du att ha möjlighet att låna och reservera artiklar online. '
+text_no_membership: Du har inget aktivt medlemskap.
+public_add_credit.title: Lägg till kredit
+public_add_credit.choose_card: Välj ett befintligt kort ovan, eller fortsätt att lägga till kredit till nedanstående med ett nytt kort
+public_add_credit.use_this_card: Använd detta kort
+public_add_credit.amount_to_add: Belopp att lägga till
+public_add_credit.payment_method: Betalningsmetod
+public_add_credit.min_amount: Minska kortbelopp
+public_add_credit.processing_fee: hanteringskostnad kommer att debiteras för korttransaktion.
+public_loans.no_loans: Du har inte lånat någonting ännu.
+public_payments.no_payment: Inga betalningar eller avgifter än
+public_payments.title: Avgifter och betalningar
+public_registration.newsletter: Prenumerera på vårt nyhetsbrev
+public_registration.terms_link: Se våra användarvillkor.
+public_registration.terms_label: Jag godkänner användarvillkoren
+public_become_member.title: Bli medlem
+msg_success.payment_ok: 'Betalningen är godkänd. Ditt kontosaldo har ändrats. '
+msg_success.reservation_create: 'Reserverad! Vi har skickat dig ett bekräftelse via e-post. '
+msg_success.reservation_cancel: Din reservation har avbokats.
+msg_success.basket_item_removed: Artikel har tagits bort från din varukorg.
+msg_success.basket_item_added: las till i din varukorg.
+msg_success.basket_item_exists: är redan i din varukorg.
+msg_fail.general_fail: "Ursäkta, något gick fel. Vänligen försök på nytt eller kontakta oss. \n"
+msg_fail.reservation_create: 'Något gick fel, vi kunde inte skapa en reservation. '
+msg_fail.reservation_cancel: 'Vi kunde inte avboka din reservation. Vänligen ta kontakt med oss. '

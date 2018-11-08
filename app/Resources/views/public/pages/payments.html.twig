@@ -1,0 +1,75 @@
+{% extends 'public/base.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block search %}
+    {{ include('public/partials/search.html.twig') }}
+{% endblock %}
+
+{% block accountNav %}
+    {{ include('public/partials/account_nav.html.twig') }}
+{% endblock %}
+
+{% block body %}
+    <h2>
+        {% trans %}Payments{% endtrans %}
+        {% if user is defined and user.id != app.user.id %}
+            {{ include('public/partials/session_user.html.twig') }}
+        {% endif %}
+    </h2>
+
+    {% set contact = user %}
+    {{ include('public/partials/account_balance.html.twig') }}
+
+    {% if user.payments|length > 0 %}
+        <table width="100%" class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th></th>
+                <th>{% trans %}th.date{% endtrans %}</th>
+                <th>{% trans %}th.payment_method{% endtrans %}</th>
+                <th style="text-align:right">{% trans %}th.fee{% endtrans %}/{% trans %}th.payment{% endtrans %}</th>
+                <th></th>
+            </tr>
+            </thead>
+            {% for payment in user.payments %}
+                <tr>
+                    <td>
+                        {% if payment.loan %}
+                            <div>
+                                <a href="{{ path('public_loan', {loanId: payment.loan.id}) }}">{% trans %}Loan{% endtrans %} {{ payment.loan.id }}</a>
+                            </div>
+                        {% endif %}
+                        {% if payment.note %}
+                            <div>{{ payment.note }}</div>
+                        {% endif %}
+                        {% if payment.inventoryItem %}
+                            <div>{{ payment.inventoryItem.name }}</div>
+                        {% endif %}
+                    </td>
+                    <td>{{ payment.paymentDate|date("d M Y") }}</td>
+                    <td>
+                        {% if payment.paymentMethod %}
+                            {{ payment.paymentMethod.name }}
+                        {% endif %}
+                    </td>
+                    <td align="right">
+                        {% if payment.type == 'FEE' or payment.type == 'REFUND' %}
+                            <span style="color:#b90009">- {{ tenantInformation.currencySymbol }} {{ payment.amount|number_format(2) }}</span>
+                        {% else %}
+                            <span style="color:#419f43">+ {{ tenantInformation.currencySymbol }} {{ payment.amount|number_format(2) }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if is_granted('ROLE_ADMIN') and (payment.type == 'PAYMENT' or payment.type == 'DEPOSIT') %}
+                            <a href="{{ path('refund', {id: payment.id, amount: payment.amount}) }}" class="modal-link" style="font-size: 11px">Refund</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <div class="page-help">
+            {% trans %}public_payments.no_payment{% endtrans %}
+        </div>
+    {% endif %}
+{% endblock %}

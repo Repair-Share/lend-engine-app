@@ -1,0 +1,486 @@
+{% extends 'base.html.twig' %}
+
+{% block pageCss %}
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>
+    <script type="text/javascript">
+
+        function add_markers() {
+
+            var geocoder = new google.maps.Geocoder();
+            var marker;
+
+            geocoder.geocode({'address': '{{ tenantInformation.orgPostcode }}, {{ tenantInformation.country }}'}, function(results, status)
+            {
+                if (status == google.maps.GeocoderStatus.OK) {
+
+                    var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
+                    var mapOptions = {
+                        zoom: 12,
+                        center: _position
+                    };
+                    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+                    {% for location in contactLocations %}
+                    addMarker(map, {{ location.lat }}, {{ location.lng }});
+                    {% endfor %}
+                } else {
+                    console.log(status);
+                }
+            });
+
+            function addMarker(map, lat, long) {
+                var position = {lat: lat, lng: long};
+                console.log(position);
+                marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 6,
+                        strokeColor: '#CC0000',
+                        strokeWeight: 1,
+                        fillColor: '#CC0000',
+                        fillOpacity: 0.2
+                    }
+                });
+            }
+        }
+
+        window.onload = function() {
+            add_markers();
+        }
+    </script>
+{% endblock %}
+
+{% block pageTitle %}Dashboard{% endblock %}
+
+{% block body %}
+
+    {% if isMultiSite %}
+        <div class="row">
+            <div class="col-md-12">
+                {% if activeSite %}
+                    <div class="alert bg-brown">
+                        <h4>You're currently working at <strong>{{ activeSite.name }}</strong></h4>
+                        <p>
+                            This will define your default check-in location.
+                        </p>
+                        <a href="{{ path('choose_site') }}" class="modal-link" id="change-site-link">Change site</a>
+                    </div>
+                {% else %}
+                    <a href="{{ path('choose_site') }}" class="modal-link" id="choose-site-link" style="display: none;">Choose the site you are working at today</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well" style="height:200px; overflow: scroll">
+                <h4>Latest features and updates</h4>
+                <p>17th October 2018</p>
+                    <ul>
+                        <li>
+                            We've added a <strong>new automated email</strong> to remind members of overdue items.
+                            Just head along to settings and scroll down to see the 'Automation' section.
+                        </li>
+                    <li>
+                        Like the other automated emails, you can edit the template too.
+                    </li>
+                    <li>
+                        Email automation is now only available on our paid plans.
+                    </li>
+                        <li>
+                            You now have a shiny new report to show <strong>non-loaned</strong> items, which you can use to help decide which items to remove from your library.
+                            Check it out in the reports section of admin.
+                        </li>
+                    <li>
+                        We've also added a new filter on the children report (for toy libraries).
+                    </li>
+                    </ul>
+
+                <br>
+                <p>24th August 2018</p>
+                <ul>
+                    <li>
+                        We've added a major new feature; <strong>refundable deposits</strong>. If you're on the
+                        standard plan or above, you can set up items to require a deposit when they are checked out.
+                        Just choose the deposit amount on the item page. Different items can have different deposit amounts.
+                        Staff can change the deposit amount on a per-loan basis if required.
+                        The deposit is refundable, and will not affect the member account balance.
+                        If you're using Stripe to take credit card payment, then the deposit refund is handled automatically.
+                    </li>
+                    <li>
+                        In addition to refundable deposits, we've added general refund capability.
+                        No need to use negative payments any more. We've streamlined the checkout process into one page,
+                        which should make it easier and quicker.
+                    </li>
+                    <li>
+                        And last but not least, you can now choose Swedish for your member site.
+                    </li>
+                </ul>
+
+                <br>
+                <p>
+                    10th July 2018 : Bulk check-in items if none of the outstanding items have check-in prompts.
+                    This should save loads of time when checking in multi-item loans.
+                </p>
+                <p>
+                    1st July 2018 : You can add a "changeover time" to your site opening hours if you want loans to run from and to different times from the opening and closing hours of the time slot.
+                    Setting a changeover time will also allow reservations to start on the same day an item is due to be returned.<br>
+                    Read more about the details of changeover times on the <a href="{{ path("site_list") }}">Site Settings screen</a>.
+                </p>
+                <p>
+                    14th June 2018 : The member "subscribe to newsletter" field now shows in admin on the contact screen whether you have Mailchimp connected or not, and its value is included in the contact export CSV.
+                </p>
+                <p>
+                    8th June 2018 : If you're on the Standard or Plus plan you can add custom Javascript to your member site, to manipulate fields and change behaviour. Be careful!
+                </p>
+                <p>
+                    15th May 2018 : The default option when processing credit cards with Stripe is NOT to allow users to choose a previously used card.
+                    Customers are created in Stripe when you take payments, in order that multiple payments for the same person appear on the same record,
+                    but their card details are not presented in Lend Engine unless you turn on the setting to allow previously used cards.
+                </p>
+
+                <p>
+                    8th May 2018 : We've added a new feature which allows you to add custom pages and links to your member site. This is available on Standard plan upwards.
+                    See the menu item in the settings area to get started.
+                </p>
+
+                <p>
+                    8th May 2018 : You can now make your member site private, so that users are required to log in before they can view items.
+                    Public custom pages will still show. There's a new setting at the bottom of the main settings page to make your site private.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row" id="loan-counts">
+        <div class="col-lg-3 dash-loan-data">
+            <div class="info-box">
+                <span class="info-box-icon bg-gray"><i class="fa fa-shopping-bag"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Pending</span>
+                    <span class="info-box-number" id="count-pending">{{ dashData.loansByStatus.pending }}</span>
+                    <span class="info-box-text"><a href="{{ path('loan_list', { status: "PENDING" }) }}">View list</a></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 dash-loan-data">
+            <div class="info-box">
+                <span class="info-box-icon bg-teal"><i class="fa fa-shopping-bag"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">On loan</span>
+                    <span class="info-box-number">{{ dashData.loansByStatus.active }}</span>
+                    <span class="info-box-text"><a href="{{ path('loan_list', { status: "ACTIVE" }) }}">View list</a></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 dash-loan-data">
+            <div class="info-box">
+                <span class="info-box-icon bg-red"><i class="fa fa-shopping-bag"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Overdue</span>
+                    <span class="info-box-number">{{ dashData.loansByStatus.overdue }}</span>
+                    <span class="info-box-text"><a href="{{ path('loan_list', { status: "OVERDUE" }) }}">View list</a></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 dash-loan-data">
+            <div class="info-box">
+                <span class="info-box-icon bg-orange"><i class="fa fa-shopping-bag"></i></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Reservations</span>
+                    <span class="info-box-number">{{ dashData.loansByStatus.reserved }}</span>
+                    <span class="info-box-text"><a href="{{ path('loan_list', { status: "RESERVED" }) }}">View list</a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-4 col-md-6">
+            <div class="box">
+                <div class="box-header with-border">
+                    New contacts
+                </div>
+                <div class="box-body">
+                    <canvas id="contactsAddedByMonth" height="160" style="height: 160px; width: 720px"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="box">
+                <div class="box-header with-border">
+                    Total number of <span style="color:#eec853">contacts</span> / <span style="color:#86b300">memberships</span>
+                </div>
+                <div class="box-body">
+                    <canvas id="contactsGrowth" height="160" style="height: 160px; width: 720px"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="box">
+                <div class="box-header with-border">
+                    Loans per month
+                </div>
+                <div class="box-body">
+                    <canvas id="loansAddedByMonth" height="160" style="height: 160px; width: 720px"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-4 col-md-6">
+            <div class="box">
+                <div class="box-header with-border">
+                    New items
+                </div>
+                <div class="box-body">
+                    <div class="chart">
+                        <canvas id="itemsAddedByMonth" height="160" style="height: 160px; width: 720px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="box">
+                <div class="box-header with-border">
+                    Total number of items
+                </div>
+                <div class="box-body">
+                    <canvas id="itemsGrowth" height="160" style="height: 160px; width: 720px"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="box">
+                <div class="box-header with-border">
+                    Fees charged, GBP (<span style="color:#9dbc6b">Memberships</span> / <span style="color:#ff741e">Other</span>)
+                </div>
+                <div class="box-body">
+                    <canvas id="income" height="160" style="height: 160px; width: 720px"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <style type="text/css">
+                #map
+                {
+                    height:350px;
+                    width:100%;
+                    display:block;
+                }
+            </style>
+            <div id="map"></div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block pagejs %}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.min.js"></script>
+
+    <script>
+        $(function () {
+            'use strict';
+
+            var contactsAddedByMonth = $("#contactsAddedByMonth");
+            var contactsGrowth = $("#contactsGrowth");
+            var membershipsGrowth = $("#membershipsGrowth");
+            var itemsAddedByMonth = $("#itemsAddedByMonth");
+            var itemsGrowth = $("#itemsGrowth");
+            var loansAddedByMonth  = $("#loansAddedByMonth");
+            var income  = $("#income");
+
+            var barOptions = {
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    enabled: true
+                },
+                hover :{
+                    animationDuration:0
+                },
+                scales: {
+                    xAxes: [{
+//                        type: 'time',
+//                        time: {
+//                            unit: 'month'
+//                        },
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                },
+                pointLabelFontFamily : "Quadon Extra Bold",
+                scaleFontFamily : "Quadon Extra Bold"
+            };
+
+            var barOptions_stacked = {
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    enabled: true
+                },
+                hover :{
+                    animationDuration:0
+                },
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        },
+                        scaleLabel:{
+                            display:false
+                        },
+                        gridLines: {
+                        },
+                        stacked: true
+                    }],
+                    yAxes: [{
+                        gridLines: {
+                            display:false,
+                            color: "#fff",
+                            zeroLineColor: "#fff",
+                            zeroLineWidth: 0
+                        },
+                        ticks: {
+
+                        },
+                        stacked: true
+                    }]
+                },
+                pointLabelFontFamily : "Quadon Extra Bold",
+                scaleFontFamily : "Quadon Extra Bold"
+            };
+
+            var lineOptions = barOptions;
+
+            // Contacts added by month
+            var chart_contactsAddedByMonth = new Chart(contactsAddedByMonth, {
+                type: 'bar',
+                maintainAspectRatio: false,
+                data: {
+                    labels: [{{ labels|raw }}],
+                    datasets: [{
+                        label: 'Contacts added',
+                        data: [{{ contactsAddedByMonth }}],
+                        backgroundColor: "#eec853"
+                    }]
+                },
+                options: barOptions
+            });
+
+            // Member growth
+            var chart_contactsGrowth = new Chart(contactsGrowth, {
+                type: 'line',
+                maintainAspectRatio: false,
+                data: {
+                    labels: [{{ labels|raw }}],
+                    datasets: [
+                        {
+                            label: 'Contacts',
+                            data: [{{ contactsGrowth }}],
+                            fill: false,
+                            borderColor: "#eec853",
+                            lineTension: 0
+                        },
+                        {
+                            label: 'Memberships',
+                            data: [{{ membershipsGrowth }}],
+                            fill: false,
+                            borderColor: "#86b300",
+                            lineTension: 0
+                        }
+                    ]
+                },
+                options: lineOptions
+            });
+
+
+            // Items added by month
+            var chart_itemsAddedByMonth = new Chart(itemsAddedByMonth, {
+                type: 'bar',
+                maintainAspectRatio: false,
+                data: {
+                    labels: [{{ labels|raw }}],
+                    datasets: [{
+                        label: 'Items added',
+                        data: [{{ itemsAddedByMonth }}],
+                        backgroundColor: "#3F3B55"
+                    }]
+                },
+                options: barOptions
+            });
+
+            // Items growth
+            var chart_itemsGrowth = new Chart(itemsGrowth, {
+                type: 'line',
+                maintainAspectRatio: false,
+                data: {
+                    labels: [{{ labels|raw }}],
+                    datasets: [{
+                        label: 'Total items',
+                        data: [{{ itemsGrowth }}],
+                        fill: false,
+                        borderColor: "#3F3B55",
+                        lineTension: 0
+                    }]
+                },
+                options: lineOptions
+            });
+
+            // Loans per month
+            var chart_loansAddedByMonth = new Chart(loansAddedByMonth, {
+                type: 'bar',
+                maintainAspectRatio: false,
+                data: {
+                    labels: [{{ labels|raw }}],
+                    datasets: [{
+                        label: 'Loans',
+                        data: [{{ loansAddedByMonth }}],
+                        backgroundColor: "#39cccc"
+                    }]
+                },
+                options: barOptions
+            });
+
+            // Loans per month
+            var chart_income = new Chart(income, {
+                type: 'bar',
+                maintainAspectRatio: false,
+                data: {
+                    labels: [{{ labels|raw }}],
+                    datasets: [
+                        {
+                            label: 'Membership',
+                            data: [{{ membershipFeesByMonth }}],
+                            backgroundColor: "#9dbc6b"
+                        }, {
+                            label: 'Other',
+                            data: [{{ otherFeesByMonth }}],
+                            backgroundColor: "#ff741e"
+                        }
+                    ]
+                },
+                options: barOptions_stacked
+            });
+
+        });
+
+    </script>
+{% endblock %}

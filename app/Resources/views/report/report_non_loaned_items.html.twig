@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block pageCss %}
+{% endblock %}
+
+{% block title %}{{ pageTitle }}{% endblock %}
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div id="report-filter">
+
+        <input type="hidden" class="report-date-picker">
+        <input type="hidden" name="date_from" id="date_from" value="">
+        <input type="hidden" name="date_to" id="date_to" value="">
+
+        <form method="GET">
+            <div class="col-md-11">
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        <label>Date range</label>
+                        <select class="form-control" name="time">
+                            <option value="all" {%if app.request.get('time') == 'all'%}selected{% endif %}>All time (ie never loaned)</option>
+                            <option value="1mth" {%if app.request.get('time') == '1mth'%}selected{% endif %}>No loans in last month</option>
+                            <option value="6mth" {%if app.request.get('time') == '6mth'%}selected{% endif %}>No loans in last 6 months</option>
+                            <option value="12mth" {%if app.request.get('time') == '12mth'%}selected{% endif %}>No loans in last 12 months</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <label>Filter by item name, code</label>
+                        <input type="text" name="search" class="form-control" value="{{ app.request.get('search') }}" placeholder="Item name or code">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-1">
+                <label>&nbsp;</label>
+                <button type="submit" class="btn bg-green pull-right form-control">Filter</button>
+            </div>
+
+            <div class="col-md-12">
+                <div class="page-help">
+                    This report shows all active items that have not been loaned or reserved in the selected date range.
+                    You can use it to decide which items to remove from your library.<br>
+                    Items will not show on this report if they have reservations or loans dated in the future,
+                    even if they have no loans in the selected date range.
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-sm-12 table-responsive">
+        <table cellspacing="0" class="table table-hover table-striped" id="report-non-loaned-items-table">
+            <thead>
+            {% for column in tableHeader %}
+            <th>{{ column }}</th>
+            {% endfor %}
+            </thead>
+
+            {% for row in tableRows %}
+            <tr id="tr{{ row.id }}">
+                {% for column in row.data %}
+                <td>{{ column }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+
+            <tfoot>
+            {% for column in tableHeader %}
+            <td style="border-top:1px solid #aaa; font-weight:bold"></td>
+            {% endfor %}
+            </tfoot>
+
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        var dateFrom = "";
+        var dateTo = "";
+    </script>
+<script src="/js/pages/report.js"></script>
+{% endblock %}

@@ -1,0 +1,46 @@
+# app/config/security_https.yml
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: bcrypt
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
+
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username
+
+    firewalls:
+        main:
+            pattern: ^/
+            form_login:
+                provider: fos_userbundle
+                csrf_token_generator: security.csrf.token_manager
+                always_use_default_target_path: true
+                default_target_path: auto_update
+            logout:
+                path:   logout
+                target: home
+            anonymous:    true
+            oauth:
+                failure_path: /login
+                login_path: /login
+                check_path: /connect_check
+                default_target_path: social_welcome
+                resource_owners:
+                    facebook: "/login/check-facebook"
+                    google: "/login/check-google"
+                    twitter: "/login/check-twitter"
+                oauth_user_provider:
+                    service: app.provider.oauth
+
+    access_control:
+        - { path: ^/admin, role: ROLE_ADMIN, requires_channel: https }
+        - { path: ^/member, role: ROLE_USER, requires_channel: https }
+        - { path: ^/, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/reset, role: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+
+

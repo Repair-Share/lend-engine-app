@@ -1,0 +1,59 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: cy-GB, Welsh (Wales)
+# Tagged: FOSUserBundle
+# Exported by: Chris
+# Exported at: Wed, 23 May 2018 10:19:01 +0100
+---
+group.edit.submit: Diweddaru grwp
+group.show.name: 'Enw grŵp '
+group.new.submit: 'Creu grŵp '
+group.flash.updated: 'Mae''r grŵp wedi cael ei ddiweddaru '
+group.flash.created: Mae'r grŵp wedi cael ei greu
+group.flash.deleted: Mae'r grŵp wedi cael ei ddileu
+Invalid credentials.: Enw defnyddiwr neu cyfrinair annilys
+security.login.username: 'Enw defnyddiwr:'
+security.login.password: 'Cyfrinair:'
+security.login.remember_me: Cofiwch fi
+security.login.submit: Mewngofnodi
+profile.show.firstName: Enw cyntaf
+profile.show.lastName: Cyfenw
+profile.show.email: E-bost
+profile.edit.submit: Diweddaru
+profile.flash.updated: Mae eich proffil wedi cael ei ddiweddaru
+change_password.submit: Newid cyfrinair
+change_password.flash.success: Mae eich cyfrinair wedi cael ei newid
+registration.check_email: '... cymerwch olwg ar eich mewnflwch a gweld os ydi o yna.'
+registration.confirmed: Mae eich cyfrif yn weithredol ac rydych wedi mewngofnodi!
+registration.back: Parhau...
+registration.submit: Cofrestru
+registration.flash.user_created: Mae e-bost wedi cael ei yrru atoch. Mae'n cynnwys cysylltiad mae'n rhaid i chi bwyso i actifadu eich cyfrif.
+registration.email.subject: Croeso!
+registration.email.message: |-
+  I orffen actifadu eich cyfrif, ewch i <br> >br>
+  %cadarnhadUrl%
+resetting.password_already_requested: Mae'r cyfrinair ar gyfer y defnyddiwr yma eisoes wedi cael ei ofyn amdano yn y 24 awr diwethaf.
+resetting.check_email: "Mae e-bost wedi cael ei anfon. Mae'n cynnwys dolen mae'n rhaid i chi bwyso i ailosod eich cyfrinair.\nOs na ydych yn cael e-bost, gwiriwch eich ffolder sbam neu disgwyl 5 munud ac yna trïo eto. "
+resetting.request.invalid_username: Dydi'r enw defnyddiwr neu e-bost ''%enwdefnyddiwr%'' ddim yn bodoli.
+resetting.request.username: 'Enw defnyddiwr neu e-bost:'
+resetting.request.submit: Ailosod cyfrinair
+resetting.reset.submit: Newid cyfrinair
+resetting.flash.success: Mae'r cyfrinair wedi cael ei ailosod yn llwyddiannus
+resetting.email.subject: Ailosod Cyfrinair
+resetting.email.message: |-
+  <br>
+  I ailosod eich cyfrinair, pwyswch y ddolen isod:<br><br>
+  <a href=''%cadarnhadUrl%''>%cadarnhadUrl%</a>
+layout.logout: Allgofnodi
+layout.login: Mewngofnodi
+layout.register: Cofrestru
+layout.logged_in_as: Wedi mewngofnodi fel %enwdefnyddiwr%
+form.group_name: 'Enw grŵp:'
+form.username: 'Enw defnyddiwr:'
+form.current_password: 'Cyfrinair presennol:'
+form.password: 'Cyfrinair:'
+form.password_confirmation: 'Ailadrodd cyfrinair:'
+form.new_password: 'Cyfrinair newydd:'
+form.new_password_confirmation: 'Ailadrodd cyfrinair newydd:'
+security.login.forgot_password: ""

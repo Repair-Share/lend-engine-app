@@ -1,0 +1,536 @@
+{# app/Resources/views/product/item.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block pageTitle %}{{ title }}{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+
+    <div id="item-inventory-detail">
+        {% if item.id %}
+            {% if item.inventoryLocation.id == 1 %}
+                <div class="label bg-teal pull-left">On loan</div>
+                <span class="item-inventory-detail-span">
+                to {{ activeLoanInformation.contactName }} on loan
+                <a href="{{ path('public_loan', {loanId: activeLoanInformation.loanId}) }}">{{ activeLoanInformation.loanId }}</a>,
+                due back {{ activeLoanInformation.dateTo|date("F d") }}
+            </span>
+            {% elseif activeLoanInformation|length > 0 %}
+                <div class="label bg-orange">Reserved</div>
+                <span class="item-inventory-detail-span">
+                    by <a href="{{ path('public_loan', {loanId: activeLoanInformation.loanId}) }}">{{ activeLoanInformation.contactName }}</a>
+                    from {{ activeLoanInformation.dateFrom|date("F d") }} to {{ activeLoanInformation.dateTo|date("F d") }}
+                </span>
+            {% elseif item.inventoryLocation.isAvailable == 1 %}
+                <div class="label bg-green">Available</div>
+            {% else %}
+                <div class="label bg-yellow">On hold</div>
+            {% endif %}
+
+            <span class="item-inventory-detail-span">Location:</span>
+            <span class="item-inventory-detail-span">
+                <strong>
+                {% if isMultiSite and item.inventoryLocation.id != 1%}
+                    {{ item.inventoryLocation.site.name }} :
+                {% endif %}
+                    {{ item.inventoryLocation.name }}
+                </strong>
+            </span>
+
+            {% if item.assignedTo %}
+                <span class="item-inventory-detail-span">Assigned to:</span>
+                <span class="item-inventory-detail-span"><strong>{{ item.assignedTo.Name }}</strong></span>
+            {% endif %}
+
+            {% if item.inventoryLocation.id != 1 %}
+                <span class="item-inventory-detail-span">
+                    <a class="modal-link" href="{{ path('item_move', {id: item.id}) }}">Move / Assign</a>
+                </span>
+            {% endif %}
+
+        {% else %}
+            {{ form_row(form.inventoryLocation) }}
+        {% endif %}
+    </div>
+
+    <div class="nav-tabs-custom">
+
+        <ul class="nav nav-tabs" id="item_tabs">
+            <li class="active">
+                <a href="#tab_1">Item information</a>
+            </li>
+            <li>
+                <a href="#prompts" id="set-prompts">Check in/out</a>
+            </li>
+            <li>
+                <a href="#custom_fields" id="set-custom-fields">Custom Fields</a>
+            </li>
+            {% if item.id %}
+                <li>
+                    <a href="{{ path('item_history', {id: item.id}) }}" class="media_node" rel="tooltip"
+                       data-toggle="tabajax" data-target="#item_info">Item history</a>
+                </li>
+                {% if tenantInformation.feature('ItemAttachment') %}
+                <li>
+                    <a href="{{ path('item_files', {id: item.id}) }}" class="media_node" rel="tooltip"
+                       data-toggle="tabajax" data-target="#item_files">Attachments</a>
+                </li>
+                {% endif %}
+                <li>
+                    <a href="{{ path('item_reservations_html', {itemId: item.id}) }}" class="media_node" rel="tooltip"
+                       data-toggle="tabajax" data-target="#item_reservations_html">Reservations</a>
+                </li>
+            {% endif %}
+        </ul>
+
+        <div class="tab-content">
+
+            <div class="tab-pane active" id="tab_1">
+                <div class="row">
+                    <div class="col-md-4">
+                        {{ form_errors(form) }}
+                        {% if help is defined %}
+                            <span class="help">{{ help }}</span>
+                        {% endif %}
+
+                        {{ form_row(form.name) }}
+
+                        <div class="row">
+                            <div class="col-md-5">
+                                {% if tenantInformation.codeStub == true %}
+                                {% else %}
+                                {% endif %}
+                                {{ form_row(form.sku) }}
+                            </div>
+                            <div class="col-md-7">
+                                {{ form_row(form.serial) }}
+                            </div>
+                        </div>
+
+                        {{ form_row(form.note) }}
+
+                        {{ form_row(form.tags) }}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(form.loanFee) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.maxLoanDays) }}
+                            </div>
+                        </div>
+
+                        <div class="row" style="{% if not tenantInformation.feature('Deposits') %}display: none;{% endif %}">
+                            <div class="col-md-6">
+                                {{ form_row(form.depositAmount) }}
+                            </div>
+                            <div class="col-md-6 help-block">
+                                <br>When this item is checked out, a deposit will need to be taken.
+                            </div>
+                        </div>
+
+                        {{ form_row(form.condition) }}
+                        {{ form_row(form.keywords) }}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(form.priceCost) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.priceSell) }}
+                            </div>
+                        </div>
+
+                        <div class="row" style="{% if tenantInformation.feature('Deposits') %}display: none;{% endif %}">
+                            <div class="col-md-12">
+                                <br>
+                                <div class="upgrade">
+                                    On paid plans you can set up items that require refundable deposits.
+                                    <a href="{{ path('billing') }}">Upgrade / see plans</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        {{ form_row(form.brand) }}
+
+                        {{ form_row(form.description) }}
+
+                        {{ form_row(form.componentInformation) }}
+                        {{ form_row(form.careInformation) }}
+
+                        <div class="form-group">
+                            <label class="control-label">Item type</label>
+                            {{ form_row(form.itemType) }}
+                            {% if item.itemType %}
+                                {{ item.itemType.name }}
+                            {% else %}
+                                <i class="fa fa-exclamation-circle" style="color: #ff741e;"></i>
+                                Not set
+                            {% endif %}
+                            {% if item.id %}
+                                <a class="pull-right" href="{{ path('change_item_type', {itemId: item.id}) }}">Change</a>
+                            {% endif %}
+                            <div class="help-block">
+                                Item type is used internally across the Lend Engine network to learn more about what people are lending and borrowing.
+                                Members don't see this information.
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                {% if item.id %}
+                                <div class="">
+                                    <a class="btn btn-xs btn-success" href="{{ path('public_product', {productId: item.id}) }}">View on member site</a>
+                                </div>
+                                {% endif %}
+                                {{ form_row(form.showOnWebsite) }}
+                                {{ form_row(form.isReservable) }}
+                            </div>
+                        </div>
+
+                        <div class="row" id="item-thumbnails">
+                            {% if item.images | length == 0 %}
+                                <div class="col-md-12" id="no-images">
+                                    No images uploaded yet
+                                </div>
+                            {% endif %}
+                            <div id="image-thumbnails-closer"></div>
+                            {{ form_row(form.imageName) }}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12" style="margin-top:10px">
+                                {% if item.id %}
+                                    <div id="images-processing" class="page-help" style="display:none">
+                                        <img src="/images/ajax-loader.gif">
+                                        Uploading and processing images ... this might take a few moments.
+                                    </div>
+
+                                    <div id="imageUploader" class="dropzone"></div>
+                                {% else %}
+                                    Save item before uploading images.
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="tab-pane" id="prompts" style="position: relative">
+
+                {% if isMultiSite %}
+                <div class="row" {% if not tenantInformation.feature('Site') %}style="display:none"{% endif %}>
+                    <div class="col-md-12">
+                        {{ form_row(form.sites) }}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="row" {% if not tenantInformation.feature('CheckInPrompt') %}style="display:none"{% endif %}>
+                    <div class="col-md-6">
+                        {{ form_row(form.checkInPrompts) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.checkOutPrompts) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        {% if tenantInformation.feature('CheckInPrompt') %}
+                        <div class="page-help">
+                            Check in and Check out prompts are useful to ensure you have captured all the information you need when you are checking items in or out.
+                            Add them in the settings screens.
+                        </div>
+                        {% else %}
+                        <div class="upgrade">
+                            Check in and check out prompts are not available on your plan.
+                            <a href="{{ path('billing') }}">Upgrade / view plans</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="custom_fields" style="position: relative">
+                <div class="row">
+                    <div class="col-md-6">
+                        {% if customFieldsExist %}
+                            {{ form_rest(form) }}
+                            <div class="page-help">
+                                * Fields with an asterisk are shown on your Lend Engine site.
+                            </div>
+                        {% else %}
+
+                            {% if tenantInformation.feature('ProductField') %}
+                            <div class="page-help">
+                                Add extra custom fields at Settings &raquo; Item fields.
+                            </div>
+                            {% else %}
+                            <div class="upgrade">
+                                Item custom fields are not available on your plan.
+                                <a href="{{ path('billing') }}">Upgrade / view plans</a>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="item_info">
+                <!-- ajax-content -->
+            </div>
+
+            {% if tenantInformation.feature('ItemAttachment') %}
+            <div class="tab-pane" id="item_files">
+                <!-- ajax-content -->
+            </div>
+            {% endif %}
+
+            <div class="tab-pane" id="item_reservations_html">
+                <!-- ajax-content -->
+            </div>
+
+        </div>
+        <!-- /.tab-content -->
+    </div>
+
+    <div class="page-controls">
+        <button type="submit" id="save-item" name="submitForm" value="save" class="btn bg-green btn-loading pull-right">Save <span
+                    class="hidden-xs">item</span></button>
+        <button type="submit" id="save-and-new" name="submitForm" value="saveAndNew"
+                class="btn btn-default btn-loading hidden-xs">Save
+            and add another
+        </button>
+    </div>
+
+    {{ form_end(form) }}
+
+    {{ source('partials/image-thumb-js.html') }}
+
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+
+        $(document).ready(function () {
+
+            $('#item_tabs a').click(function (e) {
+                e.preventDefault(); $(this).tab('show');
+                setUpSelectMenus();
+            });
+
+            var itemId = {% if item.id %}{{ item.id }}{% else %}null{% endif %};
+
+            Dropzone.autoDiscover = false;
+            var filelist = [];
+            var resizeImgList = [];
+
+            {% if item.id %}
+
+            Dropzone.options.imageUploader = {
+                url: "{{ oneup_uploader_endpoint('gallery') }}",
+                autoProcessQueue: false,
+                uploadMultiple: true,
+                addRemoveLinks : true,
+                method: "post",
+                paramName: "file",
+                acceptedFiles: "image/*",
+                maxFilesize: 2,
+                init: function() {
+
+                    imageUploader = this; // closure
+                    var canvas = document.createElement('canvas');
+
+                    // You might want to show the submit button only when
+                    // files are dropped here:
+                    this.on('addedfile', function(file) {
+                        var max_w = 800;
+                        var max_h = 800;
+
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            var img = new Image();
+                            img.onload = function() {
+                                var w = img.width;
+                                var h = img.height;
+                                var ratio_w = 1;
+                                var ratio_h = 1;
+                                if(w > max_w) {
+                                    ratio_w = max_w / w;
+                                }
+                                if(h > max_h) {
+                                    ratio_h = max_h / h;
+                                }
+                                var ratio = Math.min(ratio_w, ratio_h);
+                                w = Math.floor(w * ratio);
+                                h = Math.floor(h * ratio);
+                                canvas.width = w;
+                                canvas.height = h;
+                                var ctx = canvas.getContext('2d', {preserveDrawingBuffer: true});
+                                ctx.drawImage(img, 0, 0, w, h);
+                                var dataURL = canvas.toDataURL('image/jpeg', 0.5);
+                                var a = dataURL.split(',')[1];
+                                var blob = atob(a);
+                                var array = [];
+                                for(var k = 0; k < blob.length; k++) {
+                                    array.push(blob.charCodeAt(k));
+                                }
+                                var data = new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+                                resizeImgList.push(data);
+                                imageUploader.processFile(data);
+                                imageUploader.removeFile(file);
+                            };
+                            img.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+
+                    this.on('removedfile', function(file) {
+                        var k = filelist.indexOf(file);
+                        if (k > -1) {
+                            filelist.splice(k, 1);
+                            resizeImgList.splice(k, 1);
+                        }
+                    });
+
+                    this.on("sending", function (file, xhr, formData) {
+                        formData.append("itemId", itemId);
+                        console.log("Uploading file ... ");
+                        startImagesUploading();
+                    });
+
+                    this.on("success", function (file, serverResponse) {
+                        console.log(file);
+                        if (file.status == "success") {
+                            console.log("Uploaded OK");
+                            insertFileThumbnail(serverResponse.newFileName);
+                        }
+                    });
+
+                    this.on("queuecomplete", function (file) {
+                        console.log("All files have finished uploading");
+                        finishImagesUploading();
+                    });
+
+                }
+            };
+
+            var imageUploader = new Dropzone('div#imageUploader', Dropzone.options.imageUploader);
+
+            var thumbNailBlock = $("#item-thumbnails");
+
+            // Set the correct thumbnail
+            thumbNailBlock.on("click", ".image-selector", function () {
+                var imageName = $(this).attr('image-name');
+                setMainImage(imageName);
+            });
+
+            // Remove an image
+            thumbNailBlock.on("click", ".image-remove", function () {
+                var imageName = $(this).attr('image-name');
+                var imageDiv = $(this).parent();
+                $(this).html('<img src="/images/ajax-loader.gif">');
+                $.get(
+                        "/admin/item/{{ item.id }}/image/" + imageName + "/remove",
+                        {item: "{{ item.id }}"},
+                        function (data) {
+                            if (data == "ok") {
+                                console.log("removing image " + imageName);
+                                imageDiv.fadeOut(500).remove();
+                            }
+                        },
+                        "json");
+            });
+
+            // Rotate an image
+            thumbNailBlock.on("click", ".image-rotate", function () {
+                var imageName = $(this).attr('image-name');
+                var imageDiv = $(this).parent();
+                var image = imageDiv.find('.img-thumbnail');
+                var triggerLink = $(this);
+                triggerLink.html('<img src="/images/ajax-loader.gif">');
+                if (triggerLink.hasClass('go-left')) {
+                    rotationDirection = 'left';
+                } else {
+                    rotationDirection = 'right';
+                }
+                $.get(
+                        "/admin/image/" + imageName + "/rotate",
+                        {rotate: rotationDirection},
+                        function (data) {
+                            if (data == "ok") {
+                                d = new Date();
+                                image.attr("src", image.attr("src")+"?"+d.getTime());
+                                if (rotationDirection == 'left') {
+                                    triggerLink.html('<i class="fa fa-rotate-left"></i>');
+                                } else {
+                                    triggerLink.html('<i class="fa fa-rotate-right"></i>');
+                                }
+                            }
+                        },
+                        "json");
+            });
+
+            function insertFileThumbnail(imageName) {
+                var source = $("#image-thumbnail-template").html();
+                var template = Handlebars.compile(source);
+                var image = {
+                    imageName: imageName,
+                    imageId: imageName.replace(/\.[^/.]+$/, ""),
+                    imagePath: "{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/" + imageName
+                };
+                var html = template(image);
+                $("#image-thumbnails-closer").before(html);
+                $("#no-images").remove();
+            }
+
+            function setMainImage(imageName) {
+                console.log("Setting as main image: " + imageName);
+                $("#item_imageName").val(imageName);
+                $(".image-selector").removeClass("active").html("Set as main image");
+                var imageId = imageName.replace(/\.[^/.]+$/, "");
+                $("#set_" + imageId).addClass("active").html("Main image");
+            }
+
+            function startImagesUploading() {
+                $("#save-item").attr('disabled', true).html("Files uploading ...");
+                $("#save-and-new").hide();
+                $("#images-processing").show();
+            }
+
+            function finishImagesUploading() {
+                $("#save-item").attr('disabled', false).html("Save item");
+                $("#save-and-new").show();
+                $("#images-processing").hide();
+            }
+
+            // Insert existing images
+            {% if item.images | length > 0 %}
+            {% for image in item.images %}
+            insertFileThumbnail("{{ image.imageName }}");
+            {% endfor %}
+            setMainImage("{{ item.imageName }}");
+            {% endif %}
+
+            {% endif %}
+
+        });
+    </script>
+    <script src="/js/pages/item.js"></script>
+{% endblock %}

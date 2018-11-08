@@ -1,0 +1,16 @@
+{# app/Resources/views/default/form.html.twig #}
+{# Demo to test all field types #}
+
+{% extends 'base.html.twig' %}
+
+{% block pageTitle %}{{ title }}{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+
+    {{ form_errors(form) }}
+
+    {{ form_end(form) }}
+
+{% endblock %}

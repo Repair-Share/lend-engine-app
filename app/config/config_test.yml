@@ -1,0 +1,35 @@
+imports:
+    - { resource: config_dev.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+        name: MYSESSION
+    profiler:
+        collect: false
+
+monolog:
+    handlers:
+        main:
+            type:   stream
+            path:   "%kernel.logs_dir%/%kernel.environment%.log"
+            level:  warning
+            channels: ["!doctrine"]
+        console:
+            type:   console
+            bubble: false
+            level:  warning
+            channels: ["!doctrine"]
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false
+
+swiftmailer:
+    disable_delivery: true
+
+security:
+    firewalls:
+        main: # This should be your firewall name
+          http_basic: true

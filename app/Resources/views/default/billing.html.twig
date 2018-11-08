@@ -1,0 +1,222 @@
+{% extends 'base.html.twig' %}
+
+{% block pageTitle %}My account{% endblock %}
+
+{% block title %}My account{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+
+        <div class="col-md-2">
+            {{ knp_menu_render('settingsMenu') }}
+        </div>
+
+        <div class="col-md-10" style="padding-left: 30px">
+
+            {% if tenantInformation.accountStatus == 'CANCELLED' %}
+                <div class="alert alert-danger">
+                    Your account has been cancelled
+                </div>
+            {% endif %}
+
+            {% if tenantInformation.plan %}
+            <p>
+
+            </p>
+            {% else %}
+            <h1>Choose a plan.</h1>
+            <p>
+                If you choose a paid plan, you'll be prompted to add credit card details, which will be charged each month on the day you first subscribed.
+                <br>You can cancel at any time. Our subscriptions are handled securely by Stripe.com and we never see or store your card details.
+            </p>
+            {% endif %}
+
+
+            <div class="row">
+
+                <style>
+                    div.plan-content {
+                        padding: 0 20px 20px 20px;
+                    }
+
+                    div.plan-wrapper.active {
+                        border: 1px solid #3f3b55;
+                        border-radius: 4px;
+                    }
+
+                    .plan-active {
+                        background-color: #3f3b55;
+                        padding: 5px;
+                        font-size: 0.8em;
+                        color: #eec853;
+                        font-weight: bold;
+                    }
+
+                    h3 {
+                        font-weight: bolder;
+                        padding-bottom: 15px;
+                        border-bottom: 1px solid #eee;
+                    }
+
+                    .plan-content ul {
+                        list-style: none;
+                        padding-left: 0;
+                    }
+
+                    .plan-content ul li {
+                        border-bottom: 1px dotted #eee;
+                        padding: 5px 0;
+                    }
+
+                    .plan-content .price {
+                        font-size: 20px;
+                        padding-bottom: 15px;
+                    }
+
+                    .plan-content .price span {
+                        font-size: 13px;
+                    }
+                </style>
+
+                <form method="POST" action="{{ path('billing') }}" id="subsForm">
+
+                    <input type="hidden" name="plan" id="planCode" value="">
+                    <input type="hidden" id="stripeToken" name="stripeToken" value="">
+
+                    {% for plan in plans %}
+                        <div class="col-md-4">
+
+                            <div class="plan-wrapper {% if tenantInformation.plan == plan.code %}active{% endif %}">
+
+                                {% if tenantInformation.plan == plan.code %}
+                                    <div class="plan-active">This is your plan</div>
+                                {% else %}
+                                    <div style="padding: 4px">&nbsp;</div>
+                                {% endif %}
+
+                                <div class="plan-content">
+                                    <h3>{{ plan.name }}</h3>
+
+                                    {% if plan.code == 'free' %}
+
+                                        <div class="price">Nothing!</div>
+                                        <ul>
+                                            <li><i class="fa fa-check"></i> Up to 100 items</li>
+                                            <li><i class="fa fa-check"></i> Up to 100 members</li>
+                                            <li><i class="fa fa-check"></i> Unlimited loans</li>
+                                            <li><i class="fa fa-check"></i> Unlimited reservations</li>
+                                            <li><i class="fa fa-check"></i> Member website</li>
+                                            <li><i class="fa fa-check"></i> Credit card processing</li>
+                                        </ul>
+
+                                    {% elseif plan.code == 'standard' %}
+
+                                        <div class="price">£5.00 <span>GBP per month*</span></div>
+                                        <ul>
+                                            <li>As free plan plus:</li>
+                                            <li><i class="fa fa-check"></i> Unlimited items</li>
+                                            <li><i class="fa fa-check"></i> Unlimited members</li>
+                                            <li><i class="fa fa-check"></i> Automated emails</li>
+                                            <li><i class="fa fa-check"></i> Item custom fields</li>
+                                            <li><i class="fa fa-check"></i> Item attachments</li>
+                                            <li><i class="fa fa-check"></i> Refundable deposits</li>
+                                            <li><i class="fa fa-check"></i> Check-out prompts</li>
+                                            <li><i class="fa fa-check"></i> Check-in prompts</li>
+                                            <li><i class="fa fa-check"></i> Member custom fields</li>
+                                            <li><i class="fa fa-check"></i> Multiple language support</li>
+                                            <li><i class="fa fa-check"></i> Attach files to contacts</li>
+                                            <li><i class="fa fa-check"></i> Customise member emails</li>
+                                            <li><i class="fa fa-check"></i> Private member site (login required)</li>
+                                            <li><i class="fa fa-check"></i> Custom web pages and menu links</li>
+                                        </ul>
+
+                                    {% else %}
+
+                                        <div class="price">£20 <span>GBP per month*</span></div>
+                                        <ul>
+                                            <li>As standard plan plus:</li>
+                                            <li><i class="fa fa-check"></i> Multiple sites</li>
+                                            <li><i class="fa fa-check"></i> Custom domain / URL</li>
+                                            <li><i class="fa fa-check"></i> SSL security</li>
+                                        </ul>
+
+                                    {% endif %}
+
+                                    {% if tenantInformation.plan == plan.code %}
+                                        <br><br>
+                                        <a class="btn btn-danger" href="{{ path('cancel_subscription', {id: tenantInformation.subscriptionId}) }}">Cancel subscription</a>
+                                        <div class="help-block" style="font-size: 0.8em">
+                                            Your account will become inaccessible, and no refunds will be made.
+                                            Data will be held for 30 days and then removed, unless you ask us to remove it sooner.
+                                        </div>
+                                    {% else %}
+                                        <br><br>
+                                        <button type="submit" id="{{ plan.stripeCode }}" data-amount="{{ plan.amount }}" class="btn btn-success subscribe-submit" title="{{ plan.stripeCode }}">Choose this plan</button>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+
+                        </div>
+                    {% endfor %}
+                </form>
+
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12" style="padding: 30px">
+                    * If your card is not in GBP, then your bank will convert to your local currency.
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block pagejs %}
+    {#If we've not already included it#}
+    {% if tenantInformation.stripeAccessToken|length == 0 %}
+        <script src="https://checkout.stripe.com/checkout.js"></script>
+    {% endif %}
+
+    <script>
+
+        var subscriptionHandler = StripeCheckout.configure({
+            key: '{{ billing_public_key }}',
+            locale: 'auto',
+            token: function(token) {
+                $("#stripeToken").val(token.id);
+                $("#subsForm").submit();
+                waitButton($('.subscribe-submit'));
+            }
+        });
+
+        // When user clicks payment button, route through Stripe if appropriate
+        $(document).on('click', ".subscribe-submit", function(e) {
+
+            var paymentAmount = $(this).data('amount');
+            var planCode = $(this).attr('id');
+            $("#planCode").val(planCode);
+
+            if (planCode == 'free') {
+                $("#subsForm").submit();
+                waitButton($('.subscribe-submit'));
+            } else {
+                // Open Checkout with further options:
+                subscriptionHandler.open({
+                    name: 'Lend Engine',
+                    zipCode: false,
+                    currency: 'gbp',
+                    allowRememberMe: false,
+                    email:  '{{ tenantInformation.accountOwnerEmail }}',
+                    panelLabel: "Subscribe now"
+                });
+                e.preventDefault();
+            }
+        });
+    </script>
+{% endblock %}

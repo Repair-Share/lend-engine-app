@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Error</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    {% stylesheets
+    '@AppBundle/Resources/css/bootstrap.css'
+    '@AppBundle/Resources/admin/css/AdminLTE.css'
+    '@AppBundle/Resources/admin/css/skin-black-light.css'
+    '@AppBundle/Resources/admin/css/main.css'
+    filter='cssrewrite'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+    {% block body %}{% endblock %}
+</div>
+
+{% javascripts
+'@AppBundle/Resources/js/jQuery-2.1.4.min.js'
+'@AppBundle/Resources/js/bootstrap.js'
+'@AppBundle/Resources/admin/js/plugins/adminLTE.js'
+filter='uglifyjs2'
+%}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+
+{% javascripts
+'@AppBundle/Resources/js/admin.js'
+filter='uglifyjs2' %}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+
+</body>
+</html>

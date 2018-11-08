@@ -1,0 +1,67 @@
+{# app/Resources/views/emails/reservation_confirm.html.twig #}
+
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}{{ 'le_email.reservation_confirm.title'|trans() }}{% endblock %}
+
+{% block content %}
+
+    {% if message %}
+        <div style="padding: 10px; background-color: #d5f996; border-radius: 4px; margin-bottom: 10px;">
+            {{ message }}
+        </div>
+    {% endif %}
+
+    <p>{{ tenantInformation.getEmailReservationHeader|raw }}</p>
+    <br>
+
+    <table width="100%">
+        <thead>
+        <tr>
+            <th></th>
+        </tr>
+        </thead>
+        {% for row in loanRows %}
+            <tr>
+                <td valign="top">
+
+                    <strong>
+                        {{ row.inventoryItem.name }}
+                    </strong>
+
+                    <div style="padding: 4px;">
+                        {{ row.dueOutAt|date('d F g:i a') }} - {{ row.dueInAt|date('d F g:i a') }}
+                    </div>
+
+                    {% if row.inventoryItem.description|length > 0 %}
+                        <div style="padding: 4px; font-size: 12px;">
+                            <strong>{{ 'le_email.item_description'|trans() }}:</strong><br />
+                            {{ row.inventoryItem.description|nl2br }}</div>
+                    {% endif %}
+
+                    {% if row.inventoryItem.componentInformation|length > 0 %}
+                        <div style="padding: 4px; font-size: 12px;">
+                            <strong>{{ 'le_email.item_contains'|trans() }}:</strong><br />
+                            {{ row.inventoryItem.componentInformation|nl2br }}</div>
+                    {% endif %}
+
+                    {% if row.inventoryItem.fileAttachments|length > 0 %}
+                        {% for file in row.inventoryItem.fileAttachments %}
+                            {% if file.sendToMemberOnCheckout == true %}
+                                <div style="padding: 4px; font-size: 12px">{{ 'le_email.see_attachment'|trans() }} {{ file.fileName }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <br>
+    <p>{{ tenantInformation.getEmailReservationFooter|raw }}</p>
+
+{% endblock %}

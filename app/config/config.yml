@@ -1,0 +1,249 @@
+imports:
+    - { resource: "../../src/AppBundle/DynamicParametersLoader.php" }
+    - { resource: parameters.yml }
+    - { resource: services.yml }
+
+parameters:
+    locale: en
+
+framework:
+    translator:      { fallbacks: ["%locale%"] }
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: ~
+    validation:      { enabled: true, enable_annotations: true }
+    templating:
+        engines: ['twig']
+    assets:
+        version: 1.0.18
+        version_format:  '%%s?v=%%s'
+    default_locale:  "%locale%"
+    trusted_hosts:   ~
+    trusted_proxies: ~
+    session:
+        # handler_id set to null will use default session handler from php.ini
+        handler_id:  ~
+    fragments:       ~
+    http_method_override: true
+    serializer:
+        enable_annotations: true
+
+# Twig Configuration
+twig:
+    date:
+        timezone:     Europe/London
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+    form_themes:      [':form:fields.html.twig']
+    globals:
+        app_version:      "%app_version%"
+        stripe_client_id: "%stripe_client_id%"
+        rollbar_client_token : "%rollbar_client_token%"
+        billing_public_key: "%billing_public_key%"
+
+# Assetic Configuration
+assetic:
+    debug:          "%kernel.debug%"
+    use_controller: "%kernel.debug%"
+    bundles:        [ FOSUserBundle ]
+    filters:
+        cssrewrite: ~
+        uglifyjs2:
+            bin: /usr/local/bin/uglifyjs
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                driver:   pdo_mysql
+                host:     "%database_host%"
+                port:     "%database_port%"
+                dbname:   "%database_name%"
+                user:     "%database_user%"
+                password: "%database_password%"
+                charset:  utf8mb4
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+        mappings:
+            gedmo_translatable:
+                type: annotation
+                prefix: Gedmo\Translatable\Entity
+                dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translatable/Entity"
+                alias: GedmoTranslatable # (optional) it will default to the name set for the mapping
+                is_bundle: false
+
+stof_doctrine_extensions:
+    default_locale: "en"
+    translation_fallback: true
+    persist_default_translation: false
+    orm:
+        default:
+            translatable: true
+
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/DoctrineMigrations"
+    namespace: Application\Migrations
+    table_name: migration_versions
+    name: Application Migrations
+
+# Swiftmailer Configuration
+swiftmailer:
+    transport: "%mailer_transport%"
+    host:      "%mailer_host%"
+    username:  "%mailer_user%"
+    password:  "%mailer_password%"
+    spool:     { type: memory }
+
+# FOS User bundle
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: AppBundle\Entity\Contact
+    from_email:
+        address: hello@lend-engine.com
+        sender_name: Lend Engine
+    resetting:
+        token_ttl: 3600
+        email:
+            template: emails/fos_password_reset.email.twig
+    registration:
+        confirmation:
+            enabled: true
+            template: emails/fos_registration.email.twig
+        form:
+            type: AppBundle\Form\RegistrationType
+            validation_groups: [AppBundleRegistration]
+    profile:
+        form:
+            type: AppBundle\Form\ProfileType
+            validation_groups: [AppBundleProfile]
+    service:
+        mailer: service.fos_user_mailer
+
+endroid_twitter:
+    consumer_key: "%twitter_consumer_key%"
+    consumer_secret: "%twitter_consumer_secret%"
+    access_token: '...'
+    access_token_secret: '...'
+
+# File system bridge to AWS
+oneup_flysystem:
+    adapters:
+        product_adapter_local:
+            local:
+                directory: "%kernel.root_dir%/../web/images/products"
+        product_adapter:
+             awss3v3:
+                 client: lendengine.s3_client
+                 bucket: lend-engine
+                 prefix: ''
+
+    filesystems:
+        product_image_fs:
+            adapter: product_adapter
+            mount:   product_image_fs
+
+# Image and file uploader
+oneup_uploader:
+    mappings:
+        gallery:
+            frontend: dropzone
+            namer: uploader.image_namer
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.product_image_fs_filesystem
+        files:
+            frontend: dropzone
+            namer: uploader.file_namer
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.product_image_fs_filesystem
+
+hwi_oauth:
+    # name of the firewall in which this bundle is active, this setting MUST be set
+    firewall_names: [main]
+    fosub:
+        username_iterations: 30
+        properties:
+            # these properties will be used/redefined later in the custom FOSUBUserProvider service.
+            facebook: facebook_id
+            google: google_id
+            twitter: twitter_id
+    resource_owners:
+        facebook:
+            type:                facebook
+            client_id:           "%facebook_client_id%"
+            client_secret:       "%facebook_client_secret%"
+            scope:               "email, public_profile"
+            infos_url:           "https://graph.facebook.com/me?fields=id,first_name,last_name,email"
+            paths:
+                email:     email
+                firstname: first_name
+                lastname:  last_name
+        google:
+            type:                google
+            client_id:           "%google_client_id%"
+            client_secret:       "%google_client_secret%"
+            scope:               "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
+            paths:
+                email: email
+        twitter:
+            type:           twitter
+            infos_url:      "https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true"
+            paths:
+                email:      email
+                firstname:  name
+                username:   screen_name
+            client_id:      "%twitter_consumer_key%"
+            client_secret:  "%twitter_consumer_secret%"
+
+hype_mailchimp:
+    api_key: "%mailchimp_api_key%"
+    default_list: "%mailchimp_default_list%"
+    ssl: true
+
+old_sound_rabbit_mq:
+    connections:
+        default:
+            # A different (unused) connection defined by an URL. One can omit all parts,
+            # except the scheme (amqp:). If both segment in the URL and a key value (see above)
+            # are given the value from the URL takes precedence.
+            # See https://www.rabbitmq.com/uri-spec.html on how to encode values.
+            url: 'amqp://wjngrufk:-jUSQ5q0rWCsi_cVdTW5YXv_MT0tcSEB@antelope.rmq.cloudamqp.com/wjngrufk'
+            lazy: true
+        not_used:
+            host:     'antelope.rmq.cloudamqp.com'
+            port:     5672
+            user:     'qktirzaz'
+            password: 'KJAWmNpTCBXAcYjz9FFIrBW2QLd-pfwx'
+            vhost:    '/qktirzaz'
+            lazy:     false
+            connection_timeout: 3
+            read_write_timeout: 3
+            # requires php-amqplib v2.4.1+ and PHP5.4+
+            keepalive: false
+            # requires php-amqplib v2.4.1+
+            heartbeat: 0
+            #requires php_sockets.dll
+            use_socket: true # default false
+    producers:
+        task_queue:
+            connection:       default
+            exchange_options: {name: 'task_queue', type: direct}
+            service_alias:    queue.mail.add
+            enable_logger:    true
+    consumers:
+        task_queue:
+            connection:       default
+            exchange_options: {name: 'task_queue', type: direct}
+            queue_options:    {name: 'task_queue'}
+            callback:         queue.mail.process
+            enable_logger:    true

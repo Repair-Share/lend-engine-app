@@ -1,0 +1,331 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+    knp_menu.renderer.twig.options:
+        currentClass: active
+        ancestorClass: treeview active
+        allow_safe_labels: true
+
+services:
+
+    # Mail not yet sent via RabbitMQ but tested with Heroku and ready to link things up
+    queue.mail.add:
+        class: AppBundle\Services\QueueMailAdd
+        arguments:
+            - "@twig"
+
+    queue.mail.process:
+        class: AppBundle\Services\QueueMailProcess
+        arguments:
+            - "@logger"
+
+    doctrine.dbal.connection_factory:
+        class: AppBundle\Account\CustomConnectionFactory
+        arguments:
+            - "@session"
+
+    tenant_information:
+        class: AppBundle\Extensions\TenantInformation
+        arguments:
+            - "@session"
+            - "@service_container"
+            - "@doctrine.orm.entity_manager"
+            - "@billing"
+            - "@settings"
+
+    twig.extension.tenant_information:
+        class: AppBundle\Extensions\TenantInformationExtension
+        arguments:
+            - "@tenant_information"
+        tags:
+            - { name: twig.extension }
+
+    twigdate.listener.request:
+        class: AppBundle\EventListener\TwigDateRequestListener
+        arguments:
+            - "@twig"
+            - "@session"
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    billing:
+        class: AppBundle\Services\BillingService
+
+    billing_listener:
+        class: AppBundle\EventListener\BillingListener
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@session"
+            - "@router"
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController}
+
+    # To wipe data from entities not supported on a given pay plan
+    doctrine_event_listener:
+        class: AppBundle\EventListener\DoctrineEventListener
+        arguments:
+            - "@session"
+            - "@billing"
+        tags:
+            - { name: doctrine.event_listener, event: postLoad, method: onPostLoad }
+
+    app.form.registration:
+        class: AppBundle\Form\RegistrationType
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: form.type, alias: app_user_registration }
+
+    app.form.profile:
+        class: AppBundle\Form\ProfileType
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: form.type, alias: app_user_profile }
+
+    valid_tag_validator:
+        class: AppBundle\Validator\ValidTagValidator
+        arguments:
+            - "@doctrine.orm.entity_manager"
+        tags:
+            -
+                name: validator.constraint_validator
+                alias: valid_tag
+
+    lendengine.s3_client:
+        class: Aws\S3\S3Client
+        arguments:
+            -
+                version: 'latest' # or 'latest'
+                region:  "us-west-2" # 'eu-central-1' for example
+                credentials:
+                    key:    "%aws_key%"
+                    secret: "%aws_secret%"
+
+    helper.imageresizer:
+        class: AppBundle\Helpers\ImageResizer
+        arguments: ['@service_container']
+
+    helper.loan_status_label:
+        class: AppBundle\Helpers\LoanStatusLabel
+
+    uploader.image_namer:
+        class: AppBundle\Uploader\Naming\ImageNamer
+        arguments:
+            - "@session"
+
+    uploader.file_namer:
+        class: AppBundle\Uploader\Naming\FileNamer
+        arguments:
+            - "@session"
+
+    uploader.upload_listener:
+        class: AppBundle\EventListener\UploadListener
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service_container"
+        tags:
+            - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
+
+    fos_user.registration_complete:
+        class: AppBundle\EventListener\RegistrationConfirmListener
+        arguments:
+            - "@router"
+        tags:
+            - { name: kernel.event_subscriber }
+
+    fos_user.profile_edit:
+        class: AppBundle\EventListener\ProfileEditListener
+        tags:
+            - { name: kernel.event_subscriber }
+
+    settings:
+        class: AppBundle\Settings\Settings
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    ## ENTITY SERVICES
+
+    service.contact:
+        class: AppBundle\Services\Contact\ContactService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service_container"
+
+    service.membership:
+        class: AppBundle\Services\Membership\MembershipService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service_container"
+
+    service.loan:
+        class: AppBundle\Services\Loan\LoanService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service_container"
+
+    service.loan_row:
+        class: AppBundle\Services\Loan\LoanRowService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service_container"
+
+    service.item:
+        class: AppBundle\Services\Item\ItemService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service_container"
+
+    service.inventory:
+        class: AppBundle\Services\InventoryService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service_container"
+
+    service.booking:
+        class: AppBundle\Services\Booking\BookingService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service_container"
+
+    service.payment:
+        class: AppBundle\Services\Payment\PaymentService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@settings"
+            - "@service.stripe"
+
+    service.checkout:
+        class: AppBundle\Services\Loan\CheckoutService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service_container"
+            - "@service.contact"
+            - "@service.booking"
+
+    service.waiting_list:
+        class: AppBundle\Services\WaitingList\WaitingListService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service_container"
+            - "@twig"
+
+    ## END ENTITY SERVICES
+
+    service.stripe:
+        class: AppBundle\Services\StripeHandler
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service_container"
+
+    service.fos_user_mailer:
+        class: AppBundle\Mailer\FOSMailer
+        arguments:
+            - "@service_container"
+            - "@twig"
+            - "@router"
+
+    ## REPORT SERVICES
+
+    report.items:
+        class: AppBundle\Services\Report\ReportLoanedItems
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    report.non-loaned-items:
+        class: AppBundle\Services\Report\ReportNonLoanedItems
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    report.loans:
+        class: AppBundle\Services\Report\ReportLoans
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    report.payments:
+        class: AppBundle\Services\Report\ReportPayments
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    report.costs:
+        class: AppBundle\Services\Report\ReportCosts
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    report.children:
+        class: AppBundle\Services\Report\ReportChildren
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    report.site_search:
+        class: AppBundle\Services\Report\ReportSiteSearch
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    ## END REPORT SERVICES
+
+    app.cache.clear:
+        class: Symfony\Bundle\FrameworkBundle\Command\CacheClearCommand
+        calls:
+            - [setContainer, ["@service_container"] ]
+
+    app.menu_builder:
+        class: AppBundle\Menu\MenuBuilder
+        arguments: ["@knp_menu.factory", "@service_container"]
+        tags:
+            - { name: knp_menu.menu_builder, method: siteMenu, alias: siteMenu }
+            - { name: knp_menu.menu_builder, method: pagesMenu, alias: pagesMenu }
+            - { name: knp_menu.menu_builder, method: adminMenu, alias: adminMenu }
+            - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
+            - { name: knp_menu.menu_builder, method: accountMenu, alias: accountMenu }
+
+    service.schedule_handler:
+        class: AppBundle\Services\ScheduleHandler
+        arguments:
+            - "@twig"
+            - "@service_container"
+            - "@settings"
+            - "@doctrine.orm.entity_manager"
+            - "@logger"
+
+    app.locale_listener:
+        class: AppBundle\EventListener\LocaleListener
+        arguments: ['%kernel.default_locale%', "@tenant_information"]
+        tags:
+            - { name: kernel.event_subscriber }
+
+    app.user_locale_listener:
+        class: AppBundle\EventListener\UserLocaleListener
+        arguments: ['@session']
+        tags:
+            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
+
+    app.provider.oauth:
+        class: UserBundle\Security\Core\User\OAuthUserProvider
+        arguments:
+            - "@fos_user.user_manager"
+            - { facebook: facebook_id, google: google_id, twitter: twitter_id }
+            - "@session"
+            - "@security.token_storage"
+
+    app.translatable.mapper:
+        class:     AppBundle\Form\TranslatableDataMapper
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    app.form.item_type:
+        class: AppBundle\Form\Type\ItemType
+        arguments:
+            - "@app.translatable.mapper"
+        calls:
+            - [ setLocales, ["%locales%"] ]
+        tags:
+            - { name: form.type }
+
+    app.form.product_tag_type:
+        class: AppBundle\Form\Type\ProductTagType
+        arguments:
+            - "@app.translatable.mapper"
+        calls:
+            - [ setLocales, ["%locales%"] ]
+        tags:
+            - { name: form.type }

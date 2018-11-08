@@ -1,0 +1,10 @@
+<form method="POST" action="{{ path('member_search') }}">
+    <div class="input-group">
+        <input type="text" class="form-control" id="member-search" name="member-search" value="{{ app.request.get('member-search') }}" placeholder="Search by name or email ...">
+        <span class="input-group-btn">
+          <button type="submit" class="btn btn-success" value="search">Search</button>
+        </span>
+        <input type="hidden" name="new" value="{{ app.request.get('new') }}">
+        <input type="hidden" name="itemId" value="{{ app.request.get('itemId') }}">
+    </div>
+</form>

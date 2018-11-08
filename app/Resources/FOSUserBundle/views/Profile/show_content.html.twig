@@ -1,0 +1,86 @@
+<h2>{{ 'public_account.title'|trans({}, 'member_site') }}</h2>
+
+{% set contact = app.user %}
+{{ include('public/partials/account_balance.html.twig') }}
+
+<div class="fos_user_user_show row">
+    <div class="col-md-6">
+        <h4>{{ 'public_account.contact_subtitle'|trans({}, 'member_site') }}</h4>
+        <div class="user_info">{{ user.firstName }} {{ user.lastName }}</div>
+        <div class="user_info">{{ user.email }}</div>
+        <div class="user_info">{{ user.telephone }}</div>
+        <br>
+        <a href="{{ path('fos_user_profile_edit') }}" class="btn btn-sm btn-primary">{{ 'public_account.button_edit_details'|trans({}, 'member_site') }}</a>
+        <a href="{{ path('fos_user_change_password') }}" class="btn btn-sm btn-primary">{{ 'public_account.button_change_password'|trans({}, 'member_site') }}</a>
+    </div>
+    <div class="col-md-6">
+        {#<h4>Social media</h4>#}
+
+        {#<p>#}
+            {#Connecting your social media accounts will make it easier to share your borrowing experience.#}
+        {#</p>#}
+
+        {#{% if user.twitterId %}#}
+            {#<span class="btn btn-sm btn-block btn-social btn-twitter">#}
+                {#<span class="fa fa-twitter"></span>#}
+                {#<i class="fa fa-check"></i>#}
+                {#{% trans %}Connected to Twitter{% endtrans %}#}
+            {#</span>#}
+        {#{% else %}#}
+            {#<a href="{{ path('hwi_oauth_service_redirect', {'service': 'twitter' }) }}" class="btn btn-sm btn-block btn-social btn-twitter">#}
+                {#<span class="fa fa-twitter"></span>#}
+                {#{% trans %}Connect Twitter{% endtrans %}#}
+            {#</a>#}
+        {#{% endif %}#}
+
+        {#{% if user.facebookId %}#}
+            {#<span class="btn btn-sm btn-block btn-social btn-facebook">#}
+                {#<span class="fa fa-twitter"></span>#}
+                {#<i class="fa fa-check"></i>#}
+                {#{% trans %}Connected to Facebook{% endtrans %}#}
+            {#</span>#}
+        {#{% else %}#}
+            {#<a href="{{ path('hwi_oauth_service_redirect', {'service': 'facebook' }) }}" class="btn btn-sm btn-block btn-social btn-facebook">#}
+                {#<span class="fa fa-twitter"></span>#}
+                {#{% trans %}Connect Facebook{% endtrans %}#}
+            {#</a>#}
+        {#{% endif %}#}
+
+        {#<p class="help-block" style="padding-top: 10px; font-size: 12px">#}
+            {#When you create a reservation or loan, we'll ask if you want to share with your network.#}
+            {#Why would you want to do this? The more people that borrow, the more successful the library will be,#}
+            {#and the greater impact we'll have.#}
+        {#</p>#}
+    </div>
+</div>
+
+<br>
+
+<h4>{{ 'public_account.membership_subtitle'|trans({}, 'member_site') }}</h4>
+
+{% if app.user.activeMembership is defined and app.user.activeMembership and app.user.activeMembership.status == 'ACTIVE' %}
+
+    {% if app.user.activeMembership.expiresAt|date("Y-m-d") < date()|date_modify("+7 days")|date("Y-m-d") %}
+        <div class="alert alert-warning">
+            <strong>{{ app.user.activeMembership.membershipType.name }}</strong> member until
+            <strong>{{ app.user.activeMembership.expiresAt|date("d F Y") }}</strong>
+            <p>
+                Your membership is about to expire.
+                <br><br>
+                <a href="{{ path('subscribe') }}" class="btn btn-primary">Renew now</a>
+            </p>
+        </div>
+    {% else %}
+        <div class="alert alert-success">
+            <strong>{{ app.user.activeMembership.membershipType.name }}</strong> member until
+            <strong>{{ app.user.activeMembership.expiresAt|date("d F Y") }}</strong>
+        </div>
+    {% endif %}
+
+{% else %}
+    <div class="alert alert-info">
+        {{ 'text_no_membership'|trans({}, 'member_site') }}
+        <br><br>
+        <a href="{{ path('subscribe') }}" class="btn btn-primary">Subscribe now</a>
+    </div>
+{% endif %}

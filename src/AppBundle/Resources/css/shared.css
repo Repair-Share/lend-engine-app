@@ -1,0 +1,73 @@
+/** CSS used on member site and admin **/
+
+/* PAYMENT PROCESSING */
+
+.creditCard {
+    width: 180px;
+    float: left;
+    padding: 10px;
+    border: 1px solid #d4dee8;
+    border-radius: 4px;
+    font-size: 12px;
+    margin: 0 20px 10px 0;
+    background-color: #fafafa;
+}
+
+.creditCard.active {
+    background-color: #e4f2fe;
+    border: 1px solid #afcfe8;
+}
+
+.creditCardText {
+    font-family: "Courier New", Courier, mono;
+    font-weight: bold;
+}
+
+.account-balance {
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.session-user {
+    color: #ff6519;
+}
+
+.session-user a {
+    font-size: 14px;
+}
+
+/* Notes */
+
+.note-wrapper {
+    padding: 10px 0;
+}
+
+.admin-only {
+    /*color: #CC0000;*/
+}
+
+.admin-tools {
+    padding: 10px 0 10px 0;
+    margin: 10px 0;
+    border: 1px solid #AAA;
+    border-radius: 4px;
+    background-color: #fafafa
+}
+
+.admin-tools-title {
+    font-size: 10px;
+    padding-bottom: 6px;
+    color: #aaa
+}
+
+.note-head {
+    padding: 5px 0;
+    color: #c0c0c0;
+}
+
+.note-body {
+}

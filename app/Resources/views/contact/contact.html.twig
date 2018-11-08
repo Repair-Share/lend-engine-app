@@ -1,0 +1,305 @@
+{# app/Resources/views/contact/contact.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block pageTitle %}{{ title }}{% endblock %}
+
+{% block pageCss %}
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>
+    <script type="text/javascript">
+        function getLatLong() {
+            var geocoder = new google.maps.Geocoder();
+            var address = $("#contact_addressLine1").val();
+            address = address + ',' + $("#contact_addressLine2").val();
+            address = address + ',' + $("#contact_addressLine3").val();
+            address = address + ',' + $("#contact_addressLine4").val();
+            geocoder.geocode({'address': address}, function(results, status)
+            {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    var lat = results[0].geometry.location.lat();
+                    var lng = results[0].geometry.location.lng();
+                    $("#contact_latitude").val(lat);
+                    $("#contact_longitude").val(lng);
+                }
+            });
+        }
+    </script>
+{% endblock %}
+{% block body %}
+
+    {{ form_start(form) }}
+
+    {{ form_errors(form) }}
+
+    <input type="hidden" name="next" value="{{ app.request.get('next') }}">
+
+    {% if contact.id %}
+
+        <!-- For functional testing //-->
+        <span style="display: none;" id="contact-id">{{ contact.id }}"</span>
+
+        <div id="item-inventory-detail">
+        {% if contact.activeMembership is null %}
+            No active membership
+            <span class="item-inventory-detail-span">
+                <a class="modal-link" href="{{ path('membership', {contactId : contact.id}) }}">Add membership</a>
+            </span>
+        {% else %}
+            <strong>{{ contact.activeMembership.membershipType.name }}</strong> member until {{ contact.activeMembership.expiresAt|date('d M Y') }}
+            <!-- For functional testing //-->
+            <span style="display: none;" id="active-membership-id">{{ contact.activeMembership.id }}"</span>
+        {% endif %}
+            <span class="pull-right">
+                Account balance:
+                {% if contact.balance > 0 %}
+                    <span class="label bg-green">
+                        {{ contact.balance|number_format(2) }}
+                    </span>
+                {% else %}
+                    <span class="label bg-red">
+                        {{ contact.balance|number_format(2) }}
+                    </span>
+                {% endif %}
+            </span>
+        </div>
+
+    {% endif %}
+
+    <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Contact information</a></li>
+            {% if tenantInformation.industry == 'toys' %}
+                <li><a href="#tab_2" data-toggle="tab" aria-expanded="false">Children ({{ contact.children|length }})</a></li>
+            {% endif %}
+            {% if contact.id %}
+                <li><a href="#tab_3" data-toggle="tab" aria-expanded="false">Memberships</a></li>
+                <li><a href="#tab_4" data-toggle="tab" aria-expanded="false">Loans ({{ contact.loans|length }})</a></li>
+                <li><a href="#tab_5" data-toggle="tab" aria-expanded="false">Charges and Payments</a></li>
+                <li><a href="#tab_6" data-toggle="tab" aria-expanded="false">Notes</a></li>
+                <li>
+                    <a href="{{ path('contact_files', {id: contact.id}) }}" class="media_node" rel="tooltip" data-toggle="tabajax" data-target="#contact_files">Attachments ({{ contact.fileAttachments|length }})</a>
+                </li>
+            {% endif %}
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab_1">
+
+                <div class="row">
+                    <div class="col-md-4">
+
+                        {% if help is defined %}
+                            <span class="help">{{ help }}</span>
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(form.firstName) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.lastName) }}
+                            </div>
+                        </div>
+                        {{ form_row(form.email) }}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(form.telephone) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.membershipNumber) }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <p><strong>Access to your Lend Engine site</strong></p>
+                            {{ form_row(form.enabled) }}
+                            {% if contact.id %}
+                                {{ form_row(form.autoPassword) }}
+                            {% else %}
+                                {{ form_row(form.sendWelcomeEmail) }}
+                            {% endif %}
+                        </div>
+
+                        {% if is_granted('ROLE_SUPER_USER') %}
+                            {{ form_row(form.roles) }}
+                        {% endif %}
+
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.addressLine1) }}
+                        {{ form_row(form.addressLine2) }}
+                        {{ form_row(form.addressLine3) }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form_row(form.addressLine4) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(form.countryIsoCode) }}
+                            </div>
+                        </div>
+
+                        {{ form_row(form.locale) }}
+
+                        {{ form_row(form.subscriber) }}
+                    </div>
+                    <div class="col-md-4">
+
+                        {% if tenantInformation.feature('ContactField') %}
+                            {% if customFieldsExist %}
+                                {% for field in customFields %}
+                                    {{ form_row(attribute(form, "fieldValue#{field.id}")) }}
+                                {% endfor %}
+                            {% else %}
+                                <div class="page-help">
+                                    Add extra custom fields at Settings &raquo; Contact fields.
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <br>
+                            <div class="upgrade">
+                                On higher pay plans, you can also add extra information about your members using custom fields.
+                                <br><br>Member custom fields are not available on your plan.
+                            </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="tab_2">
+
+                {% if tenantInformation.industry == 'toys' %}
+                <ul class="children" data-prototype="{{ form_widget(form.children.vars.prototype)|e }}">
+                    {% for child in form.children %}
+                        <li class="child">
+                            {{ form_row(child.name) }}
+                            {{ form_row(child.gender) }}
+                            {{ form_row(child.dateOfBirth) }}
+                        </li>
+                    {% endfor %}
+                    <li id="add_child_li">
+                        <a href="#" class="add_child_link">Add a child</a>
+                    </li>
+                </ul>
+                {% endif %}
+
+            </div>
+
+            <div class="tab-pane" id="tab_3">
+                {{ include('contact/tabs/memberships.html.twig') }}
+            </div>
+
+            <div class="tab-pane" id="tab_4">
+                {{ include('contact/tabs/loans.html.twig') }}
+            </div>
+
+            <div class="tab-pane" id="tab_5">
+                {{ include('contact/tabs/payments.html.twig') }}
+            </div>
+
+            <div class="tab-pane" id="tab_6">
+                {{ include('contact/tabs/notes.html.twig') }}
+            </div>
+
+            <div class="tab-pane" id="contact_files">
+                <!-- ajax-content -->
+            </div>
+
+        </div>
+        <!-- /.tab-content -->
+    </div>
+
+    {% if contact.id %}
+    <div class="row">
+        <div class="col-md-12">
+            <a id="contact_remove" href="{{ path('contact_archive', {id: contact.id, 'anon': 'y'}) }}">Remove this contact</a>
+            <br>This will remove following personal information (email, name, address) stored about this contact.
+            <br>The anonymised contact will then be archived.
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="page-controls">
+        <input type="hidden" name="form_action" id="form_action" value="save">
+        {% if app.request.get('next') == 'membership' %}
+            <button type="button" onClick="save('saveAndAddMembership');" class="btn bg-green btn-loading">Save contact</button>
+        {% elseif app.request.get('next') == 'loan' %}
+            <button type="button" onClick="save('saveAndAddLoan');" class="btn bg-green btn-loading">Save and add loan</button>
+        {% else %}
+            {% if contact.id and is_granted('ROLE_SUPER_USER') %}
+                <a id="contact_archive" class="btn btn-default" href="{{ path('contact_archive', {id: contact.id}) }}">Archive</a>
+            {% else %}
+            {% endif %}
+            <button type="button" onClick="save('save');" class="btn btn-success btn-loading">Save contact</button>
+        {% endif %}
+    </div>
+
+    {{ form_row(form.latitude) }}
+    {{ form_row(form.longitude) }}
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        $(document).ready(function() {
+            var $collectionHolder;
+            $collectionHolder = $('ul.children');
+            $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+            $(".add_child_link").on('click', function(e) {
+                e.preventDefault();
+                addChildForm($collectionHolder);
+            });
+
+            $("#contact_archive").on('click', function(e){
+                if (window.confirm("This will hide the contact permanently but will retain historical data.\n\nIf you want to remove the contact for privacy reasons, use the link at the bottom of the page. \n\nContinue to archive anyway?")) {
+                    return true;
+                }
+                return false;
+            });
+
+            $("#contact_remove").on('click', function(e){
+                if (window.confirm("This will scramble and hide the contact permanently. Are you sure?")) {
+                    return true;
+                }
+                return false;
+            });
+
+            $collectionHolder.find('li.child').each(function() {
+                addChildFormDeleteLink($(this));
+            });
+        });
+
+        function addChildForm($collectionHolder) {
+            var prototype = $collectionHolder.data('prototype');
+            var index = $collectionHolder.data('index');
+            var newForm = prototype.replace(/__name__/g, index);
+            $collectionHolder.data('index', index + 1);
+            var $newFormLi = $('<li class="child"></li>').append(newForm);
+            $("#add_child_li").before($newFormLi);
+            addChildFormDeleteLink($newFormLi);
+            setUpSelectMenus();
+        }
+
+        function addChildFormDeleteLink($childFormLi) {
+            var $removeFormA = $('<a href="#">Remove this child</a>');
+            $childFormLi.append($removeFormA);
+            $removeFormA.on('click', function(e) {
+                e.preventDefault();
+                $childFormLi.remove();
+            });
+        }
+
+        function save(form_action) {
+            getLatLong();
+            $("#form_action").val(form_action);
+            window.setTimeout(submitForm, 500);
+        }
+
+        function submitForm() {
+            $("form[name='contact']").submit();
+            waitButton($('.btn-loading'));
+        }
+    </script>
+{% endblock %}

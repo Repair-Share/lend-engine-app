@@ -1,0 +1,55 @@
+# Loco yaml export: Symfony YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: fr-FR, French (France)
+# Tagged: Emails
+# Status: Translated
+# Exported by: Chris
+# Exported at: Wed, 19 Jul 2017 10:19:03 +0100
+---
+le_email:
+  item_description: Description
+  item_contains: Contient
+  see_attachment: Voir la pièce jointe
+  return_sites: S’il vous plaît retourner cet article à (aux) l'emplacement(s) suivant(s)
+  th_item: Article
+  th_fee: Frais
+  th_due_back: Doit être retourné
+  url: URL de connexion
+  email: Courriel
+  password: Mot de passe
+  assign:
+    title: Un article vous a été assigné
+    message: '%firstName%, l''article « %itemName% » vous a été assigné par %assignorName%.'
+    added_note: a également ajouté une remarque
+    all_items: Voir tous les articles qui vous sont assignés
+    current_location: Localisation actuelle
+  checkout:
+    subject: Votre information de prêt
+    title: Votre information de prêt
+  extend:
+    subject: Votre date de retour de prêt a été mise à jour
+    title: Nous avons changé la date de retour d’un article
+    due_back: est désormais dû en retour le
+  reminder:
+    subject: Votre emprunt loanId est attendu de retour demain
+    title: Votre (vos) article (s) est (sont) dû de retour bientôt
+  reservation_reminder:
+    subject: Passez prendre votre réservation demain
+    title: Passez prendre votre réservation demain
+  membership_expired:
+    subject: Votre abonnement a expiré
+    title: Votre abonnement a expiré
+  login_details:
+    subject: Vos informations de connexion pour %accountName%
+    title: Informations de connexion
+    message: Voici vos identifiants pour notre système de prêt
+  new_password:
+    title: Votre nouveau mot de passe
+    message: Il s’agit de votre nouveau mot de passe pour %accountName%
+  reservation_confirm:
+    subject: Votre confirmation de réservation
+    title: Confirmation de réservation
+  site_welcome:
+    subject: Bienvenue sur %accountName%
+    title: Bienvenue

@@ -1,0 +1,602 @@
+/* Custom mods to admin theme */
+table.table th.actions {
+    text-align: right;
+}
+
+table.table td.actions {
+    text-align: right;
+}
+
+table.has-actions tr td:last-of-type {
+    text-align: right;
+}
+
+table.has-actions thead th:last-of-type {
+    text-align: right;
+}
+
+.content-header > .breadcrumb {
+    top: 10px;
+}
+
+.bg-brown {
+    background-color: #8A8982;
+    color: #fff
+}
+
+.bg-yellow {
+    background-color: #F7DD13 !important;
+}
+
+.bg-dim {
+    background-color: transparent;
+    color: #D4D3D3;
+}
+
+.select2-dropdown .select2-search__field:focus, .select2-search--inline .select2-search__field:focus {
+    border: 0;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active {
+    border-top-color: #433f38;
+}
+
+.fixed .content-wrapper, .right-side {
+    padding-top: 55px;
+}
+
+.main-header {
+    border-bottom: 1px solid #ccc;
+}
+
+.main-header > .navbar {
+    background-color: #fff;
+}
+
+.skin-black-light .main-header > .logo {
+    background-color: #fff;
+    color: #000;
+    border-right: 1px solid #fff;
+    height: 55px
+}
+
+.main-header > .logo:hover {
+    background-color: #fff;
+    color: #000;
+    border-right: 1px solid #fff;
+}
+
+#primary-filter {
+    display: none;
+}
+
+#primary-filter-inner {
+    border-radius: 6px;
+    margin: 0 10px 15px 10px;
+    padding: 12px 0;
+    background-color: #F3F3F3;
+    overflow: hidden;
+}
+
+#primary-filter .filter-fields {
+    border-right: 1px solid #CECACA;
+}
+
+/* Calendar pickers */
+.original-end-date {
+    background-color: #8A8982;
+    color: #fff;
+}
+
+div#extend-modal .date-picker-wrapper {
+    border: 0;
+    padding: 0;
+    background-color: #fff;
+}
+
+div#extend-modal .date-picker-wrapper .drp_top-bar {
+    display: none;
+}
+
+/* bootstrap overrides */
+.form-control {
+    padding: 6px 6px;
+}
+
+.form-control[disabled], fieldset[disabled] .form-control {
+    background-color: #fff;
+    border: none;
+    padding: 0;
+}
+
+.help-block {
+    font-size: 12px;
+    color: #a0a0a0;
+}
+
+/* Text formatting */
+.dim-info {
+    color: #a0a0a0;
+}
+
+.text-large {
+    font-size: 20px
+}
+
+.page-help {
+    padding: 16px 10px 16px 10px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #63594D;
+    background-color: #F7F5EE;
+    border-radius: 6px;
+}
+
+td.entity-id, span.entity-id, div.entity-id {
+    font-size: 11px;
+    color: #a0a0a0;
+}
+
+.emph {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.item-info {
+    font-size: 13px;
+}
+
+.item-tags {
+    padding: 6px 0;
+}
+
+#item-detail-modal .item-tags {
+    margin-left: 0;
+}
+
+.item-tag {
+    display: inline-block;
+    margin-bottom: 4px;
+    padding: 5px;
+}
+
+.item-info .item-info-label {
+    color: #acacac;
+    width: 70px;
+    display: block;
+    float: left;
+}
+
+.item-name {
+    font-weight: bold;
+}
+
+.item-location {
+    padding:4px;
+    font-size:13px;
+}
+
+/* Login form fix */
+#remember_me {
+    margin-left: 0;
+}
+
+/* Settings / Setup area */
+.setup-divider {
+    padding: 15px 0 25px 15px;
+}
+
+.setup-divider-inner {
+    border-bottom: 1px solid #ccc;
+}
+.item-active {
+
+}
+.item-inactive {
+    color: #d0cccc;
+}
+
+/* Forms */
+.input-100 {
+    width: 100px;
+}
+
+.select2-selection__choice {
+    background-color: #8A8982 !important;
+    border-color: #909090 !important
+}
+
+.form-inline-text {
+    padding-top: 30px;
+}
+
+.limiter {
+    font-size: 11px;
+    color: #bfbab1;
+}
+
+/* Tables */
+.table-hover > tbody > .total-row > td {
+    font-weight: bold;
+}
+
+.table-hover > tbody > tr.total-row:hover > td, .total-row > td {
+    background-color: #fff;
+}
+
+.dataTables_length {
+    float: left;
+}
+
+.dataTables_filter {
+    float: right;
+}
+
+.empty-table {
+    padding: 30px;
+    font-size: 28px;
+    text-align: center;
+}
+
+tr.myDragClass td {
+    opacity: 0.4;
+    filter: alpha(opacity=40); /* For IE8 and earlier */
+}
+
+td.drag-handle {
+    color: #CCC;
+}
+
+td.drag-handle:hover {
+    cursor:move;
+    color: #666;
+}
+
+/* Select2 seems to cause trouble with form labels */
+.control-label {
+    width: 100%
+}
+
+/* Products */
+div.item-thumb {
+    width: 100px;
+    height: 100px;
+    float: left;
+    margin-right: 12px;
+}
+
+div.item-thumb img {
+    width: 100px;
+    border: 1px solid #eff0ef;
+}
+
+div.image-large {
+}
+
+div.no-image {
+    height: 100px;
+    border: 1px solid #efefef;
+    background-color: #fafafa;
+    color: #dedede;
+    text-align: center;
+    line-height: 80px;
+}
+
+#item-inventory-detail {
+    border-radius: 6px;
+    margin-bottom: 15px;
+    background-color: #F3F3F3;
+    padding: 10px;
+}
+
+.item-inventory-detail-span {
+    padding-left: 15px;
+}
+
+.item-reservations {
+    font-size: 13px;
+}
+
+/* Add inventory or items to a loan */
+.box-add {
+    background-color: #E2EFD9;
+    padding: 10px;
+    margin: 0;
+    overflow: hidden;
+}
+
+.page-controls {
+    padding-right: 0;
+    margin: 8px 0;
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1035;
+}
+
+.page-controls button:not(.btn-drop) {
+    margin-right: 10px;
+}
+
+.page-controls a {
+    margin-right: 10px;
+}
+
+.primary-message {
+    padding: 10px;
+    margin: 10px;
+}
+
+/*      Loan page       */
+.currently-on-loan {
+    padding: 10px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+}
+
+/*      Reports         */
+div#report-filter {
+    padding-bottom: 10px;
+    overflow: hidden;
+    display: block;
+    margin-bottom: 10px;
+    background-color: #fff;
+}
+
+/*      Settings      */
+.settings-nav > li {
+    padding: 5px 0;
+}
+.settings-nav > li.active > a, .settings-nav > li.active > a:hover, .settings-nav > li.active > a:focus {
+    border-top: none;
+}
+.settings-nav > li > a {
+    padding: 2px 10px 4px 10px;
+    border-radius: 6px;
+}
+.settings-nav > li.active > a {
+    background-color: #8A8982;
+    color: #fff;
+    font-weight: bold;
+}
+
+/*      Dashboard      */
+.text-start p {
+    font-size:18px;
+}
+.dash-data {
+    margin-top:20px;
+}
+.dash-data .info-box-icon {
+    background-color: #fff;
+    color: #ddd;
+}
+.dash-loan-data {
+    margin-top:20px;
+}
+.dash-loan-data .info-box-icon i {
+    color: #fff;
+}
+
+/*     MENU      */
+.sidebar-menu .treeview-menu > li.last {
+    padding-bottom: 6px;
+}
+
+/*     Steps     */
+.sidebar-menu ul.nav-pills {
+    padding: 0 0 10px 0;
+}
+
+.sidebar-menu ul.nav-pills li {
+    padding: 10px;
+    color: #E0E0E0;
+    margin-right: 10px;
+}
+
+.sidebar-menu ul.nav-pills li.active {
+    color: #000;
+}
+
+.fa {
+    color: #bab9b2
+}
+
+a > .fa {
+    color: #3c8dbc;
+}
+
+.fa-question-circle {
+    color: #3c8dbc;
+}
+
+.sidebar-menu a:hover .fa {
+    color: #8A8982
+}
+
+.secondary-link {
+    padding: 6px 15px;
+}
+
+.secondary-link.active a {
+    font-weight: bold;
+    color: #000;
+}
+
+.secondary-tip {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #2c3b41;
+}
+
+/* Language tabs */
+ul.nav-language > li > a {
+    padding: 3px 5px;
+    font-size: 12px;
+}
+
+/*    IMAGES   */
+.image-selector {
+    font-size:11px;
+    text-align: center;
+    background-color: #dedede;
+    color: #fff;
+    margin-top:6px;
+    margin-bottom: 6px;
+    padding: 3px;
+    border-radius: 4px;
+}
+.image-selector:hover {
+    cursor: pointer;
+}
+.image-selector.active {
+    background-color: #327E04;
+}
+.image-control i {
+    text-align:center;
+    height: 26px;
+    width: 26px;
+    padding: 5px;
+}
+.image-control:hover i {
+    cursor: pointer;
+    color: #000;
+}
+.item-image-count {
+    margin-top: -25px;
+    margin-left: 0;
+    width: 100%;
+    background-color: #333;
+    padding: 4px;
+    font-size: 12px;
+    position: relative;
+    color: #fff;
+    opacity: 0.3;
+    border-radius: 0 0 6px 6px;
+}
+
+/* FILE ATTACHMENTS */
+
+.file-attachment {
+    overflow: hidden;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding: 10px;
+}
+
+.file-attachment:hover {
+    background-color: #FAFAFA;
+    border-radius: 6px;
+}
+
+.file-attachment .file-icon {
+    float: left;
+    padding-right: 10px;
+    font-size: 24px;
+}
+
+.file-attachment .file-name {
+    display: block;
+    float: left;
+}
+
+.file-attachment .file-size {
+    padding-left: 10px;
+}
+
+.file-attachment .file-send {
+    padding-left: 10px;
+}
+
+.file-attachment .file-send label {
+    font-weight: normal
+}
+
+.file-attachment .file-delete {
+    float: right;
+    font-size: 24px;
+    margin-right: 20px;
+}
+
+.file-attachment .file-delete:hover i {
+    cursor: pointer;
+    color: #000;
+}
+
+/* PAYMENT PROCESSING */
+
+.creditCard {
+    width: 180px;
+    float: left;
+    padding: 10px;
+    border: 1px solid #d4dee8;
+    border-radius: 4px;
+    font-size: 12px;
+    margin: 0 20px 10px 0;
+    background-color: #fafafa;
+}
+.creditCard.active {
+    background-color: #e4f2fe;
+    border: 1px solid #afcfe8;
+}
+.creditCardText {
+    font-family: "Courier New", Courier, mono;
+    font-weight: bold;
+}
+
+.upgrade {
+    padding: 10px;
+    border: 1px solid #ffeece;
+    background-color: #fffeed;
+    color: #000000;
+    border-radius: 4px;
+}
+
+/* Contact children tab */
+
+ul.children { padding-left: 0; list-style-type: none;  }
+ul.children li.child {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-bottom: 1px dotted #ccc;
+    height: 90px;
+}
+ul.children div.form-group { float:left; width: 240px; margin-right: 15px; }
+ul.children a { padding-left: 20px; }
+ul.children a.add_child_link { display: block; clear: both; }
+ul.children select { width: 100%; }
+
+/* Responsive */
+
+@media (min-width: 900px) {
+    .modal-dialog {
+        width: 800px
+    }
+}
+
+/* XS */
+@media (max-width: 767px) {
+    .fixed .content-wrapper, .fixed .right-side {
+        padding-top: 40px;
+    }
+
+    .dataTables_length {
+        display: none;
+    }
+
+    .secondary-link {
+        display: none;
+    }
+
+    #cat-select-wrapper {
+        display: none;
+    }
+}
+
+@media print {
+    .hidden-print {
+        display: none !important;
+    }
+}

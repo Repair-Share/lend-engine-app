@@ -1,0 +1,165 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: ro-RO, Romanian (Romania)
+# Tagged: Member site
+# Exported by: Chris
+# Exported at: Tue, 25 Jul 2017 22:24:13 +0100
+---
+Loan: Împrumută
+Loans: Împrumuturi
+Reservation: Rezervare
+Reservations: Rezervări
+Brand: Marca
+Payment: Plată
+Payments: Plăți
+Fee: Taxă
+loan_status.pending: În așteptare
+loan_status.on_loan: Împrumutat
+loan_status.reserved: Rezervat
+loan_status.cancelled: Anulat
+loan_status.overdue: Întârziat
+loan_status.closed: Închis
+note_reservation_fee: Taxă de rezervare
+note_reservation_fee_will_be_added: taxă va fi adaugată per rezervare
+th.date: Data
+th.payment_method: Metoda de plată
+th.fee: Taxă
+th.payment: Plată
+th.ref: Referințe
+th.items: Articole
+th.date_from: De la
+th.date_to: Către
+th.status: Status
+Reference: Referințe
+Items: Articole
+Status: Status
+STATUS_PENDING: În așteptare
+STATUS_ACTIVE: Împrumutate
+STATUS_OVERDUE: Întârziate
+STATUS_RESERVED: Rezervate
+STATUS_CANCELLED: Anulate
+STATUS_CLOSED: Închis
+days: '{1}zi|[2,Inf[zile'
+per_day: per zi
+per_n_days: pentru %count% zile
+button_cancel: Anulare
+button_cancel_reservation: Anulează rezervarea
+button_add_credit: Adaugă credit
+button_go: Go
+I forgot my password: Am uitat parola
+Log out: Deconectare
+My account: Contul meu
+Login with Facebook: Autentificare cu Facebook
+Login with Google: Autentificare cu Google
+form.firstName: Nume
+form.lastName: Prenume
+form.email: Adresă de email
+form.telephone: Telefon
+form.address1: Strada / Numărul
+form.address2: Oraș
+form.address3: Țara
+form.postcode: Cod poștal
+form.country: Țara
+form.locale: Limba preferată
+public_misc.link_admin: Admin
+public_misc.link_home: Acasă
+public_misc.link_recent_items: Recent adăugate
+public_misc.link_all_items: Toate articolele
+public_misc.search_items: Caută articole
+public_misc.no_results: Nu am găsit nimic
+public_misc.filter_items: Filtrează articole
+public_misc.any_site: Orice site
+public_footer.find_us: Găsește-ne / orar de funcționare
+public_footer.choose_lang: Alege limba
+public_footer.powered_by: Cu sprijinul
+public_footer.logged_in_as: Ești autentificat ca
+public_account.title: Contul Meu
+public_account.contact_subtitle: Detalii despre contact
+public_account.membership_subtitle: 'Detalii despre drepturile de membru '
+public_account.button_edit_details: Editează detaliile mele
+public_account.button_change_password: Schimbă parola
+public_item_list.pages: Afișez de la %x% la %y% din %z% articole
+public_item.location: Locație
+public_item.brand: Marca
+public_item.code: Cod
+public_item.serial: Serial
+public_item.condition: Condiție
+public_item.contains: Conține
+public_item.downloads: Download-uri
+public_item.log_in_to_download: Autentifică-te pentru a downloada
+public_item.log_in_to_borrow: Autentifică-te pentru a putea împrumuta sau rezerva
+public_item.borrow_now: Împrumută / rezervă
+public_item.not_available: Indisponibil
+public_item.available: Disponibil
+public_item.on_loan: Deja împrumutat
+public_item.pickup_date_error: Articolele din coșul tău definesc o dată de ridicare care se suprapune cu rezervările existente pentru acest articol...
+public_item.pickup_site_error: Acest articol nu este disponibil din cauză că alte articole din coșul tău sunt neînapoiate
+public_item.basket_exists: Ai deja articole în coșul tău. Trebuie să le ridici împreună, așadar noi am...
+public_item.account_balance_is: Balanța disponibilă este de
+public_item.add_credit: Adaugă credit
+public_item.pickup_at: Ridică articolul la
+public_item.return_by: Înapoiază până la
+public_item.choose_pickup_first: Alege întâi data ridicării
+public_item.button_choose_pickup: Alege data ridicării
+public_item.button_choose_return: Alege când vei înapoia
+public_item.cancel: Anulare
+public_item.basket_add: Adaugă articolul în coș
+public_item.locations: Locații disponibile
+public_item.maps_link: Deschide în Google Maps
+public_item.similar_items: articole similare disponibile
+public_item.see_all: Vezi toate
+public_item.not_reservable: Acest articol nu este disponibil pentru rezervarea online. Te rugăm contactează-ne.
+calendar.pickup_day: Ridicare articol
+calendar.my_booking: REZERVAREA MEA
+calendar.reserved: REZERVAT
+calendar.on_loan: ÎMPRUMUTAT
+calendar.text_clash_date: Perioada selectată se suprapune cu o rezervare existentă deja. Te rugăm alege o altă dată.
+calendar.text_return_after_pickup: Te rugăm selectează o dată de returnare mai târzie decât data ridicării articolului.
+calendar.alert_already_booked: Aceasta dată nu poate fi selectată din cauza unei alte rezervări.
+calendar.alert_not_your_booking: Poți vizualiza doar detaliile despre împrumuturile tale.
+calendar.alert_day_warning: Acest articol poate fi împrumutat doar multiplu de itemLoanDays zile. \n Te rugăm alege o...
+calendar.alert_min_loan_days: Trebuie să împrumuți acest articol pentru cel puțin minLoanDays zile.
+calendar.alert_max_loan_days: Poți împrumuta acest articol până la maxLoanDays zile.
+public_basket.title: Coș
+public_basket.name: Coș
+public_basket.due_at: Scadent la
+public_basket.return_to: Înapoiază la
+public_basket.pickup_after: Ridică articolul după
+public_basket.from: de la
+public_basket.add_credit_message: Te rugăm adaugă credit întâi.
+public_basket.empty: Coș gol
+public_basket.confirm_reservation: Rezervă
+public_basket.remove_item: Șterge
+public_basket.total: Total
+public_basket.balance: Taxa întârziere la scadență
+public_basket.no_items: Nici un articol în coș. Caută un articol pentru a-l adăuga.
+public_basket.full_charge: va fi debitată din contul tău acum
+public_basket.delay_charge: va fi debitată din contul tău acum, cu restul datorat colectării de articole
+public_loan.title: Împrumută
+public_user_menu.contact_info: Profil
+text_borrow_with_membership: Cu drepturi de membru depline vei putea împrumuta sau rezerva acest articol online.
+text_no_membership: Nu există drepturi de membru active pentru dvs. deocamdată.
+public_add_credit.title: Adaugă credit
+public_add_credit.choose_card: Alegeți un card existent de mai sus, sau continuați să adăugați credit mai jos utilizând un nou card
+public_add_credit.use_this_card: Folosește acest card
+public_add_credit.amount_to_add: Suma de adăugat
+public_add_credit.payment_method: Metoda de plată
+public_add_credit.min_amount: Suma minimă a cardului
+public_add_credit.processing_fee: taxa de procesare va fi adăugată pentru tranzacțiile cu cardul
+public_loans.no_loans: Nu ai împrumutat nimic deocamdată
+public_payments.no_payment: Nu există plăți sau taxe încă
+public_payments.title: Taxe și Plăți
+public_registration.newsletter: Abonează-te la newsletter-ul nostru
+public_registration.terms_link: Citește Termenii și Condițiile
+public_registration.terms_label: Sunt de acord cu Termenii și Condițiile
+public_become_member.title: Devino membru
+msg_success.payment_ok: Plata a fost efectuată cu succes. Balanța contului tău a fost modificată.
+msg_success.reservation_create: Rezervat! Tocmai ce am trimis un email de confirmare.
+msg_success.reservation_cancel: Rezervarea ta a fost anulată.
+msg_success.basket_item_removed: Articolul a fost șters din coșul tău.
+msg_success.basket_item_added: a fost adăugat în coșul tău.
+msg_success.basket_item_exists: este deja în coșul tău.
+msg_fail.general_fail: Ne pare rău însă a apărut o eroare. Te rugăm să încerci din nou sau să iei legătura cu noi.
+msg_fail.reservation_create: Ceva nu a funcționat bine, nu am putut să creem rezervarea.
+msg_fail.reservation_cancel: Nu am putut anula rezervarea. Te rugăm să ne contactezi.

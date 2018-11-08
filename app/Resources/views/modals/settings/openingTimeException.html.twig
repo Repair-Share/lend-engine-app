@@ -1,0 +1,98 @@
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+{% block modalSubTitle %}{{ subTitle|raw }}{% endblock %}
+
+{% block modalBody %}
+
+    {{ form_start(form, {'attr': {'id': 'opening_time_exception'}}) }}
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_row(form.date) }}
+            <div id="date-container"></div>
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.type) }}
+            <div class="row">
+                <div class="col-md-4">
+                    {{ form_row(form.timeFrom) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.timeChangeover) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.timeTo) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 help-block">
+                    Loans and reservations end at changeover time. If you don't set one, the slot's end time will be used.
+                </div>
+            </div>
+            {{ form_row(form.site) }}
+        </div>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="modal-submit btn bg-green">Add</button>
+
+    <script>
+        $(document).ready(function () {
+            var dateExtendField = $("#opening_time_exception_date");
+            dateExtendField.dateRangePicker({
+                format: 'ddd MMM D YYYY',
+                autoClose: true,
+                singleDate: true,
+                singleMonth: true,
+                showShortcuts: false,
+                inline: true,
+                alwaysOpen: true,
+                container: '#date-container',
+                setValue: function (s) {
+                    if (!$(this).attr('readonly') && !$(this).is(':disabled') && s != $(this).val()) {
+                        $(this).val(s)
+                    }
+                }
+            }).bind('datepicker-change', function (event, obj) {
+                {#var newTimeIn = moment(obj.date1).format('YYYY-MM-DD');#}
+                {#var start = moment("{{ loanRow.dueInAt|date('Y-m-d') }}");#}
+                {#var end = moment(newTimeIn);#}
+                {#var duration = moment.duration(end.diff(start));#}
+                {#var days = duration.asDays().toFixed(0);#}
+                {#$(".extend-days").html(days);#}
+                {#$("#modal_display_new_time_in").html(end.format('ddd MMM DD YYYY'));#}
+                {#$("#modal_new_time_in").val(end.format('YYYY-MM-DD'));#}
+                {#calculateExtensionFee(days);#}
+            });
+
+            // Validate the form
+            $("#opening_time_exception").delegate("#opening_time_exception_timeFrom", "change", function(event) {
+                if ($("#opening_time_exception_timeFrom").val().length < 4) {
+                    alert('Please set a valid opening time (4 digit 24-hour time)');
+                    $("#opening_time_exception_timeFrom").val("").focus();
+                }
+            });
+
+            $("#opening_time_exception").delegate("#opening_time_exception_timeTo", "change", function(event) {
+                if ($("#opening_time_exception_timeTo").val().length < 4) {
+                    alert('Please set a valid closing time (4 digit 24-hour time)');
+                    $("#opening_time_exception_timeTo").val("").focus();
+                }
+            });
+
+        });
+    </script>
+
+{% endblock %}
+

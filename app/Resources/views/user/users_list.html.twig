@@ -1,0 +1,89 @@
+{# app/Resources/views/user/list.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}User list{% endblock %}
+
+{% block pageTitle %}Users{% endblock %}
+
+{% block primaryButton %}
+    <a href="{{ path('user') }}" class="btn bg-green modal-link">Add a new user</a>
+{% endblock %}
+
+{% block pageHelp %}
+    <div class="page-help">
+        This is the list of staff that can access Lend Engine for {{ tenantInformation.accountName }}.<br>
+        <strong>Administrators</strong> can create, edit and delete products, categories, tags etc, and edit
+        settings.<br>
+        <strong>Staff</strong> are able to create and edit members & loans.
+    </div>
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+
+        <div class="col-md-2">
+            <br>
+            {{ knp_menu_render('settingsMenu') }}
+            <br>
+            <br>
+        </div>
+
+        <div class="col-md-10">
+
+            <table cellspacing="0" class="table table-hover table-striped" id="data-table">
+                <thead>
+                <th>Name</th>
+                <th></th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Last login</th>
+                <th class="actions"></th>
+                </thead>
+                {% for user in users %}
+                    <tr>
+                        <td><a href="{{ path("user", {'id': user.id}) }}" class="modal-link">{{ user.firstName }} {{ user.lastName }}</a>
+                        </td>
+                        <td>
+                            {% if not user.enabled %}
+                                <span class="label bg-red">Disabled</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% set isAdmin = false %}
+                            {% for role in user.roles %}
+                                {% if role == "ROLE_SUPER_USER" %}
+                                    {% set isAdmin = true %}
+                                {% endif %}
+                            {% endfor %}
+                            {% if isAdmin == true %}
+                                Administrator
+                            {% else %}
+                                Staff
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.lastLogin %}
+                                {{ user.lastLogin|date('d M Y g:i a') }}
+                            {% else %}
+                                Never
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            {% if app.user.id == user.id %}
+                                <a href="{{ path("change_password", {'id': user.id}) }}" class="modal-link">Change password</a>
+                            {% else %}
+                                <a href="{{ path("user_delete", {'id': user.id}) }}">Delete</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block pagejs %}
+
+{% endblock %}

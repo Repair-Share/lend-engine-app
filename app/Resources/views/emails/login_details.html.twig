@@ -1,0 +1,28 @@
+{# app/Resources/views/emails/new_user.html.twig #}
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}{{ 'le_email.login_details.title'|trans() }}{% endblock %}
+
+{% block content %}
+
+    {{ 'le_email.login_details.message'|trans() }}
+    <br><br>
+
+    <table cellpadding="10" cellspacing="0">
+        <tr>
+            <td>{{ 'le_email.url'|trans() }}:</td>
+            <td>http://{{ tenantInformation.accountDomain }}/login</td>
+        </tr>
+        <tr>
+            <td>{{ 'le_email.email'|trans() }}:</td>
+            <td>{{ email }}</td>
+        </tr>
+        <tr>
+            <td>{{ 'le_email.password'|trans() }}:</td>
+            <td>{{ password }}</td>
+        </tr>
+    </table>
+
+{% endblock %}

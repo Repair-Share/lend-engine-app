@@ -1,0 +1,33 @@
+{# app/Resources/views/emails/item_waiting_list_alert.html.twig #}
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block title %}Item is now available!{% endblock %}
+
+{% block heading %}Item is now available!{% endblock %}
+
+{% block content %}
+
+    An item on your waiting list is now available to borrow:
+
+    <br><br>
+
+    <strong>{{ item.name }}</strong>
+
+    <br><br>
+    The item has been returned to:
+
+    <br><br>
+
+    <strong>
+        {{ item.inventoryLocation.site.name }}<br>
+        {{ item.inventoryLocation.site.address|nl2br }}
+    </strong>
+
+    <br><br>
+    <a href="http://{{ tenantInformation.accountCode }}.lend-engine-app.com/product/{{ item.id }}">
+        Click here to borrow
+    </a>
+
+{% endblock %}

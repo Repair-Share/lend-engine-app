@@ -1,0 +1,167 @@
+{# app/Resources/views/settings/settings.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block pageTitle %}Settings{% endblock %}
+
+{% block primaryButton %}{% endblock %}
+
+{% block body %}
+
+    <style>
+        h2 { margin: 20px 0 10px; padding-bottom: 10px; border-bottom: 3px solid #dedede; }
+    </style>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row" id="settings-settings">
+
+        <div class="col-md-2">
+            {{ knp_menu_render('settingsMenu') }}
+        </div>
+
+        <div class="col-md-6">
+
+            <h2>About your organisation</h2>
+
+            {{ form_row(form.org_name) }}
+            {{ form_row(form.org_email) }}
+            {{ form_row(form.industry) }}
+            {{ form_row(form.org_address) }}
+            {{ form_row(form.org_postcode) }}
+            {{ form_row(form.org_country) }}
+
+            {{ form_row(form.auto_sku_stub) }}
+
+            {{ form_row(form.org_locale) }}
+            {{ form_row(form.org_languages) }}
+            {{ form_row(form.org_timezone) }}
+
+            {{ form_row(form.org_currency) }}
+
+            <h2>Mailchimp integration</h2>
+
+            <p class="help-block">
+                Once you've added your Mailchimp API details in here Lend Engine will push new contacts, and contact updates, across to Mailchimp.
+            </p>
+
+            {{ form_row(form.mailchimp_api_key) }}
+            {{ form_row(form.mailchimp_default_list_id) }}
+            {{ form_row(form.mailchimp_double_optin) }}
+
+            <h2>Automation</h2>
+
+            <p class="help-block">
+                If you're on one of our paid plans, we can automate emails to save your team loads of time and reduce late returns or missed reservation pickups.
+                Emails are not sent during your trial period.
+                <br>
+                You can edit the email content on the <a href="{{ path('settings_templates') }}">email template settings</a> page.
+            </p>
+
+            {{ form_row(form.automate_email_loan_reminder) }}
+            {{ form_row(form.automate_email_reservation_reminder) }}
+            {{ form_row(form.automate_email_membership) }}
+            {{ form_row(form.automate_email_overdue_days) }}
+
+            <h2>Payment processing</h2>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        {% if tenantInformation.stripePublicApiKey|length == 0 %}
+                            <p class="help-block">
+                                Use Stripe.com to take credit card payments from members.
+                                Connect your Lend Engine account by clicking the button below.
+                                By linking your Lend Engine system to Stripe you accept our payment terms and conditions,
+                                and any fees that the Lend Engine may charge in addition to the amount you are charging your members.
+                            </p>
+                            <a target="_blank" href="https://connect.stripe.com/oauth/authorize?state={{ tenantInformation.accountCode }}&response_type=code&client_id={{ stripe_client_id }}&scope=read_write">
+                                <img src="/images/stripe-logo.png" style="width:120px">
+                            </a>
+                        {% else %}
+                            <div class="help-block">
+                                <label class="label bg-green"><strong>Connected to Stripe</strong></label>
+                                <p style="padding-top:10px;"><a href="{{ path('stripe_disconnect') }}">Disconnect</a> (its easy to reconnect later and you won't lose any data)</p>
+                            </div>
+
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row" {% if tenantInformation.stripePublicApiKey|length == 0 %}style="display:none"{% endif %}>
+                <div class="col-md-12">
+                    {{ form_row(form.stripe_payment_method) }}
+                    {{ form_row(form.stripe_minimum_payment) }}
+                    {{ form_row(form.stripe_use_saved_cards) }}
+                    {{ form_row(form.stripe_fee) }}
+                </div>
+            </div>
+
+            <h2>Public website</h2>
+
+            <div class="form-group">
+                <label>Your website URL is:</label>
+
+                <p>
+                    <a href="http://{{ tenantInformation.accountCode }}.lend-engine-app.com"
+                       target="_blank">http://<strong>{{ tenantInformation.accountCode }}</strong>.lend-engine-app.com</a>
+                </p>
+
+                <p class="help-block">
+                    <a href="http://www.lend-engine.com/contact" target="_blank">Contact us</a> if you want to change this.
+                </p>
+            </div>
+
+            {{ form_row(form.site_welcome) }}
+            {{ form_row(form.site_welcome_user) }}
+            {{ form_row(form.site_css) }}
+            {{ form_row(form.site_js) }}
+            {{ form_row(form.site_font_name) }}
+
+            <h2>Registration and log in</h2>
+
+            {{ form_row(form.site_allow_registration) }}
+            {{ form_row(form.registration_terms_uri) }}
+            {{ form_row(form.site_is_private) }}
+
+            {#<div class="form-group">#}
+                {#<p class="help-block">#}
+                    {#<a href="http://www.lend-engine.com/contact" target="_blank">Contact us</a>#}
+                    {#if you would like to turn on <strong>Google</strong> or <strong>Facebook</strong> single-sign-on for your public website,#}
+                    {#as we need to add your account into Google or Facebook's servers (it's free).#}
+                    {#This allows people to register and log in using their Google or Facebook account.#}
+                    {#Their contact details will be copied into your Lend Engine account (following their approval).#}
+                {#</p>#}
+            {#</div>#}
+
+            {#{{ form_row(form.site_google_login) }}#}
+            {#{{ form_row(form.site_facebook_login) }}#}
+            {#{{ form_row(form.site_twitter_login) }}#}
+
+            <h2>Optional features</h2>
+
+            {{ form_row(form.enable_waiting_list) }}
+
+            <p class="help-block">
+                If an item is not available (on loan, or in an unavailable location), a member can add themselves to the waiting list via your website.
+                When the item becomes available again (check in, or move to an available location),
+                all members requesting this item are sent an email.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="page-controls">
+        <button type="submit" class="btn bg-green">Save settings</button>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

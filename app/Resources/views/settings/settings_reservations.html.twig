@@ -1,0 +1,137 @@
+{# app/Resources/views/settings/settings_reservations.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Reservation settings{% endblock %}
+
+{% block pageTitle %}Reservation settings{% endblock %}
+
+{% block primaryButton %}{% endblock %}
+
+{% block body %}
+
+    <style>
+        h2 { margin: 20px 0 10px; padding-bottom: 10px; border-bottom: 3px solid #dedede; }
+    </style>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row">
+
+        <div class="col-md-2">
+            {{ knp_menu_render('settingsMenu') }}
+        </div>
+
+        <div class="col-md-8">
+
+            <h2>Loans</h2>
+
+            {{ form_row(form.default_checkin_location) }}
+
+            <div class="form-group">
+                <label class="control-label" for="">
+                    Your normal borrowing fee (per item)
+                </label>
+                <div class="row">
+                    <div class="col-xs-2">
+                        <div class="input-group input-100">
+                            <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
+                            {{ form_widget(form.default_loan_fee) }}
+                        </div>
+                    </div>
+                    <div class="col-xs-1" style="margin: 6px;">
+                        for
+                    </div>
+                    <div class="col-xs-2">
+                        {{ form_widget(form.default_loan_days) }}
+                    </div>
+                    <div class="col-xs-1" style="margin: 6px;">
+                        days
+                    </div>
+                </div>
+
+                <div class="help-block">
+                    Most libraries will set this as a daily rate.
+                    <br>The number of days a member can borrow an item for will be determined by your opening hours;
+                    so if you are only open once a week, people will have to borrow for at least 7 days.
+                    If you're open on Tuesdays and Thursdays, then some loans will be 2 days and some will be 5 days (or more).
+                    Self serve reservations via the member site can only be a multiple of the days you choose here
+                    (administrators are not limited).
+                    <br>This can be overridden for each item.
+                </div>
+            </div>
+
+            {{ form_row(form.min_loan_days) }}
+            {{ form_row(form.max_loan_days) }}
+
+            <div class="form-group">
+                <label class="control-label" for="">
+                    Late return fee (per day)
+                </label>
+                <div class="input-group input-100">
+                    <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
+                    {{ form_widget(form.daily_overdue_fee) }}
+                </div>
+                <div class="help-block">
+                    When items are being returned late, this fee is added at the check-in stage.
+                </div>
+            </div>
+
+            {{ form_row(form.loan_terms) }}
+
+            <h2>Reservations</h2>
+
+            <div class="help-block">
+                <p>
+                    If an item is set for online reservation, members and staff can use the member site to reserve items for future dates.
+                </p>
+                <p>
+                    The reservation is 'checked out' when the member comes in to collect the items, at which point it turns into a regular loan.
+                </p>
+                <p>
+                    Available time slots for reservations (pickup and return) are defined by the opening times you set for your site(s).
+                    If your organisation has multiple sites, then the member chooses pickup site and return site when they reserve.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label" for="">
+                    Reservation fee
+                </label>
+                <div class="input-group input-100">
+                    <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
+                    {{ form_widget(form.reservation_fee) }}
+                </div>
+                <div class="help-block">
+                    Charged to the member account when a reservation is placed (even if the reservation is not checked out later).
+                </div>
+            </div>
+
+            {{ form_row(form.charge_daily_fee) }}
+
+            <br />
+
+        </div>
+
+    </div>
+
+    <div class="page-controls">
+        <button type="submit" id="save-settings" class="btn bg-green">Save settings</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        $(document).ready(function() {
+            $(".limited").limiter(2055);
+        });
+    </script>
+{% endblock %}

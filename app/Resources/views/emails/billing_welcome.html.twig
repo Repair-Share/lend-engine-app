@@ -1,0 +1,9 @@
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}Welcome on board!{% endblock %}
+
+{% block content %}
+    <p>We've confirmed your subscription to the {{ plan }} plan.</p>
+{% endblock %}

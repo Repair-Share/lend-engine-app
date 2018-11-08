@@ -1,0 +1,111 @@
+
+header {
+    margin-bottom: 20px;
+}
+
+a.navbar-brand {
+    font-size: 34px;
+    color: #000;
+    font-weight: bold;
+}
+
+#borrow-form {
+    padding: 10px;
+    background-color: #fafafa;
+    border: 1px solid #dddddd;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.alert-error {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+.alert-error hr {
+    border-top-color: #e4b9c0;
+}
+.alert-error .alert-link {
+    color: #843534;
+}
+
+/* LABELS */
+.bg-brown {
+    background-color: #8A8982;
+    color: #fff
+}
+
+.bg-yellow {
+    background-color: #F7DD13 !important;
+}
+
+.bg-gray {
+    color: #000;
+    background-color: #d2d6de !important;
+}
+
+.bg-dim {
+    background-color: transparent;
+    color: #D4D3D3;
+}
+
+.bg-red {
+    background-color: #dd4b39 !important;
+}
+
+.bg-teal {
+    background-color: #39cccc !important;
+}
+
+.bg-orange {
+    background-color: #ff851b !important;
+}
+
+/* PAYMENT PROCESSING */
+
+.creditCard {
+    width: 180px;
+    float: left;
+    padding: 10px;
+    border: 1px solid #d4dee8;
+    border-radius: 4px;
+    font-size: 12px;
+    margin: 0 20px 10px 0;
+    background-color: #fafafa;
+}
+.creditCard.active {
+    background-color: #e4f2fe;
+    border: 1px solid #afcfe8;
+}
+.creditCardText {
+    font-family: "Courier New", Courier, mono;
+    font-weight: bold;
+}
+
+@media (min-width: 768px) {
+    #search-box {
+        padding: 0 40px 0 40px;
+        margin-bottom: 20px;
+    }
+
+    #search-box.no-menu {
+        padding: 0 15px 0 15px;
+    }
+}
+
+@media (max-width: 767px) {
+    #search-box {
+        padding: 0 15px 0 15px;
+        margin-bottom: 5px;
+    }
+
+    #search-box .no-menu {
+        padding: 0 10px 0 10px;
+    }
+}
+
+/* EMBED MODE */
+
+#content.embed-mode #navigation ul {
+    margin: 0 !important;
+}

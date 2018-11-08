@@ -1,0 +1,28 @@
+{# app/Resources/views/modals/location.html.twig #}
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+{% block modalSubTitle %}{{ subTitle|raw }}{% endblock %}
+
+{% block modalBody %}
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.site) }}
+    {{ form_row(form.isAvailable) }}
+    {{ form_row(form.isActive) }}
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="modal-submit btn bg-green">Save location</button>
+{% endblock %}
+

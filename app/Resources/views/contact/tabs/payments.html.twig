@@ -1,0 +1,89 @@
+{% if contact.stripeCustomerId|length > 0 %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-help">
+                Your Stripe.com account has card information for this contact.
+                Edit cards or refund payments using
+                <a href="https://dashboard.stripe.com/test/customers/{{ contact.stripeCustomerId }}" target="_blank">
+                    Stripe.com.
+                </a>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if contact.payments|length > 0 %}
+    <table width="100%" class="table table-hover table-striped tab-table">
+        <thead>
+        <tr>
+            <th>Processed at</th>
+            <th>Date</th>
+            <th>Payment method</th>
+            <th>Note</th>
+            <th></th>
+            <th style="text-align:right">Amount</th>
+        </tr>
+        </thead>
+        {% for payment in contact.payments %}
+            <tr>
+                <td>{{ payment.createdAt|date("d M Y H:i") }}</td>
+                <td>{{ payment.paymentDate|date("d M Y") }}</td>
+                <td>
+                    {% if payment.paymentMethod %}
+                        {{ payment.paymentMethod.name }}
+                    {% endif %}
+                    {% if payment.pspCode %}
+                    <div class="help-block">{{ payment.pspCode }}</div>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if payment.loan %}
+                        <div><a href="{{ path('public_loan', {loanId: payment.loan.id}) }}">Loan {{ payment.loan.id }}</a></div>
+                    {% endif %}
+                    {{ payment.note }}
+                </td>
+                <td>
+                    {% if payment.type == 'DEPOSIT' or payment.type == 'PAYMENT' %}
+                        <a href="{{ path('refund', {id: payment.id, amount: payment.amount}) }}" class="btn btn-default btn-xs modal-link">Refund</a>
+                    {% endif %}
+                </td>
+                <td align="right">
+                    {% if payment.type == 'FEE' or payment.type == 'REFUND' %}
+                        <span style="color:#b90009">- {{ tenantInformation.currencySymbol }} {{ payment.amount|number_format(2) }}</span>
+                    {% else %}
+                        <span style="color:#419f43">+ {{ tenantInformation.currencySymbol }} {{ payment.amount|number_format(2) }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <div class="page-help">
+        No payments yet ...
+        {% if not contact.id %}
+            you'll be able to take payments once you've saved the contact.
+        {% endif %}
+    </div>
+{% endif %}
+
+{% if contact.id %}
+<div>
+    <div class="pull-left">
+        <a href="{{ path('add_credit') }}?c={{ contact.id }}&modal=true&return=admin" class="btn bg-green modal-link">
+            Add credit
+        </a>
+    </div>
+    <div class="pull-right">
+        <div class="text-large">Available balance: <strong>{{ contact.balance|number_format(2) }}</strong></div>
+        <div class="help-block">
+            {% if contact.balance > 0 %}
+                Contact has balance on account to allocate against fees.
+            {% elseif contact.balance < 0 %}
+                Contact owes money!
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="clearfix"></div>

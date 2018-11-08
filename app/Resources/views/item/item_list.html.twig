@@ -1,0 +1,204 @@
+{# app/Resources/views/item/item_list.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Items{% endblock %}
+
+{% block pageTitle %}
+    {% if searchString != '' %}
+        Search for "{{ searchString }}"
+    {% else %}
+        Items
+    {% endif %}
+{% endblock %}
+
+{% block primaryButton %}
+    {% if is_granted('ROLE_SUPER_USER') %}
+        <a class="btn btn-default" href="{{ path('export_items') }}" style="margin-right: 10px">Export</a>
+    {% endif %}
+    <a class="btn bg-green" href="{{ path('item_type') }}">Add item</a>
+{% endblock %}
+
+{% block body %}
+
+    <div class="row" id="primary-filter" style="display:block">
+        <div id="primary-filter-inner">
+            <form method="GET" class="">
+                <input type="hidden" name="filtered" value="1">
+                <input type="hidden" name="search" value="{{ app.request.get('search') }}">
+                <div class="col-md-11 filter-fields">
+
+                    <!-- STANDARD FILTERS -->
+                    <div class="row">
+                        <div style="display:none;" class="col-md-3 form-group">
+                            <label for="customFieldValue" id="customFieldValueLabel">Contains</label>
+                            <input type="text" class="form-control" id="customFieldValue" name="customFieldValue"
+                                   value="{{ app.request.get('customFieldValue') }}">
+                        </div>
+                        <div class="col-md-3 form-group">
+                            <label for="filterTagIds">Tag</label>
+                            <select id="filterTagIds" name="filterTagIds[]" class="form-control" multiple="multiple">
+                                <option value=""></option>
+                                {% for tag in tags %}
+                                    <option value="{{ tag.id }}"
+                                            {% if tag.id in app.request.get('filterTagIds') %}SELECTED{% endif %}>{{ tag.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 form-group">
+                            <label for="filterLocationId">Location</label>
+                            <select name="filterLocationId" id="filterLocationId" class="form-control">
+                                <option value=""></option>
+                                {% for site in sites %}
+                                    <optgroup label="{{ site.name }}">
+                                        {% for location in site.inventoryLocations %}
+                                            <option {% if location.id == app.request.get('filterLocationId') %}SELECTED{% endif %} value="{{ location.id }}">{{ location.name }}</option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 form-group">
+                            <label>Assigned to</label>
+                            <select id="filterAssignedTo" name="filterAssignedTo" class="form-control">
+                                <option></option>
+                                {% for person in team %}
+                                    <option value="{{ person.id }}" {% if app.request.get('filterAssignedTo') == person.id %}SELECTED{% endif %}>{{ person.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 form-group">
+                            <label>Condition</label>
+                            <select id="filterCondition" name="filterCondition" class="form-control">
+                                <option></option>
+                                {% for condition in conditions %}
+                                    <option value="{{ condition.id }}" {% if app.request.get('filterCondition') == condition.id %}SELECTED{% endif %}>{{ condition.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- CUSTOM FIELD FILTERS -->
+                    <div class="row" style="display:none">
+
+                        <div class="col-md-3 form-group">
+                            <label for="customFieldId">Where ... </label>
+                            <select id="customFieldId" name="customFieldId" class="form-control">
+                                <option value="">Choose custom field</option>
+                                {% for field in customFields %}
+                                    <option value="customField{{ field.id }}"
+                                            {% if app.request.get('customFieldId') == "customField#{field.id}" %}SELECTED{% endif %}>{{ field.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 form-group">
+                            <label for="customFieldOperator">&nbsp;</label>
+                            <select id="customFieldOperator" name="customFieldOperator" class="form-control">
+                                {#<option value="equals">Equals</option>#}
+                                <option value="contains">Contains</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 form-group">
+                            <label for="customFieldValue">&nbsp;</label>
+                            <input type="text" id="customFieldValue" name="customFieldValue" class="form-control" placeholder="">
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn bg-green pull-right form-control">Filter</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="row" id="item-list-body">
+        <div class="col-md-12 table-responsive">
+            <table cellspacing="0" class="table table-hover table-striped has-actions" id="data-table-inventory">
+                <thead>
+                <th>Product</th>
+                <th>Location</th>
+                <th>&nbsp;</th>
+                {% for field in customFields %}
+                    {% if field.showOnItemList == true %}
+                        <th>{{ field.name }}</th>
+                    {% endif %}
+                {% endfor %}
+                <th class="hidden-print" style="width:100px"> </th>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        $(document).ready(function() {
+
+            var dataTable = $('#data-table-inventory').DataTable({
+                ordering: false,
+                serverSide: true,
+                autoWidth: true,
+                pageLength: 50,
+                ajax: {
+                    "url": "{{ path('dt_item_list') }}",
+                    "data": function (d) {
+                        d.filterTagIds      = $("#filterTagIds").val();
+                        d.filterLocationId  = $("#filterLocationId").val();
+                        d.filterAssignedTo  = $("#filterAssignedTo").val();
+                        d.filterCondition   = $("#filterCondition").val();
+//                        d.customFieldId     = $("#customFieldId").val();
+//                        d.customFieldValue  = $("#customFieldValue").val();
+                    }
+                },
+                "oSearch": {
+                    "sSearch": "{{ searchString }}"
+                },
+                "language": {
+                    "infoFiltered": ""
+                },
+                "columns": [
+                    null,
+                    null,
+                    null,
+                {% for field in customFields %}
+                    {% if field.showOnItemList == true %}
+                    null,
+                    {% endif %}
+                {% endfor %}
+                    { className: "hidden-print" }
+                ]
+            });
+
+            dataTable.buttons().container().appendTo('#data-table-inventory_length').css('padding-right', '20px');
+
+            $("#data-table-inventory_filter label input").css("height", "34px");
+            $("div.dataTables_wrapper div.dataTables_filter input").css("text-align", "left");
+            $("#data-table-inventory_filter label input").attr("placeholder", "Item name, code, serial");
+            $("#data-table-inventory_filter label input").css("width", "200px");
+
+            //http://coderexample.com/datatable-custom-column-search/
+            $('.search-input-text').on( 'keyup click', function () {   // for text boxes
+                var i =$(this).attr('data-column');  // getting column index
+                var v =$(this).val();  // getting search input value
+                dataTable.columns(i).search(v).draw();
+            } );
+
+            $('.search-input-select').on( 'change', function () {
+                var i =$(this).attr('data-column');
+                var v =$(this).val();
+                dataTable.columns(i).search(v).draw();
+            } );
+
+        });
+    </script>
+{% endblock %}

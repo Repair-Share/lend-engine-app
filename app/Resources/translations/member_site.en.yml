@@ -1,0 +1,226 @@
+# General
+
+# Entities
+Loan: Loan
+Loans: Loans
+Reservation: Reservation
+Reservations: Reservations
+Brand: Brand
+Payment: Payment
+Payments: Payments
+Fee: Fee
+
+# Loan statuses
+loan_status:
+  pending: Pending
+  on_loan: On loan
+  reserved: Reserved
+  cancelled: Cancelled
+  overdue: Overdue
+  closed: Closed
+
+# Localized data added to database (eg loan notes)
+note_reservation_fee: Reservation fee
+note_reservation_fee_will_be_added: fee will be added per reservation
+
+# Table headers
+th:
+  date: Date
+  payment_method: Payment method
+  fee: Fee
+  payment: Payment
+  ref: Reference
+  items: Items
+  date_from: From
+  date_to: To
+  status: Status
+
+# Loan-related
+Reference: Reference
+Items: Items
+Status: Status
+STATUS_PENDING: Pending
+STATUS_ACTIVE: On loan
+STATUS_OVERDUE: Overdue
+STATUS_RESERVED: Reserved
+STATUS_CANCELLED: Cancelled
+STATUS_CLOSED: Closed
+
+# number of days an item is on loan
+days: "{1}day|[2,Inf[days"
+per_day: per day
+per_n_days: for %count% days
+
+# Actions
+button_cancel: Cancel
+button_cancel_reservation: Cancel reservation
+button_add_credit: Add credit
+button_go: Go
+
+# Security / access
+I forgot my password: I forgot my password
+Log out: Log out
+My account: My account
+Login with Facebook: Login with Facebook
+Login with Google: Login with Google
+
+# Form labels
+form:
+  firstName: First name
+  lastName: Last Name
+  email: Email address
+  telephone: Telephone
+  address1: House number / street
+  address2: City
+  address3: County
+  postcode: Postcode
+  country: Country
+  locale: Your preferred language
+
+public_misc:
+  link_admin: Admin
+  link_home: Home
+  link_recent_items: Recently added
+  link_all_items: All items
+  search_items: Search our items
+  no_results: Nothing found
+  filter_items: Filter items
+  any_site: Any site
+  log_in_first: Please log in to view items
+
+public_footer:
+  find_us: Find us / opening hours
+  choose_lang: Choose language
+  powered_by: Powered by
+  logged_in_as: You are logged in as
+
+public_account:
+  title: My Account
+  contact_subtitle: Contact details
+  membership_subtitle: Membership details
+  button_edit_details: Edit my details
+  button_change_password: Change my password
+
+public_item_list:
+  pages: Showing %x% to %y% of %z% items
+
+# Item related
+public_item:
+  location: Location
+  brand: Brand
+  code: Code
+  serial: Serial
+  condition: Condition
+  contains: Contains
+  downloads: Downloads
+  log_in_to_download: log in to download
+  log_in_to_borrow: Log in to borrow or reserve
+  borrow_now: Borrow / reserve
+  not_available: Not available
+  available: Available
+  on_loan: On loan
+  pickup_date_error: Items in your basket define a pickup date that clashes with the bookings for this item. You won't be able to borrow this item on the same loan.
+  pickup_site_error: This item is not available from the site that the other items in your basket are due to be collected from. You won't be able to borrow this item on the same loan.
+  basket_exists: You already have items in your basket. <br>You'll need to pick them up together, so we've set the pickup date for you.
+  account_balance_is: Available balance is
+  add_credit: Add credit
+  pickup_at: Pickup at
+  return_by: Return by
+  choose_pickup_first: "Choose pickup first"
+  button_choose_pickup: Choose pickup time
+  button_choose_return: Choose return time
+  cancel: Cancel
+  basket_add: Add item to basket
+  locations: Available locations
+  maps_link: Open in Google maps
+  similar_items: similar items available
+  see_all: See all
+  not_reservable: "This item is not available for reservation online. Please contact us."
+
+calendar:
+  pickup_day: Pickup
+  my_booking: MY BOOKING
+  reserved: RESERVED
+  on_loan: ON LOAN
+  text_clash_date: Your selected period clashes with an existing booking. Please choose another date.
+  text_return_after_pickup: Please choose a return date after your pickup date
+  alert_already_booked: You can't select this date due to another booking.
+  alert_not_your_booking: You can only view details of your own bookings.
+  alert_day_warning: This item can only be loaned for multiples of itemLoanDays days. \nPlease choose another return date.
+  alert_min_loan_days: "You must borrow this item for at least minLoanDays days."
+  alert_max_loan_days: "You can borrow this item for up to maxLoanDays days."
+
+# Member site : basket page
+public_basket:
+  title: Basket
+  name: Basket
+  due_at: Due at
+  return_to: Return to
+  pickup_after: Pick up after
+  from: from
+  add_credit_message: Please add credit first.
+  empty: Empty basket
+  confirm_reservation: Reserve
+  remove_item: Remove
+  total: Total
+  balance: Due to charge
+  no_items: <h3>No items in basket</h3> Search for an item to add.
+  full_charge: "will be charged to your account"
+  delay_charge: "will be charged to your account now, with the remainder due on collection of items"
+
+public_loan:
+  title: Loan
+
+# Member site : Logged in : Menu
+public_user_menu:
+  contact_info: Profile
+
+text_borrow_with_membership: |
+  With full membership you will be able to borrow and reserve this item online.
+
+text_no_membership: |
+  We don't have an active membership for you.
+
+# Member site : Logged in : Add credit page
+public_add_credit:
+  title: Add credit
+  choose_card: Choose an existing card above, or just continue adding credit to below to use a new card
+  use_this_card: Use this card
+  amount_to_add: Amount to add
+  payment_method: Payment method
+  min_amount: Minimum card amount
+  processing_fee: processing fee will be added for card transactions
+
+# Member site : Logged in : Loans list
+public_loans:
+  no_loans: You've not borrowed anything yet
+
+# Member site : Logged in : Payments list
+public_payments:
+  no_payment: No payments or fees yet
+  title: Fees and Payments
+
+# Registration page
+public_registration:
+  newsletter: "Subscribe to our newsletter"
+  terms_link: "View our Terms and Conditions"
+  terms_label: "I agree to the Terms and Conditions"
+
+# The page shown to users as part of registration process, to choose membership
+public_become_member:
+  title: Become a member
+
+msg_success:
+  payment_ok: Payment made OK. Your account balance has been amended.
+  reservation_create: Reserved! We've just sent an email confirmation.
+  reservation_cancel: Your reservation was cancelled.
+  basket_item_removed: Item was removed from your basket.
+  basket_item_added: was added to your basket.
+  basket_item_exists: is already in your basket.
+
+msg_fail:
+  general_fail: Sorry, something went wrong. Please try again or get in touch with us.
+  reservation_create: Something went wrong, we couldn't create your reservation.
+  reservation_cancel: We couldn't cancel your reservation. Please get in touch with us.
+
+

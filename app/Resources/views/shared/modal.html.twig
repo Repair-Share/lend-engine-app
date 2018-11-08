@@ -1,0 +1,11 @@
+{#Modal template for pages shared between admin and member site#}
+<div class="modal-header">
+    <div style="font-size: 11px; color: #AAA">{% block subTitle %}{% endblock %}</div>
+    <h4 style="margin-top: 4px;">{% block title %}{% endblock %}</h4>
+</div>
+<div class="modal-body">
+    {% block body %}{% endblock %}
+</div>
+<div class="modal-footer">
+    {% block footer %}{% endblock %}
+</div>

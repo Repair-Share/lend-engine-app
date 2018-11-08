@@ -1,0 +1,44 @@
+{% extends 'shared/modal.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block subTitle %}
+    Archive:
+{% endblock %}
+
+{% block title %}
+    <strong>{{ item.name }}</strong>
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {{ form_row(form.notes) }}
+        </div>
+    </div>
+
+    <div class="page-help">
+        Archiving an item will hide it from item lists, and you won't be able to add it to loans.
+        It will still appear on reports.
+    </div>
+
+    <input type="hidden" name="form_action" value="item_move">
+    <input type="hidden" name="item_id" value="{{ item.id }}">
+    <input type="hidden" name="from_location_id" value="{{ item.inventoryLocation.id }}">
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block footer %}
+
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="modal-submit btn btn-success">Archive item</button>
+
+{% endblock %}

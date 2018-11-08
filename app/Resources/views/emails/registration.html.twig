@@ -1,0 +1,33 @@
+{# app/Resources/views/emails/new_user.html.twig #}
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}{{ tenantInformation.companyName }}{% endblock %}
+
+{% block content %}
+
+    {{ tenantInformation.emailWelcomeHeader|raw }}
+
+    <table>
+        <tr>
+            <td>
+                Username:
+            </td>
+            <td>
+                {{ username }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Email address:
+            </td>
+            <td>
+                {{ email }}
+            </td>
+        </tr>
+    </table>
+
+    {{ tenantInformation.emailWelcomeFooter|raw }}
+
+{% endblock %}

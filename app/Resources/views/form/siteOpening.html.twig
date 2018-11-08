@@ -1,0 +1,17 @@
+<div class="siteOpening row" style="padding-bottom: 10px;">
+    <div class="col-md-4" style="padding-right: 5px;">
+        {{ form_widget(siteOpening.weekDay) }}
+    </div>
+    <div class="col-md-2" style="padding-left: 5px; padding-right: 5px;">
+        {{ form_widget(siteOpening.timeFrom, { 'attr': {'size': '4'}}) }}
+    </div>
+    <div class="col-md-2" style="padding-left: 5px; padding-right: 5px;">
+        {{ form_widget(siteOpening.timeTo, { 'attr': {'size': '4'}}) }}
+    </div>
+    <div class="col-md-2" style="padding-left: 5px; padding-right: 5px;">
+        {{ form_widget(siteOpening.timeChangeover, { 'attr': {'size': '4'}}) }}
+    </div>
+    <div class="col-md-1" style="padding-left: 5px; padding-right: 5px;">
+        <a href="#" class="btn btn-default removeOpening">x</a>
+    </div>
+</div>

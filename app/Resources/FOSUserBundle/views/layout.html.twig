@@ -1,0 +1,15 @@
+{% extends "public/base.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block search %}
+    {{ include('public/partials/search.html.twig') }}
+{% endblock %}
+
+{% block accountNav %}
+    {{ include('public/partials/account_nav.html.twig') }}
+{% endblock %}
+
+{% block body %}
+    {% block fos_user_content %}{% endblock %}
+{% endblock %}

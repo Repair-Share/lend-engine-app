@@ -1,0 +1,57 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: is-IS, Icelandic (Iceland)
+# Tagged: FOSUserBundle
+# Exported by: Chris
+# Exported at: Wed, 23 May 2018 10:17:08 +0100
+---
+group.edit.submit: Uppfæra hóp
+group.show.name: Nafn hóps
+group.new.submit: Búðu til hóp
+group.flash.updated: Hópurinn hefur verið uppfærður
+group.flash.created: Hópurinn hefur verið búinn til
+group.flash.deleted: Hópnum hefur verið eytt
+Invalid credentials.: Ógilt notendanafn eða lykilorð
+security.login.username: 'Notendanafn:'
+security.login.password: 'Lykilorð:'
+security.login.remember_me: Muna eftir mér
+security.login.submit: Innskráning
+profile.show.firstName: Nafn
+profile.show.lastName: Eftirnafn
+profile.show.email: Netfang
+profile.edit.submit: Uppfæra
+profile.flash.updated: Notenda aðgangur þinn hefur verið uppfærður
+change_password.submit: Breyta lykilorði
+change_password.flash.success: Lykilorðið þínu hefur verið breytt
+registration.check_email: '...kíktu í tölvupóstinn þinn og sjáðu hvort þetta sé komið.'
+registration.confirmed: Þú hefur fengið aðgang og ert skráð/ur inn!
+registration.back: Áfram...
+registration.submit: Skráning
+registration.flash.user_created: Þú hefur fengið sendan tölvupóst.  Þar er hlekkur sem þú verður að ýta á til að virkja notenda aðgang þinn.
+registration.email.subject: Velkomin/n!
+registration.email.message: Til að virkja aðgang þinn, vinsamlegast fylgdu slóðinni %confirmationUrl%
+resetting.password_already_requested: Sótt hefur verið um lykilorð fyrir þennan notenda á síðasta sólahring.
+resetting.check_email: Tölvupóstur hefur verið sendur á netfangið þitt.  Þar finnur þú hlekk til að endustilla lykilorðið.  Ef þú færð ekki tölvupóst, vinsamlegast athugaðu "Spam" möppuna í pósthólfinu þínu eða hinkraðu í 5 mínútur og reyndu þá aftur.
+resetting.request.invalid_username: Notendanafn eða netfang "%username%" finnst ekki á skrá.
+resetting.request.username: 'Notendanafn eða netfang:'
+resetting.request.submit: Endurstilling lykilorðs
+resetting.reset.submit: Breyttu lykilorði
+resetting.flash.success: Lykilorði hefur verið breytt
+resetting.email.subject: Endurstilling lykilorðs
+resetting.email.message: |-
+  <br>
+  Smelltu á hlekkinn hér fyrir neðan til að endurstilla lykilorðið þitt:<br><br>
+  <a href="%confirmationUrl%">%confirmationUrl%</a>
+layout.logout: Útskráning
+layout.login: Innskráning
+layout.register: Skráning
+layout.logged_in_as: Notandinn %username% er skráður inn
+form.group_name: 'Nafn hóps:'
+form.username: 'Notendanafn:'
+form.current_password: 'Núverandi lykilorð:'
+form.password: 'Lykilorð:'
+form.password_confirmation: 'Endurtaktu lykilorð:'
+form.new_password: 'Nýtt lykilorð:'
+form.new_password_confirmation: 'Endurtaktu nýtt lykilorð:'
+security.login.forgot_password: Ég man ekki lykilorðið mitt

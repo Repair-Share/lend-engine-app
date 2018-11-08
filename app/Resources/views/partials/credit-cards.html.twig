@@ -1,0 +1,35 @@
+{% trans_default_domain 'member_site' %}
+
+{% if contact.creditCards|length > 0 %}
+    <div class="row">
+        <div class="col-md-12">
+            {% if contact.creditCards|length > 0 %}
+                <div style="overflow: hidden">
+                    {% for card in contact.creditCards %}
+                        <span class="creditCard" id="{{ card.cardId }}">
+                                <span class="creditCardText">
+                                    {{ card.brand }}<br />
+                                    XXXX XXXX XXXX {{ card.last4 }}<br />
+                                    {{ card.expMonth }} / {{ card.expYear }}
+                                </span>
+                                <br />
+                                <a class="card-select" onClick="setCard('{{ card.cardId }}'); return false;">
+                                    {% trans %}public_add_credit.use_this_card{% endtrans %}
+                                </a>
+                            </span>
+                    {% endfor %}
+                </div>
+                <p>
+                    {% trans %}public_add_credit.choose_card{% endtrans %}<br />
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <a style="font-size: 12px;" href="https://dashboard.stripe.com/test/customers/{{ contact.stripeCustomerId }}" target="_blank">
+                        Edit cards for this customer using your Stripe.com account
+                    </a>
+                    {% endif %}
+                </p>
+            {% else %}
+
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

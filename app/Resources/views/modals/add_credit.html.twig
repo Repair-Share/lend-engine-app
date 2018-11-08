@@ -1,0 +1,13 @@
+{% extends 'shared/modal.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block title %}
+    {% trans %}public_add_credit.title{% endtrans %}
+    {% if user is defined and user.id != app.user.id %}
+        <span class="session-user">for {{ user.name }}</span>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {{ include('cores/payment_core.html.twig') }}
+{% endblock %}

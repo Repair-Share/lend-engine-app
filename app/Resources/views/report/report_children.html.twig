@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block pageCss %}
+{% endblock %}
+
+{% block title %}{{ pageTitle }}{% endblock %}
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block primaryButton %}
+    {% if is_granted('ROLE_SUPER_USER') %}
+        <a class="btn btn-default pull-right" href="{{ path('export_children') }}" style="margin-right: 10px">Export</a>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+        <div id="report-filter">
+            <form method="GET">
+
+                <input type="hidden" id="date_picker" class="form-control report-date-picker">
+                <input type="hidden" name="date_from" id="date_from" value="{{ date_from }}">
+                <input type="hidden" name="date_to" id="date_to" value="{{ date_to }}">
+
+                <div class="col-md-11">
+                    <div class="row">
+
+                        {#<div class="col-md-4 form-group">#}
+                            {#<label>Date range</label>#}
+                            {##}
+                        {#</div>#}
+
+                        <div class="col-md-4 form-group">
+                            <label>Grouping</label>
+                            <select class="form-control" name="group_by">
+                                <option value="gender" {% if app.request.get('group_by') == 'gender' %}SELECTED{% endif %}>Gender</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 form-group">
+                            <label>Parent is active member</label>
+                            <select class="form-control" name="has_membership">
+                                <option value="yes" {% if app.request.get('has_membership') == 'yes' %}SELECTED{% endif %}>Yes</option>
+                                <option value="no" {% if app.request.get('has_membership') == 'no' %}SELECTED{% endif %}>No</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn bg-green pull-right form-control">Filter</button>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="page-help">
+                        This report shows the total count of children added to your database where the parent contact
+                        has not been archived or deleted.
+                        You can also filter to show only children for parents who have an active membership.
+                        Currently the only grouping available for this report is by child gender.
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 table-responsive">
+            <table cellspacing="0" class="table table-hover table-striped" id="report-table">
+                <thead>
+                {% for column in tableHeader %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+                </thead>
+
+                {% for row in tableRows %}
+                    <tr id="tr{{ row.id }}">
+                        {% for column in row.data %}
+                            <td>{{ column | raw }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+
+                <tfoot>
+                {% for column in tableHeader %}
+                    <td style="border-top:1px solid #aaa; font-weight:bold"></td>
+                {% endfor %}
+                </tfoot>
+
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        var dateFrom = "{{ date_from|date('M d Y') }}";
+        var dateTo = "{{ date_to|date('M d Y') }}";
+    </script>
+    <script src="/js/pages/report.js"></script>
+{% endblock %}

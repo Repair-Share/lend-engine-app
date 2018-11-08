@@ -1,0 +1,38 @@
+{% trans_default_domain 'member_site' %}
+
+{% if tenantInformation.enabledWaitingList %}
+
+    {% if isOnWaitingList %}
+
+        <div class="alert alert-success" style="margin-top:10px; overflow: hidden;">
+            You're on the waiting list!
+            <a href="{{ path('waiting_list_remove', {itemId: product.id}) }}" class="pull-right">Remove me</a><br>
+            <div class="pull-right"><a href="{{ path('help-waiting-list') }}">About the waiting list</a></div>
+        </div>
+
+    {% else %}
+
+        {% if app.user.id is defined %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('waiting_list_add', {itemId: product.id}) }}">Add {{ user.name }} to the waiting list</a>
+            {% else %}
+                <a href="{{ path('waiting_list_add', {itemId: product.id}) }}">Add me to the waiting list</a>
+            {% endif %}
+            <br><br>
+        {% else %}
+            {#<a href="{{ path('fos_user_security_login') }}" class="btn btn-success pull-right">#}
+                {#Log in to request this#}
+            {#</a>#}
+        {% endif %}
+
+        {% if not is_granted('ROLE_ADMIN') %}
+
+            <div style="padding:4px 0;">
+                <a href="{{ path('help-waiting-list') }}">About the waiting list</a>
+            </div>
+
+        {% endif %}
+
+    {% endif %}
+
+{% endif %}

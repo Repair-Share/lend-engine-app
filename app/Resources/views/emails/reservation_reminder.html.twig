@@ -1,0 +1,42 @@
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}{{ 'le_email.reservation_reminder.title'|trans() }}{% endblock %}
+
+{% block content %}
+
+    <p>{{ tenantInformation.getEmailReservationReminderHeader|raw }}</p>
+    <br>
+
+    <div>
+        {% for row in loanRows %}
+            <div style="padding: 4px 0; clear: left;">
+                {% if row.inventoryItem.imageName %}
+                <div style="">
+                <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ schema }}/thumbs/{{ row.inventoryItem.imageName }}">
+                </div>
+                {% endif %}
+                {{ row.inventoryItem.name }}
+            </div>
+        {% endfor %}
+        <div style="clear: both"></div>
+
+        <br>
+
+        {{ 'public_basket.pickup_after'|trans({}, 'member_site') }}
+        <strong>{{ dueDate|date('d F g:i a') }}</strong>
+        {{ 'public_basket.from'|trans({}, 'member_site') }}:<br><br>
+        {{ loanRows[0].siteFrom.name }}<br>
+        {{ loanRows[0].siteFrom.address|nl2br }}
+    </div>
+
+    <br>
+    <a style="" href="http://{{ tenant.domain }}/login">{{ 'le_email.login_to_view_this_loan'|trans() }}</a>
+
+    <br>
+    <br>
+    <br>
+    <p>{{ tenantInformation.getEmailReservationReminderFooter|raw }}</p>
+
+{% endblock %}

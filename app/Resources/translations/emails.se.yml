@@ -1,0 +1,43 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: sv-SE, Swedish (Sweden)
+# Tagged: Emails
+# Exported by: Chris
+# Exported at: Thu, 23 Aug 2018 21:05:02 +0100
+---
+le_email.item_description: Beskrivning
+le_email.item_contains: Innehåller
+le_email.see_attachment: Se bifogat
+le_email.return_sites: Vänligen lämna denna artikel på följande plats/platser
+le_email.th_item: artikel
+le_email.th_fee: Avgift
+le_email.th_due_back: Ska återlämnas
+le_email.url: Inlogg URL
+le_email.email: E-post
+le_email.password: Lösenord
+le_email.assign.title: Du har tilldelats en artikel
+le_email.assign.message: '%firstName%, du har tilldelats artikel "%itemName%" av %assignorName%.'
+le_email.assign.added_note: la också till en anteckning
+le_email.assign.all_items: Se alla artiklar som har tilldelats dig
+le_email.assign.current_location: Nuvarande plats
+le_email.checkout.subject: Din låneinformation
+le_email.checkout.title: Din låneinformation
+le_email.extend.subject: Ditt återlämningsdatum har uppdaterats
+le_email.extend.title: Vi har ändrat återlämningsdatumet för en artikel
+le_email.extend.due_back: 'förfaller nu på '
+le_email.reminder.subject: Ditt lån loanId förfaller i morgon
+le_email.reminder.title: Ditt lån förfaller i morgon
+le_email.reservation_reminder.subject: Hämta din reservation i morgon
+le_email.reservation_reminder.title: Hämta din reservation i morgon
+le_email.membership_expired.subject: 'Ditt medlemskap har gått ut. '
+le_email.membership_expired.title: 'Ditt medlemskap har gått ut. '
+le_email.login_details.subject: Dinna inloggningsuppgifter för %accountName%
+le_email.login_details.title: Inloggningsuppgifter
+le_email.login_details.message: Här är dina inloggningsuppgifter för vårt lånesystem
+le_email.new_password.title: Ditt nya lösenord
+le_email.new_password.message: Detta är ditt nya lösenord för %accountName%
+le_email.reservation_confirm.subject: Din reservationsbekräftelse
+le_email.reservation_confirm.title: Bekräftelse på reservation
+le_email.site_welcome.subject: Välkommen till %accountName%
+le_email.site_welcome.title: Välkommen

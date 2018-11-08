@@ -1,0 +1,93 @@
+{# app/Resources/views/form/fields.html.twig #}
+
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{% block form_help -%}
+    {% for attrname, attrvalue in attr %}
+        {% if attrname == 'data-help' %}
+            {% autoescape false %}<span class="help-block">{{ attrvalue|raw }}</span>{% endautoescape %}
+        {% endif %}
+    {% endfor %}
+{%- endblock form_help %}
+
+{% block form_errors -%}
+    {{ parent() }}
+    {{- block('form_help') -}}
+{%- endblock form_errors %}
+
+{% block translatable_text_row %}
+
+    {{ form_label(form) }}
+    <ul class="nav nav-tabs nav-language">
+        {% for locale,child in form %}
+            <li role="presentation" class="{{ locale == app.request.locale?"active":"" }}">
+                <a aria-controls="trans-field-{{ form.vars.name }}-{{ locale }}" role="tab" data-toggle="tab" href="#trans-field-{{ form.vars.name }}-{{ locale }}"
+                        style="color: {% if child.vars.value %}#00AA00{% else %}#AA0000{% endif %}">
+                    {{ child.vars.name|trans }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content" style="margin-top: 10px">
+        {% for locale,child in form %}
+            <div role="tabpanel" class="tab-pane {{ locale == app.request.locale?"active":"" }}" id="trans-field-{{ form.vars.name }}-{{ locale }}">
+                {{ form_widget(child) }}
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+
+{% endblock %}
+
+{% block translatable_textarea_row %}
+    {{ form_label(form) }}
+    <ul class="nav nav-tabs nav-language">
+        {% for locale,child in form %}
+            <li role="presentation" class="{{ locale == app.request.locale?"active":"" }}">
+                <a aria-controls="trans-field-{{ form.vars.name }}-{{ locale }}" role="tab" data-toggle="tab" href="#trans-field-{{ form.vars.name }}-{{ locale }}"
+                   style="color: {% if child.vars.value %}#00AA00{% else %}#AA0000{% endif %}">
+                    {{ child.vars.name|trans }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content" style="margin-top: 10px">
+        {% for locale,child in form %}
+            <div role="tabpanel" class="tab-pane {{ locale == app.request.locale?"active":"" }}" id="trans-field-{{ form.vars.name }}-{{ locale }}">
+                {{ form_widget(child) }}
+            </div>
+        {% endfor %}
+    </div>
+    <br>
+
+{% endblock %}
+
+{# to get HTML in checkbox label #}
+{% block checkbox_radio_label %}
+    {# Do not display the label if widget is not defined in order to prevent double label rendering #}
+    {% if widget is defined %}
+        {% if required %}
+            {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' required')|trim}) %}
+        {% endif %}
+        {% if parent_label_class is defined %}
+            {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' ' ~ parent_label_class)|trim}) %}
+        {% endif %}
+        {% if label is not same as(false) and label is empty %}
+            {%- if label_format is not empty -%}
+                {% set label = label_format|replace({
+                '%name%': name,
+                '%id%': id,
+                }) %}
+            {%- else -%}
+                {% set label = name|humanize %}
+            {%- endif -%}
+        {% endif %}
+        <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+            {{- widget|raw }} {{ label is not same as(false) ? (translation_domain is same as(false) ? label|raw : label|trans({}, translation_domain)|raw) -}}
+        </label>
+    {% endif %}
+{% endblock checkbox_radio_label %}

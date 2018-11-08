@@ -1,0 +1,173 @@
+{% extends 'base.html.twig' %}
+
+{% block pageTitle %}Calendar{% endblock %}
+
+{% block title %}Calendar{% endblock %}
+
+{% block body %}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.css">
+    <div class="row">
+        <div class="col-md-2">
+            < list of sites here >
+        </div>
+        <div class="col-md-10">
+            <div id="calendar"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagejs %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#calendar').fullCalendar({
+
+                defaultView: 'agendaWeek',
+                height: $(window).height()-150,
+                allDaySlot: false,
+                selectable: true,
+                selectHelper: true,
+
+                header: {
+                    left:   'title',
+                    center: '',
+                    right:  ' listMonth agendaWeek,month prev,next'
+                },
+
+                businessHours: {
+                    // (0=Sunday)
+                    dow: [ 1, 2, 3, 4, 5 ],
+                    start: '00:00',
+                    end: '23:59'
+                },
+
+//                eventSources: [
+//                    {
+//                        url: 'ajaxData.php?op=eventFeed&cID='+4,
+//                        type: 'GET',
+//                        error: function() {
+//                            alert('there was an error while fetching events!');
+//                        },
+//                        borderColor: "#aaa",
+//                        backgroundColor: "#DEDDA0",
+//                        textColor: 'black' // a non-ajax option
+//                    }
+//                ],
+
+                events: [
+                    {
+                        title  : '9.30 - 12.30',
+                        start  : '2017-02-10T09:30:00',
+                        end    : '2017-02-10T12:30:00'
+                    },
+                    {
+                        title  : '9.30 - 12.30',
+                        start  : '2017-02-17T09:30:00',
+                        end    : '2017-02-17T12:30:00'
+                    },
+                    {
+                        title  : '9.30 - 12.30',
+                        start  : '2017-02-24T09:30:00',
+                        end    : '2017-02-24T12:30:00'
+                    }
+                ],
+
+                select: function(start, end) {
+                    eventModal(start, end);
+                },
+
+                eventClick: function(calEvent, jsEvent, view) {
+                    alert('User can edit event' + calEvent.title);
+                },
+
+                loading: function(bool) {
+                    if (bool) showLoadingDiv('Loading ...');
+                    else hideLoadingDiv();
+                },
+
+                // MOVE an event
+                eventDrop: function(event, dayDelta, minuteDelta, allDay) {
+                    showLoadingDiv('Loading ...');
+                    $.get( 'ajaxData.php?op=eventUpdate&type=move&eID='+event.id+"&days="+dayDelta+"&minutes="+minuteDelta, null, function(data) {
+                        if ( data == "ok" ) {
+                            hideLoadingDiv();
+                        } else {
+                            alert("Sorry, we couldn\'t not move the activity. Please try again.");
+                            revertFunc();
+                        }
+                    });
+                },
+
+                // RESIZE an event
+                eventResize: function(event, dayDelta, minuteDelta, allDay) {
+                    showLoadingDiv('Loading ...');
+                    $.get( 'ajaxData.php?op=eventUpdate&type=resize&eID='+event.id+"&days="+dayDelta+"&minutes="+minuteDelta, null, function(data) {
+                        if ( data == "ok" ) {
+                            hideLoadingDiv();
+                        } else {
+                            alert("Sorry, we couldn\'t not move the activity. Please try again.");
+                            revertFunc();
+                        }
+                    });
+                }
+
+            });
+
+            function eventModal(start, end) {
+                var modalUrl = "{{ path('slot') }}?start="+start+"&end="+end;
+                var modalWrapper = $('#modal-wrapper');
+                $('.modal-content', modalWrapper).load(modalUrl, function() {
+                    modalWrapper.modal('show');
+                    modalWrapper.on('shown.bs.modal', function() {
+                        modalWrapper.find(".modal-body input:first").focus();
+                        setUpSelectMenus();
+                    });
+                });
+                return false;
+            }
+
+            function addFeedToCal( type, thisId, colour ) {
+                var url;
+                if ( type == "project" ) {
+                    url = 'ajaxData.php?op=eventFeed&projectId='+thisId;
+                } else {
+                    url = 'ajaxData.php?op=eventFeed&cID='+thisId;
+                }
+                $('#calendar').fullCalendar( 'addEventSource', {
+                    url: url,
+                    type: 'GET',
+                    data: {
+                        custom_param1: 'something',
+                        custom_param2: 'somethingelse'
+                    },
+                    error: function() {
+                        alert('There was an error while fetching events!');
+                    },
+                    borderColor: "#aaa",
+                    backgroundColor: colour,
+                    textColor: 'black'
+                });
+            }
+
+            function removeFeedFromCal( type, thisId ) {
+                var url;
+                if ( type == "project" ) {
+                    url = "ajaxData.php?op=eventFeed&projectId="+thisId;
+                } else {
+                    url = "ajaxData.php?op=eventFeed&cID="+thisId;
+                }
+                $('#calendar').fullCalendar( 'removeEventSource', {
+                    url: url
+                });
+            }
+
+            function showLoadingDiv() {
+
+            }
+
+            function hideLoadingDiv() {
+
+            }
+        });
+    </script>
+{% endblock %}

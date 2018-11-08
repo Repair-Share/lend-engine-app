@@ -1,0 +1,50 @@
+{# app/Resources/views/modals/user.html.twig #}
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+
+{% block modalBody %}
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-6">
+
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.firstName) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.lastName) }}
+                </div>
+            </div>
+
+            {{ form_row(form.email) }}
+
+            {% if user.id %}
+                {{ form_row(form.autoPassword) }}
+            {% endif %}
+
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.enabled) }}
+            {{ form_row(form.roles) }}
+        </div>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="modal-submit btn bg-green">Save</button>
+    <script>
+
+    </script>
+{% endblock %}
+

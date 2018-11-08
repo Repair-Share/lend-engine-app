@@ -1,0 +1,317 @@
+{% trans_default_domain 'member_site' %}
+
+<div class="row" id="productMain">
+    <div class="col-sm-5">
+
+        {% if product.imagePath %}
+            <div class="row">
+                <div class="col-xs-12">
+                    {% for key,image in product.images %}
+                        <div id="large_{{ key }}" class="img-large" style="{% if product.imageName != image.imageName %}display: none;{% endif %}">
+                            <a target="_blank" id="image-link" href="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/large/{{ image.imageName }}">
+                            <img id="large_{{ key }}"
+                                 src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/large/{{ image.imageName }}"
+                                 class="img-thumbnail img-responsive">
+                            </a>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <div style="position:absolute; bottom: 10px; left: 25px;">
+
+                                    <div class="admin-tools-title">
+                                        <i class="fa fa-wrench"></i>
+                                        Admin tools:
+                                    </div>
+
+                                    <a href="{{ path('item', {id: product.id}) }}" class="btn btn-xs btn-primary role-admin">Edit</a>
+
+                                    {% if product.inventoryLocation.id > 1 %}
+                                        <a href="{{ url('item_move', {id: product.id}) }}" class="btn btn-xs btn-primary modal-link">Move / assign</a>
+                                        <a href="{{ url('item_archive', {id: product.id}) }}" class="btn btn-xs btn-primary modal-link">Delete</a>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row" id="item-thumbnails">
+                {% if product.images | length > 1 %}
+                    <div class="col-xs-12">
+                    {% for key,image in product.images %}
+                        <div style="height:80px; width:80px; padding-top:10px; padding-right: 6px; float:left;">
+                            <img
+                                    src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ image.imageName }}"
+                                    class="img-thumbnail img-responsive img-selector"
+                                    onClick="setImage('large_{{ key }}')">
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-xs-12">
+                    <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" class="img-thumbnail img-responsive">
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div style="position:absolute; bottom: 10px; left: 25px;">
+
+                            <div class="admin-tools-title">
+                                <i class="fa fa-wrench"></i>
+                                Admin tools:
+                            </div>
+
+                            <a href="{{ path('item', {id: product.id}) }}" class="btn btn-xs btn-primary role-admin">Edit</a>
+
+                            {% if product.inventoryLocation.id > 1 %}
+                                <a href="{{ url('item_move', {id: product.id}) }}" class="btn btn-xs btn-primary modal-link">Move / assign</a>
+                                <a href="{{ url('item_archive', {id: product.id}) }}" class="btn btn-xs btn-primary modal-link">Delete</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if product.componentInformation|length > 0 %}
+            <div class="row">
+                <div class="col-md-12">
+                    <p style="padding-top: 15px;">
+                        <strong>{% trans %}public_item.contains{% endtrans %}:</strong><br />
+                        {{ product.componentInformation|raw|nl2br }}
+                    </p>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+    <div class="col-sm-7">
+
+        <div style="padding: 10px 0">
+
+            <p class="item-fee">
+                <strong class="fee-title">{% trans %}Fee{% endtrans %}:</strong>
+                {{ tenantInformation.currencySymbol }} {{ product.loanFee|number_format(2) }}
+
+                {% if product.maxLoanDays == 1 %}
+                    {% trans %}per_day{% endtrans %}
+                {% else %}
+                    {% trans with {'%count%': product.maxLoanDays } %}per_n_days{% endtrans %}
+                {% endif %}
+            </p>
+
+            {% if product.depositAmount > 0 %}
+            <p class="item-deposit">
+                A deposit of {{ tenantInformation.currencySymbol }} {{ product.depositAmount }} is due when this item is borrowed.
+            </p>
+            {% endif %}
+
+            {#Item status#}
+            {% if product.inventoryLocation.id == 1 %}
+
+                <span class="label label-info">
+                    {% trans %}public_item.on_loan{% endtrans %}
+                </span>
+
+                <div class="clearfix" style="padding-bottom:10px;"></div>
+
+                {{ include('public/partials/waiting_list.html.twig') }}
+
+            {% elseif product.inventoryLocation.isAvailable == 1 %}
+
+                <div>
+                    <span class="label label-success pull-left">
+                        {% trans %}public_item.available{% endtrans %}
+                    </span>
+                    <div class="clearfix" style="padding-bottom:10px;"></div>
+                </div>
+
+            {% else %}
+
+                <span class="label label-warning">
+                    {% trans %}public_item.not_available{% endtrans %}
+                </span>
+                <div class="clearfix" style="padding-bottom:10px;"></div>
+
+                {{ include('public/partials/waiting_list.html.twig') }}
+
+            {% endif %}
+
+            <div class="clearfix"></div>
+
+            {#Item details#}
+
+            {% if product.inventoryLocation.id > 1 %}
+                {% if isMultiSite == true or is_granted('ROLE_ADMIN') %}
+                    <div class="item-info item-site">
+                        <span class="item-info-label">{% trans %}public_item.location{% endtrans %}:</span>
+                        {{ product.inventoryLocation.site.name }}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <span title="Location detail (eg in stock) is visible for admin only" data-toggle="tooltip">({{ product.inventoryLocation.name }})</span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if product.condition %}
+                <div class="item-info item-condition">
+                    <span class="item-info-label">{% trans %}public_item.condition{% endtrans %}:</span> {{ product.condition.name }}
+                </div>
+            {% endif %}
+
+            {% if product.brand %}
+                <div class="item-info item-brand">
+                    <span class="item-info-label">{% trans %}public_item.brand{% endtrans %}:</span> {{ product.brand }}
+                </div>
+            {% endif %}
+
+            {% if product.sku %}
+                <div class="item-info item-code">
+                    <span class="item-info-label">{% trans %}public_item.code{% endtrans %}:</span> {{ product.sku }}
+                </div>
+            {% endif %}
+
+            {% if product.serial %}
+                <div class="item-info item-serial">
+                    <span class="item-info-label">{% trans %}public_item.serial{% endtrans %}:</span> {{ product.serial }}
+                </div>
+            {% endif %}
+
+            {% if product.note and is_granted('ROLE_ADMIN') %}
+                <div class="item-info item-note">
+                    <span class="item-info-label">
+                        <i class="fa fa-exclamation-circle" data-toggle="tooltip" style="color: #ff741e" title="Not shown to members"></i>
+                        Note:
+                    </span> {{ product.note }}
+                </div>
+            {% endif %}
+
+            {% if product.tags is defined %}
+                <div class="item-tags">
+                    {% for tag in product.tags %}
+                        <a href="{{ path('public_products') }}?tagId={{ tag.id }}" class="label label-default bg-brown item-tag">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        </div>
+
+        <p id="item-detail-description">
+            {{ product.description|raw|nl2br }}
+        </p>
+
+        {% if product.textFieldValues|length > 0 and tenantInformation.feature('ProductField') %}
+            <table width="100%" cellpadding="10" cellspacing="0">
+                {% for field in product.textFieldValues %}
+                    {% if field.content != '' and field.showOnWebsite == true %}
+                        <tr>
+                            <td valign="top" style="padding: 0 10px 6px 0; font-weight: bold">{{ field.name }}</td>
+                            <td valign="top" style="padding: 0 10px 6px 0">{{ field.content|nl2br }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        {% endif %}
+
+        {% if product.fileAttachments|length > 0 and tenantInformation.feature('ItemAttachment') %}
+            <div class="file-attachments">
+                <div style="font-weight: bold">{% trans %}public_item.downloads{% endtrans %}</div>
+                {% if app.user.id is not defined  %}
+                    <p>({% trans %}public_item.log_in_to_download{% endtrans %})</p>
+                {% endif %}
+                {% for file in product.fileAttachments %}
+                    <div>
+                    {% if app.user.id is defined  %}
+                        <a target="_blank" href="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/files/{{ file.fileName }}">{{ file.fileName }}</a>
+                    {% else %}
+                        {{ file.fileName }}
+                    {% endif %}
+                    </div>
+                {% endfor %}
+                <br>
+            </div>
+
+        {% endif %}
+
+        {#Main controls#}
+        {% if user.id is defined %}
+
+            {% if product.isReservable != false or is_granted('ROLE_ADMIN') %}
+
+                {#Item is reservable, or we are admin#}
+                {% if user.activeMembership is defined and user.activeMembership %}
+
+                    {% if app.request.get('modal') == 'true' %}
+                        {#Button in footer#}
+                    {% else %}
+                        <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>
+                    {% endif %}
+
+                    <div class="alert alert-danger" id="pickup-date-error" style="display: none;">
+                        {% trans %}public_item.pickup_date_error{% endtrans %}
+                    </div>
+                    <div class="alert alert-danger" id="pickup-site-error" style="display: none;">
+                        {% trans %}public_item.pickup_site_error{% endtrans %}
+                    </div>
+
+                {% else %}
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="alert alert-warning">
+                            {{ user.name }} does not have an active membership.<br>
+                            <a href="{{ path('membership', {contactId: user.id}) }}" class="modal-link">Subscribe now</a>,
+                            or <a href="{{ path('member_search', {itemId: product.id}) }}">change user</a>.
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            {{ 'text_borrow_with_membership'|trans({}, 'member_site') }}
+                        </div>
+                    {% endif %}
+
+                {% endif %}
+
+            {% else %}
+
+                <div class="alert alert-warning no-borrow">
+                    {% trans %}public_item.not_reservable{% endtrans %}
+                </div>
+
+            {% endif %}
+
+        {% else %}
+
+            {#Not logged in#}
+            {% if product.isReservable == false %}
+                <div class="alert alert-warning no-borrow">
+                    {% trans %}public_item.not_reservable{% endtrans %}
+                </div>
+            {% else %}
+                <a href="{{ path('fos_user_security_login') }}" class="btn btn-success">
+                    {% trans %}public_item.log_in_to_borrow{% endtrans %}
+                </a>
+            {% endif %}
+
+        {% endif %}
+
+        <br><br>
+        <!-- Facebook share button code -->
+        <div class="fb-share-button" data-href="{{ url('public_product', {productId: product.id}) }}" data-layout="button" data-size="small" data-mobile-iframe="true">
+            <a class="fb-xfbml-parse-ignore" target="_blank" href="{{ url('public_product', {productId: product.id}) }}">Share</a>
+        </div>
+
+        {#<div class="fb-comments" data-href="{{ url('public_product', {productId: product.id}) }}" data-numposts="5"></div>#}
+
+    </div>
+
+</div>
+
+<br />
+
+
+<script>
+    // Set the correct thumbnail
+    function setImage(imageId) {
+        jQuery("#" + imageId).show();
+        jQuery(".img-large:not(#" + imageId + ")").hide();
+    }
+</script>

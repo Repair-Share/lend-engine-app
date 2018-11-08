@@ -1,0 +1,104 @@
+<div class="row">
+    <div class="col-md-12">
+        <form action="{{ path('fos_user_registration_register') }}" method="POST" class="fos_user_registration_register">
+
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+
+            {% if tenantInformation.facebookLogin or tenantInformation.googleLogin or tenantInformation.twitterLogin %}
+                {% set socialLogin = true %}
+            {% else %}
+                {% set socialLogin = false %}
+            {% endif %}
+
+
+            {% if socialLogin == true %}
+            <h2>Register using social media</h2>
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    {% if tenantInformation.facebookLogin %}
+                    <a href="{{ path('hwi_oauth_service_redirect', {'service': 'facebook' }) }}" class="btn btn-sm btn-block btn-social btn-facebook">
+                        <span class="fa fa-facebook"></span>
+                        {% trans %}Register using Facebook{% endtrans %}
+                    </a>
+                    {% endif %}
+
+                    {% if tenantInformation.twitterLogin %}
+                    <a href="{{ path('hwi_oauth_service_redirect', {'service': 'twitter' }) }}" class="btn btn-sm btn-block btn-social btn-twitter">
+                        <span class="fa fa-twitter"></span>
+                        {% trans %}Register using Twitter{% endtrans %}
+                    </a>
+                    {% endif %}
+
+                    {% if tenantInformation.googleLogin %}
+                        <a href="{{ path('hwi_oauth_service_redirect', {'service': 'google' }) }}" class="btn btn-sm btn-block btn-social btn-google">
+                            <span class="fa fa-google"></span>
+                            {% trans %}Register using Google{% endtrans %}
+                        </a>
+                    {% endif %}
+
+                    <p class="help-block" style="font-size: 11px">
+                        By connecting with Facebook, Twitter or Google you agree to our terms and conditions.
+                    </p>
+                </div>
+
+                <div class="col-md-6">
+                    <p>
+                        {#By connecting using your social media account, we can help spread the word that borrowing is better than buying.#}
+                        {#We'll <strong>always</strong> ask permission before posting anything on your behalf, of course.#}
+                    </p>
+                </div>
+
+            </div>
+
+            <br>
+
+            <h2>Or fill out your details below ...</h2>
+
+            {% else %}
+                <h2></h2>
+            {% endif %}
+
+            <div class="row">
+
+                <div class="col-md-4" id="col-personal">
+                    {{ form_row(form.firstName) }}
+                    {{ form_row(form.lastName) }}
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.telephone) }}
+                    {{ form_row(form.locale) }}
+                </div>
+
+                <div class="col-md-4" id="col-address">
+                    {{ form_row(form.addressLine1) }}
+                    {{ form_row(form.addressLine2) }}
+                    {{ form_row(form.addressLine3) }}
+                    {{ form_row(form.addressLine4) }}
+                    {{ form_row(form.countryIsoCode) }}
+                </div>
+
+                <div class="col-md-4" id="col-password">
+                    {{ form_row(form.plainPassword) }}
+
+                    {{ form_row(form.subscriber) }}
+
+                    {{ form_row(form.terms) }}
+
+                    <input type="submit" value="{{ 'registration.submit'|trans({}, 'FOSUserBundle') }}" class="btn btn-primary btn-block btn-flat pull-right" />
+
+                </div>
+
+            </div>
+
+            {{ form_end(form) }}
+
+        </form>
+    </div>
+</div>
+
+{% block pagejs %}{% endblock %}
+
+
