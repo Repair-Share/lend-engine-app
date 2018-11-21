@@ -25,6 +25,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             ->where('lr.dueInAt > :dateStart')
             ->andWhere('lr.dueInAt < :dateEnd')
             ->andWhere('l.status = :statusActive')
+            ->andWhere('lr.checkedInAt IS NULL')
             ->setParameter('dateStart', $tomorrow->format("Y-m-d 00:00:00"))
             ->setParameter('dateEnd', $tomorrow->format("Y-m-d 23:59:59"))
             ->setParameter('statusActive', 'ACTIVE');
