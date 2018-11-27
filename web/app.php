@@ -13,6 +13,8 @@ $loader->unregister();
 $apcLoader->register(true);
 */
 
+unset($_SERVER["HTTP_FORWARDED"]);
+
 /**
  * @var Composer\Autoload\ClassLoader
  */

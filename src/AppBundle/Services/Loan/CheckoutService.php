@@ -94,7 +94,10 @@ class CheckoutService
 
             // Move item to on-loan
             /** @var \AppBundle\Entity\InventoryLocation $location */
-            $location = $locationRepo->find(1);
+            if (!$location = $locationRepo->find(1)) {
+                $this->errors[] = "Location with ID 1 not found. Please contact support.";
+                return false;
+            }
 
             /** @var $row \AppBundle\Entity\LoanRow */
             $inventoryItem = $row->getInventoryItem();
