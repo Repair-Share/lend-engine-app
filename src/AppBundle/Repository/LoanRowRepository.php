@@ -55,10 +55,11 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             ->where('lr.dueInAt > :dateStart')
             ->andWhere('lr.dueInAt < :dateEnd')
             ->andWhere('lr.checkedInAt IS NULL')
-//            ->andWhere('l.status = :statusActive')
+            ->andWhere('lr.checkedOutAt IS NOT NULL')
+            ->andWhere('l.status != :statusReserved')
             ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
             ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"))
-//            ->setParameter('statusActive', 'ACTIVE')
+            ->setParameter('statusReserved', 'RESERVED')
         ;
 
         $query = $qb->getQuery();
