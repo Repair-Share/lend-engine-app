@@ -25,7 +25,8 @@
                         </div>
                         <div class="col-xs-8">
                             <h5>{{ product.name }}</h5>
-                            <div>Code: {{ product.sku }}</div>
+                            {% if product.sku %}<div>Code: {{ product.sku }}</div>{% endif %}
+                            {% if product.serial %}<div>Serial: {{ product.serial }}</div>{% endif %}
                             <div>{{ product.description }}</div>
                             {% if product.componentInformation %}
                             <div><br>Contains:<br>{{ product.componentInformation }}</div>
