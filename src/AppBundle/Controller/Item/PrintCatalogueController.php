@@ -54,6 +54,9 @@ class PrintCatalogueController extends Controller
         /** @var \AppBundle\Services\InventoryService $inventoryService */
         $inventoryService = $this->get('service.inventory');
 
+        /** @var \AppBundle\Services\Item\ItemService $itemService */
+        $itemService = $this->get('service.item');
+
         /** @var \AppBundle\Repository\InventoryItemRepository $repo */
         $itemRepo = $em->getRepository('AppBundle:InventoryItem');
 
@@ -62,11 +65,32 @@ class PrintCatalogueController extends Controller
         $searchResults = $inventoryService->itemSearch(0, 200, $filter);
         $products      = $searchResults['data'];
 
+        $defaultLoanDays = (int)$this->get('settings')->getSettingValue('default_loan_days');
+        $minLoanDays = (int)$this->get('settings')->getSettingValue('min_loan_days');
+
         $items = [];
         foreach ($products AS $product) {
             /** @var \AppBundle\Entity\InventoryItem $product */
             $itemId = $product->getId();
             $item = $itemRepo->find($itemId);
+
+            // Calculate the item fee for the full loan period
+            $itemFee = $itemService->determineItemFee($product, null);
+
+            // Usually 1, for a daily charge
+            if (!$itemLoanDays = $product->getMaxLoanDays()) {
+                $itemLoanDays = $defaultLoanDays;
+            }
+
+            // Multiply out for the UI
+            if ($minLoanDays > $itemLoanDays) {
+                $itemFee = $itemFee * $minLoanDays;
+                $itemLoanDays = $itemLoanDays * $minLoanDays;
+            }
+
+            $item->setLoanFee($itemFee);
+            $item->setMaxLoanDays($itemLoanDays);
+
             $items[] = $item;
         }
 
