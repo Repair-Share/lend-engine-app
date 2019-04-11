@@ -205,6 +205,12 @@ class TenantInformation
 
     /* Website features */
 
+    public function getSiteTheme()
+    {
+        return "test";
+//        return "basic";
+    }
+
     public function getSiteWelcome()
     {
         $w = $this->settings->getSettingValue('site_welcome');

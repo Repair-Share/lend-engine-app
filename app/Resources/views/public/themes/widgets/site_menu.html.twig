@@ -1,0 +1,25 @@
+{% trans_default_domain 'member_site' %}
+
+<a href="{{ path('home') }}" style="padding: 0 10px"><i class="fa fa-home"></i><span class="hidden-xs"> {% trans %}public_misc.link_home{% endtrans %}</span></a>
+
+{% if tenantInformation.basket is defined and tenantInformation.basket %}
+    <a href="{{ path('basket_show') }}" style="padding: 0 10px;"><i class="fa fa-shopping-basket"></i><span class="hidden-xs"> Basket</span> ({{ tenantInformation.basket.loanRows|length }} items)</a>
+{% endif %}
+
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('homepage') }}" style="padding: 0 10px"><i class="fa fa-wrench"></i><span class="hidden-xs"> {% trans %}public_misc.link_admin{% endtrans %}</span></a>
+    {% endif %}
+    <a href="{{ path('fos_user_profile_show') }}" style="padding: 0 10px"><i class="fa fa-user"></i><span class="hidden-xs"> {% trans %}My account{% endtrans %}</span></a>
+    <a href="{{ path('fos_user_security_logout') }}" style="padding: 0 10px"><i class="fa fa-sign-out"></i><span class="hidden-xs"> {% trans %}Log out{% endtrans %}</span></a>
+
+{% else %}
+
+    {% if tenantInformation.allowRegistration %}
+        <a href="{{ path('fos_user_registration_register') }}" style="padding: 0 10px">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a>
+    {% endif %}
+
+    <a href="{{ path('fos_user_security_login') }}" style="padding: 0 10px">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+
+{% endif %}

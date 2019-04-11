@@ -1,8 +1,9 @@
-<div style="padding:10px 0;" id="site-welcome">
+{% extends 'public/themes/loader.html.twig' %}
+{% trans_default_domain 'member_site' %}
 
-    {% if testContent is defined %}
-    {{ testContent }}
-    {% endif %}
+{% block body %}
+
+<div style="padding:10px 0;" id="site-welcome">
 
     {% if tenantInformation.siteWelcome %}
         {{ tenantInformation.siteWelcome|raw }}
@@ -61,3 +62,5 @@
 
     {% endif %}
 </div>
+
+{% endblock %}

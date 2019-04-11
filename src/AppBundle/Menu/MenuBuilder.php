@@ -111,7 +111,6 @@ class MenuBuilder
         $this->menu->addChild('Check in prompts', array('route' => 'checkInPrompt_list'));
         $this->menu->addChild('Check out prompts', array('route' => 'checkOutPrompt_list'));
 
-//        $this->menu->addChild('Import items', array('route' => 'import_items'));
         $this->menu->addChild('Import contacts', array('route' => 'import_contacts'));
         $this->menu->addChild('Custom pages & links', array('route' => 'page_list'));
 
@@ -125,15 +124,31 @@ class MenuBuilder
     /**
      * @return \Knp\Menu\ItemInterface
      */
-    public function siteMenu()
+    public function itemsMenuStacked()
     {
+        return $this->itemsMenu(true);
+    }
+
+    /**
+     * @param bool $stacked
+     * @return \Knp\Menu\ItemInterface
+     * @throws \Exception
+     */
+    public function itemsMenu($stacked = false)
+    {
+
+        if ($stacked == true) {
+            $class = 'nav nav-pills nav-stacked items-nav';
+        } else {
+            $class = 'nav nav-pills items-nav';
+        }
 
         $requestStack = $this->container->get('request_stack');
         $request = $requestStack->getCurrentRequest();
 
         $this->menu = $this->factory->createItem('root', array(
             'childrenAttributes' => array(
-                'class' => 'nav nav-pills nav-stacked'
+                'class' => $class
             )
         ));
 
@@ -225,15 +240,31 @@ class MenuBuilder
     /**
      * @return \Knp\Menu\ItemInterface
      */
-    public function pagesMenu()
+    public function pagesMenuStacked()
+    {
+        return $this->pagesMenu(true);
+    }
+
+    /**
+     * @param bool $stacked
+     * @return \Knp\Menu\ItemInterface
+     * @throws \Exception
+     */
+    public function pagesMenu($stacked = false)
     {
 
         $requestStack = $this->container->get('request_stack');
         $request = $requestStack->getCurrentRequest();
 
+        if ($stacked == true) {
+            $class = 'nav nav-pills nav-stacked custom-nav';
+        } else {
+            $class = 'nav nav-pills custom-nav';
+        }
+
         $this->menu = $this->factory->createItem('root', array(
             'childrenAttributes' => array(
-                'class' => 'nav nav-pills nav-stacked custom-nav'
+                'class' => $class
             )
         ));
 

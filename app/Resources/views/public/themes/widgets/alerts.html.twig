@@ -1,0 +1,14 @@
+{% for flashMessage in app.session.flashbag.get('success') %}
+    <div class="alert alert-success">
+        {{ flashMessage | raw }}
+    </div>
+{% endfor %}
+
+{% set errors = app.session.flashbag.get('error') %}
+{% if errors|length > 0 %}
+    <div class="alert alert-error">
+        {% for flashMessage in errors %}
+            <div>{{ flashMessage | raw }}</div>
+        {% endfor %}
+    </div>
+{% endif %}

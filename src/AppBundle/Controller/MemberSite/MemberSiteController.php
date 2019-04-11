@@ -33,17 +33,9 @@ class MemberSiteController extends Controller
             $user = $contactRepo->find($sessionUserId);
         }
 
-        return $this->render('public/base.html.twig', [
+        return $this->render('public/pages/home.html.twig', [
             'user' => $user
         ]);
-    }
-
-    /**
-     * @Route("welcome", name="home-content")
-     */
-    public function homeAction(Request $request)
-    {
-        return $this->render('public/pages/home.html.twig', ['testContent' => '']);
     }
 
     /**

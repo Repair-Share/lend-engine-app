@@ -1,0 +1,19 @@
+{% if tenantInformation.languages|length > 1 %}
+    <h5>{% trans %}public_footer.choose_lang{% endtrans %}</h5>
+
+    {% set languages = {
+    en: {code: 'en', name: 'English'},
+    fr: {code: 'fr', name: 'Francais'},
+    es: {code: 'es', name: 'Espanol'},
+    is: {code: 'is', name: 'íslensku'},
+    nl: {code: 'nl', name: 'Nederlands'},
+    ro: {code: 'ro', name: 'Română'},
+    sk: {code: 'sk', name: 'Slovak'},
+    se: {code: 'se', name: 'Svenska'},
+    cy: {code: 'cy', name: 'Cymraeg'},
+    } %}
+
+    {% for lCode in tenantInformation.languages %}
+        <a {% if app.request.locale == lCode %}class="active"{% endif %} href="{{ path('set_locale', {loc: lCode}) }}">{{ languages[lCode].name }}</a>
+    {% endfor %}
+{% endif %}

@@ -1,0 +1,9 @@
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    {% trans %}public_footer.logged_in_as{% endtrans %} {{ app.user.firstName }} {{ app.user.lastName }}.
+    {% if app.user.activeSite %}
+        <br>
+        Working at {{ app.user.activeSite.name }}
+        <br>
+        <a href="{{ path('choose_site') }}" class="modal-link">Change site</a>
+    {% endif %}
+{% endif %}

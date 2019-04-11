@@ -1,0 +1,27 @@
+/* WIDGET OVERRIDES */
+
+/* logo */
+header {
+    margin-bottom: 20px;
+}
+
+#nav-org-name {
+    font-size: 24px;
+    line-height: 40px;
+    margin-top: 10px;
+}
+
+#nav-org-name a {
+    color: #000;
+}
+
+/* account_menu */
+
+#account-nav {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #666;
+    padding-bottom: 10px;
+}
+
+/* CUSTOM CSS */
+

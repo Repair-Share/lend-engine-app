@@ -1,0 +1,5 @@
+{% trans_default_domain 'member_site' %}
+
+<h5>{{ tenantInformation.companyName }}</h5>
+{{ tenantInformation.companyEmail }}<br>
+<a href="{{ path('public_site_list') }}">{% trans %}public_footer.find_us{% endtrans %}</a>

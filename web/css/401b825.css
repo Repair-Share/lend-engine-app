@@ -6799,21 +6799,9 @@ button.close {
 }
 /* HEADER */
 
-header {
-    margin-bottom: 20px;
-}
 
-#nav-org-name {
-    font-size: 24px;
-    line-height: 40px;
-    margin-top: 10px;
-}
 
-#nav-org-name a {
-    color: #000;
-}
-
-/* Top nav */
+/* TOP NAV */
 
 #nav-menu {
     line-height: 40px;
@@ -6838,19 +6826,9 @@ header {
 #leftNavigation {
     clear: left;
 }
-.custom-nav {
-    border-bottom: 1px #CCC solid;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-}
 
 /* ACCOUNT NAV */
 
-#account-nav {
-    margin-bottom: 15px;
-    border-bottom: 1px solid #666;
-    padding-bottom: 10px;
-}
 
 /* GENERAL SITE STUFF */
 
@@ -7044,17 +7022,6 @@ mark{
 
 /* OTHER */
 
-@media (min-width: 768px) {
-    #search-box {
-        margin-bottom: 20px;
-    }
-}
-
-@media (max-width: 767px) {
-    #search-box {
-        margin-bottom: 20px;
-    }
-}
 /*!
  * FullCalendar v3.2.0 Stylesheet
  * Docs & License: https://fullcalendar.io/
