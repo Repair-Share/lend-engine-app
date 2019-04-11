@@ -208,11 +208,6 @@ class TenantInformation
     public function getSiteWelcome()
     {
         $w = $this->settings->getSettingValue('site_welcome');
-
-        // Convert links into links
-//        $url = '@(http(s)?)?(://)?(([a-zA-Z])([-\w]+\.)+([^\s\.]+[^\s]*)+[^,.\s])@';
-//        $w = preg_replace($url, '<a href="http$2://$4" target="_blank" title="$0">$0</a>', $w);
-
         return $w;
     }
 
@@ -226,6 +221,7 @@ class TenantInformation
         return $this->settings->getSettingValue('site_css');
     }
 
+    // Custom JavaScript for the public site
     public function getSiteJs()
     {
         return $this->settings->getSettingValue('site_js');
@@ -236,6 +232,13 @@ class TenantInformation
         return $this->settings->getSettingValue('site_allow_registration');
     }
 
+    // Require log in to search and view items
+    public function getSiteIsPrivate()
+    {
+        return $this->settings->getSettingValue('site_is_private');
+    }
+
+    // A link to terms and conditions for the registration page
     public function getTermsUri()
     {
         return $this->settings->getSettingValue('registration_terms_uri');

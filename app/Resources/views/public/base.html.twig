@@ -160,9 +160,12 @@
 
         <div class="container">
 
+            {# If we're logged in, or if the search is public, show it #}
+            {% if not tenantInformation.siteIsPrivate or is_granted("IS_AUTHENTICATED_REMEMBERED") %}
             {% block search %}
                 {{ include('public/partials/search.html.twig') }}
             {% endblock %}
+            {% endif %}
 
             <div class="row">
 
