@@ -15,12 +15,12 @@ monolog:
             type:   stream
             path:   "%kernel.logs_dir%/%kernel.environment%.log"
             level:  warning
-            channels: ["!doctrine"]
+            channels: ["!doctrine", "!translation"]
         console:
             type:   console
             bubble: false
             level:  warning
-            channels: ["!doctrine"]
+            channels: ["!doctrine", "!translation"]
 
 web_profiler:
     toolbar: false
