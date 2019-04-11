@@ -28,7 +28,6 @@ class AppKernel extends Kernel
             new Http\HttplugBundle\HttplugBundle(),
             new Hype\MailchimpBundle\HypeMailchimpBundle(),
             new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
-            new Endroid\Twitter\Bundle\EndroidTwitterBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
         );
 

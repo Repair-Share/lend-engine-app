@@ -29,7 +29,6 @@ abstract class AuthenticatedControllerTest extends \Symfony\Bundle\FrameworkBund
     public function setUp()
     {
         $this->client = $this->createAuthorizedClient();
-
         $this->helpers = new TestHelpers();
     }
 
@@ -38,6 +37,8 @@ abstract class AuthenticatedControllerTest extends \Symfony\Bundle\FrameworkBund
      */
     protected function createAuthorizedClient()
     {
+        fwrite(STDERR, print_r("Logging in as admin user hello@lend-engine.com ... ".PHP_EOL, TRUE));
+
         $client = static::createClient();
         $container = $client->getContainer();
         $session = $container->get('session');
@@ -59,7 +60,11 @@ abstract class AuthenticatedControllerTest extends \Symfony\Bundle\FrameworkBund
         // save the login token into the session and put it in a cookie
         $session->set('_security_' . $firewallName, serialize($container->get('security.token_storage')->getToken()));
         $session->save();
-        $client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
+        $client->getCookieJar()->set(
+            new Cookie(
+                $session->getName(), $session->getId()
+            )
+        );
 
         return $client;
     }
@@ -74,6 +79,8 @@ abstract class AuthenticatedControllerTest extends \Symfony\Bundle\FrameworkBund
      */
     public function loadTestDatabase()
     {
+        fwrite(STDERR, print_r("Loading test database 'unit_test' ... ".PHP_EOL, TRUE));
+
         $kernel = static::createKernel();
         $kernel->boot();
 

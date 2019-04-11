@@ -128,12 +128,6 @@ fos_user:
     service:
         mailer: service.fos_user_mailer
 
-endroid_twitter:
-    consumer_key: "%twitter_consumer_key%"
-    consumer_secret: "%twitter_consumer_secret%"
-    access_token: '...'
-    access_token_secret: '...'
-
 # File system bridge to AWS
 oneup_flysystem:
     adapters:
