@@ -64,10 +64,14 @@
                             {% if product.loanFee > 0 %}
                                 <span class="item-list-fee">
                                     {{ tenantInformation.currencySymbol }} {{ product.loanFee|number_format(2) }}
-                                    {% if product.maxLoanDays == 1 %}
-                                        {% trans %}per_day{% endtrans %}
+                                    {% if tenantInformation.fixedFeePricing %}
+                                        {#{% trans %}per_borrow{% endtrans %}#}
                                     {% else %}
-                                        {% trans with {'%count%': product.maxLoanDays } %}per_n_days{% endtrans %}
+                                        {% if product.maxLoanDays == 1 %}
+                                            {% trans %}per_day{% endtrans %}
+                                        {% else %}
+                                            {% trans with {'%count%': product.maxLoanDays } %}per_n_days{% endtrans %}
+                                        {% endif %}
                                     {% endif %}
                                 </span>
                             {% endif %}
