@@ -1,3 +1,5 @@
+{% trans_default_domain 'member_site' %}
+
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
     {% trans %}public_footer.logged_in_as{% endtrans %} {{ app.user.firstName }} {{ app.user.lastName }}.
     {% if app.user.activeSite %}

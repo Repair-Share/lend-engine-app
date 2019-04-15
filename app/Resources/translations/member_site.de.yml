@@ -1,0 +1,166 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: de-DE, German (Germany)
+# Tagged: Member site
+# Exported by: Chris
+# Exported at: Mon, 15 Apr 2019 20:04:14 +0100
+---
+Loan: Darlehen
+Loans: Kredite
+Reservation: Reservierung
+Reservations: Reservierungen
+Brand: Marke
+Payment: Zahlung
+Payments: Zahlungen
+Fee: Gebühr
+loan_status.pending: Ausstehend
+loan_status.on_loan: Ausgeliehen
+loan_status.reserved: Reserviert
+loan_status.cancelled: Storniert
+loan_status.overdue: Überfällig
+loan_status.closed: geschlossen
+note_reservation_fee: Reservierungsgebühr
+note_reservation_fee_will_be_added: Zahlungsgebühr wird pro Reservierung hinzugefügt
+th.date: Datum
+th.payment_method: Zahlweise
+th.fee: Gebühr
+th.payment: Bezahlung
+th.ref: Referenz
+th.items: Gegenstände
+th.date_from: Von
+th.date_to: Zu
+th.status: Status
+Reference: Referenz
+Items: Gegenstände
+Status: Status
+STATUS_PENDING: Ausstehend
+STATUS_ACTIVE: Leihgabe
+STATUS_OVERDUE: Überfällig
+STATUS_RESERVED: Reserviert
+STATUS_CANCELLED: Abgebrechen
+STATUS_CLOSED: Geschlossen
+days: '{1}day|[2,Inf[days'
+per_day: pro Tag
+per_n_days: for %count% days
+button_cancel: Abbruch
+button_cancel_reservation: Reservierung abbrechen
+button_add_credit: Add credit
+button_go: Los
+I forgot my password: Ich habe mein Passwort vergessen.
+Log out: Abmelden
+My account: Mein Konto
+Login with Facebook: Mit Facebook anmelden
+Login with Google: Mit Google anmelden
+form.firstName: Vorname
+form.lastName: Nachname
+form.email: 'E-Mail:'
+form.telephone: Telefon
+form.address1: Straße, Hausnummer
+form.address2: Stadt
+form.address3: Bundesland
+form.postcode: Postleitzahl
+form.country: Land
+form.locale: Deine bevorzugte Sprache
+public_misc.link_admin: Admin
+public_misc.link_home: Home
+public_misc.link_recent_items: Zuletzt hinzugefügt
+public_misc.link_all_items: Alle Gegenstände
+public_misc.search_items: Durchsuche unsere Gegenstände
+public_misc.no_results: Nichts gefunden
+public_misc.filter_items: Gegenstände filtern
+public_misc.any_site: Irgendein Ort
+public_footer.find_us: Besuch uns / Öffnungszeiten
+public_footer.choose_lang: Sprache auswählen
+public_footer.powered_by: Unterstützt von
+public_footer.logged_in_as: Du bist angemeldet als
+public_account.title: Mein Konto
+public_account.contact_subtitle: Kontaktdaten
+public_account.membership_subtitle: Mitgliedschaftsdaten
+public_account.button_edit_details: Meine Daten bearbeiten
+public_account.button_change_password: Mein Passwort ändern
+public_item_list.pages: Showing %x% to %y% of %z% items
+public_item.location: Ort
+public_item.brand: Marke
+public_item.code: Code
+public_item.serial: Serie
+public_item.condition: Zustand
+public_item.contains: Enthält
+public_item.downloads: Downloads
+public_item.log_in_to_download: Anmelden, um herunterzuladen
+public_item.log_in_to_borrow: Anmelden, um zu leihen oder zu reservieren
+public_item.borrow_now: Ausleihen/reservieren
+public_item.not_available: Nicht verfügbar
+public_item.available: Erhältlich
+public_item.on_loan: Verliehen
+public_item.pickup_date_error: Items in your basket define a pickup date that clashes with the bookings for this item. You won't be able to borrow this item on the same loan.
+public_item.pickup_site_error: Dieser Artikel ist nicht auf der Website verfügbar, von der die anderen Artikel in Ihrem Korb abgeholt werden sollen.
+public_item.basket_exists: Sie haben bereits Artikel in Ihrem Warenkorb. <br>Sie müssen sie zusammen abholen, daher haben wir das Abholdatum für Sie festgelegt.
+public_item.account_balance_is: Verfügbarer Saldo ist
+public_item.add_credit: Guthaben hinzufügen
+public_item.pickup_at: 'Abholen bei:'
+public_item.return_by: Zurückgeben bis
+public_item.choose_pickup_first: Wähl zuerst den Abholort.
+public_item.button_choose_pickup: Wähle die Abholzeit.
+public_item.button_choose_return: Wähle die Rückgabezeit.
+public_item.cancel: Abbrechen
+public_item.basket_add: Artikel zum Warenkorb hinzufügen
+public_item.locations: Verfügbare Orte
+public_item.maps_link: Mit Google Maps öffnen.
+public_item.similar_items: ähnliche, verfügbare Gegenstände
+public_item.see_all: Alle ansehen
+public_item.not_reservable: Dieser Gegenstand kann online nicht reserviert werden. Bitte kontaktiere uns.
+calendar.pickup_day: Abholung
+calendar.my_booking: MEINE BUCHUNG
+calendar.reserved: RESERVIERT
+calendar.on_loan: VERLIEHEN
+calendar.text_clash_date: Ihr ausgewählter Zeitraum stößt mit einer bestehenden Buchung zusammen. Bitte wählen Sie ein anderes Datum.
+calendar.text_return_after_pickup: Bitte wähle ein Rückgabedatum nach deinem Abholungsdatum aus.
+calendar.alert_already_booked: Aufgrund einer anderen Buchung kannst du dieses Datum nicht auswählen.
+calendar.alert_not_your_booking: Du kannst nur Details deiner eigenen Buchung einsehen.
+calendar.alert_day_warning: This item can only be loaned for multiples of itemLoanDays days. \nPlease choose another return date.
+calendar.alert_min_loan_days: You must borrow this item for at least minLoanDays days.
+calendar.alert_max_loan_days: 'Du kannst diesen Gegenstand für bis zu maxLeihdauer Tage entleihen. '
+public_basket.title: Korb
+public_basket.name: Korb
+public_basket.due_at: 'Fällig am '
+public_basket.return_to: Zurück an
+public_basket.pickup_after: Abholen nach
+public_basket.from: von
+public_basket.add_credit_message: Please add credit first.
+public_basket.empty: Leerer Korb
+public_basket.confirm_reservation: Reservieren
+public_basket.remove_item: Entfernen
+public_basket.total: Gesamt
+public_basket.balance: Gegen Gebühr
+public_basket.no_items: <h3 Keine Artikel im Korb</ h3> Suchen Sie nach einem Artikel, den Sie hinzufügen möchten.
+public_basket.full_charge: will be charged to your account
+public_basket.delay_charge: wird jetzt Ihrem Konto belastet, der Rest wird bei Abholung der Artikel fällig
+public_loan.title: Ausleihen
+public_user_menu.contact_info: Profil
+text_borrow_with_membership: Bei voller Mitgliedschaft können Sie diesen Artikel online ausleihen und reservieren.
+text_no_membership: 'Wir haben keine aktive Mitgliedschaft für dich. '
+public_add_credit.title: Guthaben hinzufügen
+public_add_credit.choose_card: Choose an existing card above, or just continue adding credit to below to use a new card
+public_add_credit.use_this_card: Verwenden Sie diese Karte
+public_add_credit.amount_to_add: Amount to add
+public_add_credit.payment_method: Zahlweise
+public_add_credit.min_amount: Minimum card amount
+public_add_credit.processing_fee: processing fee will be added for card transactions
+public_loans.no_loans: Du hast noch nichts ausgeliehen.
+public_payments.no_payment: No payments or fees yet
+public_payments.title: Fees and Payments
+public_registration.newsletter: Melde dich für unseren Newsletter an.
+public_registration.terms_link: Lies unsere Leihbedingungen.
+public_registration.terms_label: Ich stimme den Leihbedingungen zu.
+public_become_member.title: Werde Mitglied
+msg_success.payment_ok: Payment made OK. Your account balance has been amended.
+msg_success.reservation_create: Reserviert! Wir haben dir gerade eine Bestätigungsemail zugeschickt.
+msg_success.reservation_cancel: Deine Reservierung wurde storniert.
+msg_success.basket_item_removed: Artikel wurde aus Ihrem Korb entfernt.
+msg_success.basket_item_added: wurde Ihrem Korb hinzugefügt.
+msg_success.basket_item_exists: ist bereits in Ihrem Warenkorb.
+msg_fail.general_fail: Entschuldige! Etwas ist schief gelaufen. Bitte versuch es noch einmal oder wende dich an uns.
+msg_fail.reservation_create: 'Etwas ist schief gelaufen, wir konnten deine Reservierung nicht erstellen. '
+msg_fail.reservation_cancel: Wir konnten deine Reservierung nicht stornieren. Bitte kontaktiere uns.
+...

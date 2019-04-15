@@ -119,6 +119,7 @@ class SettingsType extends AbstractType
         ));
 
         $languages = [
+            'Deutsch'    => 'de',
             'English'    => 'en',
             'Espanol'    => 'es',
             'Francais'   => 'fr',

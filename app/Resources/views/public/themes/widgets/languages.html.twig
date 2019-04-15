@@ -1,7 +1,10 @@
+{% trans_default_domain 'member_site' %}
+
 {% if tenantInformation.languages|length > 1 %}
     <h5>{% trans %}public_footer.choose_lang{% endtrans %}</h5>
 
     {% set languages = {
+    de: {code: 'de', name: 'Deutsch'},
     en: {code: 'en', name: 'English'},
     fr: {code: 'fr', name: 'Francais'},
     es: {code: 'es', name: 'Espanol'},
