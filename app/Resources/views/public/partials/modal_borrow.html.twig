@@ -6,16 +6,23 @@
             <div class="modal-body">
 
                 <div style="padding-bottom: 10px; border-bottom: 1px dotted #ccc;">
-                    {% if product.maxLoanDays == 1 and dailyFee > 0 %}
+                    {% if tenantInformation.fixedFeePricing %}
                         <strong>
                             {% trans %}Fee{% endtrans %}:
-                            {{ tenantInformation.currencySymbol }} {{ dailyFee|number_format(2) }} {% trans %}per_day{% endtrans %}
+                            {{ tenantInformation.currencySymbol }} {{ itemFee|number_format(2) }}
+                            {% trans %}per_borrow{% endtrans %}
+                        </strong>
+                    {% elseif product.maxLoanDays == 1 and dailyFee > 0 %}
+                        <strong>
+                            {% trans %}Fee{% endtrans %}:
+                            {{ tenantInformation.currencySymbol }} {{ dailyFee|number_format(2) }}
+                            {% trans %}per_day{% endtrans %}
                         </strong>
                     {% elseif dailyFee > 0 %}
                         <strong>
                             {% trans %}Fee{% endtrans %}:
-                            {{ tenantInformation.currencySymbol }} {{ dailyFee|number_format(2) }} {% trans %}per_day{% endtrans %}
-                            {#({{ dailyFee }} {% trans %}per_day{% endtrans %})#}
+                            {{ tenantInformation.currencySymbol }} {{ dailyFee|number_format(2) }}
+                            {% trans %}per_day{% endtrans %}
                         </strong>
                     {% endif %}
 

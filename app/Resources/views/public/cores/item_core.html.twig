@@ -91,13 +91,19 @@
 
             <p class="item-fee">
                 <strong class="fee-title">{% trans %}Fee{% endtrans %}:</strong>
+
                 {{ tenantInformation.currencySymbol }} {{ product.loanFee|number_format(2) }}
 
-                {% if product.maxLoanDays == 1 %}
-                    {% trans %}per_day{% endtrans %}
+                {% if tenantInformation.fixedFeePricing %}
+                    {% trans %}per_borrow{% endtrans %}
                 {% else %}
-                    {% trans with {'%count%': product.maxLoanDays } %}per_n_days{% endtrans %}
+                    {% if product.maxLoanDays == 1 %}
+                        {% trans %}per_day{% endtrans %}
+                    {% else %}
+                        {% trans with {'%count%': product.maxLoanDays } %}per_n_days{% endtrans %}
+                    {% endif %}
                 {% endif %}
+
             </p>
 
             {% if product.depositAmount > 0 %}
@@ -298,8 +304,6 @@
         <div class="fb-share-button" data-href="{{ url('public_product', {productId: product.id}) }}" data-layout="button" data-size="small" data-mobile-iframe="true">
             <a class="fb-xfbml-parse-ignore" target="_blank" href="{{ url('public_product', {productId: product.id}) }}">Share</a>
         </div>
-
-        {#<div class="fb-comments" data-href="{{ url('public_product', {productId: product.id}) }}" data-numposts="5"></div>#}
 
     </div>
 

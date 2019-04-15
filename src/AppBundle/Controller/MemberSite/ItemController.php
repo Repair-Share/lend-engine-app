@@ -84,10 +84,14 @@ class ItemController extends Controller
         // Pro-rate to get a DAILY fee which is used on the calendar for bookings
         $dailyFee = round($itemFee / $itemLoanDays, 6);
 
-        // Multiply out for the UI
-        if ($minLoanDays > $itemLoanDays) {
-            $itemFee = $itemFee * $minLoanDays;
-            $itemLoanDays = $itemLoanDays * $minLoanDays;
+        // Multiply out for the UI, if items are loaned per-period
+        if (1) {
+            $itemFee = round($itemFee, 2);
+        } else {
+            if ($minLoanDays > $itemLoanDays) {
+                $itemFee = $itemFee * $minLoanDays;
+                $itemLoanDays = $itemLoanDays * $minLoanDays;
+            }
         }
 
         $product->setLoanFee($itemFee);
@@ -176,7 +180,6 @@ class ItemController extends Controller
 
         // Convert links into links
         $url = '@(http(s)?)?(://)?(([a-zA-Z])([-\w]+\.)+([^\s\.]+[^\s]*)+[^,.\s])@';
-
         $fieldsToConvert = ['Description', 'CareInformation', 'ComponentInformation'];
         foreach ($fieldsToConvert AS $f) {
             $getter = 'get'.$f;
@@ -186,6 +189,8 @@ class ItemController extends Controller
             $product->$setter($string);
         }
 
+        $fixedFee = 43;
+
         return $this->render($template, array(
             'product' => $product,
             'user' => $contact,
@@ -193,6 +198,7 @@ class ItemController extends Controller
             'contactBalance' => $contactBalance,
             'isOnWaitingList' => $isOnWaitingList,
             'dailyFee' => (float)$dailyFee,
+            'itemFee' => (float)$itemFee,
             'itemLoanDays' => $loanPeriod, // borrows must be in this multiple, usually 1 day
             'maxLoanDays' => $maxLoanDays,
             'minLoanDays' => $minLoanDays,

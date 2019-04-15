@@ -49,6 +49,7 @@ STATUS_CLOSED: Closed
 # number of days an item is on loan
 days: "{1}day|[2,Inf[days"
 per_day: per day
+per_borrow: per borrow
 per_n_days: for %count% days
 
 # Actions

@@ -33,6 +33,7 @@
 
             {{ form_row(form.default_checkin_location) }}
 
+
             <div class="form-group">
                 <label class="control-label" for="">
                     Your normal borrowing fee (per item)
@@ -62,9 +63,11 @@
                     If you're open on Tuesdays and Thursdays, then some loans will be 2 days and some will be 5 days (or more).
                     Self serve reservations via the member site can only be a multiple of the days you choose here
                     (administrators are not limited).
-                    <br>This can be overridden for each item.
+                    <br>This default price can be overridden for each item.
                 </div>
             </div>
+
+            {{ form_row(form.fixed_fee_pricing) }}
 
             {{ form_row(form.min_loan_days) }}
             {{ form_row(form.max_loan_days) }}

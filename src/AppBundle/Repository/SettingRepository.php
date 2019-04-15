@@ -106,6 +106,7 @@ class SettingRepository extends \Doctrine\ORM\EntityRepository
 
             'reservation_fee',
             'charge_daily_fee',
+            'fixed_fee_pricing',
 
             'open_days', // legacy, now done per site
         );

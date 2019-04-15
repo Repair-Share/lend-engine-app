@@ -96,6 +96,25 @@ class SettingsReservationsType extends AbstractType
             )
         ));
 
+        $helpText = <<<EOH
+Most libraries choose a fee per day or week, but if you want to choose a fixed fee per borrow, select YES here.
+We'll ignore the number of days in the setting above.
+EOH;
+
+        $yesNoChoice = [
+            'Yes' => 1,
+            'No' => 0
+        ];
+        $builder->add('fixed_fee_pricing', ChoiceType::class, array(
+            'choices' => $yesNoChoice,
+            'label' => 'OR ... prices are fixed per borrow',
+            'data' => (int)$dbData['fixed_fee_pricing'],
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => $helpText
+            ]
+        ));
+
         $builder->add('daily_overdue_fee', TextType::class, array(
             'label' => 'Late return fee (per day)',
             'data' => $dbData['daily_overdue_fee'],

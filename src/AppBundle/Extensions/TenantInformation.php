@@ -143,6 +143,11 @@ class TenantInformation
         return explode(',', $this->settings->getSettingValue('org_languages'));
     }
 
+    public function getFixedFeePricing()
+    {
+        return $this->settings->getSettingValue('fixed_fee_pricing');
+    }
+
     public function getOrgPostcode()
     {
         return $this->settings->getSettingValue('org_postcode');

@@ -118,7 +118,7 @@
                             <div class="col-md-6">
                                 {{ form_row(form.loanFee) }}
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6" {% if tenantInformation.fixedFeePricing %}style="display:none"{% endif %}>
                                 {{ form_row(form.maxLoanDays) }}
                             </div>
                         </div>

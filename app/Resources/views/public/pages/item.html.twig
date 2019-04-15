@@ -134,7 +134,9 @@
             var maxLoanDays = {{ maxLoanDays|number_format(0) }};
             var minLoanDays = {{ minLoanDays|number_format(0) }};
             var dailyFee = {{ dailyFee|number_format(6) }};
+            var itemFee = {{ itemFee|number_format(6) }};
             var endLoanAt = "{{ endLoanAt }}";
+            var fixedFeePricing = {{ tenantInformation.fixedFeePricing }};
 
             // Translations
             var text_pickup_day = "{% trans %}calendar.pickup_day{% endtrans %}";
@@ -263,9 +265,6 @@
                     // UI
                     $(".new_return_date").html(eventEnd.format("dddd DD MMMM h:mm a"));
                     $(".new_return_site").html(siteName);
-
-//                    $(".t_start").hide();
-//                    $(".t_end").show();
 
                     // Form data
                     $("#newReturnDate").val(eventEnd.format("YYYY-MM-DD HH:mm:00"));
@@ -540,13 +539,6 @@
                     }
                 },
 
-//                eventAfterRender: function (calEvent, element) {
-//                    $(element).tooltip({
-//                        title: calEvent.title,
-//                        container: "body"
-//                    });
-//                },
-
                 viewRender: function() {
                     if (basketPickupTime) {
                         // User has a basket
@@ -600,7 +592,13 @@
             var accountBalance = {{ contactBalance }};
 
             function calculateTotalFee(days) {
-                var totalFee = dailyFee * days;
+                var totalFee;
+                if (fixedFeePricing == 1) {
+                    totalFee = itemFee;
+                } else {
+                    totalFee = dailyFee * days;
+                }
+
                 if (totalFee > accountBalance) {
                     $(".credit-warning").show();
                 } else {
