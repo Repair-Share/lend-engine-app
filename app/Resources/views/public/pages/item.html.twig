@@ -1,31 +1,8 @@
 {% trans_default_domain 'member_site' %}
 {% extends 'public/themes/loader.html.twig' %}
 
-{% block topleft %}
-    <div class="block-borrow col-md-12 hidden-xs">
+{% block sitesKey %}
 
-        <br>
-        <div class="location-title">
-            <h5>{% trans %}public_item.locations{% endtrans %}</h5>
-        </div>
-
-        <div class="row">
-            {% for site in sites %}
-                <div class="col-md-12 site-{{ site.id }}">
-                    <div class="site site-id-{{ site.id }}" style="border-left: 8px solid {{ site.colour }};">
-                        <div style="padding-bottom: 6px;">{{ site.name }}</div>
-                        {{ site.address }}<br>
-                        <a href="https://www.google.co.uk/maps/search/{{ site.address }},{{ site.postCode }}" target="_blank">
-                            <i class="fa fa-external-link" style="font-size: 0.8em"></i>
-                            {% trans %}public_item.maps_link{% endtrans %}
-                        </a>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-
-        <br><br>
-    </div>
 {% endblock %}
 
 {% block body %}
@@ -52,39 +29,6 @@
 
     <div id="item-core">
         {{ include('public/cores/item_core.html.twig') }}
-    </div>
-
-    <div class="row block-borrow hidden-sm hidden-md hidden-lg">
-
-        <div class="col-md-12">
-
-            <div class="location-title">
-                <span class="pull-left">{% trans %}public_item.locations{% endtrans %}</span>
-            </div>
-
-            <div class="row">
-                {% for site in sites %}
-                    <div class="col-xs-6 col-md-4 site-{{ site.id }}">
-                        <div class="site">
-                            <div style="border-bottom: 8px solid {{ site.colour }}; padding-bottom: 6px;">{{ site.name }}</div>
-                            {{ site.address }}<br>
-                            <a href="https://www.google.co.uk/maps/search/{{ site.address }},{{ site.postCode }}" target="_blank">
-                                <i class="fa fa-external-link" style="font-size: 0.8em"></i>
-                                {% trans %}public_item.maps_link{% endtrans %}
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-                <div class="col-xs-6 col-md-4">
-                    <a href="{{ path('public_product', {productId: product.id}) }}" class="btn btn-danger" id="button-cancel">
-                        {% trans %}button_cancel{% endtrans %}
-                    </a>
-                </div>
-            </div>
-
-            <br>
-        </div>
-
     </div>
 
     {% if app.request.get('extend') %}
@@ -124,7 +68,23 @@
 
     </form>
 
-{% endblock %}
+    <br>
+    <div class="row">
+        {% for site in sites %}
+            <div class="col-xs-6 col-md-4 site-id-{{ site.id }}">
+                <div class="site">
+                    <div style="border-bottom: 8px solid {{ site.colour }}; padding-bottom: 6px;">{{ site.name }}</div>
+                    {{ site.address }}<br>
+                    <a href="https://www.google.co.uk/maps/search/{{ site.address }},{{ site.postCode }}" target="_blank">
+                        <i class="fa fa-external-link" style="font-size: 0.8em"></i>
+                        {% trans %}public_item.maps_link{% endtrans %}
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% endblock %}
 
 {% block pagejs %}
     <script>
@@ -389,6 +349,8 @@
                 }
             }
 
+            // We used to have this function which checked the left menu contained the site key
+            // But with new theme based sites it's not always present
             function validatePickupSite(siteId) {
                 var returnValue = true;
                 if (!$(".site-id-"+siteId).html()) {

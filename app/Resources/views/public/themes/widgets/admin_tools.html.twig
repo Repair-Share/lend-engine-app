@@ -1,0 +1,3 @@
+{% if is_granted('ROLE_ADMIN') %}
+    {{ include('public/partials/search_admin.html.twig') }}
+{% endif %}

@@ -1,8 +1,7 @@
 {% trans_default_domain 'member_site' %}
 
 <div class="row" id="search-box">
-
-    <div class="{% if is_granted('ROLE_ADMIN') %}col-md-4{% else %}col-md-12{% endif %}">
+    <div class="col-md-12">
         <form role="search" action="{{ path('public_products') }}">
             <div class="input-group">
                 <input type="text" name="search" id="search-text" class="form-control" value="{{ app.request.get('search') }}"
@@ -11,108 +10,6 @@
                     <button type="submit" id="search-button" class="btn btn-success">{% trans %}button_go{% endtrans %}</button>
                 </span>
             </div>
-
-            {% if is_granted('ROLE_ADMIN') %}
-            <div class="help-block">
-                <a href="{{ path('item_type') }}">Add a new item</a>
-            </div>
-            {% endif %}
         </form>
     </div>
-
-    {% if is_granted('ROLE_ADMIN') %}
-        <div class="col-md-4">
-            <form role="search" action="{{ path('member_search') }}" method="GET">
-                <input type="hidden" name="go" value="{{ app.request.get('go') }}">
-                {% if app.request.get('itemId') %}
-                    <input type="hidden" name="itemId" value="{{ app.request.get('itemId') }}">
-                {% elseif product is defined %}
-                    <input type="hidden" name="itemId" value="{{ product.id }}">
-                {% endif %}
-                <div class="input-group">
-                    <input type="text" name="member-search" id="member-search" class="form-control" placeholder="Search members">
-            <span class="input-group-btn">
-                <button type="submit" id="member-search-button" class="btn btn-success">{% trans %}button_go{% endtrans %}</button>
-            </span>
-                </div>
-                <div class="help-block">
-                    Search by name or email ... or
-                    <a href="{{ path('contact') }}">add contact</a>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-4">
-            <form role="search" action="{{ path('loan_search') }}" method="GET">
-                <div class="input-group">
-                    <input type="text" name="loan-search" id="loan-search" class="form-control" placeholder="Search loans">
-                    <span class="input-group-btn">
-                        <button type="submit" id="loan-search-button" class="btn btn-success">{% trans %}button_go{% endtrans %}</button>
-                    </span>
-                </div>
-                <div class="help-block">
-                    Search by member, item, loan ID or loan status:
-                    <div style="font-size: 12px;">
-                        <a href="{{ path('loan_search', {'loan-search' : 'on loan'}) }}">On loan</a>&nbsp;
-                        <a href="{{ path('loan_search', {'loan-search' : 'overdue'}) }}">Overdue</a>&nbsp;
-                        <a href="{{ path('loan_search', {'loan-search' : 'reserved'}) }}">Reserved</a>&nbsp;
-                    </div>
-
-                </div>
-            </form>
-        </div>
-    {% endif %}
-
 </div>
-
-{% if is_granted('ROLE_ADMIN') %}
-
-    {% if tenantInformation.openingHoursAreSet == false %}
-        <div class="alert alert-danger">
-            <strong>None of your sites have any opening hours.</strong><br>
-            You won't be able to create loans or reservations.
-            <a href="{{ path('site_list') }}">Manage sites now</a>
-        </div>
-    {% endif %}
-
-    <div class="row admin-tools">
-        <div class="col-xs-6" >
-            <div class="admin-tools-title">
-                <i class="fa fa-wrench"></i>
-                This box is only visible for staff
-            </div>
-
-            {% if user and user.id != app.user.id %}
-                <i class="fa fa-user"></i> Browsing as <strong><a title="Edit contact" data-toggle="tooltip" href="{{ path('contact', {id: user.id}) }}">{{ user.name }}</a></strong>
-                <div class="help-block">
-                    Change user with the search box above.
-                </div>
-            {% endif %}
-
-        </div>
-        <div class="col-xs-6" style="text-align: right">
-            {% if user and user.id != app.user.id %}
-
-                {% if user.activeMembership %}
-                    <strong>{{ user.activeMembership.memberShipType.name }}</strong> member until {{ user.activeMembership.expiresAt|date("F d, Y") }}
-                    <br><strong>{{ tenantInformation.currencySymbol }} {{ user.balance|number_format(2) }}</strong> available balance.
-                    {% if user.activeMembership.memberShipType.discount > 0 %}
-                        <br>Prices include {{ user.activeMembership.memberShipType.discount }}% discount
-                    {% endif %}
-                {% endif %}
-
-                <div style="padding-top: 4px;">
-                    <a href="{{ path('loan_search', {'loan-search': user.name|trim }) }}"><i class="fa fa-shopping-bag"></i> Loans</a>&nbsp;&nbsp;
-                    <a href="{{ path('payments') }}"><i class="fa fa-credit-card"></i> Payments</a>&nbsp;&nbsp;
-                    <a href="{{ path('add_credit') }}?c={{ user.id }}"><i class="fa fa-plus-circle"></i> Add credit</a>
-                </div>
-
-            {% else %}
-                <div class="help-block">
-                    To create a loan or reservation:<br>
-                    1. Search for a member and choose 'browse as'<br>
-                    2. Choose your item(s)
-                </div>
-            {% endif %}
-        </div>
-    </div>
-{% endif %}

@@ -38,15 +38,17 @@
 
             <div class="container">
 
+                {% if is_granted('ROLE_ADMIN') %}
+                    {% include('public/themes/widgets/admin_tools.html.twig') %}
+                {% else %}
                 <div style="margin-bottom: 20px">
                     {% include('public/themes/widgets/search.html.twig') %}
                 </div>
+                {% endif %}
 
                 <div class="row">
 
                     <div class="col-sm-3" role="navigation" id="leftnavbar">
-                        {#For inserting sites nav when reserving items#}
-                        {% block topleft %}{% endblock %}
                         <div class="navbar-collapse collapse" id="leftNavigation">
                             {% include('public/themes/widgets/pages_menu_stacked.html.twig') %}
                             <hr size="1" noshade>

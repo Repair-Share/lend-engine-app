@@ -38,7 +38,7 @@
 
             <div class="container">
 
-                <div class="row" style="background-color: #bff7f5">
+                <div class="row" style="background-color: #fff; border-bottom: 1px solid #000; padding: 6px 0;">
                     <div class="col-sm-8">
                         {% include('public/themes/widgets/pages_menu.html.twig') %}
                     </div>
@@ -47,24 +47,20 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" style="margin-bottom: 16px; padding: 4px 0;">
                     <div class="col-sm-12">
                         {% include('public/themes/widgets/items_menu.html.twig') %}
                     </div>
                 </div>
 
                 <div class="row">
-
                     <div class="col-sm-12" id="page-body">
-
+                        {% include('public/themes/widgets/admin_tools.html.twig') %}
                         {% include('public/themes/widgets/alerts.html.twig') %}
                         {% include('public/themes/widgets/account_menu.html.twig') %}
-
                         {#--- THIS IS THE SECTION THAT PULLS IN ACTUAL CONTENT ---#}
                         {% block body %}{% endblock %}
-
                     </div>
-
                 </div>
 
             </div>
