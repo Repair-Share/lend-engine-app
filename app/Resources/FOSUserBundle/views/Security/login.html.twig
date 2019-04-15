@@ -63,10 +63,6 @@
 
                     <h2>&nbsp;</h2>
 
-                    {#<p style="color: #c9c9c9;">#}
-                        {#Log in using your email address:#}
-                    {#</p>#}
-
                     <form action="{{ path("fos_user_security_check") }}" method="post">
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
                         <div class="form-group has-feedback">

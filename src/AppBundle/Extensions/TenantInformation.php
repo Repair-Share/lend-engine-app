@@ -207,8 +207,8 @@ class TenantInformation
 
     public function getSiteTheme()
     {
-        return "test";
-//        return "basic";
+//        return "test";
+        return "basic"; // the original theme
     }
 
     public function getSiteWelcome()
