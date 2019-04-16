@@ -29,7 +29,7 @@ class PageController extends Controller
 
         $tableRows = array();
         $em   = $this->getDoctrine()->getManager();
-        $locations = $em->getRepository('AppBundle:Page')->findOrderedByName($request->get('type'));
+        $locations = $em->getRepository('AppBundle:Page')->findOrderedBySort($request->get('type'));
 
         $tableHeader = array(
             'Name',
@@ -80,6 +80,7 @@ EOT;
                 'tableRows'  => $tableRows,
                 'tableHeader' => $tableHeader,
                 'modalUrl' => $modalUrl,
+                'sortable' => true,
                 'help' => $helpText
             )
         );

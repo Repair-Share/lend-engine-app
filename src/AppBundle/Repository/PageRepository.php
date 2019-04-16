@@ -10,11 +10,12 @@ namespace AppBundle\Repository;
  */
 class PageRepository extends \Doctrine\ORM\EntityRepository
 {
+
     /**
      * @param string $visibility
      * @return array
      */
-    public function findOrderedByName($visibility = '')
+    public function findOrderedBySort($visibility = '')
     {
         $repository = $this->getEntityManager()->getRepository('AppBundle:Page');
         $builder = $repository->createQueryBuilder('p');
@@ -22,7 +23,7 @@ class PageRepository extends \Doctrine\ORM\EntityRepository
         if ($visibility) {
             $builder->where('p.visibility = "'.$visibility.'"');
         }
-        $builder->addOrderBy('p.name');
+        $builder->addOrderBy('p.sort, p.name');
         $query = $builder->getQuery();
         return $query->getResult();
     }

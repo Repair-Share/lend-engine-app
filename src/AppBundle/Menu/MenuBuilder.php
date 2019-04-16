@@ -270,7 +270,7 @@ class MenuBuilder
 
         /** @var $repo \AppBundle\Repository\PageRepository */
         $repo = $this->container->get('doctrine')->getRepository('AppBundle:Page');
-        $pages = $repo->findOrderedByName();
+        $pages = $repo->findOrderedBySort();
 
         foreach ($pages AS $page) {
 

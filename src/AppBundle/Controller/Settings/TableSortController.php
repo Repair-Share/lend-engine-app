@@ -59,6 +59,9 @@ class TableSortController extends Controller
                     case 'CheckOutPrompt':
                         $repo = $em->getRepository('AppBundle:CheckOutPrompt');
                         break;
+                    case 'Page':
+                        $repo = $em->getRepository('AppBundle:Page');
+                        break;
                 }
 
                 $entityId = $newSequence[$n];

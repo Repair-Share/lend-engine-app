@@ -88,6 +88,13 @@ class Page
     private $updatedBy;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="sort", type="integer")
+     */
+    private $sort = 0;
+
+    /**
      * Gets triggered only on insert
      * @ORM\PrePersist
      */
@@ -334,6 +341,30 @@ class Page
     public function getUpdatedBy()
     {
         return $this->updatedBy;
+    }
+
+    /**
+     * Set sort
+     *
+     * @param integer $sort
+     *
+     * @return Page
+     */
+    public function setSort($sort)
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
+    /**
+     * Get sort
+     *
+     * @return integer
+     */
+    public function getSort()
+    {
+        return $this->sort;
     }
 }
 
