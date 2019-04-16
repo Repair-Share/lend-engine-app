@@ -65,7 +65,8 @@ class ItemTagsListController extends Controller
 <h4 style="margin-top: 0px;">About item categories</h4>
 These are used to categorise your items, both for admin and for member use.
 When you set a category to be shown on the member site, it appears on the left hand menu.
-Items can be assigned multiple categories.
+Items can be assigned multiple categories.<br>
+<span class="label bg-orange">NEW</span> - change the order of your categories in the menu by dragging items using the icon on the left of each row.
 EOT;
 
         return $this->render(
@@ -78,6 +79,7 @@ EOT;
                 'tableRows'  => $tableRows,
                 'tableHeader' => $tableHeader,
                 'modalUrl' => $modalUrl,
+                'sortable' => true,
                 'help' => $helpText
             )
         );

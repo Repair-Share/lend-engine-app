@@ -32,6 +32,9 @@ class TableSortController extends Controller
                 $em = $this->getDoctrine()->getManager();
 
                 switch ($entity) {
+                    case 'ProductTag':
+                        $repo = $em->getRepository('AppBundle:ProductTag');
+                        break;
                     case 'ProductField':
                         $repo = $em->getRepository('AppBundle:ProductField');
                         break;

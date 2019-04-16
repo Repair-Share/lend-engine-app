@@ -10,7 +10,6 @@ namespace AppBundle\Repository;
  */
 class PageRepository extends \Doctrine\ORM\EntityRepository
 {
-
     /**
      * @param string $visibility
      * @return array

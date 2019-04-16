@@ -39,6 +39,13 @@ class ProductTag
     private $showOnWebsite = true;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="sort", type="integer")
+     */
+    private $sort = 0;
+
+    /**
      * @ORM\ManyToMany(targetEntity="InventoryItem", mappedBy="tags")
      */
     protected $inventoryItems;
@@ -134,5 +141,29 @@ class ProductTag
     public function getShowOnWebsite()
     {
         return $this->showOnWebsite;
+    }
+
+    /**
+     * Set sort
+     *
+     * @param integer $sort
+     *
+     * @return ProductTag
+     */
+    public function setSort($sort)
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
+    /**
+     * Get sort
+     *
+     * @return integer
+     */
+    public function getSort()
+    {
+        return $this->sort;
     }
 }

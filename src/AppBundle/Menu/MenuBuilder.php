@@ -203,7 +203,7 @@ class MenuBuilder
 
         /** @var $repo \AppBundle\Repository\ProductTagRepository */
         $repo = $this->container->get('doctrine')->getRepository('AppBundle:ProductTag');
-        $tags = $repo->findAllOrderedByName();
+        $tags = $repo->findAllOrderedBySort();
 
         foreach ($tags AS $tag) {
 

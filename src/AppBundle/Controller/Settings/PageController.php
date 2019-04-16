@@ -67,7 +67,9 @@ Links are good for taking users to other websites, or to a certain filter of ite
 Links out to other sites (they will contain "http") open in a new tab. Links within your member site (starting with "/") will open in the same tab.
 <br><br>
 You can create pages that are visible for everyone, for members only, or for staff only (useful for library operating guides).
-Keep a page hidden until you are ready to set it visible. Menu items appear in alphabetical order.
+Keep a page hidden until you are ready to set it visible. Menu items appear in alphabetical order.<br><br>
+<span class="label bg-orange">NEW</span> - change the order of your pages in the menu by dragging items using the icon on the left of each row.
+
 EOT;
 
         return $this->render(
