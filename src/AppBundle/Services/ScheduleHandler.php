@@ -56,14 +56,14 @@ class ScheduleHandler
         $postMarkApiKey = getenv('SYMFONY__POSTMARK_API_KEY');
 
         // Connect to core and get tenants on this server
-        $repo = $this->em->getRepository('AppBundle:Account');
+        $repo = $this->em->getRepository('AppBundle:Tenant');
         $tenants = $repo->findBy(['server' => $this->serverName, 'status' => 'LIVE']);
 
         $resultString .= 'Number of tenants = '.count($tenants).PHP_EOL;
 
         foreach ($tenants AS $tenant) {
 
-            /** @var $tenant \AppBundle\Entity\Account */
+            /** @var $tenant \AppBundle\Entity\Tenant */
             $tenantDbSchema = $tenant->getDbSchema();
             $tenantStatus   = $tenant->getStatus();
             $tenantPlan     = $tenant->getPlan();
@@ -205,7 +205,7 @@ class ScheduleHandler
         $resultString = '';
         $postMarkApiKey = getenv('SYMFONY__POSTMARK_API_KEY');
 
-        $repo = $this->em->getRepository('AppBundle:Account');
+        $repo = $this->em->getRepository('AppBundle:Tenant');
         $tenants = $repo->findBy(['server' => $this->serverName, 'status' => 'LIVE']);
 
         $resultString .= 'Number of tenants = '.count($tenants).PHP_EOL;
@@ -213,7 +213,7 @@ class ScheduleHandler
 
         foreach ($tenants AS $tenant) {
 
-            /** @var $tenant \AppBundle\Entity\Account */
+            /** @var $tenant \AppBundle\Entity\Tenant */
             $tenantDbSchema = $tenant->getDbSchema();
             $tenantStatus   = $tenant->getStatus();
             $tenantPlan     = $tenant->getPlan();
@@ -371,14 +371,14 @@ class ScheduleHandler
         $resultString = '';
         $postMarkApiKey = getenv('SYMFONY__POSTMARK_API_KEY');
 
-        $repo = $this->em->getRepository('AppBundle:Account');
+        $repo = $this->em->getRepository('AppBundle:Tenant');
         $tenants = $repo->findBy(['server' => $this->serverName, 'status' => 'LIVE']);
 
         $resultString .= 'Number of tenants = '.count($tenants).PHP_EOL;
 
         foreach ($tenants AS $tenant) {
 
-            /** @var $tenant \AppBundle\Entity\Account */
+            /** @var $tenant \AppBundle\Entity\Tenant */
             $tenantDbSchema = $tenant->getDbSchema();
             $tenantStatus   = $tenant->getStatus();
             $tenantPlan     = $tenant->getPlan();
@@ -511,14 +511,14 @@ class ScheduleHandler
         $resultString = '';
         $postMarkApiKey = getenv('SYMFONY__POSTMARK_API_KEY');
 
-        $repo = $this->em->getRepository('AppBundle:Account');
+        $repo = $this->em->getRepository('AppBundle:Tenant');
         $tenants = $repo->findBy(['server' => $this->serverName, 'status' => 'LIVE']);
 
         $resultString .= 'Number of tenants = '.count($tenants).PHP_EOL;
 
         foreach ($tenants AS $tenant) {
 
-            /** @var $tenant \AppBundle\Entity\Account */
+            /** @var $tenant \AppBundle\Entity\Tenant */
             $tenantDbSchema = $tenant->getDbSchema();
             $tenantStatus   = $tenant->getStatus();
             $tenantPlan     = $tenant->getPlan();

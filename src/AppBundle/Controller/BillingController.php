@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\Account;
+use AppBundle\Entity\Tenant;
 use Postmark\Models\PostmarkException;
 use Postmark\PostmarkClient;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,12 +29,12 @@ class BillingController extends Controller
         $stripeService->setApiKey($this->getParameter('billing_secret_key'));
         $stripeService->currency = 'gbp';
 
-        /** @var $repo \AppBundle\Repository\AccountRepository */
-        $repo = $em->getRepository('AppBundle:Account');
+        /** @var $repo \AppBundle\Repository\TenantRepository */
+        $repo = $em->getRepository('AppBundle:Tenant');
 
         $accountCode = $request->getSession()->get('account_code');
 
-        /** @var \AppBundle\Entity\Account $tenant */
+        /** @var \AppBundle\Entity\Tenant $tenant */
         $tenant = $repo->findOneBy(['stub' => $accountCode]);
 
         // Subscribing for a new plan
@@ -46,7 +46,7 @@ class BillingController extends Controller
             $success = false;
             if ($plan == 'free') {
                 $tenant->setPlan($plan);
-                $tenant->setStatus(Account::STATUS_LIVE);
+                $tenant->setStatus(Tenant::STATUS_LIVE);
                 $em->persist($tenant);
                 $em->flush();
                 $success = true;
@@ -87,12 +87,12 @@ class BillingController extends Controller
         $stripeService->setApiKey($this->getParameter('billing_secret_key'));
         $stripeService->currency = 'gbp';
 
-        /** @var $repo \AppBundle\Repository\AccountRepository */
-        $repo = $em->getRepository('AppBundle:Account');
+        /** @var $repo \AppBundle\Repository\TenantRepository */
+        $repo = $em->getRepository('AppBundle:Tenant');
 
         $accountCode = $request->getSession()->get('account_code');
 
-        /** @var \AppBundle\Entity\Account $tenant */
+        /** @var \AppBundle\Entity\Tenant $tenant */
         $tenant = $repo->findOneBy(['stub' => $accountCode]);
 
         // Optionally set for Stripe subscriptions
@@ -100,7 +100,7 @@ class BillingController extends Controller
 
         if ($stripeService->cancelSubscription($tenant, $subscriptionId)) {
             $this->addFlash('success', "Your subscription was cancelled");
-            $tenant->setStatus(Account::STATUS_CANCEL);
+            $tenant->setStatus(Tenant::STATUS_CANCEL);
             $tenant->setPlan(null);
             $em->persist($tenant);
             $em->flush();
@@ -178,10 +178,10 @@ class BillingController extends Controller
     }
 
     /**
-     * @param Account $tenant
+     * @param Tenant $tenant
      * @param $planCode
      */
-    private function sendBillingConfirmationEmail(Account $tenant, $planCode)
+    private function sendBillingConfirmationEmail(Tenant $tenant, $planCode)
     {
         try {
             $client = new PostmarkClient($this->getParameter('postmark_api_key'));
@@ -214,9 +214,9 @@ class BillingController extends Controller
     }
 
     /**
-     * @param Account $tenant
+     * @param Tenant $tenant
      */
-    private function sendCancelEmail(Account $tenant)
+    private function sendCancelEmail(Tenant $tenant)
     {
         try {
             $client = new PostmarkClient($this->getParameter('postmark_api_key'));

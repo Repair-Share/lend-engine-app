@@ -40,6 +40,14 @@ class Site
     private $isActive = true;
 
     /**
+     * Is listed in the Lend Engine directory
+     * @var boolean
+     *
+     * @ORM\Column(name="is_listed", type="boolean")
+     */
+    private $isListed = true;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="address", type="string", length=255, nullable=true)
@@ -152,7 +160,7 @@ class Site
      *
      * @param boolean $isActive
      *
-     * @return InventoryLocation
+     * @return Site
      */
     public function setIsActive($isActive)
     {
@@ -169,6 +177,30 @@ class Site
     public function getIsActive()
     {
         return $this->isActive;
+    }
+
+    /**
+     * Set isListed
+     *
+     * @param boolean $isListed
+     *
+     * @return Site
+     */
+    public function setIsListed($isListed)
+    {
+        $this->isListed = $isListed;
+
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean
+     */
+    public function getIsListed()
+    {
+        return $this->isListed;
     }
 
     /**

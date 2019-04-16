@@ -38,7 +38,7 @@ class EmailTestController extends Controller
         $locale = $this->get('tenant_information')->getLocale();
         $user = $this->getUser();
 
-        $repo = $em->getRepository('AppBundle:Account');
+        $repo = $em->getRepository('AppBundle:Tenant');
         $tenant = $repo->findOneBy(['stub' => $accountCode]);
 
         $subject = '';

@@ -6,6 +6,7 @@ use AppBundle\Entity\InventoryLocation;
 use AppBundle\Entity\Setting;
 use AppBundle\Entity\Site;
 use AppBundle\Entity\SiteOpening;
+use AppBundle\Entity\TenantSite;
 use AppBundle\Form\Type\Settings\SiteType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -138,13 +139,10 @@ EOT;
     {
         $em = $this->getDoctrine()->getManager();
 
-        // We also need to get the tenant so we can update the _core database for the library directory
-        /** @var $tenantRepo \AppBundle\Repository\AccountRepository */
-        $tenantRepo = $em->getRepository('AppBundle:Account');
-        $accountCode = $this->get('session')->get('account_code');
+        /** @var $settingsService \AppBundle\Settings\Settings */
+        $settingsService = $this->get('settings');
 
-        /** @var \AppBundle\Entity\Account $tenant */
-        $tenant = $tenantRepo->findOneBy(['stub' => $accountCode]);
+        $accountCode = $this->get('session')->get('account_code');
 
         if ($id) {
             $site = $this->getDoctrine()->getRepository('AppBundle:Site')->find($id);
@@ -247,6 +245,9 @@ EOT;
             $setting->setSetupValue(1);
             $em->persist($setting);
             $em->flush();
+
+            // Also update Core (_core DB)
+            $settingsService->updateCore($accountCode);
 
             return $this->redirectToRoute('site_list');
         }

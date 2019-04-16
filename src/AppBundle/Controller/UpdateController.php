@@ -306,12 +306,12 @@ class UpdateController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        /** @var \AppBundle\Repository\AccountRepository $tenantRepo */
-        $tenantRepo = $em->getRepository('AppBundle:Account');
+        /** @var \AppBundle\Repository\TenantRepository $tenantRepo */
+        $tenantRepo = $em->getRepository('AppBundle:Tenant');
 
         $stub = $this->get('session')->get('account_code');
 
-        /** @var \AppBundle\Entity\Account $tenant */
+        /** @var \AppBundle\Entity\Tenant $tenant */
         if (!$tenant = $tenantRepo->findOneBy(['stub' => $stub])) {
             $this->addFlash('error', "Could not find tenant with {$stub}");
             return false;

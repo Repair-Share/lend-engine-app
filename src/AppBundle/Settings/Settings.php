@@ -7,7 +7,8 @@
 
 namespace AppBundle\Settings;
 
-use AppBundle\Entity\Account;
+use AppBundle\Entity\Tenant;
+use AppBundle\Entity\TenantSite;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -16,7 +17,7 @@ class Settings
     /** @var \Doctrine\ORM\EntityManager */
     private $em;
 
-    /** @var \AppBundle\Entity\Account */
+    /** @var \AppBundle\Entity\Tenant */
     private $tenant;
 
     public $settings = array();
@@ -27,10 +28,10 @@ class Settings
     }
 
     /**
-     * @param Account $tenant
+     * @param Tenant $tenant
      * @param EntityManager $em
      */
-    public function setTenant(Account $tenant, EntityManager $em = null)
+    public function setTenant(Tenant $tenant, EntityManager $em = null)
     {
         $this->tenant = $tenant;
         if ($em) {
@@ -95,5 +96,63 @@ class Settings
             return $this->settings[$db][$key];
 
         }
+    }
+
+    /**
+     * Push a few setting values up into Core and add/update sites
+     * @param $accountCode
+     * @return bool
+     */
+    public function updateCore($accountCode)
+    {
+        // We also need to get the tenant so we can update the _core database for the library directory
+        /** @var $tenantRepo \AppBundle\Repository\TenantRepository */
+        $tenantRepo = $this->em->getRepository('AppBundle:Tenant');
+
+        /** @var $tenantSiteRepo \AppBundle\Repository\TenantSiteRepository */
+        $tenantSiteRepo = $this->em->getRepository('AppBundle:TenantSite');
+
+        /** @var \AppBundle\Entity\Tenant $tenant */
+        $tenant = $tenantRepo->findOneBy(['stub' => $accountCode]);
+
+        /** @var \AppBundle\Entity\Site $site */
+        $sites = $this->em->getRepository('AppBundle:Site')->findAll();
+
+        foreach ($sites AS $site) {
+            // Update the site in the _core library
+            $uniqueSiteId = $tenant->getId().'-'.$site->getId();
+            if (!$tenantSite = $tenantSiteRepo->findOneBy(['uniqueId' => $uniqueSiteId])) {
+                $tenantSite = new TenantSite();
+                $tenantSite->setTenant($tenant);
+                $tenantSite->setUniqueId($uniqueSiteId);
+            }
+
+            // Set the tenant's default site as the first site saved, or preferably site ID 1
+            if ($site->getId() == 1 || !$tenant->getSite()) {
+                $tenant->setSite($tenantSite);
+            }
+
+            if ($site->getIsListed()) {
+                $tenantSite->setStatus(TenantSite::STATUS_ACTIVE);
+            } else {
+                $tenantSite->setStatus(TenantSite::STATUS_HIDDEN);
+            }
+
+            $tenantSite->setAddress($site->getAddress());
+            $tenantSite->setName($site->getName());
+            $tenantSite->setPostCode($site->getPostCode());
+            $tenantSite->setCountry($site->getCountry());
+            $this->em->persist($tenantSite);
+        }
+
+        $tenant->setTimeZone($this->getSettingValue('org_timezone'));
+        $tenant->setIndustry($this->getSettingValue('industry'));
+        $tenant->setName($this->getSettingValue('org_name'));
+        $tenant->setOrgEmail($this->getSettingValue('org_email'));
+
+        $this->em->persist($tenant);
+        $this->em->flush();
+
+        return true;
     }
 }

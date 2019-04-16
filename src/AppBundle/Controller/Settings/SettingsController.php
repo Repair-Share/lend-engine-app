@@ -29,6 +29,9 @@ class SettingsController extends Controller
         /** @var $tenantInformationService \AppBundle\Extensions\TenantInformation */
         $tenantInformationService = $this->get('tenant_information');
 
+        /** @var $settingsService \AppBundle\Settings\Settings */
+        $settingsService = $this->get('settings');
+
         // Pass tenant info in so we can control settings based on pay plan
         $options = [
             'em' => $em,
@@ -44,18 +47,17 @@ class SettingsController extends Controller
         /** @var $repo \AppBundle\Repository\SettingRepository */
         $repo =  $em->getRepository('AppBundle:Setting');
 
-        /** @var $tenantRepo \AppBundle\Repository\AccountRepository */
-        $tenantRepo = $em->getRepository('AppBundle:Account');
+        /** @var $tenantRepo \AppBundle\Repository\TenantRepository */
+        $tenantRepo = $em->getRepository('AppBundle:Tenant');
         $accountCode = $this->get('session')->get('account_code');
 
-        /** @var \AppBundle\Entity\Account $tenant */
+        /** @var \AppBundle\Entity\Tenant $tenant */
         $tenant = $tenantRepo->findOneBy(['stub' => $accountCode]);
 
         $locale = $tenantInformationService->getLocale();
 
         if ($form->isSubmitted()) {
 
-            $timeZone = '';
             foreach ($request->get('settings') AS $setup_key => $setup_data) {
 
                 if ($this->isValidSettingsKey($setup_key)) {
@@ -74,22 +76,19 @@ class SettingsController extends Controller
                     }
 
                     $em->persist($setting);
-
-                    if ($setup_key == 'org_timezone') {
-                        $timeZone = $setup_data;
-                    }
                 }
 
             }
 
-            // Update the _core DB too
-            if ($timeZone) {
-                $tenant->setTimeZone($timeZone);
-                $em->persist($tenant);
-            }
+
 
             try {
                 $em->flush();
+
+                // Also update Core (_core DB)
+                $settingsService->setTenant($tenant);
+                $settingsService->updateCore($accountCode);
+
                 $this->addFlash('success','Settings updated.');
             } catch (\PDOException $e) {
                 $this->addFlash('error','Error updating settings.');

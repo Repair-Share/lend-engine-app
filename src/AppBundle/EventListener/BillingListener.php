@@ -2,7 +2,7 @@
 
 namespace AppBundle\EventListener;
 
-use AppBundle\Entity\Account;
+use AppBundle\Entity\Tenant;
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\DependencyInjection\Container;
@@ -25,8 +25,8 @@ class BillingListener
 
     public function onKernelController(FilterControllerEvent $event)
     {
-        /** @var $repo \AppBundle\Repository\AccountRepository */
-        $repo = $this->em->getRepository('AppBundle:Account');
+        /** @var $repo \AppBundle\Repository\TenantRepository */
+        $repo = $this->em->getRepository('AppBundle:Tenant');
 
         $request = $event->getRequest();
 
@@ -41,13 +41,13 @@ class BillingListener
 
             if ($accountCode = $this->session->get('account_code')) {
 
-                /** @var $tenant \AppBundle\Entity\Account */
+                /** @var $tenant \AppBundle\Entity\Tenant */
                 if (!$tenant = $repo->findOneBy(['stub' => $accountCode])) {
                     die('We could not find your account');
                 }
 
                 // If cancelled, redirect to home
-                if ($tenant->getStatus() == Account::STATUS_CANCEL) {
+                if ($tenant->getStatus() == Tenant::STATUS_CANCEL) {
                     $redirectUrl = $this->router->generate('billing');
                     $event->setController(function() use ($redirectUrl) {
                         return new RedirectResponse($redirectUrl);
@@ -57,7 +57,7 @@ class BillingListener
                 // Prevent user from saving data (POST)
                 if ($request->getMethod() == "POST") {
                     // If in trial, check the trial expiry date
-                    if ($tenant->getStatus() == Account::STATUS_TRIAL) {
+                    if ($tenant->getStatus() == Tenant::STATUS_TRIAL) {
                         $now = new \DateTime();
                         if ($tenant->getTrialExpiresAt() < $now) {
                             $redirectUrl = $this->router->generate('billing');

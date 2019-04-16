@@ -2,7 +2,7 @@
 
 namespace AppBundle\Services;
 
-use AppBundle\Entity\Account;
+use AppBundle\Entity\Tenant;
 use AppBundle\Entity\Payment;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\Container;
@@ -349,11 +349,11 @@ class StripeHandler
     /**
      * Subscribe the tenant to a Lend Engine plan
      * @param $token
-     * @param Account $tenant
+     * @param Tenant $tenant
      * @param $planCode
      * @return bool|\Stripe\Charge
      */
-    public function createSubscription($token, Account $tenant, $planCode)
+    public function createSubscription($token, Tenant $tenant, $planCode)
     {
 
         if ($token && !$tenant->getStripeCustomerId()) {
@@ -392,7 +392,7 @@ class StripeHandler
             if ($subscription = $this->subscribeCustomer($tenant->getStripeCustomerId(), $planCode)) {
                 // Save the new plan
                 $tenant->setPlan($planCode);
-                $tenant->setStatus(Account::STATUS_LIVE);
+                $tenant->setStatus(Tenant::STATUS_LIVE);
                 $tenant->setSubscriptionId($subscription['id']);
                 $this->em->persist($tenant);
                 try {
@@ -409,11 +409,11 @@ class StripeHandler
     }
 
     /**
-     * @param Account $tenant
+     * @param Tenant $tenant
      * @param null $subscriptionId
      * @return bool
      */
-    public function cancelSubscription(Account $tenant, $subscriptionId = null)
+    public function cancelSubscription(Tenant $tenant, $subscriptionId = null)
     {
         if (!$stripeCustomerId = $tenant->getStripeCustomerId()) {
             // Cancel and return
@@ -445,13 +445,13 @@ class StripeHandler
     }
 
     /**
-     * @param Account $tenant
+     * @param Tenant $tenant
      * @return bool
      */
-    private function cancelAccount(Account $tenant)
+    private function cancelAccount(Tenant $tenant)
     {
         $tenant->setPlan(null);
-        $tenant->setStatus(Account::STATUS_CANCEL);
+        $tenant->setStatus(Tenant::STATUS_CANCEL);
         $tenant->setSubscriptionId(null);
         $this->em->persist($tenant);
         try {

@@ -5,17 +5,19 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Account
+ * Tenant
  *
  * @ORM\Table(name="_core.account", options={"collate"="utf8mb4_unicode_ci", "charset"="utf8mb4"})
  * @ORM\Entity
  */
-class Account
+class Tenant
 {
 
+    const STATUS_PENDING  = 'PENDING';
     const STATUS_TRIAL    = 'TRIAL';
     const STATUS_LIVE     = 'LIVE';
     const STATUS_CANCEL   = 'CANCELLED';
+    const STATUS_ARCHIVED = 'ARCHIVED';
     const STATUS_DELETED  = 'DELETED';
 
     /**
@@ -41,13 +43,19 @@ class Account
 
     /**
      * @var string
+     * @ORM\Column(name="industry", type="string", length=255, nullable=true)
+     */
+    private $industry;
+
+    /**
+     * @var string
      * @ORM\Column(name="db_schema", type="string", length=255, nullable=false)
      */
     private $dbSchema;
 
     /**
      * @var string
-     * @ORM\Column(name="domain", type="string", length=255, nullable=false)
+     * @ORM\Column(name="domain", type="string", length=255, nullable=true)
      */
     private $domain;
 
@@ -83,13 +91,19 @@ class Account
 
     /**
      * @var string
-     * @ORM\Column(name="status", type="string", length=255, nullable=false)
+     * @ORM\Column(name="org_email", type="string", length=255, nullable=false)
      */
-    private $status;
+    private $orgEmail;
 
     /**
      * @var string
-     * @ORM\Column(name="plan", type="string", length=16, nullable=true)
+     * @ORM\Column(name="status", type="string", length=255, nullable=false)
+     */
+    private $status = 'PENDING';
+
+    /**
+     * @var string
+     * @ORM\Column(name="plan", type="string", length=32, nullable=true)
      */
     private $plan;
 
@@ -120,6 +134,24 @@ class Account
     private $timeZone = "Europe/London";
 
     /**
+     * @var string
+     * @ORM\Column(name="schema_version", type="string", length=255, nullable=false)
+     */
+    private $schemaVersion;
+
+    /**
+     * @ORM\OneToOne(targetEntity="TenantSite", inversedBy="tenant", cascade={"remove"})
+     */
+    private $site;
+
+    /**
+     * @ORM\OneToMany(targetEntity="TenantNote", mappedBy="tenant", cascade={"remove"})
+     */
+    private $notes;
+
+    private $age;
+
+    /**
      * Get id
      *
      * @return integer
@@ -134,7 +166,7 @@ class Account
      *
      * @param string $stub
      *
-     * @return Account
+     * @return Tenant
      */
     public function setStub($stub)
     {
@@ -158,7 +190,7 @@ class Account
      *
      * @param string $name
      *
-     * @return Account
+     * @return Tenant
      */
     public function setName($name)
     {
@@ -178,11 +210,30 @@ class Account
     }
 
     /**
+     * @param $industry
+     * @return $this
+     */
+    public function setIndustry($industry)
+    {
+        $this->industry = $industry;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIndustry()
+    {
+        return $this->industry;
+    }
+
+    /**
      * Set dbSchema
      *
      * @param string $dbSchema
      *
-     * @return Account
+     * @return Tenant
      */
     public function setDbSchema($dbSchema)
     {
@@ -204,7 +255,7 @@ class Account
     /**
      * @param string $domain
      *
-     * @return Account
+     * @return Tenant
      */
     public function setDomain($domain)
     {
@@ -230,7 +281,7 @@ class Account
      *
      * @param \DateTime $createdAt
      *
-     * @return Account
+     * @return Tenant
      */
     public function setCreatedAt($createdAt)
     {
@@ -254,7 +305,7 @@ class Account
      *
      * @param \DateTime $lastAccessAt
      *
-     * @return Account
+     * @return Tenant
      */
     public function setLastAccessAt($lastAccessAt)
     {
@@ -278,7 +329,7 @@ class Account
      *
      * @param string $ownerName
      *
-     * @return Account
+     * @return Tenant
      */
     public function setOwnerName($ownerName)
     {
@@ -302,7 +353,7 @@ class Account
      *
      * @param string $ownerEmail
      *
-     * @return Account
+     * @return Tenant
      */
     public function setOwnerEmail($ownerEmail)
     {
@@ -322,11 +373,30 @@ class Account
     }
 
     /**
+     * @param $email
+     * @return $this
+     */
+    public function setOrgEmail($email)
+    {
+        $this->orgEmail = $email;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrgEmail()
+    {
+        return $this->orgEmail;
+    }
+
+    /**
      * Set status
      *
      * @param string $status
      *
-     * @return Account
+     * @return Tenant
      */
     public function setStatus($status)
     {
@@ -348,7 +418,7 @@ class Account
     /**
      * @param string $plan
      *
-     * @return Account
+     * @return Tenant
      */
     public function setPlan($plan)
     {
@@ -390,7 +460,7 @@ class Account
     /**
      * @param string $subscriptionId
      *
-     * @return Account
+     * @return Tenant
      */
     public function setSubscriptionId($subscriptionId)
     {
@@ -410,7 +480,7 @@ class Account
     /**
      * @param string $dt
      *
-     * @return Account
+     * @return Tenant
      */
     public function setTrialExpiresAt($dt)
     {
@@ -482,6 +552,64 @@ class Account
         $this->timeZone = $timeZone;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSchemaVersion()
+    {
+        return $this->schemaVersion;
+    }
+
+    /**
+     * @param $version
+     * @return $this
+     */
+    public function setSchemaVersion($version)
+    {
+        $this->schemaVersion = $version;
+
+        return $this;
+    }
+
+    /**
+     * Get notes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    /**
+     * @param TenantSite $site
+     * @return $this
+     */
+    public function setSite(TenantSite $site)
+    {
+        $this->site = $site;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSite()
+    {
+        return $this->site;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAge()
+    {
+        $now = new \DateTime();
+        $age = $this->createdAt->diff($now);
+        return $age->format('%a');
     }
 
 }

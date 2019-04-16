@@ -273,8 +273,8 @@ class LoanController extends Controller
 
             $em = $this->getDoctrine()->getManager();
 
-            /** @var \AppBundle\Repository\AccountRepository $repo */
-            $repo = $em->getRepository('AppBundle:Account');
+            /** @var \AppBundle\Repository\TenantRepository $repo */
+            $repo = $em->getRepository('AppBundle:Tenant');
             $libraryId = $this->get('session')->get('account_code');
 
             if ($tenant = $repo->findOneBy(['stub' => $libraryId])) {

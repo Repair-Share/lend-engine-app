@@ -33,6 +33,9 @@
                     To add further locations, just head to the locations settings screen.
                 </p>
             {% endif %}
+
+            {{ form_row(form.isListed) }}
+
         </div>
 
         <div class="siteOpenings col-md-7" data-prototype="{% filter escape %}{% include 'form/siteOpening.html.twig' with { 'siteOpening': form.siteOpenings.vars.prototype } %}{% endfilter %}">

@@ -52,6 +52,15 @@ class SiteType extends AbstractType
             ));
         }
 
+        $builder->add('isListed', CheckboxType::class, array(
+            'label' => '<span class="label bg-orange">NEW!</span> Show in Lend Engine directory',
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'data-help' => "We're building a listing of lending libraries across the world. Just tick this box to include your library in the directory.",
+            )
+        ));
+
         $builder->add('address', TextareaType::class, array(
             'label' => 'Address',
             'required' => false

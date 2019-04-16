@@ -24,7 +24,7 @@ class CoreLoan
     /**
      * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="Account")
+     * @ORM\ManyToOne(targetEntity="Tenant")
      * @ORM\JoinColumn(name="library", referencedColumnName="id")
      */
     private $library;
