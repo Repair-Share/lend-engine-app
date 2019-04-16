@@ -14,6 +14,25 @@ class DashController extends Controller
      */
     public function dashboardAction(Request $request)
     {
+        /** START UPDATE OF CORE */
+
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var $settingsService \AppBundle\Settings\Settings */
+        $settingsService = $this->get('settings');
+        $accountCode = $this->get('session')->get('account_code');
+
+        /** @var $tenantRepo \AppBundle\Repository\TenantRepository */
+        $tenantRepo = $em->getRepository('AppBundle:Tenant');
+
+        /** @var \AppBundle\Entity\Tenant $tenant */
+        $tenant = $tenantRepo->findOneBy(['stub' => $accountCode]);
+
+        // Update Core (_core DB)
+        $settingsService->setTenant($tenant);
+        $settingsService->updateCore($accountCode);
+
+        /** END UPDATE OF CORE */
 
         /** @var \AppBundle\Repository\ContactRepository $contactRepo */
         $contactRepo = $this->getDoctrine()->getRepository('AppBundle:Contact');
