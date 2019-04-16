@@ -138,11 +138,14 @@ class Settings
                 $tenantSite->setStatus(TenantSite::STATUS_HIDDEN);
             }
 
-            $tenantSite->setAddress($site->getAddress());
-            $tenantSite->setName($site->getName());
-            $tenantSite->setPostCode($site->getPostCode());
-            $tenantSite->setCountry($site->getCountry());
-            $this->em->persist($tenantSite);
+            if ($site->getAddress() && $site->getPostCode() && $site->getCountry()) {
+                $tenantSite->setAddress($site->getAddress());
+                $tenantSite->setName($site->getName());
+                $tenantSite->setPostCode($site->getPostCode());
+                $tenantSite->setCountry($site->getCountry());
+                $this->em->persist($tenantSite);
+            }
+            
         }
 
         $tenant->setTimeZone($this->getSettingValue('org_timezone'));
