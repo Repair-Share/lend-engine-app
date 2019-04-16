@@ -138,6 +138,14 @@ EOT;
     {
         $em = $this->getDoctrine()->getManager();
 
+        // We also need to get the tenant so we can update the _core database for the library directory
+        /** @var $tenantRepo \AppBundle\Repository\AccountRepository */
+        $tenantRepo = $em->getRepository('AppBundle:Account');
+        $accountCode = $this->get('session')->get('account_code');
+
+        /** @var \AppBundle\Entity\Account $tenant */
+        $tenant = $tenantRepo->findOneBy(['stub' => $accountCode]);
+
         if ($id) {
             $site = $this->getDoctrine()->getRepository('AppBundle:Site')->find($id);
             if (!$site) {
