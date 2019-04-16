@@ -15,7 +15,7 @@ final class Version20190416090739 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('DROP TABLE item_type');
+        $this->addSql('DROP TABLE IF EXISTS item_type');
         $this->addSql('CREATE INDEX IDX_55BDEA3044EE13D2 ON inventory_item (item_type)');
         $this->addSql('DROP INDEX UNIQ_4C62E638C05FB297 ON contact');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_4C62E638C05FB297 ON contact (confirmation_token)');
