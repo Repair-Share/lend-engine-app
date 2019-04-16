@@ -75,7 +75,7 @@
                 This box is only visible for staff
             </div>
 
-            {% if user and user.id != app.user.id %}
+            {% if user is defined and user.id != app.user.id %}
                 <i class="fa fa-user"></i> Browsing as <strong><a title="Edit contact" data-toggle="tooltip" href="{{ path('contact', {id: user.id}) }}">{{ user.name }}</a></strong>
                 <div class="help-block">
                     Change user with the search box above.
@@ -84,7 +84,7 @@
 
         </div>
         <div class="col-md-6" style="text-align: right">
-            {% if user and user.id != app.user.id %}
+            {% if user is defined and user.id != app.user.id %}
 
                 {% if user.activeMembership %}
                     <strong>{{ user.activeMembership.memberShipType.name }}</strong> member until {{ user.activeMembership.expiresAt|date("F d, Y") }}
