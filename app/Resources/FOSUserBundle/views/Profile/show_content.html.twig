@@ -26,21 +26,23 @@
 
     {% if app.user.activeMembership.expiresAt|date("Y-m-d") < date()|date_modify("+7 days")|date("Y-m-d") %}
         <div class="alert alert-warning">
-            You are currently a <strong>{{ app.user.activeMembership.membershipType.name }}</strong> member.<br>
-            Your membership expires on {{ app.user.activeMembership.expiresAt|date("D d F Y") }}
+            {{ 'public_account.current_member_type'|trans({'%type%':app.user.activeMembership.membershipType.name}, 'member_site') }}<br>
+            {{ 'public_account.membership_expires_on'|trans({}, 'member_site') }} {{ app.user.activeMembership.expiresAt|date("D d F Y") }}
             <p>
-                Your membership is about to expire.
+                {{ 'public_account.membership_about_to_expire'|trans({}, 'member_site') }}
                 <br><br>
                 <a href="{{ path('subscribe') }}" class="btn btn-primary">Renew now</a>
             </p>
         </div>
     {% else %}
         <div>
-            You are currently a <strong>{{ app.user.activeMembership.membershipType.name }}</strong> member.<br>
-            Your membership expires on {{ app.user.activeMembership.expiresAt|date("D d F Y") }}
+            {{ 'public_account.current_member_type'|trans({'%type%':app.user.activeMembership.membershipType.name}, 'member_site') }}<br>
+            {{ 'public_account.membership_expires_on'|trans({}, 'member_site') }} {{ app.user.activeMembership.expiresAt|date("D d F Y") }}
             <p>
                 <br>
-                <a href="{{ path('subscribe') }}" class="btn btn-sm btn-primary">Change subscription</a>
+                <a href="{{ path('subscribe') }}" class="btn btn-sm btn-primary">
+                    {{ 'public_account.button_change_membership'|trans({}, 'member_site') }}
+                </a>
             </p>
         </div>
     {% endif %}
@@ -49,6 +51,6 @@
     <div class="alert alert-info">
         {{ 'text_no_membership'|trans({}, 'member_site') }}
         <br><br>
-        <a href="{{ path('subscribe') }}" class="btn btn-sm btn-primary">Subscribe now</a>
+        <a href="{{ path('subscribe') }}" class="btn btn-sm btn-primary">{{ 'public_account.button_subscribe_now'|trans({}, 'member_site') }}</a>
     </div>
 {% endif %}

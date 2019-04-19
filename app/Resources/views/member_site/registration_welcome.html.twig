@@ -16,13 +16,13 @@
         {% else %}
             <h2>Welcome!</h2>
             <p>
-                Your email address has now been confirmed. Welcome to {{ tenantInformation.companyName }}.
+                {% trans %}public_registration.email_confirmed{% endtrans %}. Welcome to {{ tenantInformation.companyName }}.
             </p>
         {% endif %}
 
         {% if chooseMembership %}
             <div style="margin-top:20px;">
-                <a class="btn btn-primary" href="{{ path('subscribe') }}">Choose a membership type</a>
+                <a class="btn btn-primary" href="{{ path('subscribe') }}">{% trans %}public_user.choose_membership_type{% endtrans %}</a>
             </div>
         {% endif %}
     </div>

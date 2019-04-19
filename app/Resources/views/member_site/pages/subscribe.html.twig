@@ -27,8 +27,8 @@
         {% if app.user.activeMembership is defined and app.user.activeMembership and app.user.activeMembership.status == 'ACTIVE' %}
             <div class="col-md-12">
                 <div class="alert alert-info">
-                    You are currently a <strong>{{ app.user.activeMembership.membershipType.name }}</strong> member.<br>
-                    Your membership expires on {{ app.user.activeMembership.expiresAt|date("D j F Y") }}
+                    {{ 'public_account.current_member_type'|trans({'%type%':app.user.activeMembership.membershipType.name}, 'member_site') }}<br>
+                    {{ 'public_account.membership_expires_on'|trans({}) }} {{ app.user.activeMembership.expiresAt|date("D j F Y") }}
                 </div>
             </div>
         {% endif %}
@@ -54,11 +54,11 @@
                         {{ tenantInformation.currencySymbol }} {{ membershipType.price }}
                     </div>
                     <div>
-                        {{ membershipType.duration }} days
+                        {{ membershipType.duration }} {% transchoice membershipType.duration %}days{% endtranschoice %}
                     </div>
                     <div>
                         {% if membershipType.discount > 0 %}
-                            {{ membershipType.discount|number_format() }}% discount on loan fees.
+                            {{ membershipType.discount|number_format() }}% {{ 'public_registration.discount_on_fees'|trans({}) }}
                         {% else %}
                             &nbsp;
                         {% endif %}
@@ -70,7 +70,7 @@
                                 {% if app.user.activeMembership is defined
                                 and app.user.activeMembership
                                 and app.user.activeMembership.status == 'ACTIVE'
-                                and app.user.activeMembership.membershipType == membershipType %}Renew membership{% else %}Subscribe{% endif %}
+                                and app.user.activeMembership.membershipType == membershipType %}{{ 'public_registration.button_renew'|trans({}) }}{% else %}{{ 'public_registration.button_subscribe'|trans({}) }}{% endif %}
                             </button>
 
                             <br><br>
@@ -81,9 +81,9 @@
                             and app.user.activeMembership.membershipType == membershipType
                                 and app.user.activeMembership.expiresAt|date("Y-m-d") < date()|date_modify("+14 days")|date("Y-m-d")
                             %}
-                                Your membership will be renewed from <strong>{{ app.user.activeMembership.expiresAt|date("j F Y") }}</strong>.
+                                {{ 'public_registration.membership_deferred'|trans({}) }} <strong>{{ app.user.activeMembership.expiresAt|date("j F Y") }}</strong>.
                             {% else %}
-                                Your new membership will start today.
+                                {{ 'public_registration.membership_starts_today'|trans({}) }}
                             {% endif %}
                             </div>
                         </div>
@@ -104,8 +104,7 @@
         {% else %}
             <div class="col-md-12">
                 <div class="alert alert-warning">
-                    There are no memberships available for self serve subscription.<br>
-                    Please come in to visit us with photo ID to complete your membership.
+                    {{ 'public_registration.no_self_serve_memberships'|trans({}) }}
                 </div>
             </div>
         {% endif %}
@@ -115,37 +114,11 @@
 
 {% block pagejs %}
     <script>
-
-        {#var subscriptionHandler = StripeCheckout.configure({#}
-            {#key: stripePublicApiKey,#}
-            {#locale: 'auto',#}
-            {#token: function(token) {#}
-                {#$("#stripeToken").val(token.id);#}
-                {#$("#subsForm").submit();#}
-{#//                waitButton($('.subscribe-submit'));#}
-            {#}#}
-        {#});#}
-
-        {#// When user clicks payment button, route through Stripe if appropriate#}
         $(document).on('click', ".subscribe-submit, .payment-submit", function(e) {
-
             var paymentAmount = $(this).data('amount');
             var membershipTypeId = $(this).attr('id');
             $("#membershipTypeId").val(membershipTypeId);
             $("#paymentAmount").val(paymentAmount);
-
-            {#// Open Checkout with further options:#}
-            {#subscriptionHandler.open({#}
-                {#name: '{{ tenantInformation.companyName }}',#}
-                {#zipCode: false,#}
-                {#amount: paymentAmount * 100#}
-                {#currency: 'gbp',#}
-                {#allowRememberMe: false,#}
-                {#email:  '{{ app.user.email }}',#}
-                {#label: 'Pay {{ tenantInformation.currencySymbol }} : '+paymentAmount#}
-            {#});#}
-            {#e.preventDefault();#}
-
         });
     </script>
 {% endblock %}

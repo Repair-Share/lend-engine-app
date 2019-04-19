@@ -101,6 +101,11 @@ public_account:
   membership_subtitle: Membership details
   button_edit_details: Edit my details
   button_change_password: Change my password
+  button_subscribe_now: Subscribe now
+  button_change_membership: Change membership / renew
+  current_member_type: You are currently a %type% member.
+  membership_about_to_expire: Your membership is about to expire.
+  membership_expires_on: Your membership expires on
 
 public_item_list:
   pages: Showing %x% to %y% of %z% items
@@ -136,6 +141,7 @@ public_item:
   maps_link: Open in Google maps
   similar_items: similar items available
   see_all: See all
+  discount: discount
   not_reservable: "This item is not available for reservation online. Please contact us."
 
 calendar:
@@ -176,11 +182,9 @@ public_loan:
 public_user_menu:
   contact_info: Profile
 
-text_borrow_with_membership: |
-  With full membership you will be able to borrow and reserve this item online.
+text_borrow_with_membership: With full membership you will be able to borrow and reserve this item online.
 
-text_no_membership: |
-  We don't have an active membership for you.
+text_no_membership: We don't have an active membership for you.
 
 # Member site : Logged in : Add credit page
 public_add_credit:
@@ -203,13 +207,19 @@ public_payments:
 
 # Registration page
 public_registration:
-  newsletter: "Subscribe to our newsletter"
-  terms_link: "View our Terms and Conditions"
-  terms_label: "I agree to the Terms and Conditions"
+  newsletter: Subscribe to our newsletter
+  terms_link: View our Terms and Conditions
+  terms_label: I agree to the Terms and Conditions
+  email_confirmed: Your email address has now been confirmed
+  membership_starts_today: Your new membership will start today.
+  membership_deferred: Your membership will be renewed from
+  discount_on_fees: discount on loan fees
+  button_renew: Renew membership
+  button_subscribe: Subscribe
+  no_self_serve_memberships: There are no memberships available for self serve subscription. Please come in to visit us with photo ID to complete your membership.
 
-# The page shown to users as part of registration process, to choose membership
-public_become_member:
-  title: Become a member
+public_user:
+  choose_membership_type: Choose a membership type
 
 msg_success:
   payment_ok: Payment made OK. Your account balance has been amended.
