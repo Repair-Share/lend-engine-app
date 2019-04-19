@@ -145,7 +145,7 @@ class ItemController extends Controller
         if ($request->get('modal') == 'true') {
             $template = 'shared/modals/item.html.twig';
         } else {
-            $template = 'public/pages/item.html.twig';
+            $template = 'member_site/pages/item.html.twig';
         }
 
         if ($loanRowId = $request->get('extend')) {

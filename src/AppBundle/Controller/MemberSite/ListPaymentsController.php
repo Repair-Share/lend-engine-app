@@ -29,7 +29,7 @@ class ListPaymentsController extends Controller
             $user = $contactRepo->find($sessionUserId);
         }
 
-        return $this->render('public/pages/payments.html.twig', array(
+        return $this->render('member_site/pages/payments.html.twig', array(
             'user' => $user
         ));
     }

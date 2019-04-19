@@ -45,7 +45,7 @@ class PageController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        return $this->render('public/pages/page.html.twig', [
+        return $this->render('member_site/pages/page.html.twig', [
             'page' => $page,
             'pageTitle' => $page->getTitle()
         ]);

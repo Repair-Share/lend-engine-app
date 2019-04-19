@@ -1,0 +1,29 @@
+{# app/Resources/views/public/registration_welcome.html.twig #}
+
+{% extends 'member_site/themes/loader.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block search %}{% endblock %}
+
+{% block accountNav %}
+    {{ include('member_site/partials/account_nav.html.twig') }}
+{% endblock %}
+
+{% block body %}
+    <div id="registration-welcome">
+        {% if tenantInformation.getSiteWelcomeUser %}
+            {{ tenantInformation.getSiteWelcomeUser|raw }}
+        {% else %}
+            <h2>Welcome!</h2>
+            <p>
+                Your email address has now been confirmed. Welcome to {{ tenantInformation.companyName }}.
+            </p>
+        {% endif %}
+
+        {% if chooseMembership %}
+            <div style="margin-top:20px;">
+                <a class="btn btn-primary" href="{{ path('subscribe') }}">Choose a membership type</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

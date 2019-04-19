@@ -32,6 +32,13 @@ class MembershipType
     /**
      * @var string
      *
+     * @ORM\Column(name="description", type="string", length=1024, nullable=true)
+     */
+    private $description;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="price", type="decimal", scale=2)
      */
     private $price = 0.00;
@@ -112,6 +119,25 @@ class MembershipType
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @param $description
+     * @return $this
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**

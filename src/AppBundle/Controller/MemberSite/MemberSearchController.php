@@ -51,7 +51,7 @@ class MemberSearchController extends Controller
             }
         }
 
-        return $this->render('public/pages/member_search.html.twig', [
+        return $this->render('member_site/pages/member_search.html.twig', [
             'user'     => $user,
             'contacts' => $contacts
         ]);

@@ -1,0 +1,8 @@
+{% trans_default_domain 'member_site' %}
+
+{# If we're logged in, or if the search is public, show it #}
+{% if not tenantInformation.siteIsPrivate or is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    {% block search %}
+        {{ include('member_site/partials/search.html.twig') }}
+    {% endblock %}
+{% endif %}

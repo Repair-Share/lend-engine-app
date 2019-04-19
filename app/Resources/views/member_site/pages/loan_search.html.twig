@@ -1,0 +1,54 @@
+{% extends 'member_site/themes/loader.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block body %}
+
+    <h2 id="site-member-search">
+        Find a loan or reservation ...
+    </h2>
+
+    {% if loans|length > 0 %}
+        {% for loan in loans %}
+            <div class="search-result">
+
+                <h5>
+                    <a href="{{ path('public_loan', {loanId: loan.id}) }}">{{ loan.id }} / {{ loan.contact.name }}</a>
+                    <span class="pull-right">
+                        {{ include('partials/loan_status_label.html.twig') }}
+                    </span>
+                </h5>
+
+                {% for row in loan.loanRows %}
+                <div class="loan-row">
+                    <strong>{{ row.inventoryItem.name }}</strong><br>
+                    {{ row.dueOutAt|date("l F j, g:i a") }} to <br>
+                    {{ row.dueInAt|date("l F j, g:i a") }} ({{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %})
+                </div>
+                {% endfor %}
+                {#<a href="{{ path('switch_contact', {contactId: contact.id}) }}" class="btn btn-xs btn-success">Browse as {{ contact.firstName }}</a>#}
+
+                {#<a href="{{ path('contact', {id: contact.id}) }}" class="btn btn-xs btn-default">Edit in admin</a>#}
+
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No loans found</p>
+    {% endif %}
+
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        $(document).ready(function() {
+            $("#loan-search").focus();
+
+            {% if app.request.get('loan-search') %}
+            var options = {
+                exclude : [".btn", ".label"],
+                separateWordSearch: false
+            };
+            $(".search-result").mark("{{ app.request.get('loan-search') }}", options);
+            {% endif %}
+        });
+    </script>
+{% endblock %}

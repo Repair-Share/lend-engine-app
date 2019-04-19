@@ -1,0 +1,546 @@
+{% trans_default_domain 'member_site' %}
+{% extends 'member_site/themes/loader.html.twig' %}
+
+{% block accountNav %}
+    {{ include('member_site/partials/account_nav.html.twig') }}
+{% endblock %}
+
+{% block search %}
+    {{ include('member_site/partials/search.html.twig') }}
+{% endblock %}
+
+{% block body %}
+
+    <style>
+        #add-fee .fee-col:first-of-type {
+            padding-right: 4px;
+        }
+        #add-fee .fee-col:last-of-type {
+            padding-left: 4px;
+        }
+    </style>
+    <h2 id="page-loan-title">
+        {% if loan.status == 'RESERVED' %}
+            {% trans %}Reservation{% endtrans %}
+        {% else %}
+            {% trans %}Loan{% endtrans %}
+        {% endif %}
+        #{{ loan.id }}
+
+        {% if loan.contact.id != app.user.id %}
+            {{ include('member_site/partials/session_user.html.twig') }}
+        {% endif %}
+
+        <span class="pull-right">
+            {{ include('partials/loan_status_label.html.twig') }}
+
+            {% if loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_PENDING') and is_granted('ROLE_ADMIN') %}
+            <a class="btn btn-xs btn-danger buttonDelete" href="{{ path('loan_delete', {id: loan.id}) }}">
+                Delete
+            </a>
+            {% endif %}
+            </span>
+    </h2>
+
+    <style>
+        .basket-amount {
+            text-align: right;
+            width: 60px;
+        }
+        .basket-total {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: right;
+        }
+        .basket-subtotal {
+            font-size: 16px;
+            text-align: right;
+        }
+        .table.borderless td, .table.borderless th {
+            border-bottom: 1px solid #eee;
+            border-top: none;
+        }
+        .formControls .btn {
+            margin-right: 10px;
+        }
+        .row-charge {
+            font-size: 11px;
+            color: #419f43
+        }
+    </style>
+
+    {% if loan.loanRows|length > 0 %}
+        <div style="padding: 10px">
+            <i class="fa fa-clock" style="color: #5cb85c"></i>
+            {% trans %}public_basket.pickup_after{% endtrans %} <strong>{{ loan.loanRows|first.dueOutAt|date("d F g:i a") }}</strong>
+            {% trans %}public_basket.from{% endtrans %} <strong>{{ loan.loanRows|first.siteFrom.name }}</strong>
+        </div>
+    {% endif %}
+
+    {% if loan.loanRows|length == 0 %}
+        <div class="alert alert-info">
+            {% trans %}public_basket.no_items{% endtrans %}
+            <br><br>
+        </div>
+    {% endif %}
+
+    {{ form_start(form, { 'attr' : { 'class': 'payment-form' } }) }}
+
+        {{ form_errors(form) }}
+        {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <input type="hidden" name="contactId" id="contactId" value="{{ loan.contact.id }}">
+    <input type="hidden" name="contactEmail" id="contactEmail" class="contact-email" value="{{ loan.contact.email }}">
+
+    <table class="table borderless" id="basketDetails">
+
+        {% set deposits = 0 %}
+        {% set promptsExist = 0 %}
+
+        {% for row in loan.loanRows %}
+            <tr>
+                <td style="width:100px">
+                    {% if row.inventoryItem.imageName %}
+                        <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}" class="img-thumbnail img-responsive">
+                    {% else %}
+                        <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" alt="" class="img-responsive">
+                    {% endif %}
+
+                    {% if loan.loanRows|length > 1 and not row.isCheckedOut %}
+                    <a href="{{ path('loan_item_remove', {rowId: row.id}) }}" class="btn btn-xs btn-danger" style="margin-top: 4px;">
+                        {% trans %}public_basket.remove_item{% endtrans %}
+                    </a>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a> <br>
+
+                    {#<i class="fa fa-clock-o"></i> #}
+                    {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
+
+                    <br>( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
+
+                    {#OVERDUE WARNING#}
+                    {#{% if row.dueInAt|date("Y-m-d") < "now"|date("Y-m-d") and row.isReturned != true %}#}
+                        {#<span class="label bg-red">LATE</span>#}
+                    {#{% endif %}#}
+
+                    <br>
+                    <div class="multi-site">
+                        {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
+                    </div>
+
+                    {#CHANGE RETURN DATE#}
+                    {% if row.isReturned %}
+                        <br />
+                        <div style="color: #419f43;">
+                            <i class="fa fa-check"></i> Checked in: {{ row.checkedInAt|date }}
+                        </div>
+                    {% elseif row.isCheckedOut or (loan.status == 'PENDING' or loan.status == 'RESERVED') %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <div>
+                            <a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id, from: row.dueInAt|date("Y-m-d H:i:s") }) }}" class="">Change return date</a>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+
+                    {#CHECK IN #}
+                    {% if row.isCheckedOut and row.isReturned != true and is_granted('ROLE_ADMIN') %}
+                        <div class="help-block">
+                            <a href="{{ path('loan_check_in', {loanRowId: row.id}) }}" class="btn btn-xs btn-success">Check in</a>
+                            <!-- For functional testing: /-->
+                            <div class="check-in-row-id" style="display:none;">{{ row.id }}</div>
+                        </div>
+                    {% endif %}
+
+                    {#DEPOSIT already created for an 'on loan' row#}
+                    {% if row.deposit %}
+                        {% set deposits = deposits + row.deposit.amount %}
+                        <div class="">
+                            Refundable deposit {{ tenantInformation.currencySymbol }} {{ row.deposit.amount }}
+                        </div>
+                    {% elseif row.inventoryItem.depositAmount %}
+                        {% set deposits = deposits + row.inventoryItem.depositAmount %}
+                        <div class="">
+                            Refundable deposit {{ tenantInformation.currencySymbol }}
+                            {% if is_granted('ROLE_ADMIN') and loan.status in ['RESERVED', 'PENDING'] %}
+                                <input type="text" name="deposits[{{ row.id }}]" value="{{ row.inventoryItem.depositAmount }}" size="5" class="deposit-amount">
+                            {% else %}
+                                <input type="hidden" name="deposits[{{ row.id }}]" value="{{ row.inventoryItem.depositAmount }}" class="deposit-amount">
+                                {{ row.inventoryItem.depositAmount }}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {#CHECK OUT PROMPT#}
+                    {% if loan.status in ['RESERVED', 'PENDING'] %}
+                        {% if row.inventoryItem.checkOutPrompts|length > 0 %}
+                            {% for prompt in row.inventoryItem.checkOutPrompts %}
+                                {% set promptsExist = 1 %}
+                                <div>
+                                    <label style="padding: 10px 0 4px 0; font-weight: normal;">
+                                        <input type="checkbox" class="confirm-checkout">&nbsp;
+                                        {{ prompt.name }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+
+
+                </td>
+                <td style="text-align: right">
+                    {% if is_granted('ROLE_ADMIN') and loan.status in ['RESERVED', 'PENDING'] %}
+                        <input type="text" class="basket-amount row-calc" name="row_fee[{{ row.inventoryItem.id }}]" value="{{ row.fee|number_format(2) }}">
+                    {% else %}
+                        {{ tenantInformation.currencySymbol }} {{ row.fee|number_format(2) }}
+                        <input type="hidden" class="row-calc" value="{{ row.fee }}">
+                    {% endif %}
+
+                    <div class="row-charge">
+                        {% for p in loan.payments %}
+                            {% if p.inventoryItem == row.inventoryItem %}
+                                <div>
+                                    Charged {{ tenantInformation.currencySymbol }} {{ p.amount|number_format(2) }}
+                                    {#{% if loan.status in ['RESERVED', 'PENDING', 'ACTIVE'] %}#}
+                                    <input type="hidden" class="row-paid" value="{{ p.amount }}">
+                                    {#{% endif %}#}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                </td>
+            </tr>
+        {% endfor %}
+
+        {% for fee in loan.payments %}
+            {% if fee.inventoryItem %}
+                {#Fee included in items#}
+            {% else %}
+                <tr>
+                    <td></td>
+                    <td>
+                        {{ fee.note }}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <br><a href="{{ path('fee_delete', {id: fee.id}) }}">Remove</a>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        {% if fee.type == 'FEE' %}
+                            {% set amt = fee.amount %}
+                        {% else %}
+                            {% set amt = -fee.amount %}
+                        {% endif %}
+
+                        {{ tenantInformation.currencySymbol }} {{ amt|number_format(2) }}
+                        <input type="hidden" class="row-calc" value="{{ amt }}">
+                        <input type="hidden" class="row-paid" value="{{ amt }}">
+
+                        <div class="row-charge">
+                            <i class="fa fa-check"></i> Charged to account
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+
+        <tr>
+            <td>
+            </td>
+            <td class="basket-total">
+                {% trans %}public_basket.total{% endtrans %}
+            </td>
+            <td class="basket-total">
+                {{ tenantInformation.currencySymbol }}
+                <span class="basketTotalAmount" id="basketTotalAmount">{{ loan.totalFee|number_format(2) }}</span>
+            </td>
+        </tr>
+
+        {% if loan.balance != loan.totalFee and loan.balance > 0 %}
+        <tr class="checkout">
+            <td></td>
+            <td class="basket-subtotal">
+                {% trans %}public_basket.balance{% endtrans %}
+            </td>
+            <td class="basket-subtotal">
+                {{ tenantInformation.currencySymbol }}
+                <span class="basketBalanceAmount" id="basketBalanceAmount">{{ loan.balance|number_format(2) }}</span>
+            </td>
+        </tr>
+        {% endif %}
+
+        {% if loan.contact.balance > 0 and loan.status in ['RESERVED', 'PENDING'] %}
+            <tr class="checkout">
+                <td></td>
+                <td class="basket-subtotal">
+                    {% trans %}- balance on account{% endtrans %}
+                </td>
+                <td class="basket-subtotal">
+                    {{ tenantInformation.currencySymbol }}
+                    <span class="" id="contactBalanceAmount">{{ loan.contact.balance|number_format(2) }}</span>
+                </td>
+            </tr>
+
+            <tr class="checkout">
+                <td></td>
+                <td class="basket-subtotal">
+                    {% trans %}Subtotal{% endtrans %}
+                </td>
+                <td class="basket-subtotal">
+                    {{ tenantInformation.currencySymbol }}
+                    <span class="" id="loanSubtotalAmount">{{ subtotal|number_format(2) }}</span>
+                </td>
+            </tr>
+        {% else %}
+            {#Required for JS#}
+            <span id="contactBalanceAmount" style="display: none;">{{ loan.contact.balance|number_format(2) }}</span>
+        {% endif %}
+
+        {% if deposits > 0 and loan.status in ['RESERVED', 'PENDING'] %}
+            <tr class="checkout">
+                <td></td>
+                <td class="basket-subtotal">
+                    {% trans %}+ refundable deposits {% endtrans %}
+                </td>
+                <td class="basket-subtotal">
+                    {{ tenantInformation.currencySymbol }}
+                    <span class="" id="loanDepositsAmount">{{ deposits|number_format(2) }}</span>
+                </td>
+            </tr>
+        {% endif %}
+
+        <tr class="checkout">
+            <td></td>
+            <td class="basket-subtotal">
+                {% trans %}To pay{% endtrans %}
+            </td>
+            <td class="basket-subtotal">
+                {{ tenantInformation.currencySymbol }}
+                <span class="" id="loanToPayAmount">{{ payment_due|number_format(2) }}</span>
+            </td>
+        </tr>
+
+    </table>
+
+    <div class="row checkout payment-details">
+
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+            {% set contact = loan.contact %}
+            {{ include('partials/credit-cards.html.twig') }}
+
+            <div class="form-group">
+                <label>Take payment of:</label>
+                <div class="input-group">
+                    <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
+                    {{ form_widget(form.paymentAmount) }}
+                </div>
+            </div>
+
+            {{ form_row(form.paymentMethod) }}
+
+            <div style="display: none">
+                {{ form_row(form.paymentNote) }}
+            </div>
+
+            {% if tenantInformation.stripeFee > 0 %}
+                <div style="color:#ff4930; padding: 10px 0;">
+                    {{ tenantInformation.currencySymbol }} {{ tenantInformation.stripeFee|number_format(2, '.') }} {% trans %}public_add_credit.processing_fee{% endtrans %}.
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-12">
+            {% if loan.status == 'RESERVED' %}
+                <a href="{{ path('reservation_cancel', {id: loan.id}) }}" class="btn btn-danger">{% trans %}button_cancel_reservation{% endtrans %}</a>
+            {% endif %}
+
+            {% if is_granted('ROLE_ADMIN') %}
+                {% if loan.status in ['RESERVED', 'PENDING'] %}
+                    <button type="button" id="form-checkout" class="btn btn-success pull-right checkout submit-action payment-submit" {% if promptsExist == 1 %}disabled{% endif %}>
+                        {% if promptsExist == 1 %}
+                            Please complete all checks
+                        {% else %}
+                            Complete check out
+                        {% endif %}
+                    </button>
+                    <button type="button" id="form-save" class="btn btn-success pull-right submit-action action-save" style="display: none;">Save changes</button>
+                {% endif %}
+            {% endif %}
+        </div>
+
+    </div>
+
+    {{ form_end(form) }}
+
+    <hr>
+
+    <div class="row" style="padding: 10px 10px;">
+        <br>
+        <div class="col-md-6">
+            {% if loan.notes|length > 0 %}
+                {% for note in loan.notes %}
+                    {% if is_granted('ROLE_ADMIN') or note.adminOnly != 1 %}
+                        {{ include('partials/note.html.twig') }}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                No notes added yet.
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+
+            {% if is_granted('ROLE_ADMIN') %}
+
+                <form method="POST" action="{{ path('loan_add_fee', {loanId: loan.id}) }}">
+                    <label class="control-label">Add a fee</label>
+                    <div class="help-block">
+                        For damages, delays, additional time etc. Fees are charged to the member account immediately.
+                    </div>
+                    <div class="row" id="add-fee">
+                        <div class="col-md-4">
+                        <span class="input-group">
+                            <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
+                            <input type="text" name="feeAmount" id="feeAmount" class="form-control input-sm" placeholder="0.00">
+                        </span>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="feeReason" id="feeReason" class="form-control input-sm" placeholder="Reason">
+                        </div>
+                        <div class="col-md-12">
+                            <button type="submit" id="form-fee" class="btn btn-sm btn-success pull-right"  style="margin-top: 10px;">Add fee</button>
+                        </div>
+                    </div>
+                </form>
+
+            {% endif %}
+
+            <br>
+
+            <form method="POST" action="{{ path('loan_add_note', {loanId: loan.id}) }}">
+
+                <label class="control-label">Add notes</label>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="form-group">
+                        <label class="form-label" style="font-weight: normal">
+                            <input type="checkbox" name="noteIsPublic" value="1" checked> This note will be visible to members
+                        </label>
+                    </div>
+                    {% else %}
+                    <input type="hidden" name="noteIsPublic" value="1">
+                {% endif %}
+                <div class="form-group">
+                    <textarea class="form-control input-sm" name="loanNotes" placeholder="" rows="3"></textarea>
+                    <button type="submit" id="form-note" class="btn btn-success btn-sm pull-right" style="margin-top: 10px;">Add note</button>
+                </div>
+
+            </form>
+
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        $(document).ready(function() {
+            calculateLoanTotal();
+
+            var form = $("#form-loan");
+
+            form.on('keyup', '.deposit-amount', function() {
+                calculateLoanTotal(false);
+            });
+
+            form.on('keyup', '.row-calc', function() {
+                calculateLoanTotal(true);
+            });
+
+            form.on("change", ".confirm-checkout", function() {
+                var allowCheckOut = true;
+                $(".confirm-checkout").each(function(){
+                    if (!$(this).is(":checked")) {
+                        allowCheckOut = false;
+                    }
+                });
+                if (allowCheckOut == true) {
+                    $("#form-checkout").attr("disabled", false).html("Complete check out");
+                } else {
+                    $("#form-checkout").attr("disabled", true).html("Please complete all checks");
+                }
+            });
+
+            form.on('click', '.action-save', function(e) {
+                form.attr("action", "{{ path('loan_save', {loanId: loan.id}) }}");
+                form.submit();
+                waitButton($(this));
+            });
+
+            $(document).on('click', '.buttonDelete', function() {
+                if (!window.confirm("Are you sure you want to delete this loan?")) {
+                    return false;
+                }
+            });
+
+        });
+
+        function calculateLoanTotal(hideButton) {
+            var basketTotal   = 0.00;
+            var depositsTotal = 0.00;
+            var subTotal      = 0.00;
+            var toPay         = 0.00;
+            var contactBalance = $("#contactBalanceAmount").html() * 1;
+
+            $(".row-calc").each(function() {
+                basketTotal += $(this).val() * 1;
+            });
+
+            if (contactBalance < 0) {
+                contactBalance = 0;
+            }
+            subTotal = basketTotal - contactBalance;
+
+            if (subTotal < 0) {
+                subTotal = 0.00;
+            }
+
+            $(".deposit-amount").each(function() {
+                depositsTotal += $(this).val() * 1;
+            });
+
+            toPay = depositsTotal + subTotal;
+
+            if (toPay > 0) {
+                $(".row-paid").each(function() {
+                    toPay -= $(this).val() * 1;
+                });
+            }
+
+            $("#basketTotalAmount").html(basketTotal.toFixed(2));
+            $("#loanDepositsAmount").html(depositsTotal.toFixed(2));
+            $("#loanSubtotalAmount").html(subTotal.toFixed(2));
+            $("#loanToPayAmount").html(toPay.toFixed(2));
+            $("#loan_check_out_paymentAmount").val(toPay.toFixed(2));
+
+            if (toPay == 0) {
+                $(".payment-details").hide();
+            }
+
+            if (hideButton == true) {
+                $(".hideOnFormChange").attr('disabled', true);
+                $(".action-save").show();
+                $(".checkout").hide();
+            }
+        }
+
+    </script>
+{% endblock %}

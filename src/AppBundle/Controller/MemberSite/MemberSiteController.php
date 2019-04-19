@@ -33,7 +33,7 @@ class MemberSiteController extends Controller
             $user = $contactRepo->find($sessionUserId);
         }
 
-        return $this->render('public/pages/home.html.twig', [
+        return $this->render('member_site/pages/home.html.twig', [
             'user' => $user
         ]);
     }
@@ -43,7 +43,7 @@ class MemberSiteController extends Controller
      */
     public function helpWaitingListAction(Request $request)
     {
-        return $this->render('public/pages/waiting_list.html.twig', []);
+        return $this->render('member_site/pages/waiting_list.html.twig', []);
     }
 
     /**
@@ -52,7 +52,7 @@ class MemberSiteController extends Controller
      */
     public function testAction(Request $request)
     {
-        return $this->render('public/template.html.twig', []);
+        return $this->render('member_site/template.html.twig', []);
     }
 
 }

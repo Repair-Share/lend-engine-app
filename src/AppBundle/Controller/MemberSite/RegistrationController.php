@@ -69,50 +69,17 @@ class RegistrationController extends Controller
 
         // To deal repeat visits to the URL, only sign up once
         $addedMembershipType = false;
-        if (!$contact->getActiveMembership()) {
 
+        $proceedToChooseMembership = false;
+        if (!$contact->getActiveMembership()) {
             // Auto-enrol in any self serve membership
             /** @var \AppBundle\Repository\MembershipTypeRepository $membershipTypeRepo */
             $membershipTypeRepo = $em->getRepository('AppBundle:MembershipType');
 
             $selfServeMembershipTypes = $membershipTypeRepo->findBy(['isSelfServe' => true]);
-            if (count($selfServeMembershipTypes) > 1) {
-                return $this->render('public/pages/choose_membership.html.twig', []);
-            } else if (count($selfServeMembershipTypes) == 1) {
-
-                // @todo move this to a membership service
-
-                /** @var \AppBundle\Entity\MembershipType $membershipType */
-                $membershipType = $selfServeMembershipTypes[0];
-
-                $membership = new Membership();
-                $membership->setContact($contact);
-                $membership->setMembershipType($membershipType);
-
-                $duration = $membershipType->getDuration();
-                $expiresAt = new \DateTime();
-                $expiresAt->modify("+ {$duration} days");
-
-                $membership->setStartsAt(new \DateTime());
-                $membership->setExpiresAt($expiresAt);
-
-                $em->persist($membership);
-
-                $contact->setActiveMembership($membership);
-                $em->persist($contact);
-
-                try {
-                    $em->flush();
-                    $membershipTypeName = $membershipType->getName();
-                    $this->addFlash('success', "We've signed you up as a {$membershipTypeName} member.");
-                    $addedMembershipType = $membershipTypeName;
-                } catch (\Exception $generalException) {
-                    $this->addFlash('error', 'There was an error creating your membership.');
-                    $this->addFlash('debug', $generalException->getMessage());
-                }
-
+            if (count($selfServeMembershipTypes) > 0) {
+                $proceedToChooseMembership = true;
             }
-
         }
 
         // Send an email to admin
@@ -127,7 +94,7 @@ class RegistrationController extends Controller
             }
 
             if ($addedMembershipType) {
-                $extra .= PHP_EOL."The user was automatically subscribed as a {$addedMembershipType} member.";
+                $extra .= PHP_EOL."The user was subscribed as a {$addedMembershipType} member.";
             }
 
             $message = $this->renderView(
@@ -148,13 +115,26 @@ class RegistrationController extends Controller
                 true
             );
 
+            // CC to system owner
+            $client->sendEmail(
+                "Lend Engine <hello@lend-engine.com>",
+                'hello@lend-engine.com',
+                "New registration on your Lend Engine site : ".$contact->getName(),
+                $message,
+                null,
+                null,
+                true
+            );
+
         } catch (PostmarkException $ex) {
-//            $this->addFlash('error', 'Failed to send email:' . $ex->message . ' : ' . $ex->postmarkApiErrorCode);
+            $this->addFlash('error', 'Failed to send email:' . $ex->message . ' : ' . $ex->postmarkApiErrorCode);
         } catch (\Exception $generalException) {
-//            $this->addFlash('error', 'Failed to send email:' . $generalException->getMessage());
+            $this->addFlash('error', 'Failed to send email:' . $generalException->getMessage());
         }
 
-        return $this->render('public/registration_welcome.html.twig', []);
+        return $this->render('member_site/registration_welcome.html.twig', [
+            'chooseMembership' => $proceedToChooseMembership
+        ]);
 
     }
 

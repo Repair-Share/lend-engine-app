@@ -44,7 +44,7 @@ class SubscribeController extends Controller
         $pmRepo = $em->getRepository('AppBundle:PaymentMethod');
 
         // Deal with form submission
-        if ($selfServeMembershipTypeId = $request->get('membershipTypeId')) {
+        if ($membershipTypeId = $request->get('membershipTypeId')) {
 
             $amount = $request->get('paymentAmount');
             $paymentOk = true;
@@ -103,22 +103,31 @@ class SubscribeController extends Controller
                 $membership = new Membership();
                 $membership->setContact($contact);
 
-                $mType = $membershipTypeRepo->find($selfServeMembershipTypeId);
+                $mType = $membershipTypeRepo->find($membershipTypeId);
                 $membership->setMembershipType($mType);
                 $duration = $mType->getDuration();
 
+                // Work out how many days left on the existing membership
+                // If it's a renewal (same type) and less than 14 days to run, set end date based on end of current membership
+                $calculateExpiryBasedOnCurrentExpiryDate = false;
                 if ($activeMembership = $contact->getActiveMembership()) {
+                    $dateDiff = $activeMembership->getExpiresAt()->diff(new \DateTime());
+                    if ($dateDiff->days < 14 && $activeMembership->getMembershipType() == $mType) {
+                        $calculateExpiryBasedOnCurrentExpiryDate = true;
+                    }
+                }
+
+                // Always start from now
+                // The previous will be expired so this one will start early
+                $startsAt = new \DateTime();
+                if ($calculateExpiryBasedOnCurrentExpiryDate == true) {
                     // A renewal created before previous membership expires
-                    // The previous will be expired so this one will start early
-                    $startsAt = new \DateTime();
                     $expiresAt = $activeMembership->getExpiresAt();
-                    $expiresAt->modify("+ {$duration} days");
                 } else {
                     // A new subscription
-                    $startsAt = new \DateTime();
                     $expiresAt = clone $startsAt;
-                    $expiresAt->modify("+ {$duration} days");
                 }
+                $expiresAt->modify("+ {$duration} days");
 
                 $membership->setStartsAt($startsAt);
                 $membership->setExpiresAt($expiresAt);
@@ -147,7 +156,7 @@ class SubscribeController extends Controller
 
                 try {
                     $em->flush();
-                    $this->addFlash('success', "We've signed you up.");
+                    $this->addFlash('success', "Your subscription is complete. You're now a {$mType->getName()} member.");
                     $contactService->recalculateBalance($contact);
                 } catch (\Exception $generalException) {
                     $this->addFlash('error', 'There was an error creating your membership.');
@@ -167,7 +176,7 @@ class SubscribeController extends Controller
         $availableMembershipTypes = $membershipTypeRepo->findBy($filter);
 
         return $this->render(
-            'public/pages/subscribe.html.twig',
+            'member_site/pages/subscribe.html.twig',
             [
                 'user'    => $contact,
                 'contact' => $contact,

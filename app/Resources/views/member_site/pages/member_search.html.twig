@@ -1,0 +1,100 @@
+{% extends 'member_site/themes/loader.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block body %}
+
+    <style>
+        .membership-info {
+            padding: 6px 0;
+        }
+    </style>
+
+    <h2 id="site-member-search">
+        {% if app.request.get('new') == 'reservation' %}
+            Who should this reservation be for?
+        {% elseif app.request.get('new') == 'loan' %}
+            Who should this loan be for?
+        {% else %}
+            Member search
+        {% endif %}
+    </h2>
+
+
+    {% if app.request.get('new') == 'reservation' %}
+        {{ include('member_site/partials/member_search_form.html.twig') }}<br>
+    {% elseif app.request.get('new') == 'loan' %}
+        {{ include('member_site/partials/member_search_form.html.twig') }}<br>
+    {% endif %}
+
+    {% if contacts|length > 0 %}
+
+        <a href="{{ path('contact') }}" class="">Add a new member</a>
+
+        {% for contact in contacts %}
+            <div class="search-result">
+
+                <h5>
+                    {{ contact.name }}
+                    {% if contact.membershipNumber %}
+                         (Member#{{ contact.membershipNumber }})
+                    {% endif %}
+                </h5>
+                {{ contact.email }}<br>
+
+                {% if contact.activeMembership %}
+                    <div class="membership-info">
+                        <strong>{{ contact.activeMembership.membershipType.name }}</strong> member until {{ contact.activeMembership.expiresAt|date("F d, Y") }}
+                    </div>
+
+                    {% if app.request.get('new') == 'loan' %}
+                        <a href="{{ path('switch_contact', {contactId: contact.id}) }}?new={{ app.request.get('new') }}&itemId={{ app.request.get('itemId') }}" class="btn btn-xs btn-success">
+                        New loan</a>
+                    {% elseif app.request.get('new') == 'reservation' %}
+                        <a href="{{ path('switch_contact', {contactId: contact.id}) }}?new={{ app.request.get('new') }}&itemId={{ app.request.get('itemId') }}" class="btn btn-xs btn-success">
+                        New reservation</a>
+                    {% endif %}
+
+                    <a href="{{ path('switch_contact', {contactId: contact.id, itemId: app.request.get('itemId'), go: app.request.get('go')}) }}" class="btn btn-xs btn-success">Browse / borrow as {{ contact.name }}</a>
+                    <a href="{{ path('loan_search', {'loan-search': contact.name}) }}" class="btn btn-xs btn-default">View loans / reservations</a>
+
+                {% else %}
+                    <div class="membership-info alert alert-warning" style="padding: 10px; margin: 10px 0">
+                        <i class="fa fa-warning"></i> No active membership
+                        <a class="modal-link pull-right" href="{{ path('membership', {contactId: contact.id}) }}">Subscribe now</a>
+                    </div>
+                {% endif %}
+
+                <a href="{{ path('contact', {id: contact.id}) }}" class="btn btn-xs btn-default">Edit contact</a>
+
+            </div>
+        {% endfor %}
+    {% else %}
+        {% if app.request.get('member-search') %}
+            <p>
+                No members found.
+                <br><a href="{{ path('contact') }}" class="">Add a new member</a>
+            </p>
+        {% else %}
+            <p>
+                Search for a member using the form in the admin toolbox above.
+                <br>or <a href="{{ path('contact') }}" class="">add a new member</a>
+            </p>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}
+
+{% block pagejs %}
+<script>
+    $(document).ready(function() {
+        $("#member-search").focus();
+
+        {% if app.request.get('member-search') %}
+        var options = {
+            exclude : [".btn", ".membership-info", ".membership-info strong", "a"]
+        };
+        $(".search-result").mark("{{ app.request.get('member-search') }}", options);
+        {% endif %}
+    });
+</script>
+{% endblock %}

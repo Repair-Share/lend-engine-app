@@ -63,9 +63,10 @@ class MembershipTypeController extends Controller
 You can create different 'classes' of membership.
 At the moment, these classes are mainly used to offer different prices to different groups of members,
 using the discount field. Each membership type can have a different duration or price.
-<br><br>
-A member only has one active membership.
-<br>Optionally, you can create ONE 'self serve' membership type which will automatically be assigned to a new member when they register online.
+<br><br>A member can only have one active membership at any time.
+<br><br>If a membership type is set as 'self serve', then it's available for members to choose from online (when they register, or in "My Account").
+<br><br>If a member already has a membership when choosing one online, the current one will be expired and the new one will start today.
+The <strong>end date</strong> of the new membership will be calculated from the existing membership expiry if it's due to expire within 14 days.
 EOT;
 
         return $this->render(
@@ -121,7 +122,7 @@ EOT;
         }
 
         return $this->render(
-            'modals/membershipType.html.twig',
+            'modals/settings/membershipType.html.twig',
             array(
                 'title' => 'Membership Type',
                 'subTitle' => '',

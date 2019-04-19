@@ -146,7 +146,7 @@ class Settings
                 $tenantSite->setPostCode($site->getPostCode());
                 $tenantSite->setCountry($site->getCountry());
                 $this->em->persist($tenantSite);
-                
+
             }
 
         }

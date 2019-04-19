@@ -63,7 +63,7 @@ class ContactService
             $builder->andWhere("c.firstName LIKE :likeString
                 OR c.lastName LIKE :likeString
                 OR c.email LIKE :likeString
-                OR CONCAT(c.firstName, ' ', c.lastName) LIKE :likeString
+                OR CONCAT(COALESCE(c.firstName,''), ' ', COALESCE(c.lastName,'')) LIKE :likeString
                 ");
             $builder->setParameter('likeString', '%'.trim($filter['search']).'%');
         }

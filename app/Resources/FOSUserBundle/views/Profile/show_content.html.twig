@@ -1,7 +1,7 @@
 <h2>{{ 'public_account.title'|trans({}, 'member_site') }}</h2>
 
 {% set contact = app.user %}
-{{ include('public/partials/account_balance.html.twig') }}
+{{ include('member_site/partials/account_balance.html.twig') }}
 
 <div class="fos_user_user_show row">
     <div class="col-md-6">
@@ -14,43 +14,7 @@
         <a href="{{ path('fos_user_change_password') }}" class="btn btn-sm btn-primary">{{ 'public_account.button_change_password'|trans({}, 'member_site') }}</a>
     </div>
     <div class="col-md-6">
-        {#<h4>Social media</h4>#}
 
-        {#<p>#}
-            {#Connecting your social media accounts will make it easier to share your borrowing experience.#}
-        {#</p>#}
-
-        {#{% if user.twitterId %}#}
-            {#<span class="btn btn-sm btn-block btn-social btn-twitter">#}
-                {#<span class="fa fa-twitter"></span>#}
-                {#<i class="fa fa-check"></i>#}
-                {#{% trans %}Connected to Twitter{% endtrans %}#}
-            {#</span>#}
-        {#{% else %}#}
-            {#<a href="{{ path('hwi_oauth_service_redirect', {'service': 'twitter' }) }}" class="btn btn-sm btn-block btn-social btn-twitter">#}
-                {#<span class="fa fa-twitter"></span>#}
-                {#{% trans %}Connect Twitter{% endtrans %}#}
-            {#</a>#}
-        {#{% endif %}#}
-
-        {#{% if user.facebookId %}#}
-            {#<span class="btn btn-sm btn-block btn-social btn-facebook">#}
-                {#<span class="fa fa-twitter"></span>#}
-                {#<i class="fa fa-check"></i>#}
-                {#{% trans %}Connected to Facebook{% endtrans %}#}
-            {#</span>#}
-        {#{% else %}#}
-            {#<a href="{{ path('hwi_oauth_service_redirect', {'service': 'facebook' }) }}" class="btn btn-sm btn-block btn-social btn-facebook">#}
-                {#<span class="fa fa-twitter"></span>#}
-                {#{% trans %}Connect Facebook{% endtrans %}#}
-            {#</a>#}
-        {#{% endif %}#}
-
-        {#<p class="help-block" style="padding-top: 10px; font-size: 12px">#}
-            {#When you create a reservation or loan, we'll ask if you want to share with your network.#}
-            {#Why would you want to do this? The more people that borrow, the more successful the library will be,#}
-            {#and the greater impact we'll have.#}
-        {#</p>#}
     </div>
 </div>
 
@@ -62,8 +26,8 @@
 
     {% if app.user.activeMembership.expiresAt|date("Y-m-d") < date()|date_modify("+7 days")|date("Y-m-d") %}
         <div class="alert alert-warning">
-            <strong>{{ app.user.activeMembership.membershipType.name }}</strong> member until
-            <strong>{{ app.user.activeMembership.expiresAt|date("d F Y") }}</strong>
+            You are currently a <strong>{{ app.user.activeMembership.membershipType.name }}</strong> member.<br>
+            Your membership expires on {{ app.user.activeMembership.expiresAt|date("D d F Y") }}
             <p>
                 Your membership is about to expire.
                 <br><br>
@@ -71,9 +35,13 @@
             </p>
         </div>
     {% else %}
-        <div class="alert alert-success">
-            <strong>{{ app.user.activeMembership.membershipType.name }}</strong> member until
-            <strong>{{ app.user.activeMembership.expiresAt|date("d F Y") }}</strong>
+        <div>
+            You are currently a <strong>{{ app.user.activeMembership.membershipType.name }}</strong> member.<br>
+            Your membership expires on {{ app.user.activeMembership.expiresAt|date("D d F Y") }}
+            <p>
+                <br>
+                <a href="{{ path('subscribe') }}" class="btn btn-sm btn-primary">Change subscription</a>
+            </p>
         </div>
     {% endif %}
 
@@ -81,6 +49,6 @@
     <div class="alert alert-info">
         {{ 'text_no_membership'|trans({}, 'member_site') }}
         <br><br>
-        <a href="{{ path('subscribe') }}" class="btn btn-primary">Subscribe now</a>
+        <a href="{{ path('subscribe') }}" class="btn btn-sm btn-primary">Subscribe now</a>
     </div>
 {% endif %}

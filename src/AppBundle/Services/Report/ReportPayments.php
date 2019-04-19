@@ -31,7 +31,7 @@ class ReportPayments
 
         $builder = $repository->createQueryBuilder('p');
         $builder->select("
-            CONCAT(c.firstName, ' ', c.lastName) AS contact_name,
+            CONCAT(COALESCE(c.firstName,''), ' ', COALESCE(c.lastName,'')) AS contact_name,
             c.id AS contact_id,
             pm.name AS payment_method_name,
             p.createdAt AS date,

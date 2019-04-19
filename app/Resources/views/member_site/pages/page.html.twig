@@ -1,0 +1,10 @@
+{% extends 'member_site/themes/loader.html.twig' %}
+
+{% block body %}
+    <h2 id="page-title">{{ page.title }}</h2>
+
+    <p id="page-content">
+        {{ page.content|raw|nl2br }}
+    </p>
+
+{% endblock %}

@@ -109,8 +109,16 @@ class PaymentService
                 $this->em->persist($fee);
             }
 
+            if (!isset($cardDetails['token'])) {
+                $cardDetails['token'] = null;
+            }
+            if (!isset($cardDetails['cardId'])) {
+                $cardDetails['cardId'] = null;
+            }
+
             $token  = $cardDetails['token'];
             $cardId = $cardDetails['cardId'];
+
             if (!$token && !$cardId) {
                 $this->errors[] = "A card ID or token is required to process a payment with Stripe";
             }

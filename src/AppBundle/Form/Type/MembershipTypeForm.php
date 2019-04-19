@@ -5,6 +5,7 @@ namespace AppBundle\Form\Type;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -25,6 +26,15 @@ class MembershipTypeForm extends AbstractType
             'required' => true,
             'attr' => array(
                 'placeholder' => ''
+            )
+        ));
+
+        $builder->add('description', TextareaType::class, array(
+            'label' => 'Description',
+            'required' => true,
+            'attr' => array(
+                'placeholder' => 'Add some information for members when they are choosing a membership type online.',
+                'rows' => 5
             )
         ));
 

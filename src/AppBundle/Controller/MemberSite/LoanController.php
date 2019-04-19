@@ -251,7 +251,7 @@ class LoanController extends Controller
         }
 
 
-        return $this->render('public/pages/loan.html.twig', [
+        return $this->render('member_site/pages/loan.html.twig', [
                 'form' => $form->createView(),
                 'loan' => $loan,
                 'user' => $loan->getContact(),

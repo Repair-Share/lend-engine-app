@@ -147,7 +147,7 @@ class PaymentController extends Controller
             $template = 'modals/add_credit.html.twig';
         } else {
             // Member site
-            $template = 'public/pages/add_credit.html.twig';
+            $template = 'member_site/pages/add_credit.html.twig';
         }
 
         $paymentMethods = $pmRepo->findAllOrderedByName();

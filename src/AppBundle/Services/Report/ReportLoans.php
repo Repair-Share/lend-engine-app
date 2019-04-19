@@ -69,7 +69,7 @@ class ReportLoans
                 $builder->addGroupBy("l.status");
                 break;
             case "member":
-                $builder->addSelect("CONCAT(c.firstName, ' ', c.lastName) AS group_name");
+                $builder->addSelect("CONCAT(COALESCE(c.firstName,''), ' ', COALESCE(c.lastName,'')) AS group_name");
                 $builder->addGroupBy("l.contact");
                 break;
             default:

@@ -42,7 +42,7 @@ class BasketController extends Controller
         $contact = $contactRepo->find($contactId);
         $contactBalance = $contact->getBalance();
 
-        return $this->render('public/pages/basket.html.twig', [
+        return $this->render('member_site/pages/basket.html.twig', [
             'user' => $contact,
             'reservationFee' => $this->get('settings')->getSettingValue('reservation_fee'),
             'contactBalance' => $contactBalance

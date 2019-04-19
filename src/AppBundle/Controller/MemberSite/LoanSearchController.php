@@ -50,7 +50,7 @@ class LoanSearchController extends Controller
             }
         }
 
-        return $this->render('public/pages/loan_search.html.twig', [
+        return $this->render('member_site/pages/loan_search.html.twig', [
             'user'  => $user,
             'loans' => $loans
         ]);

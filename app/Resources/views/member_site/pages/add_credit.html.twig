@@ -1,0 +1,19 @@
+{% extends 'member_site/themes/loader.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block accountNav %}
+    {{ include('member_site/partials/account_nav.html.twig') }}
+{% endblock %}
+
+{% block body %}
+
+    <h2>
+        {% trans %}public_add_credit.title{% endtrans %}
+        {% if user is defined and user.id != app.user.id %}
+            {{ include('member_site/partials/session_user.html.twig') }}
+        {% endif %}
+    </h2>
+
+    {{ include('cores/payment_core.html.twig') }}
+
+{% endblock %}

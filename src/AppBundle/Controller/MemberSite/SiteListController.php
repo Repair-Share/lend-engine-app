@@ -31,7 +31,7 @@ class SiteListController extends Controller
             $site->setAddress(preg_replace('/\s+/', ' ', $site->getAddress()));
         }
 
-        return $this->render('public/pages/sites.html.twig', [
+        return $this->render('member_site/pages/sites.html.twig', [
             'sites' => $sites
         ]);
     }

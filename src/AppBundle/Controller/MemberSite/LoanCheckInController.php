@@ -142,7 +142,7 @@ class LoanCheckInController extends Controller
 
         }
 
-        return $this->render('public/pages/loan_check_in.html.twig', array(
+        return $this->render('member_site/pages/loan_check_in.html.twig', array(
             'loanRow' => $loanRow,
             'form' => $form->createView(),
             'daysLate' => $daysLate,

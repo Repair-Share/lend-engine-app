@@ -1,0 +1,11 @@
+{% extends 'member_site/themes/loader.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block body %}
+    {% if is_granted('ROLE_ADMIN') and app.request.get('tagId') %}
+        <div class="pull-right" style="padding-bottom: 10px">
+            <a target="_blank" href="{{ path('printable_catalogue', {category: app.request.get('tagId'), columns: 2}) }}">Print this category</a>
+        </div>
+    {% endif %}
+    {{ include('member_site/cores/items_core.html.twig') }}
+{% endblock %}

@@ -164,9 +164,9 @@ class ItemListController extends Controller
         }
 
         if ($request->get('e')) {
-            $template = 'public/items_embedded.html.twig';
+            $template = 'member_site/items_embedded.html.twig';
         } else {
-            $template = 'public/items.html.twig';
+            $template = 'member_site/items.html.twig';
         }
 
         return $this->render($template, array(

@@ -29,7 +29,7 @@ class ListLoansController extends Controller
             $user = $contactRepo->find($sessionUserId);
         }
 
-        return $this->render('public/pages/loans.html.twig', array(
+        return $this->render('member_site/pages/loans.html.twig', array(
             'user' => $user
         ));
     }
