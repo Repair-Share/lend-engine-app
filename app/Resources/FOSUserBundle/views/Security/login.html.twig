@@ -12,53 +12,6 @@
 
             <div class="row">
 
-            {% if tenantInformation.facebookLogin or tenantInformation.googleLogin or tenantInformation.twitterLogin %}
-                {% set socialLogin = true %}
-            {% else %}
-                {% set socialLogin = false %}
-            {% endif %}
-
-                {% if socialLogin == true %}
-                <div class="col-md-6" style="padding: 20px;">
-
-                    <h2>&nbsp;</h2>
-                    <p>
-                        {#By connecting using your social media account, we can help spread the word that borrowing is better than buying.#}
-                        {#We'll <strong>always</strong> ask permission before posting anything on your behalf, of course.#}
-                    </p>
-
-                    <div style="padding-bottom: 20px;">
-                        <br>
-                        {% if tenantInformation.facebookLogin %}
-                        <a href="{{ path('hwi_oauth_service_redirect', {'service': 'facebook' }) }}" class="btn btn-sm btn-block btn-social btn-facebook">
-                            <span class="fa fa-facebook"></span>
-                            {% trans %}Login with Facebook{% endtrans %}
-                        </a>
-                        {% endif %}
-
-                        {% if tenantInformation.twitterLogin %}
-                        <a href="{{ path('hwi_oauth_service_redirect', {'service': 'twitter' }) }}" class="btn btn-sm btn-block btn-social btn-twitter">
-                            <span class="fa fa-twitter"></span>
-                            {% trans %}Login with Twitter{% endtrans %}
-                        </a>
-                        {% endif %}
-
-                        {% if tenantInformation.googleLogin %}
-                            <a href="{{ path('hwi_oauth_service_redirect', {'service': 'google' }) }}" class="btn btn-sm btn-block btn-social btn-google">
-                                <span class="fa fa-google"></span>
-                                {% trans %}Login with Google{% endtrans %}
-                            </a>
-                        {% endif %}
-
-                        <div class="help-block" style="font-size: 11px;">
-                            If you've not connected before, we'll try and match your email address to one we have on record.
-                            If your email doesn't match anything, we'll create a new account for you.
-                        </div>
-
-                    </div>
-                </div>
-                {% endif %}
-
                 <div class="col-md-6" style="padding: 20px;">
 
                     <h2>&nbsp;</h2>
