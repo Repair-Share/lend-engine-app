@@ -34,7 +34,7 @@
         method: "post",
         paramName: "file", // The name that will be used to transfer the file
         url: "{{ oneup_uploader_endpoint('files') }}",
-        maxFilesize: 2, // MB
+        maxFilesize: 5, // MB
         accept: function (file, done) {
             done();
         },
@@ -58,6 +58,10 @@
             this.on("queuecomplete", function (file) {
                 console.log("All files have finished uploading");
                 finishFilesUploading();
+            });
+            this.on("error", function(file, response) {
+                // do stuff here.
+                alert(response);
             });
         }
     });
