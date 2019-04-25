@@ -252,15 +252,6 @@ filter='uglifyjs2'
     ga('linker:autoLink', ['{{ tenantInformation.accountDomain }}'] );
     ga('send', 'pageview', {'dimension1': 'admin', 'dimension2': '{{ tenantInformation.accountCode }}'});
 </script>
-{#<script src="https://cdn.smooch.io/smooch.min.js"></script>#}
-{#<script>#}
-    {#Smooch.init({#}
-        {#appToken: 'clvriixr1lv5cw9cm5yztryo1',#}
-        {#givenName: "{{ app.user.firstName }}",#}
-        {#surname: "{{ app.user.lastName }} ({{ tenantInformation.companyName }})",#}
-        {#email: "{{ app.user.email }}"#}
-    {#});#}
-{#</script>#}
 {% endif %}
 
 </body>

@@ -347,9 +347,10 @@ EOT;
             'data' => $dbData['site_welcome'],
             'required' => false,
             'attr' => array(
-                'placeholder' => 'Enter HTML here that will appear on the front page of your public website.',
-                'data-help' => '',
-                'rows' => 10
+                'placeholder' => '',
+                'data-help' => 'Enter HTML here that will appear on the front page of your public website.',
+                'rows' => 8,
+                'class' => 'summernote'
             )
         ));
 
@@ -358,9 +359,10 @@ EOT;
             'data' => $dbData['site_welcome_user'],
             'required' => false,
             'attr' => array(
-                'placeholder' => 'This page shows when a user confirms their email address.',
-                'data-help' => '',
-                'rows' => 10
+                'placeholder' => '',
+                'data-help' => 'This page shows when a user confirms their email address.',
+                'rows' => 8,
+                'class' => 'summernote'
             )
         ));
 
@@ -466,33 +468,6 @@ EOT;
                 'data-help' => 'Provided as a link for users on the registration form.',
             )
         ));
-
-//        $builder->add('site_google_login', CheckboxType::class, array(
-//            'label' => 'Users can register and log in with Google',
-//            'data' => (int)$dbData['site_google_login'],
-//            'required' => false,
-//            'attr' => array(
-//                'placeholder' => "Please contact us first; we need to add your domain to Google's system.",
-//            )
-//        ));
-//
-//        $builder->add('site_facebook_login', CheckboxType::class, array(
-//            'label' => 'Users can register and log in with Facebook',
-//            'data' => (int)$dbData['site_facebook_login'],
-//            'required' => false,
-//            'attr' => array(
-//                'placeholder' => "Please contact us first, we need to add your domain to Facebook's system.",
-//            )
-//        ));
-//
-//        $builder->add('site_twitter_login', CheckboxType::class, array(
-//            'label' => 'Users can register and log in with Twitter',
-//            'data' => (int)$dbData['site_twitter_login'],
-//            'required' => false,
-//            'attr' => array(
-//                'placeholder' => '',
-//            )
-//        ));
 
     }
 
