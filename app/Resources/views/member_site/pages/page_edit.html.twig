@@ -1,0 +1,100 @@
+{% extends 'member_site/themes/loader.html.twig' %}
+
+{% block pageCss %}
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/theme/monokai.css">
+    <link href="/plugins/summernote/summernote.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-12">
+            {{ form_row(form.title) }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_row(form.name) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.visibility) }}
+        </div>
+    </div>
+
+    <div class="tab-content">
+
+        <div class="tab-pane {% if not page.url %}active{% endif %}" id="tab_1">
+
+            Add your page content below, or <a class="" href="#tab_2" data-toggle="tab">add a link</a>.
+            Links appear in the member site menus just like pages, but take the user to the link URL.
+            <br><br>
+
+            {{ form_widget(form.content) }}
+
+        </div>
+
+        <div class="tab-pane {% if page.url %}active{% endif %}" id="tab_2">
+
+            {{ form_row(form.url) }}
+
+            Or <a class="" href="#tab_1" data-toggle="tab">add a page</a> instead.
+
+        </div>
+
+    </div>
+
+    <br>
+    <button type="submit" class="btn btn-primary">Save</button>
+    {% if page.id %}
+        <a href="{{ path('public_page', {pageId: page.id}) }}" class="btn btn-default pull-right">Cancel</a>
+        <a href="{{ path('public_page_delete', {pageId: page.id}) }}" class="btn btn-danger pull-right" style="margin-right:10px;">Delete</a>
+    {% endif %}
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block pagejs %}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/xml/xml.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/2.36.0/formatting.js"></script>
+    <script src="/plugins/summernote/summernote.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            $('.summernote').summernote({
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['style', 'bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['extra', ['codeview']]
+                ],
+                codemirror: { // codemirror options
+                    theme: 'default'
+                },
+                height: 400
+//                callbacks: {
+//                    onImageUpload: function(files, editor, welEditable) {
+//                        sendFile(files[0], editor, welEditable);
+//                    }
+//                }
+            });
+
+        });
+
+    </script>
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="modal-submit btn bg-green">Save</button>
+{% endblock %}
+

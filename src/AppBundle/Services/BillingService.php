@@ -19,37 +19,67 @@ class BillingService
             $plan = 'plus';
         }
 
+        $enabled = [
+            'CheckInPrompt'     => false,
+            'CheckOutPrompt'    => false,
+            'ProductField'      => false,
+            'ContactField'      => false,
+            'ItemAttachment'    => false,
+            'ContactAttachment' => false,
+            'Deposits'          => false,
+            'CustomEmail'       => false,
+            'Site'              => false,
+            'Page'              => false,
+            'PrivateSite'       => false,
+            'CustomStyle'       => false,
+            'CustomTheme'       => false,
+            'MultipleLanguages' => false,
+            'EmailAutomation'   => false,
+        ];
+
         switch ($plan) {
 
             case 'free':
-                $enabled = [
-                    'CheckInPrompt'     => false,
-                    'CheckOutPrompt'    => false,
-                    'ProductField'      => false,
-                    'ContactField'      => false,
-                    'ItemAttachment'    => false,
-                    'ContactAttachment' => false,
-                    'Deposits'          => false,
-                    'CustomEmail'       => false,
-                    'Site'              => false,
-                    'Page'              => false,
-                    'PrivateSite'       => false,
-                    'SiteCSS'           => false,
-                    'SiteJs'            => false,
-                    'MultipleLanguages' => false,
-                    'EmailAutomation'   => false,
-                ];
+                // nothing extra for the free plan
                 break;
 
             case 'standard':
                 $enabled = [
-                    'Site'              => false
+                    'CheckInPrompt'     => true,
+                    'CheckOutPrompt'    => true,
+                    'ProductField'      => true,
+                    'ContactField'      => true,
+                    'ItemAttachment'    => true,
+                    'ContactAttachment' => true,
+                    'Deposits'          => true,
+                    'CustomEmail'       => true,
+                    'Site'              => false,
+                    'Page'              => false,
+                    'PrivateSite'       => true,
+                    'CustomStyle'       => true,
+                    'CustomTheme'       => false,
+                    'MultipleLanguages' => true,
+                    'EmailAutomation'   => true,
                 ];
                 break;
 
             case 'plus':
                 $enabled = [
-
+                    'CheckInPrompt'     => true,
+                    'CheckOutPrompt'    => true,
+                    'ProductField'      => true,
+                    'ContactField'      => true,
+                    'ItemAttachment'    => true,
+                    'ContactAttachment' => true,
+                    'Deposits'          => true,
+                    'CustomEmail'       => true,
+                    'Site'              => true,
+                    'Page'              => true,
+                    'PrivateSite'       => true,
+                    'CustomStyle'       => true,
+                    'CustomTheme'       => true,
+                    'MultipleLanguages' => true,
+                    'EmailAutomation'   => true,
                 ];
                 break;
 

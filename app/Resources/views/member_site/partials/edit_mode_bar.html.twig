@@ -1,0 +1,31 @@
+<div id="edit-mode-controls">
+    <div class="row">
+        <div class="col-md-8">
+            <span>
+                You're in site edit mode.
+                <a href="{{ path('site_edit_end') }}" class="btn btn-xs btn-primary">Exit</a>
+            </span>
+        </div>
+        <div class="col-md-4">
+            {% if tenantInformation.feature('CustomTheme') %}
+            <form class="pull-right" action="{{ path('theme_preview') }}" method="GET">
+                <div class="input-group-sm">
+                    <span class="">Preview a theme : </span>
+                    <select id="theme-chooser" name="themeName" class=""
+                            title="Changes won't be visible for others until you apply the theme"
+                            data-toggle="tooltip" data-placement="bottom" onChange="this.form.submit()">
+                        <option value="default" {% if tenantInformation.siteTheme == "default" %}selected{% endif %}>Default</option>
+                        <option value="test" {% if tenantInformation.siteTheme == "test" %}selected{% endif %}>Test</option>
+                    </select>
+
+                    <a href="{{ path('apply_theme') }}" class="btn btn-xs btn-primary">Apply this theme</a>
+                </div>
+            </form>
+            {% else %}
+                <span title="You can choose other themes on the Plus billing plan." data-toggle="tooltip" data-placement="bottom">
+                    You're using the "{{ tenantInformation.siteTheme|capitalize }}" theme.
+                </span>
+            {% endif %}
+        </div>
+    </div>
+</div>

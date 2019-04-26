@@ -99,6 +99,7 @@ class MenuBuilder
         $this->menu->addChild('Locations', array('route' => 'location_list'));
 
         $this->menu->addChild('Loans & Reservations', array('route' => 'settings_reservations'));
+        $this->menu->addChild('Member site', array('route' => 'settings_member_site'));
         if ($this->container->get('tenant_information')->getFeature('CustomEmail')) {
             $this->menu->addChild('Email templates', array('route' => 'settings_templates'));
         }
@@ -262,11 +263,13 @@ class MenuBuilder
             $class = 'nav nav-pills custom-nav';
         }
 
-        $this->menu = $this->factory->createItem('root', array(
-            'childrenAttributes' => array(
-                'class' => $class
-            )
-        ));
+        $this->menu = $this->factory->createItem('root', [
+
+            'childrenAttributes' => [
+                'class' => $class,
+                'id' => 'CustomPagesNav'
+            ]
+        ]);
 
         /** @var $repo \AppBundle\Repository\PageRepository */
         $repo = $this->container->get('doctrine')->getRepository('AppBundle:Page');
@@ -276,23 +279,18 @@ class MenuBuilder
 
             /** @var $page \AppBundle\Entity\Page */
 
-            if ($page->getVisibility() == "HIDDEN") {
-                continue;
-            }
-
-            $icon = '';
+            $icon = '<i class="fa fa-bars site-editable"></i>';
 
             if ($this->container->get('security.authorization_checker')->isGranted("ROLE_ADMIN")) {
-                // Show all non-hidden pages
-
+                // Show all pages including hidden ones
             } else if ($this->container->get('security.authorization_checker')->isGranted("ROLE_USER")) {
                 // Show member-only pages and public pages
-                if ($page->getVisibility() == "ADMIN") {
+                if ($page->getVisibility() == "ADMIN" || $page->getVisibility() == "HIDDEN") {
                     continue;
                 }
             } else {
                 // Show public only pages
-                if ($page->getVisibility() != "PUBLIC") {
+                if ($page->getVisibility() != "PUBLIC" || $page->getVisibility() == "HIDDEN") {
                     continue;
                 }
             }
@@ -307,30 +305,68 @@ class MenuBuilder
                 $class = '';
             }
 
+            if ($page->getVisibility() == "HIDDEN" && $this->container->get('security.authorization_checker')->isGranted("ROLE_ADMIN")) {
+                $class .= ' page-hidden site-editable';
+            }
+
             if ($url = $page->getUrl()) {
-                if (strstr($url, 'http')) {
-                    $target = '_blank';
+
+                if ($this->container->get('tenant_information')->getIsEditMode()) {
+
+                    $this->menu->addChild($page->getName(), array(
+                        'route' => 'public_page_edit',
+                        'routeParameters' => $parameters,
+                        'class' => $class,
+                        'label' => $icon.$page->getName(),
+                        'extras' => array('safe_label' => true)
+                    ))->setAttribute('class', $class)
+                        ->setAttribute('id', 'page_'.$page->getId());
+
                 } else {
-                    $target = '_top';
+
+                    if (strstr($url, 'http')) {
+                        $target = '_blank';
+                        $linkIcon = ' <i class="fa fa-external-link-alt" style="font-size: 10px; color: #aaa; "></i>';
+                    } else {
+                        $target = '_top';
+                        $linkIcon = '';
+                    }
+
+                    $this->menu->addChild($page->getName(), array(
+                        'uri' => $url,
+                        'class' => $class,
+                        'label' => $icon.$page->getName().$linkIcon,
+                        'extras' => array('safe_label' => true)
+                    ))->setAttribute('class', $class)
+                        ->setAttribute('id', 'page_'.$page->getId())
+                        ->setLinkAttributes(array('target' => $target));
+
                 }
-                $this->menu->addChild($page->getName(), array(
-                    'uri' => $url,
-                    'class' => $class,
-                    'label' => $page->getName().$icon,
-                    'extras' => array('safe_label' => true)
-                ))->setAttribute('class', $class)->setLinkAttributes(array('target' => $target));
+
             } else {
+
                 $this->menu->addChild($page->getName(), array(
                     'route' => 'public_page',
                     'routeParameters' => $parameters,
                     'class' => $class,
-                    'label' => $page->getName().$icon,
+                    'label' => $icon.$page->getName(),
                     'extras' => array('safe_label' => true)
-                ))->setAttribute('class', $class);
+                ))->setAttribute('class', $class)
+                    ->setAttribute('id', 'page_'.$page->getId());
+
             }
 
-
         }
+
+        // an extra one to add a new page
+        $this->menu->addChild("Add a new page", array(
+            'route' => 'public_page_edit',
+            'routeParameters' => ['pageId' => "new"],
+            'class' => $class,
+            'label' => '<i class="fa fa-plus site-editable"></i> Add new page/link',
+            'extras' => array('safe_label' => true)
+        ))->setAttribute('class', "site-editable")
+            ->setAttribute('id', 'page_new');
 
         return $this->menu;
     }

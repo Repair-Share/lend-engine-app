@@ -1,0 +1,118 @@
+{# app/Resources/views/settings/settings.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block pageCss %}
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/theme/monokai.css">
+    <link href="/plugins/summernote/summernote.css" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Settings : Member site{% endblock %}
+
+{% block pageTitle %}Settings : Member site{% endblock %}
+
+{% block primaryButton %}{% endblock %}
+
+{% block body %}
+
+    <style>
+        h2 { margin: 20px 0 10px; padding-bottom: 10px; border-bottom: 3px solid #dedede; }
+    </style>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row" id="settings-settings">
+
+        <div class="col-md-2">
+            {{ knp_menu_render('settingsMenu') }}
+        </div>
+
+        <div class="col-md-6">
+
+            <h2>Member site settings</h2>
+
+            <div class="form-group">
+                <label>Your URL is:</label>
+
+                <p>
+                    <a href="http://{{ tenantInformation.accountCode }}.lend-engine-app.com"
+                       target="_blank">http://<strong>{{ tenantInformation.accountCode }}</strong>.lend-engine-app.com</a>
+                </p>
+
+                <p class="help-block">
+                    <a href="http://www.lend-engine.com/contact" target="_blank">Contact us</a> if you want to change this.
+                    On the Plus plan you can have your own dedicated domain and SSL (such as https://items.my-library.com)
+                </p>
+            </div>
+
+            {{ form_row(form.org_locale) }}
+            {{ form_row(form.org_languages) }}
+
+            <h2>Editable content</h2>
+
+            <p class="page-help">
+                Edit your website pages (including the home page) using <strong>site edit mode</strong>.
+                To open edit mode, use the button at the bottom of your member site.
+                If you're on the Plus plan, you'll be able to add extra pages, menu links, and edit sections of the theme.
+            </p>
+
+            {{ form_row(form.site_welcome_user) }}
+
+            <h2>Customise style</h2>
+
+            <div class="form-group">
+                <label>Site theme</label>
+                <p>
+                    {{ tenantInformation.siteTheme|capitalize }}
+                </p>
+                <p class="help-block">
+                    If you're on the Plus plan you can choose from a library of free website themes.
+                    Change your theme using site edit mode.
+                </p>
+            </div>
+
+            {{ form_row(form.site_css) }}
+            {{ form_row(form.site_js) }}
+            {{ form_row(form.site_font_name) }}
+
+            <h2>Registration and log in</h2>
+
+            {{ form_row(form.site_allow_registration) }}
+            {{ form_row(form.registration_terms_uri) }}
+            {{ form_row(form.site_is_private) }}
+
+        </div>
+
+    </div>
+
+    <div class="page-controls">
+        <button type="submit" class="btn bg-green">Save settings</button>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/xml/xml.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/2.36.0/formatting.js"></script>
+    <script src="/plugins/summernote/summernote.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.summernote').summernote({
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['style', 'bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['extra', ['codeview']]
+                ],
+                height: 200
+            });
+        });
+
+    </script>
+{% endblock %}

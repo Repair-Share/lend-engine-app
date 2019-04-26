@@ -15,7 +15,7 @@ class PageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', TextType::class, array(
-            'label' => 'Name (also used as menu text on the website)',
+            'label' => 'Menu text',
             'required' => true,
             'attr' => array(
                 'placeholder' => 'e.g. "Privacy"',
@@ -39,7 +39,7 @@ class PageType extends AbstractType
         ));
 
         $builder->add('title', TextType::class, array(
-            'label' => 'Title (shown on the page)',
+            'label' => 'Page title',
             'required' => false,
             'attr' => array(
                 'placeholder' => 'e.g. "Our Privacy Policy"',
@@ -61,9 +61,9 @@ class PageType extends AbstractType
             'required' => false,
             'attr' => array(
                 'rows' => 10,
-                'class' => 'limited',
+                'class' => 'summernote',
                 'placeholder' => 'HTML is supported.',
-                'data-help' => 'Use "&lt;br /&gt;" as a line break. Maximum 65,000 characters.'
+                'data-help' => 'Maximum 65,000 characters.'
             )
         ));
 

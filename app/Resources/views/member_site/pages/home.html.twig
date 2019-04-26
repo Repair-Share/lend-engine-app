@@ -3,11 +3,15 @@
 
 {% block body %}
 
-<div style="padding:10px 0;" id="site-welcome">
+<div id="site-welcome">
 
-    {% if tenantInformation.siteWelcome %}
-        {{ tenantInformation.siteWelcome|raw }}
+    {% if tenantInformation.siteHomePage.content %}
+
+        <h2>{{ tenantInformation.siteHomePage.title }}</h2>
+        {{ tenantInformation.siteHomePage.content|raw }}
+
     {% else %}
+
         <h2>Welcome to your Lend Engine member site</h2>
 
         <p>
@@ -20,7 +24,7 @@
         </p>
 
         <p>
-            Creating, changing, checking out and checking in loans (and reservations) is done via the member site.
+            Creating, changing, checking out and checking in loans (and reservations) is done via the <strong>member site</strong>.
         </p>
 
         <br>
@@ -34,18 +38,18 @@
             }
         </style>
 
-        <h4>Get started:</h4>
+        <h4>Follow these steps to get started:</h4>
         <ol>
             <li>
                 Check your opening hours are set up properly on the <a href="{{ path('site_list') }}">sites setting screen</a>.
                 Opening hours determine the periods you can create loans and reservations for.
             </li>
             <li>
-                Add an item via the admin screens. So you've got something to play with (you can archive it later).
+                Add an item via the admin screens, so you've got something to play with (you can archive it later).
             </li>
             <li>
                 Check your membership types (in admin)
-                and add a self-serve membership type if you want people to be able to borrow online as soon as they have registered.
+                and add self-serve membership types if you want people to be able to borrow online as soon as they have registered.
                 The alternative to self-serve memberships is to require that people come in to see you in order to become a member.
             </li>
             <li>
@@ -56,7 +60,7 @@
                 Create a loan or reservation for your new member.
             </li>
             <li>
-                Change this home page content on the <a href="{{ path('settings') }}">settings page</a> in admin.
+                Change this home page content by switching into 'site editor' mode using the button at the bottom of the screen.
             </li>
         </ol>
 

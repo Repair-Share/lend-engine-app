@@ -4,8 +4,12 @@
     {% trans %}public_footer.logged_in_as{% endtrans %} {{ app.user.firstName }} {{ app.user.lastName }}.
     {% if app.user.activeSite %}
         <br>
-        Working at {{ app.user.activeSite.name }}
-        <br>
-        <a href="{{ path('choose_site') }}" class="modal-link">Change site</a>
+        Working at <strong>{{ app.user.activeSite.name }}</strong>
+        <a href="{{ path('choose_site') }}" class="modal-link">Change</a>
     {% endif %}
+{% endif %}
+
+{% if is_granted("ROLE_ADMIN") %}
+    <br><br>
+    <a href="{{ path('site_edit_begin') }}" class="btn btn-xs btn-primary">Edit website</a>
 {% endif %}

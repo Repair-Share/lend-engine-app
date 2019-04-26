@@ -30,6 +30,38 @@
 
     <style>
         {% include('member_site/themes/css/' ~ tenantInformation.siteTheme ~ '.css') %}
+
+        #edit-mode-controls {
+            padding: 6px;
+            background-color: #6c6c6c;
+            height: 36px;
+            font-size: 12px;
+        }
+
+        #edit-mode-controls span {
+            color: #efefef;
+        }
+
+        .page-hidden a {
+            color: #ccc;
+        }
+
+        {% if tenantInformation.isEditMode %}
+        .custom-nav .fa.site-editable {
+            font-size: 12px;
+            padding-right: 10px;
+        }
+        .custom-nav .fa.site-editable:hover {
+            cursor: ns-resize;
+        }
+        {% else %}
+        .nav > li.site-editable {
+            display: none;
+        }
+        .custom-nav .fa.site-editable {
+            display: none;
+        }
+        {% endif %}
     </style>
 
     {#-- any custom CSS defined in-page --#}
@@ -102,6 +134,11 @@
     {% endif %}
 </style>
 
+{% if tenantInformation.isEditMode %}
+{% include('member_site/partials/edit_mode_bar.html.twig') %}
+{% endif %}
+
+{#THE MAIN CONTENT IS SHOVED IN HERE#}
 {% block theme %}{% endblock %}
 
 <div class="modal fade" id="modal-wrapper" role="dialog" aria-labelledby="mySmallModalLabel">
@@ -123,6 +160,35 @@
         ga('linker:autoLink', ['{{ tenantInformation.accountDomain }}'] );
         ga('send', 'pageview', {'dimension1': userType, 'dimension2': '{{ tenantInformation.accountCode }}'});
     </script>
+{% endif %}
+
+{#Extra capabilities when user is editing the member site#}
+{% if tenantInformation.isEditMode %}
+<script src="/plugins/sortable/sortable.js"></script>
+<script>
+    Sortable.create(CustomPagesNav, {
+        handle: '.fa-bars', // handle's class
+        animation: 150,
+        onEnd: function (/**Event*/evt) {
+            var newSequence = "";
+            $("ul#CustomPagesNav").find('li').each(function(i) {
+                newSequence += $(this).attr('id').replace('page_','')+'+';
+            });
+            $.get(
+                    "{{ path('table_sort') }}",
+                    { sequence:newSequence, entity:"Page" },
+                    function(data){
+                        if (data == "OK") {
+                            alert("Updated menu ordering OK.");
+                        } else {
+                            alert("There was a problem updating display order.");
+                        }
+                    },
+                    "json"
+            );
+        }
+    });
+</script>
 {% endif %}
 
 {% if tenantInformation.siteJs %}

@@ -23,61 +23,59 @@ class TableSortController extends Controller
         $errors = [];
         $msg = '';
 
-        if ($entity = $request->get('entity')) {
+        if ($entityName = $request->get('entity')) {
 
             $newSequence = trim($request->get('sequence'));
             $newSequence = explode('+', $newSequence);
 
+            $em = $this->getDoctrine()->getManager();
+
+            switch ($entityName) {
+                case 'ProductTag':
+                    $repo = $em->getRepository('AppBundle:ProductTag');
+                    break;
+                case 'ProductField':
+                    $repo = $em->getRepository('AppBundle:ProductField');
+                    break;
+                case 'ProductFieldSelectOption':
+                    $repo = $em->getRepository('AppBundle:ProductFieldSelectOption');
+                    break;
+                case 'ContactField':
+                    $repo = $em->getRepository('AppBundle:ContactField');
+                    break;
+                case 'ContactFieldSelectOption':
+                    $repo = $em->getRepository('AppBundle:ContactFieldSelectOption');
+                    break;
+                case 'LoanField':
+                    $repo = $em->getRepository('AppBundle:LoanField');
+                    break;
+                case 'LoanFieldSelectOption':
+                    $repo = $em->getRepository('AppBundle:LoanFieldSelectOption');
+                    break;
+                case 'ItemCondition':
+                    $repo = $em->getRepository('AppBundle:ItemCondition');
+                    break;
+                case 'CheckInPrompt':
+                    $repo = $em->getRepository('AppBundle:CheckInPrompt');
+                    break;
+                case 'CheckOutPrompt':
+                    $repo = $em->getRepository('AppBundle:CheckOutPrompt');
+                    break;
+                case 'Page':
+                    $repo = $em->getRepository('AppBundle:Page');
+                    break;
+            }
+
             for ($n=0; $n<count($newSequence); $n++) {
-                $em = $this->getDoctrine()->getManager();
-
-                switch ($entity) {
-                    case 'ProductTag':
-                        $repo = $em->getRepository('AppBundle:ProductTag');
-                        break;
-                    case 'ProductField':
-                        $repo = $em->getRepository('AppBundle:ProductField');
-                        break;
-                    case 'ProductFieldSelectOption':
-                        $repo = $em->getRepository('AppBundle:ProductFieldSelectOption');
-                        break;
-                    case 'ContactField':
-                        $repo = $em->getRepository('AppBundle:ContactField');
-                        break;
-                    case 'ContactFieldSelectOption':
-                        $repo = $em->getRepository('AppBundle:ContactFieldSelectOption');
-                        break;
-                    case 'LoanField':
-                        $repo = $em->getRepository('AppBundle:LoanField');
-                        break;
-                    case 'LoanFieldSelectOption':
-                        $repo = $em->getRepository('AppBundle:LoanFieldSelectOption');
-                        break;
-                    case 'ItemCondition':
-                        $repo = $em->getRepository('AppBundle:ItemCondition');
-                        break;
-                    case 'CheckInPrompt':
-                        $repo = $em->getRepository('AppBundle:CheckInPrompt');
-                        break;
-                    case 'CheckOutPrompt':
-                        $repo = $em->getRepository('AppBundle:CheckOutPrompt');
-                        break;
-                    case 'Page':
-                        $repo = $em->getRepository('AppBundle:Page');
-                        break;
-                }
-
                 $entityId = $newSequence[$n];
                 if ($entity = $repo->find($entityId)) {
                     $entity->setSort($n);
                 }
-
                 try {
                     $em->flush();
                 } catch (\Exception $generalException) {
                     $errors[] = $generalException->getMessage();
                 }
-
             }
 
             if (count($errors) == 0) {

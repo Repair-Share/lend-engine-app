@@ -45,8 +45,6 @@
 
             {{ form_row(form.auto_sku_stub) }}
 
-            {{ form_row(form.org_locale) }}
-            {{ form_row(form.org_languages) }}
             {{ form_row(form.org_timezone) }}
 
             {{ form_row(form.org_currency) }}
@@ -110,33 +108,6 @@
                     {{ form_row(form.stripe_fee) }}
                 </div>
             </div>
-
-            <h2>Public website</h2>
-
-            <div class="form-group">
-                <label>Your website URL is:</label>
-
-                <p>
-                    <a href="http://{{ tenantInformation.accountCode }}.lend-engine-app.com"
-                       target="_blank">http://<strong>{{ tenantInformation.accountCode }}</strong>.lend-engine-app.com</a>
-                </p>
-
-                <p class="help-block">
-                    <a href="http://www.lend-engine.com/contact" target="_blank">Contact us</a> if you want to change this.
-                </p>
-            </div>
-
-            {{ form_row(form.site_welcome) }}
-            {{ form_row(form.site_welcome_user) }}
-            {{ form_row(form.site_css) }}
-            {{ form_row(form.site_js) }}
-            {{ form_row(form.site_font_name) }}
-
-            <h2>Registration and log in</h2>
-
-            {{ form_row(form.site_allow_registration) }}
-            {{ form_row(form.registration_terms_uri) }}
-            {{ form_row(form.site_is_private) }}
 
             <h2>Optional features</h2>
 

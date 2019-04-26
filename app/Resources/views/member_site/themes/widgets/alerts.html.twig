@@ -12,3 +12,12 @@
         {% endfor %}
     </div>
 {% endif %}
+
+{% set info = app.session.flashbag.get('info') %}
+{% if info|length > 0 %}
+    <div class="alert alert-info">
+        {% for flashMessage in info %}
+            <div>{{ flashMessage | raw }}</div>
+        {% endfor %}
+    </div>
+{% endif %}

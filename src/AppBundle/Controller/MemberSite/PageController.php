@@ -40,7 +40,7 @@ class PageController extends Controller
                 $this->addFlash("error", "Sorry, you can't access that.");
                 return $this->redirectToRoute('home');
             }
-        } else if ($page->getVisibility() == "HIDDEN") {
+        } else if ($page->getVisibility() == "HIDDEN" && !$this->container->get('tenant_information')->getIsEditMode()) {
             $this->addFlash("error", "Sorry, you can't access that.");
             return $this->redirectToRoute('home');
         }

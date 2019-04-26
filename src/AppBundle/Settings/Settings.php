@@ -7,10 +7,10 @@
 
 namespace AppBundle\Settings;
 
+use AppBundle\Entity\Setting;
 use AppBundle\Entity\Tenant;
 use AppBundle\Entity\TenantSite;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class Settings
 {
@@ -96,6 +96,48 @@ class Settings
             return $this->settings[$db][$key];
 
         }
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     * @return bool
+     */
+    public function setSettingValue($key, $value)
+    {
+        if (!$this->isValidSettingsKey($key)) {
+            return false;
+        }
+
+        /** @var $repo \AppBundle\Repository\SettingRepository */
+        $repo =  $this->em->getRepository('AppBundle:Setting');
+
+        /** @var $setting \AppBundle\Entity\Setting */
+        if (!$setting = $repo->findOneBy(['setupKey' => $key])) {
+            $setting = new Setting();
+            $setting->setSetupKey($key);
+        }
+
+        $setting->setSetupValue($value);
+        $this->em->persist($setting);
+        $this->em->flush();
+
+        return true;
+    }
+
+    /**
+     * @param $key
+     * @return bool
+     */
+    public function isValidSettingsKey($key)
+    {
+        /** @var $repo \AppBundle\Repository\SettingRepository */
+        $repo =  $this->em->getRepository('AppBundle:Setting');
+        $keys = $repo->getSettingsKeys();
+        if (!in_array($key, $keys)) {
+            return false;
+        }
+        return true;
     }
 
     /**

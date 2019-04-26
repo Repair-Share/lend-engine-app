@@ -212,14 +212,33 @@ class TenantInformation
 
     public function getSiteTheme()
     {
-//        return "test";
-        return "basic"; // the original theme
+        if ($this->session->get('previewThemeName')) {
+            return $this->session->get('previewThemeName');
+        }
+
+        if ($themeName = $this->settings->getSettingValue('site_theme_name')) {
+            return $themeName;
+        }
+
+        return "default"; // the original theme
     }
 
-    public function getSiteWelcome()
+    /** this is set when an admin enables site editor mode */
+    public function getIsEditMode()
     {
-        $w = $this->settings->getSettingValue('site_welcome');
-        return $w;
+        return $this->session->get('isEditMode');
+    }
+
+    public function getSiteHomePage()
+    {
+        $repo = $this->entityManager->getRepository("AppBundle:Page");
+
+        $criteria = [
+            'visibility' => 'PUBLIC',
+            'url' => null
+        ];
+        $page = $repo->findOneBy($criteria, ['sort' => 'ASC']);
+        return $page;
     }
 
     public function getSiteWelcomeUser()

@@ -1,10 +1,22 @@
 {% extends 'member_site/themes/loader.html.twig' %}
 
 {% block body %}
-    <h2 id="page-title">{{ page.title }}</h2>
+    <h2 id="page-title">
+        {{ page.title }}
+        {% if is_granted('ROLE_ADMIN') and tenantInformation.isEditMode %}
+            <a href="{{ path('public_page_edit', {pageId: page.id}) }}" class="btn btn-xs btn-primary pull-right site-editable">Edit page</a>
+        {% endif %}
+    </h2>
+
+    {% if tenantInformation.isEditMode %}
+        {% if page.visibility == "ADMIN" %}
+            <div class="alert alert-info">This page is only visible to administrators</div>
+        {% elseif page.visibility == "MEMBERS" %}
+            <div class="alert alert-info">This page is only visible to logged in users</div>
+        {% endif %}
+    {% endif %}
 
     <p id="page-content">
-        {{ page.content|raw|nl2br }}
+        {{ page.content|raw }}
     </p>
-
 {% endblock %}
