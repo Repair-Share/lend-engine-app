@@ -210,6 +210,14 @@ class TenantInformation
 
     /* Website features */
 
+    public function getLogoImageName()
+    {
+        if ($imageName = $this->settings->getSettingValue('logo_image_name')) {
+            return $imageName;
+        }
+        return false;
+    }
+
     public function getSiteTheme()
     {
         if ($this->session->get('previewThemeName')) {

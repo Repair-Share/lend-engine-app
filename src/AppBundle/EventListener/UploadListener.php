@@ -7,33 +7,34 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Entity\FileAttachment;
 use AppBundle\Entity\Image;
+use AppBundle\Settings\Settings;
 use Doctrine\ORM\EntityManager;
 use Oneup\UploaderBundle\Event\PostPersistEvent;
 use Symfony\Component\DependencyInjection\Container;
 
 class UploadListener
 {
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager  */
     private $em;
 
-    /**
-     * @var Container
-     */
+    /** @var Container  */
     private $container;
 
-    public function __construct(EntityManager $em, Container $container)
+    /** @var Settings  */
+    private $settings;
+
+    public function __construct(EntityManager $em, Container $container, Settings $settings)
     {
         $this->em = $em;
         $this->container = $container;
+        $this->settings = $settings;
     }
 
     public function onUpload(PostPersistEvent $event)
     {
 
-        $s3_bucket      = $this->container->get('tenant_information')->getS3Bucket();
-        $schema   = $this->container->get('tenant_information')->getSchema();
+        $s3_bucket = $this->container->get('tenant_information')->getS3Bucket();
+        $schema    = $this->container->get('tenant_information')->getSchema();
 
         $request  = $event->getRequest();
         $response = $event->getResponse();
@@ -60,12 +61,12 @@ class UploadListener
 
                     $this->em->flush();
 
-                    $response['fileName'] = $file->getBasename();
-                    $response['fileId']   = $fileAttachment->getId();
+                    $response['fileName'] = $fileName;
+                    $response['fileId'] = $fileAttachment->getId();
                     $response['fileSize'] = $fileAttachment->getFileSize();
 
                 } catch (\Exception $e) {
-                    die( $e->getMessage() );
+                    die($e->getMessage());
                 }
 
             } else {
@@ -134,6 +135,15 @@ class UploadListener
             } catch (\Exception $e) {
                 die( $e->getMessage() );
             }
+
+        } else if ($request->get('uploadType') == 'logo') {
+
+            /** @var $file */
+            $file = $event->getFile();
+            $fileName = $file->getBasename();
+
+            $this->settings->setSettingValue('logo_image_name', $fileName);
+            $response['fileName'] = $fileName;
 
         }
 

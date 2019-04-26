@@ -53,6 +53,31 @@
             {{ form_row(form.org_locale) }}
             {{ form_row(form.org_languages) }}
 
+            <h2>Logo</h2>
+
+            <p class="help-block">
+                Upload an image file less than 500kb in size.
+            </p>
+
+            <div class="row">
+                <div class="col-md-4">
+                    {% if tenantInformation.logoImageName %}
+                        <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/files/{{ tenantInformation.logoImageName }}" class="img-thumbnail img-responsive">
+                    {% else %}
+                        No logo yet
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <div id="fileUploader" class="dropzone" style="height: 100px;"></div>
+                </div>
+            </div>
+
+            <br>
+            <p class="help-block">
+                We'll constrain the logo to a maximum of 100 pixels high.
+                If you want to customise the site CSS, you can add custom styles below.
+            </p>
+
             <h2>Editable content</h2>
 
             <p class="page-help">
@@ -114,6 +139,54 @@
                 height: 200
             });
         });
+    </script>
+    <script>
+
+        Dropzone.autoDiscover = false;
+        var fileUploader = new Dropzone("div#fileUploader", {
+            method: "post",
+            paramName: "file", // The name that will be used to transfer the file
+            url: "{{ oneup_uploader_endpoint('files') }}",
+            maxFilesize: 0.5, // MB
+            acceptedFiles: "image/*",
+            accept: function (file, done) {
+                done();
+            },
+            init: function () {
+                this.on("sending", function (file, xhr, formData) {
+                    formData.append("uploadType", "logo");
+                    console.log("Uploading image ... " + file.name);
+                    startFilesUploading();
+                });
+                this.on("success", function (file, serverResponse) {
+                    console.log(serverResponse);
+                    if (file.status == "success") {
+                        console.log("Uploaded OK");
+                        location.reload();
+                    }
+                });
+                this.on("complete", function (file) {
+                    fileUploader.removeFile(file);
+                });
+                this.on("queuecomplete", function (file) {
+                    console.log("All files have finished uploading");
+                    finishFilesUploading();
+                });
+                this.on("error", function(file, response) {
+                    // do stuff here.
+                    alert("There was an error uploading the file - perhaps it was more than 500 kB?. More info is in the browser debug console.");
+                    console.log(response);
+                });
+            }
+        });
+
+        function startFilesUploading() {
+            $("#save-item").attr('disabled', true).html("Files uploading ...");
+        }
+
+        function finishFilesUploading() {
+            $("#save-item").attr('disabled', false).html("Save item");
+        }
 
     </script>
 {% endblock %}

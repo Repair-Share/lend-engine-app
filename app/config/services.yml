@@ -124,6 +124,7 @@ services:
         arguments:
             - "@doctrine.orm.entity_manager"
             - "@service_container"
+            - "@settings"
         tags:
             - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
 
