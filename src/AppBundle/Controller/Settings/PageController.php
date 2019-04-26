@@ -59,7 +59,13 @@ class PageController extends Controller
         $modalUrl = $this->generateUrl('page');
 
         $helpText = <<<EOT
-<h4 style="margin-top: 0px;">About custom site pages and menu links</h4>
+<h4 style="margin-top: 0px;">About site pages and menu links</h4>
+<br>
+<div class="row">
+<div class="col-md-5">
+    <img src="/images/screenshots/site_menu_edit.png" class="img-responsive img-rounded">
+</div>
+<div class="col-md-7">
 You can add extra content to your member site using 'pages' or 'links'.
 Both appear as menu items in the main menu on the left hand side of the screen, above any categories you have created.<br><br>
 Pages are good for content like Terms and Conditions or a Privacy Policy, or information about your library.
@@ -67,22 +73,26 @@ Links are good for taking users to other websites, or to a certain filter of ite
 Links out to other sites (they will contain "http") open in a new tab. Links within your member site (starting with "/") will open in the same tab.
 <br><br>
 You can create pages that are visible for everyone, for members only, or for staff only (useful for library operating guides).
-Keep a page hidden until you are ready to set it visible. Menu items appear in alphabetical order.<br><br>
-<span class="label bg-orange">NEW</span> - change the order of your pages in the menu by dragging items using the icon on the left of each row.
+Keep a page hidden until you are ready to set it visible.<br><br>
+</div>
+</div>
+<br>
+<h4>Pages are created and managed using the <strong>site edit mode</strong>.<br>
+Click the button at the bottom of your member site to begin site editing.</h4>
 
 EOT;
 
         return $this->render(
             'lists/setup_list.html.twig',
             array(
-                'title'      => 'Custom pages and links',
+                'title'      => 'Site pages and links',
                 'entityName' => 'Page', // used for AJAX delete handler
-                'pageTitle'  => 'Custom pages and links',
-                'addButtonText' => 'Add a page or link',
+                'pageTitle'  => 'Site pages and links',
+                'addButtonText' => '',
                 'tableRows'  => $tableRows,
                 'tableHeader' => $tableHeader,
                 'modalUrl' => $modalUrl,
-                'sortable' => true,
+                'sortable' => false,
                 'help' => $helpText
             )
         );

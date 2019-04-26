@@ -61,7 +61,8 @@
             });
             this.on("error", function(file, response) {
                 // do stuff here.
-                alert(response);
+                alert("There was an error uploading the file. More info is in the browser debug console.");
+                console.log(response);
             });
         }
     });

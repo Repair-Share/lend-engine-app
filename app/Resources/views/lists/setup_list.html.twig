@@ -10,7 +10,7 @@
         {{ secondaryMenu|raw }}
     {% endif %}
     {% if modalUrl %}
-        {% if tenantInformation.feature(entityName) %}
+        {% if tenantInformation.feature(entityName) and addButtonText %}
             <a type="button" class="btn bg-green modal-link" href="{{ modalUrl }}">{{ addButtonText }}</a>
         {% endif %}
     {% endif %}

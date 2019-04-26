@@ -100,6 +100,8 @@ class MenuBuilder
 
         $this->menu->addChild('Loans & Reservations', array('route' => 'settings_reservations'));
         $this->menu->addChild('Member site', array('route' => 'settings_member_site'));
+        $this->menu->addChild('Site pages & links', array('route' => 'page_list'));
+
         if ($this->container->get('tenant_information')->getFeature('CustomEmail')) {
             $this->menu->addChild('Email templates', array('route' => 'settings_templates'));
         }
@@ -113,7 +115,6 @@ class MenuBuilder
         $this->menu->addChild('Check out prompts', array('route' => 'checkOutPrompt_list'));
 
         $this->menu->addChild('Import contacts', array('route' => 'import_contacts'));
-        $this->menu->addChild('Custom pages & links', array('route' => 'page_list'));
 
         $this->menu->addChild('Contact fields', array('route' => 'contact_field_list'));
         $this->menu->addChild('Membership types', array('route' => 'membershipType_list'));
@@ -156,7 +157,6 @@ class MenuBuilder
         if ($this->container->get('settings')->getSettingValue('site_is_private')
             && !$this->container->get('security.authorization_checker')->isGranted('ROLE_USER')) {
 
-            $txt = $this->container->get('translator')->trans("public_misc.log_in_first", [], 'member_site');
             $txt = "";
             $this->menu->addChild($txt, array(
                 'route' => '',
@@ -345,11 +345,18 @@ class MenuBuilder
 
             } else {
 
+                $linkIcon = '';
+                if ($page->getVisibility() == "ADMIN") {
+                    $linkIcon = ' <i class="fa fa-user-cog site-editable" style="font-size: 10px; color: #d4302d; "></i>';
+                } else if ($page->getVisibility() == "MEMBERS") {
+                    $linkIcon = ' <i class="fa fa-users site-editable" style="font-size: 10px; color: #d4302d; "></i>';
+                }
+
                 $this->menu->addChild($page->getName(), array(
                     'route' => 'public_page',
                     'routeParameters' => $parameters,
                     'class' => $class,
-                    'label' => $icon.$page->getName(),
+                    'label' => $icon.$page->getName().$linkIcon,
                     'extras' => array('safe_label' => true)
                 ))->setAttribute('class', $class)
                     ->setAttribute('id', 'page_'.$page->getId());

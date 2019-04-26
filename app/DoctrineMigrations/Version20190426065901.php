@@ -20,6 +20,8 @@ final class Version20190426065901 extends AbstractMigration
         VALUES
         (1, 1, NOW(), NOW(), 'Home', 'Home', (SELECT setup_value FROM setting WHERE setup_key = 'site_welcome'), 'PUBLIC', -1)
         ");
+
+        $this->addSql("UPDATE page SET content = REPLACE(content, '\r\n', '<br />')");
     }
 
     public function down(Schema $schema) : void

@@ -12038,11 +12038,11 @@ div#extend-modal .date-picker-wrapper .drp_top-bar {
 }
 
 .page-help {
-    padding: 16px 10px 16px 10px;
+    padding: 16px;
     margin-bottom: 10px;
     font-size: 14px;
-    color: #63594D;
-    background-color: #F7F5EE;
+    color: #6f6f6f;
+    background-color: #f9f9f9;
     border-radius: 6px;
 }
 

@@ -13,6 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\Type\SettingsType;
+use AppBundle\Form\Type\SettingsReservationsType;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class SettingsController extends Controller
