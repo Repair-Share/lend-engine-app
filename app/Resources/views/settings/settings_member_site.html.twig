@@ -56,7 +56,7 @@
             <h2>Logo</h2>
 
             <p class="help-block">
-                Upload an image file less than 500kb in size.
+                Upload an image file less than 200kb in size.
             </p>
 
             <div class="row">
@@ -147,7 +147,7 @@
             method: "post",
             paramName: "file", // The name that will be used to transfer the file
             url: "{{ oneup_uploader_endpoint('files') }}",
-            maxFilesize: 0.5, // MB
+            maxFilesize: 0.2, // MB
             acceptedFiles: "image/*",
             accept: function (file, done) {
                 done();
@@ -174,7 +174,7 @@
                 });
                 this.on("error", function(file, response) {
                     // do stuff here.
-                    alert("There was an error uploading the file - perhaps it was more than 500 kB?. More info is in the browser debug console.");
+                    alert("There was an error uploading the file - perhaps it was more than 200 kB?. More info is in the browser debug console.");
                     console.log(response);
                 });
             }
