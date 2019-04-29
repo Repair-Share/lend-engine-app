@@ -218,6 +218,12 @@ class TenantInformation
         return false;
     }
 
+    // Meta description for header
+    public function getSiteDescription()
+    {
+        return strip_tags($this->settings->getSettingValue('site_description'));
+    }
+
     public function getSiteTheme()
     {
         if ($this->session->get('previewThemeName')) {

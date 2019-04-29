@@ -65,6 +65,7 @@ class SettingRepository extends \Doctrine\ORM\EntityRepository
             'site_facebook_login',
             'site_twitter_login',
             'site_allow_registration',
+            'site_description',
             'site_font_name',
             'site_theme_name',
             'logo_image_name',

@@ -103,6 +103,24 @@ then the user will also be shown a button to continue to choose a membership.',
             )
         ));
 
+        $readOnlyCustomTheme = true;
+        $planStarHtml = '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on Plus plan.';
+        if ($this->tenantInformationService->getFeature('CustomTheme')) {
+            $readOnlyCustomTheme = false;
+            $planStarHtml = '';
+        }
+        $builder->add('site_description', TextareaType::class, array(
+            'label' => 'Website meta description',
+            'data' => $dbData['site_description'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => 'Meta description for search engines.',
+                'rows' => 3,
+                'data-help' => $planStarHtml,
+                'readonly' => $readOnlyCustomTheme
+            )
+        ));
+
         $readOnlyCSS = true;
         $planStarHtml = '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on Standard plan and above.';
         if ($this->tenantInformationService->getFeature('CustomStyle')) {

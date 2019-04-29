@@ -58,8 +58,6 @@ class PageController extends Controller
 
         }
 
-        $modalUrl = $this->generateUrl('page');
-
         $helpText = <<<EOT
 <h4 style="margin-top: 0px;">About site pages and menu links</h4>
 <br>
@@ -76,6 +74,7 @@ Links out to other sites (they will contain "http") open in a new tab. Links wit
 <br><br>
 You can create pages that are visible for everyone, for members only, or for staff only (useful for library operating guides).
 Keep a page hidden until you are ready to set it visible.<br><br>
+Use the 'slug' to define your own page URLs for better search engine ranking.
 </div>
 </div>
 <br>
@@ -93,91 +92,11 @@ EOT;
                 'addButtonText' => '',
                 'tableRows'  => $tableRows,
                 'tableHeader' => $tableHeader,
-                'modalUrl' => $modalUrl,
+                'modalUrl' => '',
                 'noActions' => true,
                 'help' => $helpText
             )
         );
-    }
-
-    /**
-     * Modal content for managing pages
-     * @Route("admin/page/{id}", defaults={"id" = 0}, requirements={"id": "\d+"}, name="page")
-     * @Security("has_role('ROLE_SUPER_USER')")
-     */
-    public function pageAction(Request $request, $id)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->getUser();
-
-        if ($id) {
-            $page = $this->getDoctrine()
-                ->getRepository('AppBundle:Page')
-                ->find($id);
-            if (!$page) {
-                throw $this->createNotFoundException(
-                    'No page found for id '.$id
-                );
-            }
-            $page->setUpdatedBy($user);
-        } else {
-            $page = new Page();
-            $page->setCreatedBy($user);
-            $page->setUpdatedBy($user);
-        }
-
-        $form = $this->createForm(PageType::class, $page, array(
-            'action' => $this->generateUrl('page', array('id' => $id))
-        ));
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            try{
-
-                $em->persist($page);
-                $em->flush();
-
-                $this->addFlash('success', 'Page saved.');
-
-                return $this->redirectToRoute('page_list');
-
-            } catch (UniqueConstraintViolationException $e) {
-
-                // Not currently enforced at the DB level
-                $this->addFlash('error', 'A page with the name "'.$page->getName().'" already exists.');
-                return $this->redirectToRoute('page_list');
-
-            } catch (PDOException $e) {
-
-                $this->addFlash('error', $e->getMessage());
-                return $this->redirectToRoute('page_list');
-
-            }
-
-        }
-
-        if ($page->getId()) {
-            if ($page->getUrl()) {
-                $title = 'Edit menu link';
-            } else {
-                $title = 'Edit custom page';
-            }
-        } else {
-            $title = 'Add a custom page or menu link';
-        }
-
-        return $this->render(
-            'modals/settings/page.html.twig',
-            array(
-                'title' => $title,
-                'subTitle' => '',
-                'form' => $form->createView(),
-                'page' => $page
-            )
-        );
-
     }
 
 }
