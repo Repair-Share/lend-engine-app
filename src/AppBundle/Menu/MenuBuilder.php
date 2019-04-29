@@ -258,7 +258,15 @@ class MenuBuilder
         $repo = $this->container->get('doctrine')->getRepository('AppBundle:Page');
         $pages = $repo->findOrderedBySort();
 
+        $n = 0;
         foreach ($pages AS $page) {
+
+            $n++;
+
+            // Don't show any pages that may have been created when user was on free trial
+            if (!$this->container->get('tenant_information')->getFeature("Page") && $n > 1) {
+                continue;
+            }
 
             /** @var $page \AppBundle\Entity\Page */
 

@@ -49,11 +49,6 @@ class PageEditController extends Controller
             }
             $page->setUpdatedBy($user);
 
-            if (!$tenantInformationService->getFeature("Page") && $pageId > 1) {
-                $this->addFlash("info", "Adding extra pages isn't available on your plan. Please upgrade via the billing page at Admin &raquo; Settings.");
-                return $this->redirectToRoute("home");
-            }
-
         }
 
         $form = $this->createForm(PageType::class, $page, array(

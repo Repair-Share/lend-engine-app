@@ -106,10 +106,17 @@
     {% endif %}
 
     {% if tenantInformation.siteFontName %}
-    <link href="https://fonts.googleapis.com/css?family={{ tenantInformation.siteFontName|replace({" ": "+"}) }}" rel="stylesheet">
-    <style>
-        body {  font-family: '{{ tenantInformation.siteFontName }}', serif;  }
-    </style>
+        <!-- Settings font //-->
+        <link href="https://fonts.googleapis.com/css?family={{ tenantInformation.siteFontName|replace({" ": "+"}) }}" rel="stylesheet">
+        <style>
+            body {  font-family: '{{ tenantInformation.siteFontName }}', serif;  }
+        </style>
+    {% elseif tenantInformation.theme.font|length > 0 %}
+        <!-- Theme font //-->
+        <link href="https://fonts.googleapis.com/css?family={{ tenantInformation.theme.font }}" rel="stylesheet">
+        <style>
+            body {  font-family: '{{ tenantInformation.theme.font }}', serif;  }
+        </style>
     {% endif %}
 
 </head>

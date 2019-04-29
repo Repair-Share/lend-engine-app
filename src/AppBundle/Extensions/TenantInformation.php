@@ -218,7 +218,6 @@ class TenantInformation
         return false;
     }
 
-    // Meta description for header
     public function getSiteDescription()
     {
         return strip_tags($this->settings->getSettingValue('site_description'));
@@ -244,6 +243,25 @@ class TenantInformation
             return true;
         }
         return false;
+    }
+
+    public function getSiteFontName()
+    {
+        return $this->settings->getSettingValue('site_font_name');
+    }
+
+    public function getTheme()
+    {
+        $repo = $this->entityManager->getRepository("AppBundle:Theme");
+        $theme = $repo->findOneBy(['code' => $this->getSiteTheme()]);
+        return $theme;
+    }
+
+    public function getThemes()
+    {
+        $repo = $this->entityManager->getRepository("AppBundle:Theme");
+        $themes = $repo->findAll();
+        return $themes;
     }
 
     /** this is set when an admin enables site editor mode */
@@ -453,9 +471,5 @@ class TenantInformation
         return $this->settings->getSettingValue('loan_terms');
     }
 
-    public function getSiteFontName()
-    {
-        return $this->settings->getSettingValue('site_font_name');
-    }
 
 }

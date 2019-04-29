@@ -7,15 +7,16 @@
                 <a href="{{ path('site_edit_end') }}" class="btn btn-xs btn-primary">Exit</a>
             </span>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" style="display:none">
                 {% if tenantInformation.feature('CustomTheme') %}
                     <form action="{{ path('theme_preview') }}" method="GET">
                         <div class="pull-left">
                             <select id="theme-chooser" name="themeName" class="form-control btn btn-mini"
                                     title="Preview other themes here. Changes won't be visible for other users until you apply the theme."
                                     data-toggle="tooltip" data-placement="bottom" onChange="this.form.submit()">
-                                <option value="default" {% if tenantInformation.siteTheme == "default" %}selected{% endif %}>Theme : Default</option>
-                                <option value="test" {% if tenantInformation.siteTheme == "test" %}selected{% endif %}>Theme : Test</option>
+                                {% for theme in tenantInformation.themes %}
+                                    <option value="{{ theme.code }}" {% if tenantInformation.siteTheme == theme.code %}selected{% endif %}>Theme : {{ theme.name }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="pull-right">
