@@ -10,9 +10,11 @@
 
     {% if tenantInformation.isEditMode %}
         {% if page.visibility == "ADMIN" %}
-            <div class="alert alert-info">This page is only visible to administrators</div>
+            <div class="alert alert-info">This page is only visible to administrators.</div>
+        {% elseif page.visibility == "HIDDEN" %}
+            <div class="alert alert-info">This page is currently hidden and won't show unless you're in site edit mode.</div>
         {% elseif page.visibility == "MEMBERS" %}
-            <div class="alert alert-info">This page is only visible to logged in users</div>
+            <div class="alert alert-info">This page is only visible to logged in users.</div>
         {% endif %}
     {% endif %}
 

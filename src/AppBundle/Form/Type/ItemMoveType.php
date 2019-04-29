@@ -62,7 +62,7 @@ class ItemMoveType extends AbstractType
             'data' => $defaultValue,
             'attr' => [
                 'data-name' => 'Assigned to',
-                'data-help' => ''
+                'data-help' => 'Notify a staff member that work needs to be done on this item.'
             ]
         ));
 
@@ -71,7 +71,7 @@ class ItemMoveType extends AbstractType
             'required' => false,
             'attr' => [
                 'placeholder' => '0.00',
-                'data-help' => '',
+                'data-help' => 'If you spent money repairing or cleaning it. For reporting on the cost of maintenance.',
                 'size' => 5
             ]
         ));
@@ -82,6 +82,7 @@ class ItemMoveType extends AbstractType
             'attr' => [
                 'placeholder' => 'e.g. "Dirty, needs a clean"',
                 'data-help' => '',
+                'class' => 'input-xs'
             ]
         ));
 

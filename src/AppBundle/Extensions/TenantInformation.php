@@ -237,6 +237,15 @@ class TenantInformation
         return "default"; // the original theme
     }
 
+    public function getIsThemePreview()
+    {
+        if ($this->session->get('previewThemeName')
+            && $this->session->get('previewThemeName') != $this->settings->getSettingValue('site_theme_name')) {
+            return true;
+        }
+        return false;
+    }
+
     /** this is set when an admin enables site editor mode */
     public function getIsEditMode()
     {

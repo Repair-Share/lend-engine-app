@@ -39,13 +39,21 @@ class PageEditController extends Controller
             $page = new Page();
             $page->setCreatedBy($user);
             $page->setUpdatedBy($user);
+
         } else {
+
             $page = $this->getDoctrine()->getRepository('AppBundle:Page')->find($pageId);
             if (!$page) {
                 $this->addFlash("error", "Page with ID {$pageId} not found.");
                 return $this->redirectToRoute('home');
             }
             $page->setUpdatedBy($user);
+
+            if (!$tenantInformationService->getFeature("Page") && $pageId > 1) {
+                $this->addFlash("info", "Adding extra pages isn't available on your plan. Please upgrade via the billing page at Admin &raquo; Settings.");
+                return $this->redirectToRoute("home");
+            }
+
         }
 
         $form = $this->createForm(PageType::class, $page, array(
@@ -64,18 +72,18 @@ class PageEditController extends Controller
                 $pageId = $page->getId();
                 $this->addFlash('success', 'Page saved.');
 
-                return $this->redirectToRoute('public_page', ['pageId' => $pageId]);
+                return $this->redirectToRoute('public_page_by_slug', ['pageId' => $pageId, 'slug' => $page->getSlug()]);
 
             } catch (UniqueConstraintViolationException $e) {
 
                 // Not currently enforced at the DB level
                 $this->addFlash('error', 'A page with the name "'.$page->getName().'" already exists.');
-                return $this->redirectToRoute('public_page', ['pageId' => $pageId]);
+                return $this->redirectToRoute('public_page_by_slug', ['pageId' => $pageId, 'slug' => $page->getSlug()]);
 
             } catch (PDOException $e) {
 
                 $this->addFlash('error', $e->getMessage());
-                return $this->redirectToRoute('public_page', ['pageId' => $pageId]);
+                return $this->redirectToRoute('public_page_by_slug', ['pageId' => $pageId, 'slug' => $page->getSlug()]);
 
             }
 

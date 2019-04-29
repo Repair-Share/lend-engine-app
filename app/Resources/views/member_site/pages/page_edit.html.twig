@@ -55,10 +55,11 @@
     </div>
 
     <br>
-    <button type="submit" class="btn btn-primary">Save</button>
+    <button type="submit" class="btn btn-primary pull-right" style="margin-left:10px;">Save</button>
+
     {% if page.id %}
         <a href="{{ path('public_page', {pageId: page.id}) }}" class="btn btn-default pull-right">Cancel</a>
-        <a href="{{ path('public_page_delete', {pageId: page.id}) }}" class="btn btn-danger pull-right" style="margin-right:10px;">Delete</a>
+        <a href="{{ path('public_page_delete', {pageId: page.id}) }}" class="btn pull-right" style="margin-right:10px;">Delete</a>
     {% endif %}
 
     {{ form_end(form) }}

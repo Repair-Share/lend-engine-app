@@ -9,6 +9,8 @@
         }
     </style>
 
+    <br>
+
     <h2 id="site-member-search">
         {% if app.request.get('new') == 'reservation' %}
             Who should this reservation be for?
@@ -21,7 +23,7 @@
 
 
     {% if app.request.get('new') == 'reservation' %}
-        {{ include('member_site/partials/member_search_form.html.twig') }}<br>
+        {#{{ include('member_site/partials/member_search_form.html.twig') }}<br>#}
     {% elseif app.request.get('new') == 'loan' %}
         {{ include('member_site/partials/member_search_form.html.twig') }}<br>
     {% endif %}

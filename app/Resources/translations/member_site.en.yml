@@ -130,10 +130,10 @@ public_item:
   basket_exists: You already have items in your basket. <br>You'll need to pick them up together, so we've set the pickup date for you.
   account_balance_is: Available balance is
   add_credit: Add credit
-  pickup_at: Pickup at
-  return_by: Return by
-  choose_pickup_first: "Choose pickup first"
-  button_choose_pickup: Choose pickup time
+  pickup_at: From
+  return_by: To
+  choose_pickup_first: -
+  button_choose_pickup: Choose time
   button_choose_return: Choose return time
   cancel: Cancel
   basket_add: Add item to basket
@@ -163,7 +163,7 @@ public_basket:
   name: Basket
   due_at: Due at
   return_to: Return to
-  pickup_after: Pick up after
+  pickup_after: Available after
   from: from
   add_credit_message: Please add credit first.
   empty: Empty basket

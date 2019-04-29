@@ -210,7 +210,7 @@ class ItemListController extends Controller
 
             if ($item->getInventoryLocation()->getId() > 1) {
                 $moveUrl = $this->generateUrl('item_move', ['id' => $itemId,]);
-                $links .= '<li><a class="modal-link" href="'.$moveUrl.'">Move</a></li>';
+                $links .= '<li><a class="modal-link" href="'.$moveUrl.'">Move / Assign</a></li>';
 
                 $removeUrl = $this->generateUrl('item_archive', ['id' => $itemId]);
                 $links .= '<li><a class="modal-link" href="'.$removeUrl.'">Delete</a></li>';

@@ -12,14 +12,16 @@
                     <form action="{{ path('theme_preview') }}" method="GET">
                         <div class="pull-left">
                             <select id="theme-chooser" name="themeName" class="form-control btn btn-mini"
-                                    title="Changes won't be visible for others until you apply the theme"
+                                    title="Preview other themes here. Changes won't be visible for other users until you apply the theme."
                                     data-toggle="tooltip" data-placement="bottom" onChange="this.form.submit()">
                                 <option value="default" {% if tenantInformation.siteTheme == "default" %}selected{% endif %}>Theme : Default</option>
                                 <option value="test" {% if tenantInformation.siteTheme == "test" %}selected{% endif %}>Theme : Test</option>
                             </select>
                         </div>
                         <div class="pull-right">
+                            {% if tenantInformation.isThemePreview %}
                             <a href="{{ path('apply_theme') }}" class="btn btn-xs btn-primary" style="margin-left: 10px">Apply this theme</a>
+                            {% endif %}
                         </div>
                     </form>
                 {% else %}

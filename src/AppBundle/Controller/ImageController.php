@@ -14,7 +14,7 @@ class ImageController extends Controller
     /**
      * @return Response
      * @Route("admin/item/{id}/image/{name}/remove/", name="image_remove")
-     * @Security("has_role('ROLE_SUPER_USER')")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function removeImageAction($id, $name)
     {
@@ -55,7 +55,7 @@ class ImageController extends Controller
     /**
      * @return Response
      * @Route("admin/image/{name}/rotate/", name="image_rotate")
-     * @Security("has_role('ROLE_SUPER_USER')")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function rotateImageAction($name, Request $request)
     {
