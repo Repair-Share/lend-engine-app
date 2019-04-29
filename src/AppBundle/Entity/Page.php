@@ -32,6 +32,13 @@ class Page
     /**
      * @var string
      *
+     * @ORM\Column(name="slug", type="string", length=255)
+     */
+    private $slug;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="title", type="string", length=255, nullable=true)
      */
     private $title;
@@ -102,6 +109,10 @@ class Page
     {
         $this->setCreatedAt(new \DateTime("now"));
         $this->setUpdatedAt(new \DateTime("now"));
+
+        if (!$this->slug) {
+            $this->slug = $this->slugify($this->name);
+        }
     }
 
     /**
@@ -114,6 +125,10 @@ class Page
 
         if ($this->getCreatedAt() == null) {
             $this->setCreatedAt(new \DateTime('now'));
+        }
+
+        if (!$this->slug) {
+            $this->slug = $this->slugify($this->name);
         }
     }
 
@@ -149,6 +164,47 @@ class Page
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return Page
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        if (!$this->slug) {
+            $this->slug = $this->slugify($this->name);
+        }
+        return $this->slug;
+    }
+
+    /**
+     * While old pages don't yet have slugs
+     * @param $str
+     * @return mixed
+     */
+    private function slugify($str) {
+        $search = array('Ș', 'Ț', 'ş', 'ţ', 'Ş', 'Ţ', 'ș', 'ț', 'î', 'â', 'ă', 'Î', 'Â', 'Ă', 'ë', 'Ë');
+        $replace = array('s', 't', 's', 't', 's', 't', 's', 't', 'i', 'a', 'a', 'i', 'a', 'a', 'e', 'E');
+        $str = str_ireplace($search, $replace, strtolower(trim($str)));
+        $str = preg_replace('/[^\w\d\-\ ]/', '', $str);
+        $str = str_replace(' ', '-', $str);
+        return preg_replace('/\-{2,}/', '-', $str);
     }
 
     /**

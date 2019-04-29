@@ -335,9 +335,14 @@ class MenuBuilder
                     $linkIcon = ' <i class="fa fa-users site-editable" style="font-size: 10px; color: #d4302d; "></i>';
                 }
 
+                $params = [
+                    'pageId' => $page->getId(),
+                    'slug'   => $page->getSlug()
+                ];
+
                 $this->menu->addChild($page->getName(), array(
-                    'route' => 'public_page',
-                    'routeParameters' => $parameters,
+                    'route' => 'public_page_by_slug',
+                    'routeParameters' => $params,
                     'class' => $class,
                     'label' => $icon.$page->getName().$linkIcon,
                     'extras' => array('safe_label' => true)

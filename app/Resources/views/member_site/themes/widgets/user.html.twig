@@ -9,7 +9,7 @@
     {% endif %}
 {% endif %}
 
-{% if is_granted("ROLE_ADMIN") %}
+{% if is_granted("ROLE_ADMIN") and not tenantInformation.isEditMode %}
     <br><br>
     <a href="{{ path('site_edit_begin') }}" class="btn btn-xs btn-primary">Edit website</a>
 {% endif %}

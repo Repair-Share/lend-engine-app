@@ -47,6 +47,15 @@ class PageType extends AbstractType
             )
         ));
 
+        $builder->add('slug', TextType::class, array(
+            'label' => 'Slug',
+            'required' => false,
+            'attr' => array(
+                'placeholder' => 'Auto-generated',
+                'data-help' => '',
+            )
+        ));
+
         $builder->add('url', TextType::class, array(
             'label' => 'Custom link',
             'required' => false,
