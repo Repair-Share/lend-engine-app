@@ -1,3 +1,38 @@
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+#theme-header {
+    height: 110px;
+}
+
+#theme-pages-menu {
+    background-color: #efefef;
+    border-bottom: 1px solid #ccc;
+    padding: 6px;
+}
+
+#theme-pages-menu .navbar {
+    min-height: 0;
+    margin-bottom: 0;
+}
+
+#theme-categories-menu {
+    background-color: #fafafa;
+    margin-bottom: 16px;
+    padding: 6px;
+}
+
+#theme-categories-menu .navbar {
+    min-height: 0;
+    margin-bottom: 0;
+}
+
+.nav > li.recent-items {
+    display: none;
+}
+
+.navbar-header {
+    padding-left: 10px;
+    padding-right: 10px;
+}

@@ -1,7 +1,7 @@
 /* WIDGET OVERRIDES */
 
-/* logo */
-header {
+#theme-header {
+    max-height: 110px;
     margin-bottom: 20px;
 }
 

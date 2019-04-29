@@ -166,23 +166,6 @@ class MenuBuilder
             return $this->menu;
         }
 
-        // Show all items
-//        $parameters = [
-//            'show' => 'all',
-//            'locationId' => $request->get('locationId'),
-//            'e' => $request->get('e') // embed
-//        ];
-//        if ($request->get('show') == 'all') {
-//            $class = 'active';
-//        } else {
-//            $class = '';
-//        }
-//        $this->menu->addChild($this->container->get('translator')->trans("public_misc.link_all_items", [], 'member_site'), array(
-//            'route' => 'public_products',
-//            'routeParameters' => $parameters,
-//            'extras' => array('safe_label' => true)
-//        ))->setAttribute('class', $class);
-
         // Show recently added items
         $parameters = [
             'show' => 'recent',
@@ -198,7 +181,7 @@ class MenuBuilder
             'route' => 'public_products',
             'routeParameters' => $parameters,
             'extras' => array('safe_label' => true)
-        ))->setAttribute('class', $class);
+        ))->setAttribute('class', 'recent-items '. $class);
 
         // Product pages by tag --------------
 

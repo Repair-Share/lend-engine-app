@@ -5,8 +5,7 @@
     <div id="all">
 
         <header>
-
-            <div class="container">
+            <div class="container" id="theme-header">
                 <div class="row">
 
                     <div id="nav-org-name" class="col-md-4 hidden-xs">
@@ -31,47 +30,45 @@
 
                 </div>
             </div>
-
         </header>
 
-        <div id="content" style="margin-bottom: 100px;">
-
-            <div class="container">
-
-                {% if is_granted('ROLE_ADMIN') %}
-                    {% include('member_site/themes/widgets/admin_tools.html.twig') %}
-                {% else %}
+        <div class="container" id="theme-search">
+            {% if is_granted('ROLE_ADMIN') %}
+                {% include('member_site/themes/widgets/admin_tools.html.twig') %}
+            {% else %}
                 <div style="margin-bottom: 20px">
                     {% include('member_site/themes/widgets/search.html.twig') %}
                 </div>
-                {% endif %}
+            {% endif %}
+        </div>
 
-                <div class="row">
+        <div class="container" id="theme-content">
 
-                    <div class="col-sm-3" role="navigation" id="leftnavbar">
-                        <div class="navbar-collapse collapse" id="leftNavigation">
-                            {% include('member_site/themes/widgets/pages_menu_stacked.html.twig') %}
-                            <br>
-                            {% include('member_site/themes/widgets/items_menu_stacked.html.twig') %}
-                        </div>
+            <div class="row">
+
+                <div class="col-sm-3" role="navigation" id="leftnavbar">
+                    <div class="navbar-collapse collapse" id="leftNavigation">
+                        {% include('member_site/themes/widgets/pages_menu_stacked.html.twig') %}
                         <br>
+                        {% include('member_site/themes/widgets/items_menu_stacked.html.twig') %}
                     </div>
+                    <br>
+                </div>
 
-                    <div class="col-sm-9" id="page-body">
+                <div class="col-sm-9" id="page-body">
 
-                        {% include('member_site/themes/widgets/alerts.html.twig') %}
-                        {% include('member_site/themes/widgets/account_menu.html.twig') %}
+                    {% include('member_site/themes/widgets/alerts.html.twig') %}
+                    {% include('member_site/themes/widgets/account_menu.html.twig') %}
 
-                        {#--- THIS IS THE SECTION THAT PULLS IN ACTUAL CONTENT ---#}
-                        {% block body %}{% endblock %}
-
-                    </div>
+                    {#--- THIS IS THE SECTION THAT PULLS IN ACTUAL CONTENT ---#}
+                    {% block body %}{% endblock %}
 
                 </div>
 
             </div>
 
         </div>
+
 
         <br/>
 

@@ -112,7 +112,7 @@
             var alert_min_days = "{% trans with {'minLoanDays': minLoanDays} %}calendar.alert_min_loan_days{% endtrans %}";
 
             var basketPickupTime, basketSiteFromId, basketSiteFromName;
-            var page = $("#content");
+            var page = $("#productMain");
             var bookings = [];
             var loanUrl = "{{ path('public_loan', {loanId: 99}) }}";
 

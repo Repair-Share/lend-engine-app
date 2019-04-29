@@ -1,15 +1,13 @@
 {% trans_default_domain 'member_site' %}
 
-<div class="row" id="search-box">
-    <div class="col-md-12">
-        <form role="search" action="{{ path('public_products') }}">
-            <div class="input-group">
-                <input type="text" name="search" id="search-text" class="form-control" value="{{ app.request.get('search') }}"
-                       placeholder="{% trans %}public_misc.search_items{% endtrans %} ...">
-                <span class="input-group-btn">
-                    <button type="submit" id="search-button" class="btn btn-success">{% trans %}button_go{% endtrans %}</button>
-                </span>
-            </div>
-        </form>
-    </div>
+<div id="search-box">
+    <form role="search" action="{{ path('public_products') }}">
+        <div class="input-group">
+            <input type="text" name="search" id="search-text" class="form-control" value="{{ app.request.get('search') }}"
+                   placeholder="{% trans %}public_misc.search_items{% endtrans %} ...">
+            <span class="input-group-btn">
+                <button type="submit" id="search-button" class="btn btn-success">{% trans %}button_go{% endtrans %}</button>
+            </span>
+        </div>
+    </form>
 </div>

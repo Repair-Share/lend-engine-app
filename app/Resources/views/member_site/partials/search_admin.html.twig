@@ -69,7 +69,7 @@
     {% endif %}
 
     <div class="row admin-tools">
-        <div class="col-md-6" >
+        <div class="col-md-4" >
             <div class="admin-tools-title">
                 <i class="fa fa-wrench"></i>
                 This box is only visible for staff
@@ -83,7 +83,7 @@
             {% endif %}
 
         </div>
-        <div class="col-md-6" style="text-align: right">
+        <div class="col-md-8" style="text-align: right">
             {% if user is defined and user.id != app.user.id %}
 
                 {% if user.activeMembership %}
@@ -102,8 +102,8 @@
 
             {% else %}
                 <div class="help-block">
-                    To create a loan or reservation:<br>
-                    1. Search for a member and choose 'browse as'<br>
+                    To create a loan or reservation:
+                    1. Search for a member and choose 'browse as'
                     2. Choose your item(s)
                 </div>
             {% endif %}
