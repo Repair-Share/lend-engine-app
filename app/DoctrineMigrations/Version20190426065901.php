@@ -18,7 +18,7 @@ final class Version20190426065901 extends AbstractMigration
         $this->addSql("INSERT INTO page
         (created_by, updated_by, created_at, updated_at, name, title, content, visibility, sort)
         VALUES
-        (1, 1, NOW(), NOW(), 'Home', 'Home', (SELECT setup_value FROM setting WHERE setup_key = 'site_welcome'), 'PUBLIC', -1)
+        (1, 1, NOW(), NOW(), 'Home', 'Home', IFNULL((SELECT setup_value FROM setting WHERE setup_key = 'site_welcome'), ''), 'PUBLIC', -1)
         ");
 
         $this->addSql("UPDATE page SET content = REPLACE(content, '\r\n', '<br />')");
