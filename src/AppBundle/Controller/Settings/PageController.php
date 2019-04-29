@@ -33,7 +33,8 @@ class PageController extends Controller
 
         $tableHeader = array(
             'Name',
-            'Title / URL',
+            'Title / link',
+            'Slug / URL',
             'Visibility',
             '',
         );
@@ -49,8 +50,9 @@ class PageController extends Controller
                 'data' => array(
                     $i->getName(),
                     $i->getTitle() ? $i->getTitle() : '<a href="'.$i->getUrl().'" target="_blank">'.$i->getUrl().'</a>',
+                    $i->getSlug(),
                     $i->getVisibility(),
-                    'Delete-'.$i->getId()
+                    ''
                 )
             );
 
@@ -92,7 +94,7 @@ EOT;
                 'tableRows'  => $tableRows,
                 'tableHeader' => $tableHeader,
                 'modalUrl' => $modalUrl,
-                'sortable' => false,
+                'noActions' => true,
                 'help' => $helpText
             )
         );

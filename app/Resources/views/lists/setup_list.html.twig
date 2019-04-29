@@ -92,6 +92,7 @@
         $(document).ready(function(){
 
             var tableRows = $("table.has-actions tr");
+
             $(tableRows).each(function(i, tr) {
                 var rowId = tr.id.replace('tr','');
                 var html = '<a class="modal-link row-edit" href="{{ modalUrl }}/'+rowId+'">Edit</a>';
