@@ -169,7 +169,7 @@
     <!-- Check in prompts -->
     {% set promptsExist = 0 %}
     {% if tenantInformation.feature('CheckInPrompt') %}
-        <div class="form-group">
+        <div class="form-group" id="check-in-prompts">
             {% if loanRow.inventoryItem.checkInPrompts|length > 0 %}
                 <div style="font-weight: bold; padding: 10px 0 4px;">Check-in prompts:</div>
                 {% for prompt in loanRow.inventoryItem.checkInPrompts %}
@@ -197,7 +197,7 @@
 
     <script>
         $(document).ready(function () {
-            $("#content").on("change", ".confirm-checkin", function() {
+            $("#check-in-prompts").on("change", ".confirm-checkin", function() {
                 var allowCheckIn = true;
                 $(".confirm-checkin").each(function(){
                     if (!$(this).is(":checked")) {
