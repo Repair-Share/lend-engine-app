@@ -576,7 +576,9 @@ class BasketController extends Controller
                 $message = $this->renderView(
                     'emails/reservation_confirm.html.twig',
                     array(
-                        'loanRows' => $loan->getLoanRows()
+                        'loan' => $loan,
+                        'loanRows' => $loan->getLoanRows(),
+                        'message'  => ''
                     )
                 );
 
@@ -614,8 +616,9 @@ class BasketController extends Controller
                 $message = $this->renderView(
                     'emails/reservation_confirm.html.twig',
                     array(
+                        'loan'     => $loan,
                         'loanRows' => $loan->getLoanRows(),
-                        'message' => $msg
+                        'message'  => $msg
                     )
                 );
 

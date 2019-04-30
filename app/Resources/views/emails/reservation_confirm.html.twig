@@ -60,8 +60,15 @@
         {% endfor %}
     </table>
 
-    <br>
-    <br>
+    <br><br>
+    <p>
+        Reserved for : <strong>{{ loan.contact.name }}</strong><br>
+        {{ loan.contact.addressLine1 }}<br>
+        {{ loan.contact.addressLine2 }}<br>
+        {{ loan.contact.addressLine3 }}<br>
+        {{ loan.contact.addressLine4 }}<br>
+    </p>
+    <br><br>
     <p>{{ tenantInformation.getEmailReservationFooter|raw }}</p>
 
 {% endblock %}
