@@ -7,7 +7,7 @@
                 <a href="{{ path('site_edit_end') }}" class="btn btn-xs btn-primary">Exit</a>
             </span>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" style="display:none">
                 {% if tenantInformation.feature('CustomTheme') %}
                     <form action="{{ path('theme_preview') }}" method="GET">
                         <div class="pull-left">
