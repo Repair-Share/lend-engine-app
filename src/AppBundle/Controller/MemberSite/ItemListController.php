@@ -138,7 +138,6 @@ class ItemListController extends Controller
             } else {
                 if (isset($items[$item->getName()]) ) {
                     // We've found one with the same name
-                    $totalRecords--;
                     $count[$item->getName()]++;
                     if ($item->getInventoryLocation()->getIsAvailable() == true) {
                         // show this group as available by replacing with the available one
@@ -156,6 +155,11 @@ class ItemListController extends Controller
         if (!$request->get('see_variations') && $groupItemsWithSameName) {
             foreach ($count AS $itemName => $qty) {
                 $items[$itemName]->setQuantity($qty);
+                if ($qty > 1) {
+                    // @todo this is a hack to improve the paginator when grouping items
+                    // we're going to have to do another query to count grouped items
+                    $totalRecords = count($items);
+                }
             }
         }
 

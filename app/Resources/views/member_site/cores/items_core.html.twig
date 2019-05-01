@@ -83,8 +83,11 @@
                                 <i class="fa fa-exclamation-circle" data-toggle="tooltip" style="color: #ff741e" title="This item is not shown to members"></i>
                             {% endif %}
                             <a href="{{ absolute_url(path('public_product', {productId: product.id})) }}" {% if app.request.get('e') %}target="_blank"{% endif %}>
-                                {{ product.name }} {% if product.quantity > 1 %}({% trans %}quantity{% endtrans %} : {{ product.quantity }}){% endif %}
+                                {{ product.name }}
                             </a>
+                            {% if product.quantity > 1 %}
+                                <div style="font-weight: normal" class="item-list-qty">{% trans %}Quantity{% endtrans %} : {{ product.quantity }}</div>
+                            {% endif %}
                             <div class="item-list-serial">
                                 {% if product.serial and product.quantity == 1 %}
                                     {% trans %}public_item.serial{% endtrans %}: {{ product.serial }}

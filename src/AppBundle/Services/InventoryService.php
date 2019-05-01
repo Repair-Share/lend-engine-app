@@ -114,6 +114,12 @@ class InventoryService
             $builder->andWhere('loc.isAvailable = 1');
         }
 
+//        if (isset($filter['grouped']) && $filter['grouped'] == true) {
+//            $builder->leftJoin('item.inventoryLocation', 'loc');
+//            $builder->andWhere('loc.isAvailable = 1');
+//            $builder->addGroupBy('item.name');
+//        }
+
         // First get the total count:
 
         $queryTotalResults = $builder->getQuery();
