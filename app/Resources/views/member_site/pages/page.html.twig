@@ -18,7 +18,14 @@
         {% endif %}
     {% endif %}
 
-    <p id="page-content">
+    <div id="page-content">
         {{ page.content|raw }}
-    </p>
+        {% if not page.content and not page.url %}
+            <div class="alert alert-warning">
+                This page has no content.
+                As an admin, go into <strong>site edit mode</strong>,
+                click the menu link for this page and then click <strong>edit page</strong>.
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

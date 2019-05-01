@@ -139,7 +139,7 @@ public_item:
   basket_add: Add item to basket
   locations: Available locations
   maps_link: Open in Google maps
-  similar_items: similar items available
+  similar_items: similar items
   see_all: See all
   discount: discount
   not_reservable: "This item is not available for reservation online. Please contact us."

@@ -50,6 +50,7 @@ class ItemListController extends Controller
 
         $defaultLoanDays = (int)$this->get('settings')->getSettingValue('default_loan_days');
         $minLoanDays = (int)$this->get('settings')->getSettingValue('min_loan_days');
+        $groupItemsWithSameName = (int)$this->get('settings')->getSettingValue('group_similar_items');
 
         /** @var \AppBundle\Services\InventoryService $inventoryService */
         $inventoryService = $this->get('service.inventory');
@@ -106,8 +107,14 @@ class ItemListController extends Controller
 
         // Turn into array of objects
         $items = [];
+        $count = [];
         foreach ($products AS $item) {
             /** @var \AppBundle\Entity\InventoryItem $item */
+
+            // How many are available
+            if (!isset($count[$item->getName()])) {
+                $count[$item->getName()] = 1;
+            }
 
             $itemFee = $itemService->determineItemFee($item, $contact);
 
@@ -125,7 +132,31 @@ class ItemListController extends Controller
             $item->setLoanFee($itemFee);
             $item->setMaxLoanDays($itemLoanDays);
 
-            $items[] = $item;
+            if ($request->get('see_variations') || !$groupItemsWithSameName) {
+                $item->setQuantity(1);
+                $items[] = $item;
+            } else {
+                if (isset($items[$item->getName()]) ) {
+                    // We've found one with the same name
+                    $totalRecords--;
+                    $count[$item->getName()]++;
+                    if ($item->getInventoryLocation()->getIsAvailable() == true) {
+                        // show this group as available by replacing with the available one
+                        $items[$item->getName()] = $item;
+                    } else {
+                        continue;
+                    }
+                }
+                // Key the items by name so we only get one of each
+                $items[$item->getName()] = $item;
+            }
+
+        }
+
+        if (!$request->get('see_variations') && $groupItemsWithSameName) {
+            foreach ($count AS $itemName => $qty) {
+                $items[$itemName]->setQuantity($qty);
+            }
         }
 
         $filterSites = [];

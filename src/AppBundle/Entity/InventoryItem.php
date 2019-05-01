@@ -281,6 +281,9 @@ class InventoryItem
      */
     private $itemType;
 
+    /** @var string */
+    private $quantity;
+
     /**
      * Empty constructor
      */
@@ -1415,5 +1418,24 @@ class InventoryItem
     public function getShortUrl()
     {
         return $this->shortUrl;
+    }
+
+    /**
+     * @param $quantity
+     * @return $this
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
     }
 }

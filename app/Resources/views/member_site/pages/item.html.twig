@@ -21,7 +21,7 @@
             {% if similarItemCount > 1 %}
                 <div class="similar-items">
                     <i class="fa fa-exclamation-triangle"></i>
-                    {{ similarItemCount }} {% trans %}public_item.similar_items{% endtrans %}. <a href="{{ path('public_products') }}?search={{ product.name }}">{% trans %}public_item.see_all{% endtrans %}</a>.
+                    {{ similarItemCount }} {% trans %}public_item.similar_items{% endtrans %}. <a href="{{ path('public_products') }}?search={{ product.name }}&see_variations=true">{% trans %}public_item.see_all{% endtrans %}</a>.
                 </div>
             {% endif %}
         </div>

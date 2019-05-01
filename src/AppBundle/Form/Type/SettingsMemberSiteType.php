@@ -172,6 +172,17 @@ then the user will also be shown a button to continue to choose a membership.',
             )
         ));
 
+        $builder->add('group_similar_items', ChoiceType::class, array(
+            'choices' => $yesNoChoice,
+            'label' => 'Group items with the same name into one search result',
+            'data' => (int)$dbData['group_similar_items'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => "If any one of the group is available, the grouped item will show as available."
+            ]
+        ));
+
         $builder->add('site_allow_registration', ChoiceType::class, array(
             'choices' => $yesNoChoice,
             'label' => 'Allow member registration via the public website',
