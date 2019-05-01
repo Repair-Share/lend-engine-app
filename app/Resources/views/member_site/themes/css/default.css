@@ -5,6 +5,10 @@
     margin-bottom: 20px;
 }
 
+#theme-content {
+    margin-top: 5px;
+}
+
 #nav-org-name {
     font-size: 24px;
     line-height: 40px;
@@ -13,6 +17,13 @@
 
 #nav-org-name a {
     color: #000;
+}
+
+/* bootstrap overrides */
+
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+    background-color: #f4f4f4;
+    color: #214d75;
 }
 
 /* account_menu */
