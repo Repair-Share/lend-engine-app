@@ -2,7 +2,6 @@
 
 {% block pageCss %}
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.css">
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/theme/monokai.css">
     <link href="/plugins/summernote/summernote.css" rel="stylesheet">
 {% endblock %}
 
@@ -69,36 +68,97 @@
 {% block pagejs %}
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/xml/xml.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/htmlmixed/htmlmixed.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/2.36.0/formatting.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.9.1/beautify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.9.1/beautify-html.min.js"></script>
+
     <script src="/plugins/summernote/summernote.js"></script>
     <script>
+
         $(document).ready(function() {
 
-            $('.summernote').summernote({
+            var editor = $('#page_content');
+
+            editor.summernote({
                 toolbar: [
-                    // [groupName, [list of button]]
                     ['style', ['style', 'bold', 'italic', 'underline', 'clear']],
                     ['para', ['ul', 'ol', 'paragraph']],
-                    ['extra', ['codeview']]
+                    ['edit', ['undo', 'redo']],
+                    ['extra', ['table', 'picture', 'link', 'codeview']]
                 ],
                 codemirror: { // codemirror options
-                    theme: 'default'
+                    mode: "text/html",
+                    htmlMode: true,
+                    theme: 'default',
+                    lineWrapping: true
                 },
-                height: 400
-//                callbacks: {
-//                    onImageUpload: function(files, editor, welEditable) {
-//                        sendFile(files[0], editor, welEditable);
-//                    }
-//                }
+                height: 400,
+                callbacks: {
+                    onImageUpload: function(image) {
+                        uploadImage(image[0]);
+                    },
+                    onBlur: function() {
+                        formatCodeView();
+                    }
+                }
             });
+
+            function uploadImage(image) {
+                $("#overlayText").html("Image uploading ...");
+                $("#overlay").show();
+                var data = new FormData();
+                data.append("file", image);
+                data.append("uploadType", "site_images");
+                $.ajax({
+                    data: data,
+                    type: "POST",
+                    url: "{{ oneup_uploader_endpoint('siteimages') }}",
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(r) {
+                        var response = $.parseJSON(r);
+                        $("#overlay").hide();
+                        var image = $('<img>').attr('src', response.url);
+                        $('#page_content').summernote("insertNode", image[0]);
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+            }
 
         });
 
-    </script>
-{% endblock %}
+        function formatCodeView() {
+            console.log("Formatting HTML source ...");
+            var editor = $("#page_content");
+            var options = {
+                "indent_size": "4",
+                "indent_char": " ",
+                "max_preserve_newlines": "-1",
+                "preserve_newlines": false,
+                "keep_array_indentation": false,
+                "break_chained_methods": false,
+                "indent_scripts": "normal",
+                "brace_style": "collapse",
+                "space_before_conditional": true,
+                "unescape_strings": false,
+                "jslint_happy": false,
+                "end_with_newline": false,
+                "wrap_line_length": "0",
+                "indent_inner_html": false,
+                "comma_first": false,
+                "e4x": false,
+                "indent_empty_lines": false
+            };
 
-{% block modalFooter %}
-    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-    <button class="modal-submit btn bg-green">Save</button>
+            var originalValue = editor.summernote('code');
+            editor.summernote('code', html_beautify(originalValue, options));
+        }
+
+    </script>
 {% endblock %}
 

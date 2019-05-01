@@ -1,14 +1,16 @@
-{% if tenantInformation.logoUrl %}
-    <a id="site-name" href="{{ path('home') }}" style="float: left;">
-        <img style="width: 240px; height: 120px;" src="{{ tenantInformation.logoUrl }}">
-    </a>
-{% elseif tenantInformation.logoImageName %}
-    <a class="" href="{{ path('home') }}">
-        <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/files/{{ tenantInformation.logoImageName }}"
-             id="site-logo" class="img-responsive" style="max-height: 100px">
-    </a>
-{% else %}
-    <a id="site-name" class="" href="{{ path('home') }}">
-        {{ tenantInformation.companyName }}
-    </a>
-{% endif %}
+<div id="org-logo">
+    {% if tenantInformation.logoUrl %}
+        <a id="site-name" href="{{ path('home') }}" style="float: left;">
+            <img style="width: 240px; height: 120px;" src="{{ tenantInformation.logoUrl }}">
+        </a>
+    {% elseif tenantInformation.logoImageName %}
+        <a class="" href="{{ path('home') }}">
+            <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/files/{{ tenantInformation.logoImageName }}"
+                 id="site-logo" class="img-responsive" style="height: 80px">
+        </a>
+    {% else %}
+        <a id="site-name" class="" href="{{ path('home') }}">
+            {{ tenantInformation.companyName }}
+        </a>
+    {% endif %}
+</div>

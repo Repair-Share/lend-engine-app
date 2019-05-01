@@ -39,14 +39,14 @@ class UploadListener
         $request  = $event->getRequest();
         $response = $event->getResponse();
 
+        /** @var $file */
+        $file = $event->getFile();
+        $fileName = $file->getBasename();
+
         if ($itemId = $request->get('itemId')) {
 
             /** @var \AppBundle\Entity\InventoryItem $item */
             $item = $this->em->getRepository('AppBundle:InventoryItem')->find($itemId);
-
-            /** @var $file */
-            $file = $event->getFile();
-            $fileName = $file->getBasename();
 
             if ($request->get('uploadType') == 'attachment') {
 
@@ -113,10 +113,6 @@ class UploadListener
             /** @var \AppBundle\Entity\Contact $contact */
             $contact = $this->em->getRepository('AppBundle:Contact')->find($contactId);
 
-            /** @var $file */
-            $file = $event->getFile();
-            $fileName = $file->getBasename();
-
             $fileAttachment = new FileAttachment();
             $fileAttachment->setContact($contact);
             $fileAttachment->setFileName($fileName);
@@ -138,12 +134,14 @@ class UploadListener
 
         } else if ($request->get('uploadType') == 'logo') {
 
-            /** @var $file */
-            $file = $event->getFile();
-            $fileName = $file->getBasename();
-
             $this->settings->setSettingValue('logo_image_name', $fileName);
             $response['fileName'] = $fileName;
+
+        } else if ($request->get('uploadType') == 'site_images') {
+
+            // From page editor image upload
+            // Return the uploaded image URL
+            $response['url'] = $s3_bucket.$schema.'/site_images/'.$file->getBasename();
 
         }
 

@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Oneup\UploaderBundle\Uploader\File\FileInterface;
 use Oneup\UploaderBundle\Uploader\Naming\NamerInterface;
 
-class ImageNamer implements NamerInterface
+class SiteImageNamer implements NamerInterface
 {
 
     private $session;
@@ -23,8 +23,7 @@ class ImageNamer implements NamerInterface
      */
     public function name(FileInterface $file)
     {
-        // Client side re-sizing now always produces a JPG
-        $imageName = sprintf('%s.%s', uniqid(), 'jpg');
-        return $this->session->get('account_code').'/'.$imageName;
+        $directory = $this->session->get('account_code');
+        return $directory.'/site_images/'.uniqid().'-'.$file->getClientOriginalName();
     }
 }

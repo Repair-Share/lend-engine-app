@@ -14259,8 +14259,8 @@ ul.children select { width: 100%; }
 }
 
 .admin-tools-title {
-    font-size: 10px;
-    padding-bottom: 6px;
+    font-size: 12px;
+    padding: 0 15px 4px;
     color: #aaa
 }
 

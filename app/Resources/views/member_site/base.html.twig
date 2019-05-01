@@ -32,23 +32,6 @@
     <style>
         {% include('member_site/themes/css/' ~ tenantInformation.siteTheme ~ '.css') %}
 
-        #edit-mode-controls {
-            padding: 6px;
-            background-color: #cecece;
-            height: 36px;
-            font-size: 12px;
-            border-bottom: 1px solid black;
-        }
-
-        select.btn-mini {
-            height: auto;
-            line-height: 14px;
-        }
-
-        .page-hidden a {
-            color: #ccc;
-        }
-
         {% if tenantInformation.isEditMode %}
         .custom-nav .fa.site-editable {
             font-size: 12px;
@@ -149,13 +132,17 @@
 {% include('member_site/partials/edit_mode_bar.html.twig') %}
 {% endif %}
 
-{#THE MAIN CONTENT IS SHOVED IN HERE#}
+{#THE MAIN CONTENT IS LOADED IN HERE#}
 {% block theme %}{% endblock %}
 
 <div class="modal fade" id="modal-wrapper" role="dialog" aria-labelledby="mySmallModalLabel">
     <div class="modal-dialog">
         <div class="modal-content"></div>
     </div>
+</div>
+
+<div id="overlay">
+    <div id="overlayText">...</div>
 </div>
 
 {% block pagejs %}{% endblock %}

@@ -1,24 +1,20 @@
 {% trans_default_domain 'member_site' %}
 
-<div class="row" id="search-box">
+<div id="admin-tools" class="row admin-tools">
 
-    <div class="col-md-4">
-        <form role="search" action="{{ path('public_products') }}">
-            <div class="input-group">
-                <input type="text" name="search" id="search-text" class="form-control" value="{{ app.request.get('search') }}"
-                       placeholder="{% trans %}public_misc.search_items{% endtrans %} ...">
-                <span class="input-group-btn">
-                    <button type="submit" id="search-button" class="btn btn-success">{% trans %}button_go{% endtrans %}</button>
-                </span>
-            </div>
-
-            <div class="help-block">
-                <a href="{{ path('item_type') }}">Add a new item</a>
-            </div>
-        </form>
+    <div class="row admin-tools-title">
+        <div class="col-md-12">
+            <i class="fa fa-wrench"></i>
+            This box is only visible for staff.
+        <span class="pull-right">
+            To create a loan or reservation:
+        1. Search for a member and choose 'browse as'
+        2. Choose your item(s)
+        </span>
+        </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form role="search" action="{{ path('member_search') }}" method="GET">
             <input type="hidden" name="go" value="{{ app.request.get('go') }}">
             {% if app.request.get('itemId') %}
@@ -38,7 +34,7 @@
             </div>
         </form>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form role="search" action="{{ path('loan_search') }}" method="GET">
             <div class="input-group">
                 <input type="text" name="loan-search" id="loan-search" class="form-control" placeholder="Search loans">
@@ -53,37 +49,28 @@
                     <a href="{{ path('loan_search', {'loan-search' : 'overdue'}) }}">Overdue</a>&nbsp;
                     <a href="{{ path('loan_search', {'loan-search' : 'reserved'}) }}">Reserved</a>&nbsp;
                 </div>
-
             </div>
         </form>
     </div>
 
-</div>
-
-    {% if tenantInformation.openingHoursAreSet == false %}
-        <div class="alert alert-danger">
-            <strong>None of your sites have any opening hours.</strong><br>
-            You won't be able to create loans or reservations.
-            <a href="{{ path('site_list') }}">Manage sites now</a>
-        </div>
-    {% endif %}
-
-    <div class="row admin-tools">
-        <div class="col-md-4" >
-            <div class="admin-tools-title">
-                <i class="fa fa-wrench"></i>
-                This box is only visible for staff
-            </div>
+        <div class="col-md-6" >
 
             {% if user is defined and user.id != app.user.id %}
                 <i class="fa fa-user"></i> Browsing as <strong><a title="Edit contact" data-toggle="tooltip" href="{{ path('contact', {id: user.id}) }}">{{ user.name }}</a></strong>
-                <div class="help-block">
+                <div class="help-block" style="font-size: 11px">
                     Change user with the search box above.
                 </div>
             {% endif %}
 
+            {% if not tenantInformation.isEditMode %}
+                <a href="{{ path('site_edit_begin') }}" class="btn btn-xs btn-default">Edit website</a>
+            {% endif %}
+
+            <a class="btn btn-xs btn-default" href="{{ path('item_type') }}">Add a new item</a>
+
         </div>
-        <div class="col-md-8" style="text-align: right">
+
+        <div class="col-md-6" style="text-align: right">
             {% if user is defined and user.id != app.user.id %}
 
                 {% if user.activeMembership %}
@@ -101,11 +88,7 @@
                 </div>
 
             {% else %}
-                <div class="help-block">
-                    To create a loan or reservation:
-                    1. Search for a member and choose 'browse as'
-                    2. Choose your item(s)
-                </div>
+
             {% endif %}
         </div>
     </div>

@@ -119,6 +119,11 @@ services:
         arguments:
             - "@session"
 
+    uploader.siteimage_namer:
+        class: AppBundle\Uploader\Naming\SiteImageNamer
+        arguments:
+            - "@session"
+
     uploader.upload_listener:
         class: AppBundle\EventListener\UploadListener
         arguments:

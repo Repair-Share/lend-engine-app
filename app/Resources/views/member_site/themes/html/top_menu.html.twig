@@ -60,9 +60,11 @@
 
         <div id="content" style="margin-bottom: 100px;">
             <div class="container">
+
+                {% include('member_site/themes/widgets/admin_tools.html.twig') %}
+
                 <div class="row">
                     <div class="col-sm-12" id="page-body">
-                        {% include('member_site/themes/widgets/admin_tools.html.twig') %}
                         {% include('member_site/themes/widgets/alerts.html.twig') %}
                         {% include('member_site/themes/widgets/account_menu.html.twig') %}
                         {#--- THIS IS THE SECTION THAT PULLS IN ACTUAL CONTENT ---#}

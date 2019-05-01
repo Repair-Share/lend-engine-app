@@ -6799,7 +6799,29 @@ button.close {
 }
 /* HEADER */
 
+#admin-tools{
+    clear:left;
+}
 
+/* EDIT MODE */
+
+#edit-mode-controls {
+    padding: 6px;
+    background-color: #cecece;
+    height: 36px;
+    font-size: 12px;
+    border-bottom: 1px solid black;
+}
+
+select.btn-mini {
+    height: auto;
+    line-height: 14px;
+}
+
+/* Grey out the hidden menu items when in edit mode */
+.page-hidden a {
+    color: #ccc;
+}
 
 /* TOP NAV */
 
@@ -7018,6 +7040,30 @@ mark{
 #footer .col-sm-4 {
     padding-left: 30px;
     padding-bottom: 30px;
+}
+/* OVERLAY */
+
+#overlay {
+    position: fixed; /* Sit on top of the page content */
+    display: none; /* Hidden by default */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 600; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+}
+#overlayText{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 20px;
+    color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
 }
 
 /* OTHER */
@@ -8635,8 +8681,8 @@ be a descendant of the grid when it is being dragged.
 }
 
 .admin-tools-title {
-    font-size: 10px;
-    padding-bottom: 6px;
+    font-size: 12px;
+    padding: 0 15px 4px;
     color: #aaa
 }
 

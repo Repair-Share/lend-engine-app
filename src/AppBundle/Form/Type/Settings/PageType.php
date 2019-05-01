@@ -39,7 +39,7 @@ class PageType extends AbstractType
         ));
 
         $builder->add('title', TextType::class, array(
-            'label' => 'Page title',
+            'label' => 'Page title (optional)',
             'required' => false,
             'attr' => array(
                 'placeholder' => 'e.g. "Our Privacy Policy"',
@@ -48,7 +48,7 @@ class PageType extends AbstractType
         ));
 
         $builder->add('slug', TextType::class, array(
-            'label' => 'Slug',
+            'label' => 'Slug (for the URL)',
             'required' => false,
             'attr' => array(
                 'placeholder' => 'Auto-generated',
@@ -70,7 +70,7 @@ class PageType extends AbstractType
             'required' => false,
             'attr' => array(
                 'rows' => 10,
-                'class' => 'summernote',
+                'class' => '',
                 'placeholder' => 'HTML is supported.',
                 'data-help' => 'Maximum 65,000 characters.'
             )

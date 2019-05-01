@@ -7,38 +7,33 @@
         <header>
             <div class="container" id="theme-header">
                 <div class="row">
-
-                    <div id="nav-org-name" class="col-md-4 hidden-xs">
+                    <div id="nav-org-name" class="col-md-3 hidden-xs">
                         {% include('member_site/themes/widgets/org_name.html.twig') %}
                     </div>
-
-                    <div id="nav-menu" class="col-md-8 col-xs-12">
-
-                        {#-- button to toggle the navigation block on the left --#}
-                        <div class="navbar-buttons pull-right">
-                            <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#leftNavigation">
-                                <span class="sr-only">Toggle navigation</span>
-                                <i class="fa fa-align-justify"></i>
-                            </button>
+                    <div class="col-md-9 col-xs-12">
+                        <div class="row">
+                            <div class="col-md-12" id="nav-menu" style="text-align:right">
+                                {#-- button to toggle the navigation block on the left --#}
+                                <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#leftNavigation">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <i class="fa fa-align-justify"></i>
+                                </button>
+                                {% include('member_site/themes/widgets/site_menu.html.twig') %}
+                            </div>
                         </div>
-
-                        <div class="pull-right">
-                            {% include('member_site/themes/widgets/site_menu.html.twig') %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                {% include('member_site/themes/widgets/search.html.twig') %}
+                            </div>
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </header>
 
-        <div class="container" id="theme-search">
+        <div class="container" id="theme-admin">
             {% if is_granted('ROLE_ADMIN') %}
                 {% include('member_site/themes/widgets/admin_tools.html.twig') %}
-            {% else %}
-                <div style="margin-bottom: 20px">
-                    {% include('member_site/themes/widgets/search.html.twig') %}
-                </div>
             {% endif %}
         </div>
 

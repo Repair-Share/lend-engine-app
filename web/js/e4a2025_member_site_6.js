@@ -1,1 +1,0 @@
-function waitButton(obj){obj.removeClass("btn-success").addClass("btn-default").attr("disabled",true).html('<img src="/images/ajax-loader.gif">')}$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip()});

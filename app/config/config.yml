@@ -160,6 +160,12 @@ oneup_uploader:
             storage:
                 type: flysystem
                 filesystem: oneup_flysystem.product_image_fs_filesystem
+        siteimages:
+            frontend: dropzone
+            namer: uploader.siteimage_namer
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.product_image_fs_filesystem
 
 hwi_oauth:
     # name of the firewall in which this bundle is active, this setting MUST be set
