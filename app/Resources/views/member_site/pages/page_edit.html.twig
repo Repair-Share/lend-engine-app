@@ -106,7 +106,11 @@
             });
 
             function uploadImage(image) {
-                $("#overlayText").html("Image uploading ...");
+                if (image.size > 204800) {
+                    alert("Please upload a file less than 200kB.");
+                    return false;
+                }
+                $("#overlayText").html("Image uploading ... ");
                 $("#overlay").show();
                 var data = new FormData();
                 data.append("file", image);

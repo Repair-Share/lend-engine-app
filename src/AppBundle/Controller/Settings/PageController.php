@@ -79,7 +79,7 @@ Use the 'slug' to define your own page URLs for better search engine ranking.
 </div>
 <br>
 <h4>Pages are created and managed using the <strong>site edit mode</strong>.<br>
-Click the button at the bottom of your member site to begin site editing.</h4>
+Click the "edit website" button in the admin toolbox on your member site to begin site editing.</h4>
 
 EOT;
 
