@@ -2,11 +2,20 @@
 
 #theme-header {
     max-height: 110px;
-    margin-bottom: 20px;
+    padding-bottom: 20px;
 }
 
 #theme-content {
     margin-top: 5px;
+    margin-bottom: 15px;
+}
+
+#theme-content-divider {
+    border-top: 1px solid #ccc; margin-bottom: 15px;
+}
+
+#theme-footer-row {
+    padding-bottom: 40px;
 }
 
 #nav-org-name {

@@ -39,9 +39,9 @@
 
         <div class="container" id="theme-content">
 
-            <div style="border-top: 1px solid #ccc; margin-bottom: 15px;"></div>
+            <div id="theme-content-divider"></div>
 
-            <div class="row">
+            <div class="row" id="theme-content-row">
 
                 <div class="col-sm-3" role="navigation" id="leftnavbar">
                     <div class="navbar-collapse collapse" id="leftNavigation">
@@ -66,15 +66,13 @@
 
         </div>
 
-
-        <br/>
-
         <footer id="footer">
-            <div class="container">
 
-                <div class="footer-div"></div>
+            <div class="container" id="theme-footer">
 
-                <div class="row footer-block" style="padding-bottom: 40px;">
+                <div class="footer-div" id="theme-footer-divider"></div>
+
+                <div class="row footer-block" id="theme-footer-row">
 
                     <div class="col-sm-4">
                         {% include('member_site/themes/widgets/contact_info.html.twig') %}
