@@ -1,14 +1,26 @@
 /* WIDGET OVERRIDES */
 
+:root {
+    --primary-color: white;
+}
+
+html, body { height: 100%; }
+
+#all { height: 100%; }
+
 #theme-header {
     max-height: 110px;
     padding-bottom: 20px;
+    border-bottom: 2px solid var(--primary-color);
 }
 
 #theme-content {
-    margin-top: 5px;
-    margin-bottom: 15px;
+    padding-top: 5px;
+    padding-bottom: 15px;
+    height: 70%;
 }
+
+#theme-content-row { padding-top: 15px }
 
 #theme-content-divider {
     border-top: 1px solid #ccc; margin-bottom: 15px;

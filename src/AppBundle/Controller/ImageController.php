@@ -60,6 +60,7 @@ class ImageController extends Controller
     public function rotateImageAction($name, Request $request)
     {
         $service = $this->get('helper.imageresizer');
+
         $s3_bucket = $this->get('tenant_information')->getS3Bucket();
         $schema    = $this->get('tenant_information')->getSchema();
 

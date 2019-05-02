@@ -265,9 +265,11 @@ class ItemController extends Controller
                 if ($request->get('submitForm') == 'saveAndNew') {
                     $this->addFlash('success', "Item saved. Ready to add a new one!");
                     return $this->redirectToRoute('item_type');
+                } elseif ($request->get('submitForm') == 'saveAndCopy') {
+                    return $this->redirectToRoute('item_copy', ['id' => $product->getId()]);
                 } else {
                     $this->addFlash('success', "Item saved.");
-                    return $this->redirectToRoute('item', array('id' => $product->getId()));
+                    return $this->redirectToRoute('item', ['id' => $product->getId()]);
                 }
             } catch (\Exception $generalException) {
                 $this->addFlash('error', 'Item failed to save.');
@@ -296,85 +298,9 @@ class ItemController extends Controller
     }
 
     /**
-     * @Route("admin/item/{id}/copy", name="item_copy", requirements={"id": "\d+"})
-     */
-    public function copyProduct($id)
-    {
-
-        $user = $this->getUser();
-
-        $em = $this->getDoctrine()->getManager();
-
-        /** @var $oldProduct \AppBundle\Entity\InventoryItem */
-        $oldProduct = $em->getRepository('AppBundle:InventoryItem')->find($id);
-
-        $newProduct = clone $oldProduct;
-        $newProduct->setId(null);
-
-        $oldName = $oldProduct->getName();
-        $newProduct->setName($oldName.' (copy)');
-        $newProduct->setCreatedBy($user);
-
-        /** @var \AppBundle\Entity\InventoryLocation $location */
-        $locationRepo = $em->getRepository('AppBundle:InventoryLocation');
-        $location = $locationRepo->find(2);
-
-        $transactionRow = new ItemMovement();
-        $transactionRow->setInventoryItem($newProduct);
-        $transactionRow->setInventoryLocation($location);
-        $transactionRow->setCreatedBy($user);
-
-        $em->persist($transactionRow);
-
-        $newProduct->setInventoryLocation($location);
-        $newProduct->setImageName(null);
-
-        $note = new Note();
-        $note->setCreatedBy($user);
-        $note->setText('Added item to <strong>'.$location->getName().'</strong>');
-        $note->setInventoryItem($newProduct);
-        $em->persist($note);
-
-        // Set initial field value if auto-sku is turned on
-        $skuStub = $this->get('tenant_information')->getCodeStub();
-        if ($skuStub) {
-            $sku = $this->generateAutoSku($skuStub);
-            $newProduct->setSku($sku);
-        }
-
-        // Update the ID of the translations
-        $locales = explode(',', $this->get('settings')->getSettingValue('org_languages'));
-
-        $repository = $em->getRepository('Gedmo\\Translatable\\Entity\\Translation');
-        $translatableFields = ['name', 'description', 'componentInformation', 'careInformation'];
-        $translations = $repository->findTranslations($oldProduct);
-        foreach ($translatableFields AS $fieldKey) {
-            foreach ($locales AS $lang) {
-                if (isset($translations[$lang][$fieldKey])) {
-                    $val = $translations[$lang][$fieldKey];
-                } else {
-                    $val = '';
-                }
-                $repository->translate($newProduct, $fieldKey, $lang, $val);
-            }
-        }
-
-        $em->persist($newProduct);
-
-        try {
-            $em->flush();
-            $this->addFlash('success', "Item copied.");
-            return $this->redirectToRoute('item', array('id' => $newProduct->getId()));
-        } catch (\Exception $generalException) {
-            $this->addFlash('error', 'Item failed to copy.');
-            $this->addFlash('debug', $generalException->getMessage());
-        }
-
-        return $this->redirectToRoute('item', array('id' => $oldProduct->getId()));
-
-    }
-
-    /**
+     * THIS IS REPLICATED IN ItemCopyController
+     * @todo move to inventory or item service
+     *
      * This won't work at high throughput; it's not transactional
      * Also assumes that user has got all 4-digit SKUs; will break with 3 digits
      * unless we add the REGEX doctrine extension to only search for latest 4-digit code

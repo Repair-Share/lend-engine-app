@@ -25,7 +25,7 @@ class TenantNote
     /**
      * @var Tenant
      *
-     * @ORM\ManyToOne(targetEntity="Tenant")
+     * @ORM\ManyToOne(targetEntity="Tenant", inversedBy="notes")
      * @ORM\JoinColumn(name="tenant", referencedColumnName="id")
      */
     private $tenant;

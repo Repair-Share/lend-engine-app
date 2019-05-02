@@ -29,7 +29,7 @@ class TenantSite
     /**
      * @var Tenant
      *
-     * @ORM\ManyToOne(targetEntity="Tenant")
+     * @ORM\OneToOne(targetEntity="Tenant", mappedBy="site")
      * @ORM\JoinColumn(name="tenant", referencedColumnName="id", nullable=true)
      */
     private $tenant;
