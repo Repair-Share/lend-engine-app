@@ -223,11 +223,6 @@ mark{
 
 /* FOOTER */
 
-#footer .footer-div {
-    border-top: 1px solid #CCC;
-    padding: 10px;
-}
-
 #footer a {
     padding-right: 6px;
 }

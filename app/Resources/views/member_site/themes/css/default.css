@@ -17,13 +17,25 @@ html, body { height: 100%; }
 #theme-content {
     padding-top: 5px;
     padding-bottom: 15px;
-    height: 70%;
+    min-height: 50%;
 }
 
-#theme-content-row { padding-top: 15px }
+#theme-content-row {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
 
 #theme-content-divider {
     border-top: 1px solid #ccc; margin-bottom: 15px;
+}
+
+#page-body {
+    padding-bottom: 20px;
+}
+
+#theme-footer-divider {
+    border-top: 1px solid #CCC;
+    padding: 10px;
 }
 
 #theme-footer-row {
@@ -38,6 +50,10 @@ html, body { height: 100%; }
 
 #nav-org-name a {
     color: #000;
+}
+
+#footer {
+    clear:left;
 }
 
 /* bootstrap overrides */
