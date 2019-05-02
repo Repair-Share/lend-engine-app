@@ -130,12 +130,16 @@ class ItemCopyController extends Controller
     {
         $filesystem = $this->container->get('oneup_flysystem.product_image_fs_filesystem');
         $schema = $this->get('tenant_information')->getSchema();
-
-        $originalPath = $schema.'/thumbs/'.$imageName;
-
         $newImageName = 'a'.$imageName;
-        $newPath = $schema.'/thumbs/'.$newImageName;
 
+        // Copy the thumbnail
+        $originalPath = $schema.'/thumbs/'.$imageName;
+        $newPath = $schema.'/thumbs/'.$newImageName;
+        $filesystem->copy($originalPath, $newPath);
+
+        // Copy the large
+        $originalPath = $schema.'/large/'.$imageName;
+        $newPath = $schema.'/large/'.$newImageName;
         $filesystem->copy($originalPath, $newPath);
 
         return $newImageName;
