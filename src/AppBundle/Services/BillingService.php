@@ -35,6 +35,7 @@ class BillingService
             'CustomTheme'       => false,
             'MultipleLanguages' => false,
             'EmailAutomation'   => false,
+            'Labels'            => false,
         ];
 
         switch ($plan) {
@@ -60,6 +61,7 @@ class BillingService
                     'CustomTheme'       => false,
                     'MultipleLanguages' => true,
                     'EmailAutomation'   => true,
+                    'Labels'            => false,
                 ];
                 break;
 
@@ -80,6 +82,7 @@ class BillingService
                     'CustomTheme'       => true,
                     'MultipleLanguages' => true,
                     'EmailAutomation'   => true,
+                    'Labels'            => true,
                 ];
                 break;
 

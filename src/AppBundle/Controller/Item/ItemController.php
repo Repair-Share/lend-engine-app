@@ -292,6 +292,7 @@ class ItemController extends Controller
             'title' => $pageTitle,
             'customFieldsExist' => $customFieldsExist,
             'item' => $product,
+            'labelTemplate' => $this->get('settings')->getLabelTemplate(),
             'isMultiSite' => $this->get('settings')->getSettingValue('multi_site'),
             'activeLoanInformation' => $loanRowDetail // for the stock info header
         ));

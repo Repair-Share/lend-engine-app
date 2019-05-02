@@ -36,6 +36,9 @@ class SettingRepository extends \Doctrine\ORM\EntityRepository
             'org_languages',
             'industry',
 
+            //labels
+            'label_type',
+
             // Reminders
             'automate_email_loan_reminder',
             'automate_email_reservation_reminder',

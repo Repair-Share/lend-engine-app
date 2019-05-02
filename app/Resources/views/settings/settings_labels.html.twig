@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block pageCss %}
+    <script src="http://www.labelwriter.com/software/dls/sdk/js/DYMO.Label.Framework.3.0.js" type="text/javascript" charset="UTF-8"></script>
+{% endblock %}
+
+{% block title %}Settings : Labels{% endblock %}
+{% block pageTitle %}Settings : Labels{% endblock %}
+{% block primaryButton %}{% endblock %}
+
+{% block body %}
+
+    <style>
+        h2 { margin: 20px 0 10px; padding-bottom: 10px; border-bottom: 2px solid #3b3b3b; font-size: 20px; }
+    </style>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row" id="settings-labels">
+
+        <div class="col-md-2">
+            {{ knp_menu_render('settingsMenu') }}
+        </div>
+
+        <div class="col-md-6">
+
+            <h2>Label settings</h2>
+
+            <div class="page-help">
+                With a Dymo LabelWriter printer, you can print barcode labels for your items.
+                These labels can be scanned in when searching for items, creating loans and reservations, and checking loans in.
+                <br><br>
+                Lend Engine currently supports two commonly used label sizes.
+                Just get in touch if you'd like to use a different size and we'll create a template.
+            </div>
+
+            <div class="alert alert-danger" id="no-printer-warning" style="display: none">
+                You don't appear to have any Dymo printers connected to this computer.
+            </div>
+
+            <div class="alert alert-info" id="printer-found" style="display:none">
+                Found installed printer "<span id="printer-name"></span>" ...
+                <span id="printer-connected"></span>
+            </div>
+
+            {{ form_row(form.label_type) }}
+
+            <label class="control-label">Label preview</label>
+            <div id="label-preview" style="width: 300px;">Preview loading ...</div>
+
+            {#<h2>Custom Dymo label template</h2>#}
+
+            {#<p class="help-block">#}
+                {#Upload a label file less than 200kb in size.#}
+            {#</p>#}
+
+            {#<div id="fileUploader" class="dropzone" style="height: 100px;"></div>#}
+
+            {#<br>#}
+            {#<p class="help-block">#}
+                {#We'll constrain the logo to a maximum of 100 pixels high.#}
+                {#If you want to customise the site CSS, you can add custom styles below.#}
+            {#</p>#}
+
+        </div>
+
+    </div>
+
+    <div class="page-controls">
+        <button type="submit" class="btn bg-green">Save settings</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(document).ready(function() {
+
+            var printButton = $('#printButton');
+            var printers = [];
+            var label = null;
+
+            var f = dymo.label.framework;
+
+            function getPrintersFromFramework() {
+                printers = f.getPrinters();
+                if (printers.length == 0) {
+                    $("#no-printer-warning").show();
+                    return false;
+                }
+                for (var i = 0; i < printers.length; i++) {
+                    console.log(printers);
+                }
+                $("#printer-name").html(printers[0].name);
+                var isConnected = 'not currently connected.';
+                if (printers[0].isConnected) {
+                    isConnected = 'and connected OK.';
+                }
+                $("#printer-connected").html(isConnected);
+                $("#printer-found").show();
+                return true;
+            }
+
+            // load label xml
+            function getLabelXml() {
+                return `{{ template|raw }}`;
+            }
+
+            if (getPrintersFromFramework()) {
+                // Create a label from the template
+                label = f.openLabelXml(getLabelXml());
+
+                // Put a preview of the selected template into the UI
+                var renderParamsXml = f.createLabelRenderParamsXml({
+                    pngUseDisplayResolution: false,
+                    shadowDepth: 1
+                });
+                var pngData = label.render(renderParamsXml, printers[0].name);
+                $("#label-preview").html('<img class="img-responsive" src="data:image/png;base64,' + pngData + '">');
+            } else {
+                $("#label-preview").html("Cannot preview label without Dymo LabelWriter software running on your computer.");
+            }
+
+        });
+
+    </script>
+{% endblock %}

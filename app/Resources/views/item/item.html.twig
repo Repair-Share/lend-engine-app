@@ -1,6 +1,10 @@
 {# app/Resources/views/product/item.html.twig #}
 {% extends 'base.html.twig' %}
 
+{% block pageCss %}
+    <script src="http://www.labelwriter.com/software/dls/sdk/js/DYMO.Label.Framework.3.0.js" type="text/javascript" charset="UTF-8"></script>
+{% endblock %}
+
 {% block title %}{{ title }}{% endblock %}
 
 {% block pageTitle %}{{ title }}{% endblock %}
@@ -191,8 +195,11 @@
                         <div class="row">
                             <div class="col-md-12">
                                 {% if item.id %}
-                                <div class="">
-                                    <a class="btn btn-xs btn-success" href="{{ path('public_product', {productId: item.id}) }}">View on member site</a>
+                                <div class="" style="margin-bottom: 20px">
+                                    {% if tenantInformation.feature('Labels') %}
+                                    <button type="button" class="btn btn-xs btn-default" id="printButton">Print label</button>
+                                    {% endif %}
+                                    <a class="btn btn-xs btn-default pull-right" href="{{ path('public_product', {productId: item.id}) }}">View on member site</a>
                                 </div>
                                 {% endif %}
                                 {{ form_row(form.showOnWebsite) }}
@@ -533,6 +540,57 @@
 
             {% endif %}
 
+
+            // LABELS
+
+            var printButton = $('#printButton');
+            var printers = [];
+            var label = null;
+
+            var f = dymo.label.framework;
+
+            function getPrintersFromFramework() {
+                printers = f.getPrinters();
+                if (printers.length == 0) {
+                    return false;
+                }
+                return true;
+            }
+
+            // load label xml
+            function getLabelXml() {
+                return `{{ labelTemplate|raw }}`;
+            }
+
+            $(document).on('click', '#printButton', function(){
+                console.log("printing label ...");
+                try {
+                    var printer = printers[0];
+                    if (!printer) {
+                        throw new Error("Select printer");
+                    }
+                    if (!label) {
+                        throw new Error("Label is not loaded. Wait until is loaded or reload the page");
+                    }
+                    // set data
+                    var labelSet = new f.LabelSetBuilder();
+                    labelSet.addRecord()
+                            .setText("ORG_NAME", "{{ tenantInformation.companyName }}")
+                            .setText("BARCODE", "{{ item.id }}")
+                            .setText("SKU", "Item code:\n{{ item.sku }}");
+                    // print
+                    label.print(printer.name, null, labelSet.toString());
+                } catch(e) {
+                    alert(e.message || e);
+                }
+            });
+
+            if (getPrintersFromFramework()) {
+                // Create a label from the template
+                label = f.openLabelXml(getLabelXml());
+            } else {
+
+            }
         });
     </script>
     <script src="/js/pages/item.js"></script>
