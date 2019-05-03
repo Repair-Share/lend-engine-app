@@ -13144,6 +13144,19 @@ table.has-actions thead th:last-of-type {
     border-right: 1px solid #CECACA;
 }
 
+/* TOGGLES */
+.toggle-switch label {
+    color: #000;
+}
+.toggle-switch .active.value-1  {
+    background-color: #10a422;
+    color: #FFF;
+}
+.toggle-switch .active.value-0  {
+    background-color: #da0202;
+    color: #FFF;
+}
+
 /* Calendar pickers */
 .original-end-date {
     background-color: #8A8982;
@@ -14244,10 +14257,6 @@ ul.children select { width: 100%; }
 
 .note-wrapper {
     padding: 10px 0;
-}
-
-.admin-only {
-    /*color: #CC0000;*/
 }
 
 .admin-tools {

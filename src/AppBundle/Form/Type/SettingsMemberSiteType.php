@@ -35,11 +35,6 @@ class SettingsMemberSiteType extends AbstractType
         $this->em = $options['em'];
         $this->tenantInformationService = $options['tenantInformationService'];
 
-        $yesNoChoice = [
-            'Yes' => 1,
-            'No' => 0
-        ];
-
         // Get the settings
         /** @var $repo \AppBundle\Repository\SettingRepository */
         $repo =  $this->em->getRepository('AppBundle:Setting');
@@ -172,8 +167,8 @@ then the user will also be shown a button to continue to choose a membership.',
             )
         ));
 
-        $builder->add('group_similar_items', ChoiceType::class, array(
-            'choices' => $yesNoChoice,
+        $builder->add('group_similar_items', ToggleType::class, array(
+            'expanded' => true,
             'label' => 'Group items with the same name into one search result',
             'data' => (int)$dbData['group_similar_items'],
             'required' => true,
@@ -183,8 +178,8 @@ then the user will also be shown a button to continue to choose a membership.',
             ]
         ));
 
-        $builder->add('site_allow_registration', ChoiceType::class, array(
-            'choices' => $yesNoChoice,
+        $builder->add('site_allow_registration', ToggleType::class, array(
+            'expanded' => true,
             'label' => 'Allow member registration via the public website',
             'data' => (int)$dbData['site_allow_registration'],
             'required' => true,
@@ -195,8 +190,8 @@ then the user will also be shown a button to continue to choose a membership.',
 
         // Only on standard plans
         if ($this->tenantInformationService->getFeature('PrivateSite')) {
-            $builder->add('site_is_private', ChoiceType::class, array(
-                'choices' => $yesNoChoice,
+            $builder->add('site_is_private', ToggleType::class, array(
+                'expanded' => true,
                 'label' => 'Require users to log in before they can view items',
                 'data' => (int)$dbData['site_is_private'],
                 'required' => true,
@@ -210,6 +205,7 @@ then the user will also be shown a button to continue to choose a membership.',
             ];
             $builder->add('site_is_private', ChoiceType::class, array(
                 'choices' => $noChoice,
+                'expanded' => true,
                 'label' => 'Require users to log in before they can view items',
                 'data' => (int)$dbData['site_is_private'],
                 'required' => true,

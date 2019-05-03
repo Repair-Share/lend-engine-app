@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+use AppBundle\Form\Type\ToggleType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -30,11 +31,6 @@ class SettingsLabelsType extends AbstractType
     {
         $this->em = $options['em'];
         $this->tenantInformationService = $options['tenantInformationService'];
-
-        $yesNoChoice = [
-            'Yes' => 1,
-            'No' => 0
-        ];
 
         $choices = [
             'Multi purpose 19mm x 51mm (11355)' => '11355',
@@ -64,8 +60,8 @@ class SettingsLabelsType extends AbstractType
             $disabled = true;
         }
 
-        $builder->add('use_labels', ChoiceType::class, array(
-            'choices' => $yesNoChoice,
+        $builder->add('use_labels', ToggleType::class, array(
+            'expanded' => true,
             'label' => 'Turn on item label printing',
             'data' => (int)$dbData['use_labels'],
             'required' => true,

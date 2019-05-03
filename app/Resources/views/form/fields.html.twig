@@ -5,7 +5,7 @@
 {% block form_help -%}
     {% for attrname, attrvalue in attr %}
         {% if attrname == 'data-help' %}
-            {% autoescape false %}<span class="help-block">{{ attrvalue|raw }}</span>{% endautoescape %}
+            {% autoescape false %}<div class="help-block">{{ attrvalue|raw }}</div>{% endautoescape %}
         {% endif %}
     {% endfor %}
 {%- endblock form_help %}
@@ -63,7 +63,6 @@
         {% endfor %}
     </div>
     <br>
-
 {% endblock %}
 
 {# to get HTML in checkbox label #}
@@ -91,3 +90,15 @@
         </label>
     {% endif %}
 {% endblock checkbox_radio_label %}
+
+{%- block toggle_widget -%}
+    <div class="btn-group toggle-switch" data-toggle="buttons">
+        {%- for child in form %}
+            <label class="btn btn-sm btn-default value-{{ child.vars.value }} {% if child.vars.checked == true %}active{% endif %}">
+                <input type="radio" id="{{ child.vars.id }}" {% if child.vars.checked == true %}checked{% endif %}
+                       autocomplete="off" name="{{ child.vars.full_name }}" value="{{ child.vars.value }}">
+                {{ child.vars.label }}
+            </label>
+        {% endfor -%}
+    </div>
+{%- endblock toggle_widget -%}

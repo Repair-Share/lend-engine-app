@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+use AppBundle\Form\Type\ToggleType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -101,16 +102,14 @@ Most libraries choose a fee per day or week, but if you want to choose a fixed f
 We'll ignore the number of days in the setting above.
 EOH;
 
-        $yesNoChoice = [
-            'Yes' => 1,
-            'No' => 0
-        ];
-        $builder->add('fixed_fee_pricing', ChoiceType::class, array(
-            'choices' => $yesNoChoice,
+        $builder->add('fixed_fee_pricing', ToggleType::class, array(
+            'expanded' => true,
+            'multiple' => false,
             'label' => 'OR ... prices are fixed per borrow',
             'data' => (int)$dbData['fixed_fee_pricing'],
+            'required' => true,
             'attr' => [
-                'class' => 'input-100',
+                'class' => 'input-100 toggle-switch',
                 'data-help' => $helpText
             ]
         ));
@@ -151,12 +150,12 @@ EOH;
             )
         ));
 
-        $yesNoChoice = [
+        $choices = [
             'When the reservation is placed' => 1,
             'When the reservation is checked out' => 0
         ];
         $builder->add('charge_daily_fee', ChoiceType::class, array(
-            'choices' => $yesNoChoice,
+            'choices' => $choices,
             'label' => 'When do you want to add the item fees to the member account?',
             'data' => (int)$dbData['charge_daily_fee'],
             'required' => true,

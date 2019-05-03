@@ -35,11 +35,6 @@ class SettingsType extends AbstractType
         $this->em = $options['em'];
         $this->tenantInformationService = $options['tenantInformationService'];
 
-        $yesNoChoice = [
-            'Yes' => 1,
-            'No' => 0
-        ];
-
         // Get the settings
         /** @var $repo \AppBundle\Repository\SettingRepository */
         $repo =  $this->em->getRepository('AppBundle:Setting');
@@ -168,8 +163,8 @@ EOT;
             $dbData['automate_email_overdue_days'] = null;
         }
 
-        $builder->add('automate_email_loan_reminder', ChoiceType::class, array(
-            'choices' => $yesNoChoice,
+        $builder->add('automate_email_loan_reminder', ToggleType::class, array(
+            'expanded' => true,
             'label' => 'Send reminder the day before a loan is due back',
             'data' => (int)$dbData['automate_email_loan_reminder'],
             'attr' => [
@@ -179,8 +174,8 @@ EOT;
             ]
         ));
 
-        $builder->add('automate_email_reservation_reminder', ChoiceType::class, array(
-            'choices' => $yesNoChoice,
+        $builder->add('automate_email_reservation_reminder', ToggleType::class, array(
+            'expanded' => true,
             'label' => 'Send reminder the day before a reservation is due to be picked up',
             'data' => (int)$dbData['automate_email_reservation_reminder'],
             'attr' => [
@@ -190,8 +185,8 @@ EOT;
             ]
         ));
 
-        $builder->add('automate_email_membership', ChoiceType::class, array(
-            'choices' => $yesNoChoice,
+        $builder->add('automate_email_membership', ToggleType::class, array(
+            'expanded' => true,
             'label' => 'Notify members when their membership has expired',
             'data' => (int)$dbData['automate_email_membership'],
             'attr' => [
@@ -246,8 +241,8 @@ EOT;
             )
         ));
 
-        $builder->add('stripe_use_saved_cards', ChoiceType::class, array(
-            'choices' => $yesNoChoice,
+        $builder->add('stripe_use_saved_cards', ToggleType::class, array(
+            'expanded' => true,
             'label' => 'Allow users to choose from previously charged cards',
             'data' => (int)$dbData['stripe_use_saved_cards'],
             'required' => true,
@@ -289,8 +284,8 @@ EOT;
             )
         ));
 
-        $builder->add('mailchimp_double_optin', ChoiceType::class, array(
-            'choices' => $yesNoChoice,
+        $builder->add('mailchimp_double_optin', ToggleType::class, array(
+            'expanded' => true,
             'label' => 'Send double opt-in email when adding email address to Mailchimp',
             'data' => (int)$dbData['mailchimp_double_optin'],
             'required' => true,
@@ -299,8 +294,8 @@ EOT;
             ]
         ));
 
-        $builder->add('enable_waiting_list', ChoiceType::class, array(
-            'choices' => $yesNoChoice,
+        $builder->add('enable_waiting_list', ToggleType::class, array(
+            'expanded' => true,
             'label' => 'Enable waiting list',
             'data' => (int)$dbData['enable_waiting_list'],
             'required' => true,
