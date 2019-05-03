@@ -23,20 +23,26 @@
 
     <div class="row" id="settings-labels">
 
-        <div class="col-md-2">
+        <div class="col-md-3 col-lg-2">
             {{ knp_menu_render('settingsMenu') }}
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-9 col-lg-8">
 
             <h2>Item label settings</h2>
 
             <div class="page-help">
-                With a Dymo LabelWriter printer, you can print barcode labels for your items.
+                <p>
+                    With a Dymo LabelWriter printer, you can print barcode labels for your items.
                 These labels can be scanned in when searching for items, creating loans and reservations, and checking loans in.
-                <br><br>
-                Lend Engine currently supports two commonly used label sizes.
-                Just get in touch if you'd like to use a different size and we'll create a template.
+                </p>
+                <p>
+                    Lend Engine currently supports two commonly used label sizes.
+                    Just get in touch if you'd like to use a different size and we'll create a template.
+                </p>
+                <p>
+                    Once you've activated label printing, you will get a "print label" button on the right hand side of the item edit screen.
+                </p>
             </div>
 
             <div class="alert alert-danger" id="no-printer-warning" style="display: none">
@@ -59,20 +65,43 @@
 
             <br>
             <h2>Set up instructions</h2>
-                <p>
-                    Install the Dymo printer driver software for your operating system from the
+            <label class="control-label">Mac OSX</label>
+            <ol>
+                <li>
+                    Install the Dymo printer driver software from the
                     <a href="http://www.dymo.com/en-US/online-support/" target="_blank">Dymo website</a>.
-                </p>
-            <p>
-                Mac users should see a little blue and green 'D' icon now showing at the top of the screen,
-                indicating that the Dymo printer service has started and is running in the background.
-                The service listens for print requests from your web browser and sends them to the printer.
-            </p>
+                </li>
+                <li>
+                    Plug in your Dymo Labelwriter printer.
+                </li>
+                <li>
+                    Verify the Dymo printer service has started and is running in the background.<br>
+                    The blue and green Dymo icon should now be showing at the top of the screen.
+                </li>
+                <li>
+                    Revisit this screen and you should see a green message indicating that Lend Engine has managed to
+                    communicate with the printer service.
+                </li>
+            </ol>
 
-            <p>
-                Revisit this page and you should see a green message indicating that Lend Engine has managed to
-                communicate with the printer service.
-            </p>
+            <br>
+            <label class="control-label">PC / Windows</label>
+            <ol>
+                <li>
+                    Download Dymo Label software from
+                    <a href="http://www.dymo.com/en-US/dymo-label-software-v873-windows" target="_blank">http://www.dymo.com/en-US/dymo-label-software-v873-windows</a>. <br>
+                    <strong>Note that the latest Dymo Connect software is not compatible with Lend Engine as it doesn't include the web service
+                    needed to print from browsers</strong>.
+                </li>
+                <li>
+                    Verify the Dymo printer service has started and is running in the background.<br>
+                    The blue and green Dymo icon should now be showing in your system tray.
+                </li>
+                <li>
+                    Revisit this screen and you should see a green message indicating that Lend Engine has managed to
+                    communicate with the printer service.
+                </li>
+            </ol>
 
 
             {#<h2>Custom Dymo label template</h2>#}
