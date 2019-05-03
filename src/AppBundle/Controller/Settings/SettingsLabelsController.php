@@ -32,6 +32,7 @@ class SettingsLabelsController extends Controller
         // Pass tenant info in so we can control settings based on pay plan
         $options = [
             'em' => $em,
+            'tenantInformationService' => $tenantInformationService
         ];
 
         $form = $this->createForm(SettingsLabelsType::class, null, $options);

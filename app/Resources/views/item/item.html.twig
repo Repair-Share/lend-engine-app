@@ -196,10 +196,10 @@
                             <div class="col-md-12">
                                 {% if item.id %}
                                 <div class="" style="margin-bottom: 20px">
-                                    {% if tenantInformation.feature('Labels') %}
-                                    <button type="button" class="btn btn-xs btn-default" id="printButton">Print label</button>
+                                    {% if tenantInformation.feature('Labels') and tenantInformation.useLabels %}
+                                    <button type="button" class="btn btn-xs btn-default pull-right" id="printButton">Print label</button>
                                     {% endif %}
-                                    <a class="btn btn-xs btn-default pull-right" href="{{ path('public_product', {productId: item.id}) }}">View on member site</a>
+                                    <a class="btn btn-xs btn-default" href="{{ path('public_product', {productId: item.id}) }}">View on member site</a>
                                 </div>
                                 {% endif %}
                                 {{ form_row(form.showOnWebsite) }}
@@ -542,7 +542,7 @@
 
 
             // LABELS
-
+            {% if tenantInformation.useLabels %}
             var printButton = $('#printButton');
             var printers = [];
             var label = null;
@@ -588,9 +588,8 @@
             if (getPrintersFromFramework()) {
                 // Create a label from the template
                 label = f.openLabelXml(getLabelXml());
-            } else {
-
             }
+            {% endif %}
         });
     </script>
     <script src="/js/pages/item.js"></script>

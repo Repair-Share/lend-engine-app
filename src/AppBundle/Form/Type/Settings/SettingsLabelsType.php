@@ -18,6 +18,9 @@ class SettingsLabelsType extends AbstractType
     /** @var \Doctrine\ORM\EntityManager */
     public $em;
 
+    /** @var $tenantInformationService \AppBundle\Extensions\TenantInformation */
+    private $tenantInformationService;
+
     function __construct()
     {
 
@@ -26,6 +29,12 @@ class SettingsLabelsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->em = $options['em'];
+        $this->tenantInformationService = $options['tenantInformationService'];
+
+        $yesNoChoice = [
+            'Yes' => 1,
+            'No' => 0
+        ];
 
         $choices = [
             'Multi purpose 19mm x 51mm (11355)' => '11355',
@@ -46,6 +55,26 @@ class SettingsLabelsType extends AbstractType
                 'data-help' => 'Save settings after changing to update the preview.',
             ]
         ));
+
+        $disabled = false;
+        if ($this->tenantInformationService->getFeature("Labels")) {
+            $dataHelp = "";
+        } else {
+            $dataHelp = "Label printing is only available on the Plus plan";
+            $disabled = true;
+        }
+
+        $builder->add('use_labels', ChoiceType::class, array(
+            'choices' => $yesNoChoice,
+            'label' => 'Turn on item label printing',
+            'data' => (int)$dbData['use_labels'],
+            'required' => true,
+            'disabled' => $disabled,
+            'attr' => [
+                'data-help' => $dataHelp,
+                'class' => 'input-100',
+            ]
+        ));
     }
 
     /**
@@ -54,7 +83,8 @@ class SettingsLabelsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'em' => null
+            'em' => null,
+            'tenantInformationService' => null
         ));
     }
 }

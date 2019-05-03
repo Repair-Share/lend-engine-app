@@ -29,7 +29,7 @@
 
         <div class="col-md-6">
 
-            <h2>Label settings</h2>
+            <h2>Item label settings</h2>
 
             <div class="page-help">
                 With a Dymo LabelWriter printer, you can print barcode labels for your items.
@@ -43,15 +43,37 @@
                 You don't appear to have any Dymo printers connected to this computer.
             </div>
 
-            <div class="alert alert-info" id="printer-found" style="display:none">
+            <div class="alert alert-success" id="printer-found" style="display:none">
                 Found installed printer "<span id="printer-name"></span>" ...
                 <span id="printer-connected"></span>
             </div>
 
-            {{ form_row(form.label_type) }}
+            {{ form_row(form.use_labels) }}
 
-            <label class="control-label">Label preview</label>
-            <div id="label-preview" style="width: 300px;">Preview loading ...</div>
+            <div id="label-printing-active" style="display:{% if tenantInformation.useLabels %}block{% else %}none{% endif %}">
+                {{ form_row(form.label_type) }}
+
+                <label class="control-label">Label preview</label>
+                <div id="label-preview" style="width: 300px;">Preview loading ...</div>
+            </div>
+
+            <br>
+            <h2>Set up instructions</h2>
+                <p>
+                    Install the Dymo printer driver software for your operating system from the
+                    <a href="http://www.dymo.com/en-US/online-support/" target="_blank">Dymo website</a>.
+                </p>
+            <p>
+                Mac users should see a little blue and green 'D' icon now showing at the top of the screen,
+                indicating that the Dymo printer service has started and is running in the background.
+                The service listens for print requests from your web browser and sends them to the printer.
+            </p>
+
+            <p>
+                Revisit this page and you should see a green message indicating that Lend Engine has managed to
+                communicate with the printer service.
+            </p>
+
 
             {#<h2>Custom Dymo label template</h2>#}
 
@@ -81,6 +103,7 @@
 
 {% block javascripts %}
     <script>
+        {% if tenantInformation.useLabels %}
         $(document).ready(function() {
 
             var printButton = $('#printButton');
@@ -92,7 +115,7 @@
             function getPrintersFromFramework() {
                 printers = f.getPrinters();
                 if (printers.length == 0) {
-                    $("#no-printer-warning").show();
+                    $("#no-printer-warning").fadeIn();
                     return false;
                 }
                 for (var i = 0; i < printers.length; i++) {
@@ -104,7 +127,7 @@
                     isConnected = 'and connected OK.';
                 }
                 $("#printer-connected").html(isConnected);
-                $("#printer-found").show();
+                $("#printer-found").fadeIn();
                 return true;
             }
 
@@ -129,6 +152,6 @@
             }
 
         });
-
+        {% endif %}
     </script>
 {% endblock %}

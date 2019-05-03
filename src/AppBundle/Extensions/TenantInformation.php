@@ -429,6 +429,11 @@ class TenantInformation
 
     /** OTHER */
 
+    public function getUseLabels()
+    {
+        return (bool)$this->settings->getSettingValue('use_labels');
+    }
+
     public function getMailchimpApiKey()
     {
         return $this->settings->getSettingValue('mailchimp_api_key');
@@ -464,6 +469,16 @@ class TenantInformation
     public function getFeature($feature)
     {
         return $this->billingService->isEnabled($this->session->get('plan'), $feature);
+    }
+
+    /**
+     * @todo map all separate settings functions to this one, and update usages in Twig templates
+     * @param $key
+     * @return string
+     */
+    public function getSetting($key)
+    {
+        return $this->settings->getSettingValue($key);
     }
 
     public function getLoanTerms()

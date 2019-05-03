@@ -37,6 +37,7 @@ class SettingRepository extends \Doctrine\ORM\EntityRepository
             'industry',
 
             //labels
+            'use_labels',
             'label_type',
 
             // Reminders
