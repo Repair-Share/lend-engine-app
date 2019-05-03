@@ -110,6 +110,7 @@ class MenuBuilder
         $this->menu->addChild('Item categories', array('route' => 'tags_list'));
         $this->menu->addChild('Item fields', array('route' => 'product_field_list'));
         $this->menu->addChild('Item conditions', array('route' => 'itemCondition_list'));
+        $this->menu->addChild('Item barcode labels', array('route' => 'settings_labels'));
 
         $this->menu->addChild('Check in prompts', array('route' => 'checkInPrompt_list'));
         $this->menu->addChild('Check out prompts', array('route' => 'checkOutPrompt_list'));

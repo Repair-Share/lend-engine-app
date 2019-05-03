@@ -69,8 +69,7 @@ class SettingsLabelsController extends Controller
         }
 
         return $this->render('settings/settings_labels.html.twig', array(
-            'form' => $form->createView(),
-            'template' => $settingsService->getLabelTemplate()
+            'form' => $form->createView()
         ));
     }
 

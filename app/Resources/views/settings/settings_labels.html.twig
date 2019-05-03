@@ -140,6 +140,7 @@
             var label = null;
 
             var f = dymo.label.framework;
+            var labelName = "{{ tenantInformation.setting('label_type') }}";
 
             function getPrintersFromFramework() {
                 printers = f.getPrinters();
@@ -160,22 +161,19 @@
                 return true;
             }
 
-            // load label xml
-            function getLabelXml() {
-                return `{{ template|raw }}`;
-            }
-
             if (getPrintersFromFramework()) {
                 // Create a label from the template
-                label = f.openLabelXml(getLabelXml());
+                $.get("/label_templates/"+labelName+".label", function(labelXml) {
+                    label = f.openLabelXml(labelXml);
 
-                // Put a preview of the selected template into the UI
-                var renderParamsXml = f.createLabelRenderParamsXml({
-                    pngUseDisplayResolution: false,
-                    shadowDepth: 1
-                });
-                var pngData = label.render(renderParamsXml, printers[0].name);
-                $("#label-preview").html('<img class="img-responsive" src="data:image/png;base64,' + pngData + '">');
+                    // Put a preview of the selected template into the UI
+                    var renderParamsXml = f.createLabelRenderParamsXml({
+                        pngUseDisplayResolution: false,
+                        shadowDepth: 1
+                    });
+                    var pngData = label.render(renderParamsXml, printers[0].name);
+                    $("#label-preview").html('<img class="img-responsive" src="data:image/png;base64,' + pngData + '">');
+                }, "text");
             } else {
                 $("#label-preview").html("Cannot preview label without Dymo LabelWriter software running on your computer.");
             }

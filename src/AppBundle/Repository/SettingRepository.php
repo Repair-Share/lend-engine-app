@@ -153,6 +153,7 @@ class SettingRepository extends \Doctrine\ORM\EntityRepository
             'automate_email_reservation_reminder' => 1,
             'automate_email_membership' => 1,
             'org_locale' => 'en',
+            'label_type' => '11355'
         ];
         foreach ($newSettings AS $k => $v) {
             if ($settingsArray[$k] == null) {

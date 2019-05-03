@@ -548,6 +548,7 @@
             var label = null;
 
             var f = dymo.label.framework;
+            var labelName = "{{ tenantInformation.setting('label_type') }}";
 
             function getPrintersFromFramework() {
                 printers = f.getPrinters();
@@ -555,11 +556,6 @@
                     return false;
                 }
                 return true;
-            }
-
-            // load label xml
-            function getLabelXml() {
-                return `{{ labelTemplate|raw }}`;
             }
 
             $(document).on('click', '#printButton', function(){
@@ -587,7 +583,9 @@
 
             if (getPrintersFromFramework()) {
                 // Create a label from the template
-                label = f.openLabelXml(getLabelXml());
+                $.get("/label_templates/"+labelName+".label", function(labelXml) {
+                    label = f.openLabelXml(labelXml);
+                }, "text");
             }
             {% endif %}
         });

@@ -1,5 +1,9 @@
 {% trans_default_domain 'member_site' %}
 
+{% if tenantInformation.useLabels %}
+<script src="http://www.labelwriter.com/software/dls/sdk/js/DYMO.Label.Framework.3.0.js" type="text/javascript" charset="UTF-8"></script>
+{% endif %}
+
 {% if filter.sites|length > 1 %}
 <div id="item-list-filter" class="multi-site">
     {% trans %}public_misc.filter_items{% endtrans %}:
@@ -24,31 +28,45 @@
 
 <div class="clearfix"></div>
 
+<style>
+    .hover-actions {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        display:none;
+    }
+</style>
+
 {% if products|length > 0 %}
     <div class="row products" id="site-item-list">
         {% for product in products %}
             <div class="col-md-3 col-sm-6 col-xs-6">
                 <div class="product site-item-tile">
 
-                    {% if product.imageName %}
-                        <div class="img-thumbnail img-responsive">
-                            <a href="{{ absolute_url(path('public_product', {productId: product.id})) }}" {% if app.request.get('e') %}target="_blank"{% endif %}>
+                    <div class="img-thumbnail img-responsive">
+
+                        {% if is_granted("ROLE_ADMIN") %}
+                        <div class="hover-actions">
+                            <a class="btn btn-xs btn-default" href="{{ path('item', {id: product.id}) }}">Edit</a>
+                            {% if product.inventoryLocation.id > 1 %}
+                            <a class="btn btn-xs btn-default modal-link" href="{{ url('item_move', {id: product.id}) }}">Move</a>
+                            {% endif %}
+                            <button class="btn btn-xs btn-default print-button" data-sku="{{ product.sku }}" id="id-{{ product.id }}">Label</button>
+                        </div>
+                        {% endif %}
+
+                        <a href="{{ absolute_url(path('public_product', {productId: product.id})) }}" {% if app.request.get('e') %}target="_blank"{% endif %}>
+                            {% if product.imageName %}
                                 <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/large/{{ product.imageName }}" alt="" class="img-responsive image1">
-                            </a>
-                            <span class="sku-label">
-                                <label class="label bg-gray">{{ product.sku }}</label>
-                            </span>
-                        </div>
-                    {% else %}
-                        <div class="img-thumbnail img-responsive">
-                            <a href="{{ absolute_url(path('public_product', {productId: product.id})) }}" {% if app.request.get('e') %}target="_blank"{% endif %}>
+                            {% else %}
                                 <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" alt="" class="img-responsive image1">
-                            </a>
-                            <span class="sku-label">
-                                <label class="label bg-gray">{{ product.sku }}</label>
-                            </span>
-                        </div>
-                    {% endif %}
+                            {% endif %}
+                        </a>
+
+                        <span class="sku-label">
+                            <label class="label bg-gray">{{ product.sku }}</label>
+                        </span>
+                    </div>
 
                     <div class="text" style="min-height: 120px">
 
@@ -158,3 +176,62 @@
     </p>
 {% endif %}
 
+<script>
+    $(".site-item-tile").hover(function() {
+        $(this).find(".hover-actions").show();
+    }, function() {
+        $(this).find(".hover-actions").hide();
+    });
+
+    {% if tenantInformation.useLabels %}
+    $(document).ready(function() {
+
+        var printButton = $('#printButton');
+        var printers = [];
+        var label = null;
+
+        var f = dymo.label.framework;
+        var labelName = "{{ tenantInformation.setting('label_type') }}";
+
+        function getPrintersFromFramework() {
+            printers = f.getPrinters();
+            if (printers.length == 0) {
+                return false;
+            }
+            return true;
+        }
+
+        if (getPrintersFromFramework()) {
+            // Create a label from the template
+            $.get("/label_templates/"+labelName+".label", function(labelXml) {
+                label = f.openLabelXml(labelXml);
+            }, "text");
+        }
+
+        $("#site-item-list").on('click', '.print-button', function(){
+            var productId = $(this).attr('id').replace("id-", "");
+            var productSku = $(this).attr('data-sku');
+            console.log("printing label for product ... "+productId+"/"+productSku);
+            try {
+                var printer = printers[0];
+                if (!printer) {
+                    throw new Error("Select printer");
+                }
+                if (!label) {
+                    throw new Error("Label is not loaded. Wait until is loaded or reload the page");
+                }
+                // set data
+                var labelSet = new f.LabelSetBuilder();
+                labelSet.addRecord()
+                        .setText("ORG_NAME", "{{ tenantInformation.companyName }}")
+                        .setText("BARCODE", productId)
+                        .setText("SKU", "Item code:\n"+productSku);
+                // print
+                label.print(printer.name, null, labelSet.toString());
+            } catch(e) {
+                alert(e.message || e);
+            }
+        });
+    });
+    {% endif %}
+</script>
