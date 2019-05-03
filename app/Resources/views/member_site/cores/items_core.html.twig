@@ -51,7 +51,9 @@
                             {% if product.inventoryLocation.id > 1 %}
                             <a class="btn btn-xs btn-default modal-link" href="{{ url('item_move', {id: product.id}) }}">Move</a>
                             {% endif %}
+                            {% if tenantInformation.feature('Labels') and tenantInformation.useLabels %}
                             <button class="btn btn-xs btn-default print-button" data-sku="{{ product.sku }}" id="id-{{ product.id }}">Label</button>
+                            {% endif %}
                         </div>
                         {% endif %}
 
