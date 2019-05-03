@@ -130,7 +130,8 @@ class ItemCopyController extends Controller
     {
         $filesystem = $this->container->get('oneup_flysystem.product_image_fs_filesystem');
         $schema = $this->get('tenant_information')->getSchema();
-        $newImageName = 'a'.$imageName;
+
+        $newImageName = preg_replace('/.+\.(.+)/', uniqid().".$1", $imageName);
 
         // Copy the thumbnail
         $originalPath = $schema.'/thumbs/'.$imageName;
