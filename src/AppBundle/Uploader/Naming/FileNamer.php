@@ -23,7 +23,7 @@ class FileNamer implements NamerInterface
      */
     public function name(FileInterface $file)
     {
-        $directory = $this->session->get('account_code');
+        $directory = $this->session->get('account_schema');
         return $directory.'/files/'.uniqid().'-'.$file->getClientOriginalName();
     }
 }

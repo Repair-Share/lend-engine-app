@@ -21,9 +21,9 @@ class FileAttachmentController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $accountCode   = $this->container->get('tenant_information')->getAccountCode();
+        $schema    = $this->get('tenant_information')->getSchema();
 
-        /** @var \AppBundle\Entity\FileAttachmentRepository $repo */
+        /** @var \AppBundle\Repository\FileAttachmentRepository $repo */
         $repo = $em->getRepository('AppBundle:FileAttachment');
         $file = $repo->find($fileId);
 
@@ -37,7 +37,7 @@ class FileAttachmentController extends Controller
         try {
             // Remove the file from S3
             $filesystem = $this->container->get('oneup_flysystem.product_image_fs_filesystem');
-            $filePath = $accountCode.'/files/'.$file->getFileName();
+            $filePath = $schema.'/files/'.$file->getFileName();
             $filesystem->delete($filePath);
         } catch (\Exception $e) {
 
@@ -58,7 +58,7 @@ class FileAttachmentController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        /** @var \AppBundle\Entity\FileAttachmentRepository $repo */
+        /** @var \AppBundle\Repository\FileAttachmentRepository $repo */
         $repo = $em->getRepository('AppBundle:FileAttachment');
 
         /** @var \AppBundle\Entity\FileAttachment $file */

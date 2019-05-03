@@ -23,7 +23,7 @@ class SiteImageNamer implements NamerInterface
      */
     public function name(FileInterface $file)
     {
-        $directory = $this->session->get('account_code');
+        $directory = $this->session->get('account_schema');
         return $directory.'/site_images/'.uniqid().'-'.$file->getClientOriginalName();
     }
 }

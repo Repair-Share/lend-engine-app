@@ -25,6 +25,7 @@ class ImageNamer implements NamerInterface
     {
         // Client side re-sizing now always produces a JPG
         $imageName = sprintf('%s.%s', uniqid(), 'jpg');
-        return $this->session->get('account_code').'/'.$imageName;
+        $directory = $this->session->get('account_schema');
+        return $directory.'/'.$imageName;
     }
 }

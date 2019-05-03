@@ -31,9 +31,6 @@ class ItemController extends Controller
         /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
         $itemRepo = $this->getDoctrine()->getRepository('AppBundle:InventoryItem');
 
-        /** @var \AppBundle\Repository\ItemTypeRepository $itemTypeRepo */
-        $itemTypeRepo = $this->getDoctrine()->getRepository('AppBundle:ItemType');
-
         $em = $this->getDoctrine()->getManager();
 
         $user = $this->getUser();
