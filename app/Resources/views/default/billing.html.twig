@@ -70,12 +70,14 @@
                     }
 
                     .plan-content .price {
-                        font-size: 20px;
+                        font-size: 26px;
                         padding-bottom: 15px;
+                        font-weight: bolder;
                     }
 
                     .plan-content .price span {
                         font-size: 13px;
+                        font-weight: normal;
                     }
                 </style>
 
@@ -112,7 +114,7 @@
 
                                     {% elseif plan.code == 'standard' %}
 
-                                        <div class="price">£5.00 <span>GBP per month*</span></div>
+                                        <div class="price">£5<span> GBP per month*</span></div>
                                         <ul>
                                             <li>As free plan plus:</li>
                                             <li><i class="fa fa-check"></i> Unlimited items</li>
@@ -128,7 +130,6 @@
                                             <li><i class="fa fa-check"></i> Attach files to contacts</li>
                                             <li><i class="fa fa-check"></i> Customise member emails</li>
                                             <li><i class="fa fa-check"></i> Private member site (login required)</li>
-                                            <li><i class="fa fa-check"></i> Custom web pages and menu links</li>
                                         </ul>
 
                                     {% else %}
@@ -136,8 +137,11 @@
                                         <div class="price">£20 <span>GBP per month*</span></div>
                                         <ul>
                                             <li>As standard plan plus:</li>
-                                            <li><i class="fa fa-check"></i> Multiple sites</li>
+                                            <li><i class="fa fa-check"></i> Multiple physical sites</li>
                                             <li><i class="fa fa-check"></i> Custom domain / URL</li>
+                                            <li><i class="fa fa-check"></i> Custom web pages and menu links</li>
+                                            <li><i class="fa fa-check"></i> Custom website themes</li>
+                                            <li><i class="fa fa-check"></i> Barcode label printing</li>
                                             <li><i class="fa fa-check"></i> SSL security</li>
                                         </ul>
 
