@@ -11,7 +11,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-
 /**
  * @ORM\Entity
  * @ORM\Table(name="contact", options={"collate"="utf8mb4_unicode_ci", "charset"="utf8mb4"})

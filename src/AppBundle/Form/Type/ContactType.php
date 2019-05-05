@@ -281,7 +281,8 @@ class ContactType extends AbstractType
             'customFields' => null,
             'customFieldValues' => null,
             'authorizationChecker' => null,
-            'showSubscriberField' => null
+            'showSubscriberField' => null,
+            'validation_groups' => ['AppBundleRegistration']
         ));
     }
 }
