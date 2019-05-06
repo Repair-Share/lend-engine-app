@@ -109,6 +109,8 @@ services:
     helper.loan_status_label:
         class: AppBundle\Helpers\LoanStatusLabel
 
+    #IMAGE UPLOADING
+
     uploader.image_namer:
         class: AppBundle\Uploader\Naming\ImageNamer
         arguments:
@@ -133,6 +135,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
 
+    # FOS USER
     fos_user.registration_complete:
         class: AppBundle\EventListener\RegistrationConfirmListener
         arguments:
@@ -277,7 +280,10 @@ services:
 
     app.menu_builder:
         class: AppBundle\Menu\MenuBuilder
-        arguments: ["@knp_menu.factory", "@service_container"]
+        arguments:
+            - "@knp_menu.factory"
+            - "@service_container"
+            - "@security.token_storage"
         tags:
             - { name: knp_menu.menu_builder, method: itemsMenu, alias: itemsMenu }
             - { name: knp_menu.menu_builder, method: itemsMenuStacked, alias: itemsMenuStacked }

@@ -15,16 +15,19 @@ class MenuBuilder
 
     private $container;
 
+    private $tokenStorage;
+
     /**
      * @param FactoryInterface $factory
      * @param Container $container
      *
      * Add any other dependency you need
      */
-    public function __construct(FactoryInterface $factory, Container $container)
+    public function __construct(FactoryInterface $factory, Container $container, $tokenStorage)
     {
         $this->factory   = $factory;
         $this->container = $container;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -32,6 +35,8 @@ class MenuBuilder
      */
     public function adminMenu()
     {
+        /** @var \AppBundle\Entity\Contact $user */
+        $user = $this->tokenStorage->getToken()->getUser();
 
         $this->menu = $this->factory->createItem('root', array(
             'childrenAttributes' => array(
@@ -50,7 +55,9 @@ class MenuBuilder
         $this->addChildItem('Loans', 'Reservations', 'loan_list', '', '', ['status' => Loan::STATUS_RESERVED]);
 
         $this->addMenuItem('Items', 'null', 'fa-cubes');
-        $this->addChildItem('Items', 'Browse items', 'item_list', '');
+        $this->addChildItem('Items', 'Browse items', 'item_list', '', '', []);
+
+        $this->addChildItem('Items', 'Assigned to me', 'item_list', '', '', ['filterAssignedTo' => $user->getId()]);
 
         if ( $this->container->get('security.authorization_checker')->isGranted("ROLE_SUPER_USER") ) {
             $this->addChildItem('Items', 'Bulk update <sup>beta</sup>', 'import_items', '');
