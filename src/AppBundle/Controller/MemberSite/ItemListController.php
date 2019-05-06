@@ -66,6 +66,10 @@ class ItemListController extends Controller
             $filter['search'] = $searchString;
         }
 
+        if ($barcode = $request->get('barcode')) {
+            $filter['barcode'] = $barcode;
+        }
+
         if ($tagId = $request->get('tagId')) {
             $filter['tagIds'] = [ $tagId ];
         }
@@ -106,7 +110,7 @@ class ItemListController extends Controller
         $totalRecords = $searchResults['totalResults'];
 
         // Go straight to item if we're scanning a barcode or there's only one result
-        if ($totalRecords == 1) {
+        if ($totalRecords == 1 && is_numeric($searchString)) {
             $item = $products[0];
             return $this->redirectToRoute('public_product', ['productId' => $item->getId()]);
         }

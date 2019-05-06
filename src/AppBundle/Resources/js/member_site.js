@@ -73,7 +73,7 @@ $(document).keypress(function(e){
             }
         } else {
             console.log("Found barcode for search, let's go! "+barcode);
-            document.location.href = '/products?search='+barcode;
+            document.location.href = '/products?barcode='+barcode;
         }
     }
     barcode = barcode + e.key;
