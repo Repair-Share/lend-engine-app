@@ -149,7 +149,8 @@
                 $(".t_end").show();
             });
 
-            page.on('click', '#buttonToday', function () {
+            $("#borrowModal").on('click', '#buttonToday', function () {
+                console.log("Setting reservation from today");
                 setPickup(currentPickupTime, null, currentPickupSiteId, currentPickupSiteName);
                 $("#buttonNDays").show();
             });
@@ -300,6 +301,8 @@
                 $(".return-day").remove();
                 var text_return_day = 'Return';
                 returnCell.html('<div class="label label-xs label-default return-day">'+text_return_day+'</div>');
+
+                $("#chooseReturn").html("Change return time").removeClass("btn-success").addClass("btn-default");
 
                 $("#borrowModalConfirm").show();
             }
@@ -573,13 +576,13 @@
             // Add reservations feed and populate array for booking validator
             addReservationsToCal();
 
+            // EXTENDING A LOAN
             {% if app.request.get('extend') %}
             loadSiteOpeningTimes();
             var pickupCell = $(".fc-bg").find("[data-date='{{ app.request.get("from")|slice(0,10) }}']");
             pickupCell.css('backgroundColor', '#d9edf7');
             pickupCell.html('<div style="padding: 5px; font-size: 10px;">Due back</div>');
             {% endif %}
-
         });
     </script>
 {% endblock %}

@@ -206,6 +206,7 @@
             {{ product.description|raw|nl2br }}
         </p>
 
+        {#CUSTOM FIELDS#}
         {% if product.textFieldValues|length > 0 and tenantInformation.feature('ProductField') %}
             <table width="100%" cellpadding="10" cellspacing="0">
                 {% for field in product.textFieldValues %}
@@ -217,8 +218,10 @@
                     {% endif %}
                 {% endfor %}
             </table>
+            <br>
         {% endif %}
 
+        {#FILE ATTACHMENTS#}
         {% if product.fileAttachments|length > 0 and tenantInformation.feature('ItemAttachment') %}
             <div class="file-attachments">
                 <div style="font-weight: bold">{% trans %}public_item.downloads{% endtrans %}</div>
@@ -247,8 +250,8 @@
                 {#Item is reservable, or we are admin#}
                 {% if user.activeMembership is defined and user.activeMembership %}
 
-                    {% if app.request.get('modal') == 'true' %}
-                        {#Button in footer#}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="#" class="btn btn-success button-borrow" id="button-borrow">Lend / Reserve</a>
                     {% else %}
                         <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>
                     {% endif %}

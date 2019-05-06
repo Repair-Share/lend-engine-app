@@ -115,12 +115,18 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a> <br>
+                    <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a> <br>
 
-                    {#<i class="fa fa-clock-o"></i> #}
+                    <i class="far fa-clock"></i>
                     {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
 
-                    <br>( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
+                    ( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
+
+                    {% if row.isCheckedOut or (loan.status == 'PENDING' or loan.status == 'RESERVED') %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id, from: row.dueInAt|date("Y-m-d H:i:s") }) }}" class="">Change return date</a>
+                        {% endif %}
+                    {% endif %}
 
                     {#OVERDUE WARNING#}
                     {#{% if row.dueInAt|date("Y-m-d") < "now"|date("Y-m-d") and row.isReturned != true %}#}
@@ -129,7 +135,7 @@
 
                     <br>
                     <div class="multi-site">
-                        {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
+                        <i class="far fa-hospital"></i> {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
                     </div>
 
                     {#CHANGE RETURN DATE#}
@@ -138,12 +144,6 @@
                         <div style="color: #419f43;">
                             <i class="fa fa-check"></i> Checked in: {{ row.checkedInAt|date }}
                         </div>
-                    {% elseif row.isCheckedOut or (loan.status == 'PENDING' or loan.status == 'RESERVED') %}
-                        {% if is_granted('ROLE_ADMIN') %}
-                        <div>
-                            <a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id, from: row.dueInAt|date("Y-m-d H:i:s") }) }}" class="">Change return date</a>
-                        </div>
-                        {% endif %}
                     {% endif %}
 
                     {#CHECK IN #}
@@ -270,6 +270,8 @@
                 <span class="basketBalanceAmount" id="basketBalanceAmount">{{ loan.balance|number_format(2) }}</span>
             </td>
         </tr>
+        {% else %}
+            <span class="basketBalanceAmount" style="display:none" id="basketBalanceAmount">{{ loan.balance|number_format(2) }}</span>
         {% endif %}
 
         {% if loan.contact.balance > 0 and loan.status in ['RESERVED', 'PENDING'] %}
@@ -458,6 +460,7 @@
             var form = $("#form-loan");
 
             form.on('keyup', '.deposit-amount', function() {
+                // We don't want the save button here as deposit amount is not stored on loan row so we can't save
                 calculateLoanTotal(false);
             });
 
@@ -499,19 +502,21 @@
             var subTotal      = 0.00;
             var toPay         = 0.00;
             var contactBalance = $("#contactBalanceAmount").html() * 1;
+            var dueToCharge   = $("#basketBalanceAmount").html() * 1;
 
             $(".row-calc").each(function() {
                 basketTotal += $(this).val() * 1;
             });
 
             console.log('basketTotal : '+basketTotal);
+            console.log('dueToCharge : '+dueToCharge);
 
             if (contactBalance < 0) {
                 contactBalance = 0;
             }
-            subTotal = basketTotal - contactBalance;
+            subTotal = dueToCharge - contactBalance;
 
-            console.log('-contactBalance = subTotal : '+subTotal);
+            console.log('dueToCharge - contactBalance = subTotal : '+subTotal);
 
             if (subTotal < 0) {
                 subTotal = 0.00;
@@ -528,10 +533,9 @@
             console.log('toPay = depositsTotal + subTotal : '+toPay);
 
             if (toPay > 0) {
-                $(".row-paid").each(function() {
-                    console.log('paid row : '+$(this).val() * 1);
-                    toPay -= $(this).val() * 1;
-                });
+//                $(".row-paid").each(function() {
+//                    toPay -= $(this).val() * 1;
+//                });
             }
 
             if (toPay < 0) {
@@ -546,6 +550,8 @@
 
             if (toPay == 0) {
                 $(".payment-details").hide();
+            } else {
+                $(".payment-details").show();
             }
 
             if (hideButton == true) {

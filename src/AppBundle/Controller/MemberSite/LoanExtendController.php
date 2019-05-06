@@ -79,10 +79,12 @@ class LoanExtendController extends Controller
         $timeZone = new \DateTimeZone($tz);
         $utc = new \DateTime('now', new \DateTimeZone("UTC"));
         $offSet = -$timeZone->getOffset($utc)/3600;
-        $newDueDate->modify("{$offSet} hours");
 
-        // Add a note
-        $noteText = 'Extended <strong>'.$loanRow->getInventoryItem()->getName().'</strong> '.$days.' '.$dayWord.' from '.$loanRow->getDueInAt()->format("d F").' to '.$newDueDate->format("d F");
+        // Add a note (with local time, not UTC)
+        $newDueDateLocalFormat = $newDueDate->format("d F g:i a");
+        $noteText = 'Extended <strong>'.$loanRow->getInventoryItem()->getName().'</strong> '.$days.' '.$dayWord.' to '.$newDueDateLocalFormat;
+
+        $newDueDate->modify("{$offSet} hours");
 
         // Save
         $loanRow->setDueInAt($newDueDate);
@@ -110,7 +112,7 @@ class LoanExtendController extends Controller
             $payment->setAmount(-$extensionFee);
             $payment->setContact($contact);
             $payment->setLoan($loan);
-            $payment->setNote("Extend ".$inventoryItem->getName()." {$days} {$dayWord} to ".$newDueDate->format("d F").".");
+            $payment->setNote("Extend ".$inventoryItem->getName()." {$days} {$dayWord} to ".$newDueDateLocalFormat.".");
             $payment->setCreatedBy($user);
             $em->persist($payment);
             $noteText .= " (extension fee ".number_format($extensionFee, 2).")";

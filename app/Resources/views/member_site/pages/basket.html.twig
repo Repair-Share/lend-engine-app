@@ -34,8 +34,8 @@
 
         {% if tenantInformation.basket.loanRows|length > 0 %}
             <div style="padding: 10px">
-                <i class="fa fa-clock-o" style="font-size: 18px; color: #5cb85c"></i>
-                {% trans %}public_basket.pickup_after{% endtrans %} <strong>{{ tenantInformation.basket.loanRows|first.dueOutAt|date("d F g:i a") }}</strong>
+                <i class="fa fa-clock" style="color: #5cb85c"></i>
+                {% trans %}public_basket.pickup_after{% endtrans %} <strong>{{ tenantInformation.basket.loanRows|first.dueOutAt|date("l j F g:i a") }}</strong>
                 <span class="multi-site">
                     {% trans %}public_basket.from{% endtrans %} <strong>{{ tenantInformation.basket.loanRows|first.siteFrom.name }}</strong>
                 </span>
@@ -64,12 +64,17 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a> <br>
-                        <i class="fa fa-clock-o"></i> {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
+                        <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a> <br>
+                        <i class="far fa-clock"></i> {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("l j F g:i a") }}</strong>
                         ({{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %})
+
+                        {#CHANGE RETURN DATE#}
+                        {# @todo update the basket, this will allow easier changes after one-click lending #}
+                        {#<a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id, from: row.dueInAt|date("Y-m-d H:i:s") }) }}" class="">Change return date</a>#}
+
                         <br>
                         <div class="multi-site">
-                            <i class="fa fa-hospital-o"></i> {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
+                            <i class="far fa-hospital"></i> {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
                         </div>
 
                         {% if row.inventoryItem.depositAmount > 0 %}
