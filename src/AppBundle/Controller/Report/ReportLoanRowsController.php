@@ -9,7 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ReportLoanedItemsController extends Controller
+class ReportLoanRowsController extends Controller
 {
 
     protected $dateFrom;
@@ -25,12 +25,14 @@ class ReportLoanedItemsController extends Controller
         $statusArray[] = array('id' => Loan::STATUS_ACTIVE, 'name' => 'Active');
         $statusArray[] = array('id' => Loan::STATUS_OVERDUE, 'name' => 'Overdue');
         $statusArray[] = array('id' => Loan::STATUS_CLOSED, 'name' => 'Closed');
+        $statusArray[] = array('id' => Loan::STATUS_CANCELLED, 'name' => 'Cancelled');
+        $statusArray[] = array('id' => Loan::STATUS_RESERVED, 'name' => 'Reserved');
 
         $this->loanStatuses = $statusArray;
     }
 
     /**
-     * @Route("admin/report/report_items", name="report_items")
+     * @Route("admin/report/all_items", name="report_all_items")
      */
     public function ItemsReport(Request $request)
     {
@@ -47,19 +49,26 @@ class ReportLoanedItemsController extends Controller
         $tableRows = array();
 
         $tableHeader = array(
-            'Name',
-            'Total times loaned',
-            'Total fees'
+            'Loan',
+            'Status',
+            'Item',
+            'Code',
+            'Serial',
+            'Member',
+            'Email',
+            'Checked out',
+            'Checked in',
+            'Fee',
+            'Deposit',
         );
 
         /** @var \AppBundle\Services\Report\ReportLoanedItems $report */
-        $report = $this->get('report.items');
+        $report = $this->get('report.all_items');
         $this->setDateRange($request);
 
         // Set up filters
         $filter = array(
             'search'    => $request->get('search'),
-            'group_by'  => $request->get('group_by'),
             'tagIds'    => $request->get('tag_ids'),
             'statuses'  => $request->get('statuses'),
             'date_from' => $this->dateFrom,
@@ -70,31 +79,47 @@ class ReportLoanedItemsController extends Controller
 
         $n = 0;
         foreach ($data AS $reportRow) {
-
-            if (!$reportRow['group_name']) {
-                $reportRow['group_name'] = '- not set -';
+            /** @var $reportRow \AppBundle\Entity\loanRow */
+            
+            if ($reportRow->getCheckedOutAt()) {
+                $checkedOutAt = $reportRow->getCheckedOutAt()->format("d M Y g:i a");
             } else {
-                if (isset($reportRow['field_type']) && $reportRow['field_type'] == 'choice') {
-                    $option = $fieldSelectOptionRepo->find($reportRow['group_name']);
-                    $reportRow['group_name'] = $option->getOptionName();
-                } else if (isset($reportRow['field_type']) && $reportRow['field_type'] == 'checkbox') {
-                    $reportRow['group_name'] = $this->valueToYesNo($reportRow['group_name']);
-                }
+                $checkedOutAt = '';
             }
 
+            if ($reportRow->getCheckedInAt()) {
+                $checkedInAt = $reportRow->getCheckedInAt()->format("d M Y g:i a");
+            } else {
+                $checkedInAt = '';
+            }
+
+            if ($reportRow->getDeposit()) {
+                $depositAmount = $reportRow->getDeposit()->getAmount();
+            } else {
+                $depositAmount = '';
+            }
+            
             $tableRows[] = array(
                 'id' => $n,
                 'data' => array(
-                    $reportRow['group_name'],
-                    $reportRow['qty'],
-                    $reportRow['fees']
+                    $reportRow->getLoan()->getId(),
+                    $reportRow->getLoan()->getStatus(),
+                    $reportRow->getInventoryItem()->getName(),
+                    $reportRow->getInventoryItem()->getSku(),
+                    $reportRow->getInventoryItem()->getSerial(),
+                    $reportRow->getLoan()->getContact()->getName(),
+                    $reportRow->getLoan()->getContact()->getEmail(),
+                    $checkedOutAt,
+                    $checkedInAt,
+                    $reportRow->getFee(),
+                    $depositAmount,
                 )
             );
             $n++;
         }
 
-        return $this->render('report/report_items.html.twig', array(
-            'pageTitle' => 'Loans by item',
+        return $this->render('report/report_loan_rows.html.twig', array(
+            'pageTitle' => 'Loan item detail report',
             'tableHeader' => $tableHeader,
             'tableRows' => $tableRows,
             'tags' => $tags,

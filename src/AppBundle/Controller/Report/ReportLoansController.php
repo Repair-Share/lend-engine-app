@@ -92,7 +92,7 @@ class ReportLoansController extends Controller
         }
 
         return $this->render('report/report_loans.html.twig', array(
-            'pageTitle' => 'Loans report',
+            'pageTitle' => 'Loans by item or member',
             'tableHeader' => $tableHeader,
             'tableRows' => $tableRows,
             'customFields' => $customFields,

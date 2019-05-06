@@ -204,18 +204,13 @@ $(document).ready(function(){
     });
 
     // Set up site search report
-    var siteSearch = $('#sitesearch-report-table').DataTable({
+    var siteSearch = $('#report-loanrows-table').DataTable({
         dom: 'lfBrtip',
         ordering: true,
         autoWidth: false,
         "bLengthChange": false,
         "bPaginate": false,
-        "columns": [
-            null,
-            null,
-            null
-        ],
-        "order": [[ 1, "desc" ]],
+        "order": [[ 0, "desc" ]],
         buttons: [
             {
                 extend: 'csv',

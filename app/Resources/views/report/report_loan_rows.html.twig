@@ -10,45 +10,35 @@
     <div class="row">
         <div class="col-md-12">
             <div class="page-help">
-                This report shows you all items loaned between two dates, grouped by item name, or one of your item custom fields.
-                To change the grouping, select from 'report by' in the filters.
+                This report shows all loan rows on all loans of all statuses. Use the filters to limit the report data,
+                and then use the search box on the right at the top of the report to find rows within the data set.
             </div>
         </div>
     </div>
-
     <div class="row">
         <div id="report-filter">
             <form method="GET">
                 <div class="col-md-11">
                     <div class="row">
-                        <div class="col-md-4 form-group">
-                            <label for="group_by">Report by</label>
-                            <select id="group_by" name="group_by" class="form-control">
-                                <option value="product" {% if app.request.get('group_by') == 'product' %}SELECTED{% endif %}>Item</option>
-                                {% for field in productFields %}
-                                    <option value="customField{{ field.id }}" {% if app.request.get('group_by') == "customField#{field.id}" %}SELECTED{% endif %}>{{ field.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-3 form-group">
                             <label>Date range</label>
                             <input type="text" id="date_picker" class="form-control report-date-picker">
                             <input type="hidden" name="date_from" id="date_from" value="{{ date_from }}">
                             <input type="hidden" name="date_to" id="date_to" value="{{ date_to }}">
                         </div>
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-3 form-group">
                             <label>Filter by item name, code</label>
                             <input type="text" name="search" class="form-control" value="{{ app.request.get('search') }}" placeholder="Item name or code">
                         </div>
-                        <div class="col-md-4 form-group">
-                            <label for="tag_ids">Filter by tag</label>
+                        <div class="col-md-3 form-group">
+                            <label for="tag_ids">Filter by category</label>
                             <select id="tag_ids" name="tag_ids[]" class="form-control" multiple="multiple">
                                 {% for tag in tags %}
                                     <option {% if tag.id in app.request.get('tag_ids') %}SELECTED{% endif %} value="{{ tag.id }}">{{ tag.name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-3 form-group">
                             <label for="statuses">Filter by loan status</label>
                             <select id="statuses" name="statuses[]" class="form-control" multiple="multiple">
                                 {% for status in statuses %}
@@ -68,9 +58,8 @@
     </div>
 
     <div class="row">
-
         <div class="col-sm-12 table-responsive">
-            <table cellspacing="0" class="table table-hover table-striped" id="report-items-table">
+            <table cellspacing="0" class="table table-hover table-striped" id="report-loanrows-table">
                 <thead>
                 {% for column in tableHeader %}
                     <th>{{ column }}</th>

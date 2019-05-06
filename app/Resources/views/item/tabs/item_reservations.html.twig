@@ -7,6 +7,7 @@
         <thead>
         <tr>
             <th>ID</th>
+            <th>Status</th>
             <th>Member</th>
             <th>From</th>
             <th>To</th>
@@ -14,13 +15,15 @@
         </tr>
         </thead>
         {% for reservation in reservations %}
-            <tr>
-                <td><a href="{{ path('public_loan', {loanId: reservation.loan.id}) }}">{{ reservation.loan.id }}</a></td>
-                <td>{{ reservation.loan.contact.name }}</td>
-                <td>{{ reservation.dueOutAt|date("d M Y H:i") }}</td>
-                <td>{{ reservation.dueInAt|date("d M Y H:i") }}</td>
-                <td><a href="{{ path('public_loan', {loanId: reservation.loan.id}) }}">View</a></td>
-            </tr>
+            {% set loan = reservation.loan %}
+                <tr>
+                    <td><a href="{{ path('public_loan', {loanId: reservation.loan.id}) }}">{{ reservation.loan.id }}</a></td>
+                    <td>{% include('partials/loan_status_label.html.twig') %}</td>
+                    <td>{{ reservation.loan.contact.name }}</td>
+                    <td>{{ reservation.dueOutAt|date("d M Y H:i") }}</td>
+                    <td>{{ reservation.dueInAt|date("d M Y H:i") }}</td>
+                    <td><a href="{{ path('public_loan', {loanId: reservation.loan.id}) }}">View</a></td>
+                </tr>
         {% endfor %}
     </table>
 {% else %}

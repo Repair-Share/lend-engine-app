@@ -71,8 +71,9 @@ class MenuBuilder
         $this->addMenuItem('Contacts / Members', 'contact_list', 'fa-group');
 
         $this->addMenuItem('Reports', 'null', 'fa-signal');
-        $this->addChildItem('Reports', 'Loans', 'report_loans', '');
-        $this->addChildItem('Reports', 'Loaned items', 'report_items', '');
+        $this->addChildItem('Reports', 'Loans by status/member', 'report_loans', '');
+        $this->addChildItem('Reports', 'Loans by item', 'report_items', '');
+        $this->addChildItem('Reports', 'Loan item detail', 'report_all_items', '');
         $this->addChildItem('Reports', 'Non-loaned items', 'non_loaned_items', '');
         $this->addChildItem('Reports', 'Payments', 'report_payments', '');
         $this->addChildItem('Reports', 'Item costs', 'report_costs', '');

@@ -241,6 +241,11 @@ services:
         arguments:
             - "@doctrine.orm.entity_manager"
 
+    report.all_items:
+        class: AppBundle\Services\Report\ReportLoanRows
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
     report.non-loaned-items:
         class: AppBundle\Services\Report\ReportNonLoanedItems
         arguments:
