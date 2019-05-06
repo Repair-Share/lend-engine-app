@@ -5,22 +5,32 @@
             <th>ID</th>
             <th>Status</th>
             <th>Reference</th>
+            <th>Item</th>
             <th>Fee</th>
             <th>Check out</th>
-            <th>Check in</th>
+            <th>Checked in</th>
             <th></th>
         </tr>
         </thead>
         {% for loan in contact.loans %}
-            <tr>
-                <td><a href="{{ path('public_loan', {loanId: loan.id}) }}">{{ loan.id }}</a></td>
-                <td>{{ loan.status }}</td>
-                <td>{{ loan.reference }}</td>
-                <td>{{ loan.totalFee|number_format(2) }}</td>
-                <td>{{ loan.timeOut|date("d M Y") }}</td>
-                <td>{{ loan.timeIn|date("d M Y") }}</td>
-                <td><a href="{{ path('public_loan', {loanId: loan.id}) }}">View</a></td>
-            </tr>
+            {% for row in loan.loanRows %}
+                <tr>
+                    <td><a href="{{ path('public_loan', {loanId: loan.id}) }}">{{ loan.id }}</a></td>
+                    <td>
+                        {% include('partials/loan_status_label.html.twig') %}
+                    </td>
+                    <td>{{ loan.reference }}</td>
+                    <td>{{ row.inventoryItem.name }}</td>
+                    <td>{{ loan.totalFee|number_format(2) }}</td>
+                    <td>{{ row.dueOutAt|date("d M Y g:i a") }}</td>
+                    <td>
+                        {% if row.checkedInAt %}
+                        {{ row.checkedInAt|date("d M Y g:i a") }}
+                        {% endif %}
+                    </td>
+                    <td><a href="{{ path('public_loan', {loanId: loan.id}) }}">View</a></td>
+                </tr>
+            {% endfor %}
         {% endfor %}
     </table>
 {% else %}
