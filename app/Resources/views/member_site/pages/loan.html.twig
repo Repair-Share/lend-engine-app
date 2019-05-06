@@ -504,10 +504,14 @@
                 basketTotal += $(this).val() * 1;
             });
 
+            console.log('basketTotal : '+basketTotal);
+
             if (contactBalance < 0) {
                 contactBalance = 0;
             }
             subTotal = basketTotal - contactBalance;
+
+            console.log('-contactBalance = subTotal : '+subTotal);
 
             if (subTotal < 0) {
                 subTotal = 0.00;
@@ -517,12 +521,21 @@
                 depositsTotal += $(this).val() * 1;
             });
 
+            console.log('depositsTotal : '+depositsTotal);
+
             toPay = depositsTotal + subTotal;
+
+            console.log('toPay = depositsTotal + subTotal : '+toPay);
 
             if (toPay > 0) {
                 $(".row-paid").each(function() {
+                    console.log('paid row : '+$(this).val() * 1);
                     toPay -= $(this).val() * 1;
                 });
+            }
+
+            if (toPay < 0) {
+                toPay = 0;
             }
 
             $("#basketTotalAmount").html(basketTotal.toFixed(2));
