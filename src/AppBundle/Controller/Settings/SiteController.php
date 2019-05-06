@@ -67,8 +67,6 @@ class SiteController extends Controller
 
             $url = $this->generateUrl('opening_time_exception_list', ['siteId' => $i->getId()]);
 
-
-
             if (!$openingHours) {
                 $openingHours = '<div>Edit site to add regular opening hours each week.</div>';
             }
@@ -162,6 +160,17 @@ EOT;
             $inventoryLocation->setIsActive(true);
             $inventoryLocation->setIsAvailable(true);
             $inventoryLocation->setSite($site);
+
+            if (!$site->getCountry()) {
+                $site->setCountry($settingsService->getSettingValue('org_country'));
+            }
+
+            $opening = new SiteOpening();
+            $opening->setSite($site);
+            $opening->setTimeFrom('0900');
+            $opening->setTimeTo('1700');
+            $opening->setWeekDay(1);
+            $site->addSiteOpening($opening);
 
             // Assign it to the site
             $site->setDefaultCheckInLocation($inventoryLocation);

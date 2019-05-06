@@ -110,7 +110,7 @@ class Site
      */
     public function __construct()
     {
-
+        $this->siteOpenings = new ArrayCollection();
     }
 
     /**
