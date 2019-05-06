@@ -69,12 +69,19 @@ class InventoryService
         }
 
         if (isset($filter['search']) && $filter['search']) {
-            $builder->andWhere('item.name LIKE :string
+            if (is_numeric($filter['search'])) {
+                $builder->andWhere('item.sku = :number
+                        OR item.serial = :number
+                        OR item.id = :number');
+                $builder->setParameter('number', trim($filter['search']));
+            } else {
+                $builder->andWhere('item.name LIKE :string
                         OR item.sku LIKE :string
                         OR item.serial LIKE :string
                         OR item.brand LIKE :string
                         OR item.keywords LIKE :string');
-            $builder->setParameter('string', '%'.trim($filter['search']).'%');
+                $builder->setParameter('string', '%'.trim($filter['search']).'%');
+            }
         }
 
         if (isset($filter['serial']) && $filter['serial']) {

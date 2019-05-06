@@ -149,7 +149,7 @@
                     {#CHECK IN #}
                     {% if row.isCheckedOut and row.isReturned != true and is_granted('ROLE_ADMIN') %}
                         <div class="help-block">
-                            <a href="{{ path('loan_check_in', {loanRowId: row.id}) }}" class="btn btn-xs btn-success">Check in</a>
+                            <a href="{{ path('loan_check_in', {loanRowId: row.id}) }}" data-loan-row-id="{{ row.id }}" id="check-in-{{ row.inventoryItem.id }}" class="btn btn-xs btn-success">Check in</a>
                             <!-- For functional testing: /-->
                             <div class="check-in-row-id" style="display:none;">{{ row.id }}</div>
                         </div>

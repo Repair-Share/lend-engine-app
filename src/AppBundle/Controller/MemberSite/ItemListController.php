@@ -105,6 +105,12 @@ class ItemListController extends Controller
         $products     = $searchResults['data'];
         $totalRecords = $searchResults['totalResults'];
 
+        // Go straight to item if we're scanning a barcode or there's only one result
+        if ($totalRecords == 1) {
+            $item = $products[0];
+            return $this->redirectToRoute('public_product', ['productId' => $item->getId()]);
+        }
+
         // Turn into array of objects
         $items = [];
         $count = [];

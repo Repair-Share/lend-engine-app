@@ -213,3 +213,17 @@ $(".modal-content").delegate(".modal-submit", "click", function(event) {
 function waitButton(obj) {
     obj.removeClass('bg-green').addClass('btn-default').attr('disabled', true).before('<img src="/images/ajax-loader.gif" style="padding-right: 10px">');
 }
+
+// ALSO IN member_site.js
+var barcode = '';
+$(document).keypress(function(e){
+    setTimeout(resetBarcode, 1000);
+    if (e.which == 13 && barcode != '') {
+        document.location.href = '/admin/item/list?search='+barcode;
+        console.log("Found barcode, let's go!");
+    }
+    barcode = barcode + e.key;
+});
+function resetBarcode() {
+    barcode = '';
+}

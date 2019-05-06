@@ -38,6 +38,23 @@ class ItemListController extends Controller
         $itemConditions = $repo->findAllOrderedBySort();
 
         $searchString = $request->get('search');
+
+        // Shortcut to item if we're doing a barcode scan
+        if (is_numeric($searchString)) {
+            /** @var \AppBundle\Services\InventoryService $inventoryService */
+            $inventoryService = $this->get('service.inventory');
+            $filter['search'] = $searchString;
+            $searchResults = $inventoryService->itemSearch(0, 10, $filter);
+
+            $totalRecords = $searchResults['totalResults'];
+            $inventory    = $searchResults['data'];
+
+            if ($totalRecords == 1) {
+                $item = $inventory[0];
+                return $this->redirectToRoute('item', ['id' => $item->getId()]);
+            }
+        }
+
         return $this->render(
             'item/item_list.html.twig',
             array(
