@@ -26,7 +26,7 @@
         </thead>
         {% for payment in contact.payments %}
             <tr>
-                <td>{{ payment.createdAt|date("d M Y H:i") }}</td>
+                <td>{{ payment.createdAt|date("d M Y g:i a") }}</td>
                 <td>{{ payment.paymentDate|date("d M Y") }}</td>
                 <td>
                     {% if payment.paymentMethod %}

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\MemberSite;
 
+use AppBundle\Entity\Contact;
 use AppBundle\Entity\CoreLoan;
 use AppBundle\Entity\CreditCard;
 use AppBundle\Entity\Loan;
@@ -50,9 +51,6 @@ class LoanController extends Controller
             $this->addFlash('error', "Please log in");
             return $this->redirectToRoute('home');
         }
-
-        /** @var \AppBundle\Services\StripeHandler $stripeService */
-        $stripeService = $this->get('service.stripe');
 
         /** @var \AppBundle\Services\Loan\CheckoutService $checkoutService */
         $checkoutService = $this->get('service.checkout');
@@ -149,8 +147,8 @@ class LoanController extends Controller
                 // Take the deposit amount off
                 $paymentAmount -= $totalDeposits;
 
+                // Create the payment for the loan itself
                 if ($paymentAmount > 0) {
-                    // If payment amount is still non zero after deposits
                     $payment = new Payment();
                     $payment->setCreatedBy($user);
                     $payment->setPaymentMethod($paymentMethod);
@@ -164,62 +162,76 @@ class LoanController extends Controller
                         $paymentOk = false;
                         foreach ($paymentService->errors AS $error) {
                             $this->addFlash('error', $error);
-
                         }
                     }
 
+                    // unset the token so we can't use it for deposits
+                    if (isset($cardDetails['token']) && $cardDetails['token']) {
+                        unset($cardDetails['token']);
+                    }
                 }
 
                 // Create the deposits as separate payments
-                if ($deposits = $request->request->get('deposits')) {
+                // Retrieve the cardId from the customer (if we've saved it with the first payment)
+                if ($paymentOk == true) {
+                    if ($deposits = $request->request->get('deposits')) {
 
-                    foreach ($deposits AS $loanRowId => $amount) {
-                        $totalDeposits += $amount;
+                        // If we're using a new card for the payment, we can't reuse the token so get the saved card
+                        if (isset($cardDetails['token']) && $cardDetails['token']) {
+                            // we still have the token from Stripe Checkout (fee was zero)
+                        } else if (!$cardDetails['cardId'] && $stripePaymentMethodId == $paymentMethod->getId()) {
+                            $contact = $this->loadCustomerCards($loan->getContact());
+                            $cards = $contact->getCreditCards();
+                            if (is_array($cards) && count($cards) > 0) {
+                                $cardId = $cards[0]->getCardId();
+                                $cardDetails = [
+                                    'cardId' => $cardId
+                                ];
+                            } else {
+                                $this->addFlash('error', "Customer has no credit cards saved to take a deposit.");
+                                $paymentOk = false;
+                            }
+                        }
 
-                        $p = new Payment();
-                        $p->setType(Payment::PAYMENT_TYPE_DEPOSIT);
-                        $p->setCreatedBy($user);
-                        $p->setPaymentMethod($paymentMethod);
-                        $p->setAmount($amount);
-                        $paymentNote = 'Deposit received.';
-                        $p->setNote($paymentNote);
-                        $p->setContact($loan->getContact());
+                        foreach ($deposits AS $loanRowId => $amount) {
+                            if ($amount > 0 && $paymentOk == true) {
+                                $p = new Payment();
+                                $p->setType(Payment::PAYMENT_TYPE_DEPOSIT);
+                                $p->setCreatedBy($user);
+                                $p->setPaymentMethod($paymentMethod);
+                                $p->setAmount($amount);
+                                $paymentNote = 'Deposit received for "'.$loanRows[$loanRowId]->getInventoryItem()->getName().'".';
+                                $p->setNote($paymentNote);
+                                $p->setContact($loan->getContact());
 
-                        $p->setLoanRow($loanRows[$loanRowId]);
-                        $p->setIsDeposit(true); // Creates deposit, payment and links to loan row
+                                $p->setLoanRow($loanRows[$loanRowId]);
+                                $p->setIsDeposit(true); // Creates deposit, payment and links to loan row
 
-                        if (!$paymentService->create($p, $cardDetails)) {
-                            $paymentOk = false;
-                            foreach ($paymentService->errors AS $error) {
-                                $this->addFlash('error', $error);
+                                if (!$paymentService->create($p, $cardDetails)) {
+                                    $paymentOk = false;
+                                    foreach ($paymentService->errors AS $error) {
+                                        $this->addFlash('error', $error);
+                                    }
+                                }
                             }
                         }
                     }
-
                 }
 
             }
 
             // We either have a successful charge, or no payment amount
             if ($paymentOk == true) {
-
                 if ( $checkoutService->loanCheckOut($loan) ) {
-
                     $this->addFlash('success', "Items are now checked out.");
-
                     $this->sendCheckoutConfirmationEmail($loan);
-
                     $this->addLoanToCore($loan);
-
                 } else {
-
                     $this->addFlash('error', "We can't check out this loan:");
                     foreach ($checkoutService->errors AS $error) {
                         $this->addFlash('error', $error);
                     }
-
                 }
-
             } else {
                 // we will have errors from the payment handler
                 $this->addFlash('error', "There were payment errors, the loan was not checked out");
@@ -229,27 +241,8 @@ class LoanController extends Controller
 
         }
 
-        // Get existing cards for a customer
-        $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
-
-        $customerStripeId = $loan->getContact()->getStripeCustomerId();
-        if ($customerStripeId && $stripeUseSavedCards) {
-            // retrieve their cards
-            $stripeCustomer = $stripeService->getCustomerById($customerStripeId);
-
-            if (isset($stripeCustomer['sources']['data'])) {
-                foreach($stripeCustomer['sources']['data'] AS $source) {
-                    $creditCard = new CreditCard();
-                    $creditCard->setLast4($source['last4']);
-                    $creditCard->setExpMonth($source['exp_month']);
-                    $creditCard->setExpYear($source['exp_year']);
-                    $creditCard->setBrand($source['brand']);
-                    $creditCard->setCardId($source['id']);
-                    $loan->getContact()->addCreditCard($creditCard);
-                }
-            }
-        }
-
+        $contact = $this->loadCustomerCards($loan->getContact());
+        $loan->setContact($contact);
 
         return $this->render('member_site/pages/loan.html.twig', [
                 'form' => $form->createView(),
@@ -262,13 +255,44 @@ class LoanController extends Controller
     }
 
     /**
+     * @param Contact $contact
+     * @return Contact
+     */
+    private function loadCustomerCards(Contact $contact) {
+        // Get existing cards for a customer
+        $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
+
+        /** @var \AppBundle\Services\StripeHandler $stripeService */
+        $stripeService = $this->get('service.stripe');
+
+        $customerStripeId = $contact->getStripeCustomerId();
+        if ($customerStripeId && $stripeUseSavedCards) {
+            // Retrieve their cards
+            $stripeCustomer = $stripeService->getCustomerById($customerStripeId);
+
+            if (isset($stripeCustomer['sources']['data'])) {
+                foreach($stripeCustomer['sources']['data'] AS $source) {
+                    $creditCard = new CreditCard();
+                    $creditCard->setLast4($source['last4']);
+                    $creditCard->setExpMonth($source['exp_month']);
+                    $creditCard->setExpYear($source['exp_year']);
+                    $creditCard->setBrand($source['brand']);
+                    $creditCard->setCardId($source['id']);
+                    $contact->addCreditCard($creditCard);
+                }
+            }
+        }
+
+        return $contact;
+    }
+
+    /**
      * @param Loan $loan
      * @return bool
      *
      * When we get super busy we'll make this asynchronous
      */
-    private function addLoanToCore(Loan $loan)
-    {
+    private function addLoanToCore(Loan $loan) {
         try {
 
             $em = $this->getDoctrine()->getManager();

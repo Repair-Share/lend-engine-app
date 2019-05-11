@@ -34,19 +34,22 @@
             {% for payment in user.payments %}
                 <tr>
                     <td>
-                        {% if payment.loan %}
-                            <div>
-                                <a href="{{ path('public_loan', {loanId: payment.loan.id}) }}">{% trans %}Loan{% endtrans %} {{ payment.loan.id }}</a>
-                            </div>
-                        {% endif %}
                         {% if payment.note %}
                             <div>{{ payment.note }}</div>
                         {% endif %}
                         {% if payment.inventoryItem %}
                             <div>{{ payment.inventoryItem.name }}</div>
                         {% endif %}
+                        {% if payment.loan %}
+                            <div>
+                                <a href="{{ path('public_loan', {loanId: payment.loan.id}) }}">{% trans %}Loan{% endtrans %} {{ payment.loan.id }}</a>
+                            </div>
+                        {% endif %}
                     </td>
-                    <td>{{ payment.paymentDate|date("d M Y") }}</td>
+                    <td>
+                        {{ payment.paymentDate|date("d M Y") }}
+                        <div style="font-size: 11px; color: #aaa;">{{ payment.createdAt|date("g:i a") }}</div>
+                    </td>
                     <td>
                         {% if payment.paymentMethod %}
                             {{ payment.paymentMethod.name }}

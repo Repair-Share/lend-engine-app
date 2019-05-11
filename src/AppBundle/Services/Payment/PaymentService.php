@@ -134,7 +134,7 @@ class PaymentService
                     $p->setPspCode($charge->id);
                 }
             } else {
-                $this->errors[] = "Payment service failed to get a successful payment from Stripe";
+                $this->errors[] = 'Payment service failed to get a successful payment from Stripe for "'.$p->getNote().'" ';
                 foreach ($this->stripeService->errors AS $error) {
                     $this->errors[] = $error;
                 }
@@ -148,7 +148,7 @@ class PaymentService
             $deposit = new Deposit();
             $deposit->setCreatedBy($p->getCreatedBy());
             $deposit->setContact($p->getContact());
-            $deposit->setAmount($basePaymentAmount); // Excluding any Stripe payment fee
+            $deposit->setAmount($basePaymentAmount); // Exclude any Stripe payment fee
 
             if (!$p->getLoanRow()) {
                 throw new \Exception("A loanRow is required when creating a deposit payment");
