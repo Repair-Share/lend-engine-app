@@ -110,6 +110,15 @@ class LoanController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            // pre-check before we start creating payments
+            if (!$checkoutService->validateCheckout($loan)) {
+                $this->addFlash('error', "We can't check out:");
+                foreach ($checkoutService->errors AS $error) {
+                    $this->addFlash('error', $error);
+                }
+                return $this->redirectToRoute('public_loan', ['loanId' => $loan->getId()]);
+            }
+
             // Until we have a fail, assume payment is OK
             $paymentOk = true;
             $cardDetails = null;
