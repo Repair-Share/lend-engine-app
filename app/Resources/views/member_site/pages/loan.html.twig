@@ -122,23 +122,18 @@
 
                     ( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
 
-                    {% if row.isCheckedOut or (loan.status == 'PENDING' or loan.status == 'RESERVED') %}
+                    {% if (row.isCheckedOut and not row.checkedInAt) or (loan.status in ['RESERVED', 'PENDING']) %}
                         {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id, from: row.dueInAt|date("Y-m-d H:i:s") }) }}" class="">Change return date</a>
                         {% endif %}
                     {% endif %}
-
-                    {#OVERDUE WARNING#}
-                    {#{% if row.dueInAt|date("Y-m-d") < "now"|date("Y-m-d") and row.isReturned != true %}#}
-                        {#<span class="label bg-red">LATE</span>#}
-                    {#{% endif %}#}
 
                     <br>
                     <div class="multi-site">
                         <i class="far fa-hospital"></i> {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
                     </div>
 
-                    {#CHANGE RETURN DATE#}
+                    {# Checked in #}
                     {% if row.isReturned %}
                         <br />
                         <div style="color: #419f43;">
@@ -155,13 +150,14 @@
                         </div>
                     {% endif %}
 
-                    {#DEPOSIT already created for an 'on loan' row#}
+                    {# DEPOSIT already created for an 'on loan' row #}
                     {% if row.deposit %}
                         {% set deposits = deposits + row.deposit.amount %}
                         <div class="">
                             Refundable deposit {{ tenantInformation.currencySymbol }} {{ row.deposit.amount }}
                         </div>
-                    {% elseif row.inventoryItem.depositAmount %}
+                    {% elseif row.inventoryItem.depositAmount and loan.status in ['RESERVED', 'PENDING'] %}
+                    {# DEPOSIT is set on the item but we haven't created a row yet #}
                         {% set deposits = deposits + row.inventoryItem.depositAmount %}
                         <div class="">
                             Refundable deposit {{ tenantInformation.currencySymbol }}
@@ -172,9 +168,11 @@
                                 {{ row.inventoryItem.depositAmount }}
                             {% endif %}
                         </div>
+                    {% else %}
+                        {#No need to show any deposits#}
                     {% endif %}
 
-                    {#CHECK OUT PROMPT#}
+                    {# CHECK OUT PROMPT #}
                     {% if loan.status in ['RESERVED', 'PENDING'] %}
                         {% if row.inventoryItem.checkOutPrompts|length > 0 %}
                             {% for prompt in row.inventoryItem.checkOutPrompts %}
@@ -203,9 +201,9 @@
                         {% for p in loan.payments %}
                             {% if p.inventoryItem == row.inventoryItem %}
                                 <div>
-                                    Charged {{ tenantInformation.currencySymbol }} {{ p.amount|number_format(2) }}
+                                    {#Charged {{ tenantInformation.currencySymbol }} {{ p.amount|number_format(2) }}#}
                                     {#{% if loan.status in ['RESERVED', 'PENDING', 'ACTIVE'] %}#}
-                                    <input type="hidden" class="row-paid" value="{{ p.amount }}">
+                                    {#<input type="hidden" class="row-paid" value="{{ p.amount }}">#}
                                     {#{% endif %}#}
                                 </div>
                             {% endif %}
@@ -218,7 +216,7 @@
 
         {% for fee in loan.payments %}
             {% if fee.inventoryItem %}
-                {#Fee included in items#}
+                {#Fee included in items rows#}
             {% else %}
                 <tr>
                     <td></td>
@@ -237,11 +235,9 @@
 
                         {{ tenantInformation.currencySymbol }} {{ amt|number_format(2) }}
                         <input type="hidden" class="row-calc" value="{{ amt }}">
-                        <input type="hidden" class="row-paid" value="{{ amt }}">
-
-                        <div class="row-charge">
-                            <i class="fa fa-check"></i> Charged to account
-                        </div>
+                        {#<div class="row-charge">#}
+                            {#<i class="fa fa-check"></i> Charged to account#}
+                        {#</div>#}
                     </td>
                 </tr>
             {% endif %}
@@ -314,6 +310,8 @@
             </tr>
         {% endif %}
 
+        {#Only show the to-pay amount if we are before checkout, since we can no longer take payment via this screen#}
+        {% if loan.status in ['PENDING', 'RESERVED'] %}
         <tr class="checkout">
             <td></td>
             <td class="basket-subtotal">
@@ -324,6 +322,7 @@
                 <span class="" id="loanToPayAmount">{{ payment_due|number_format(2) }}</span>
             </td>
         </tr>
+        {% endif %}
 
     </table>
 
@@ -454,6 +453,13 @@
 
 {% block pagejs %}
     <script>
+        var basketTotal   = 0.00;
+        var depositsTotal = 0.00;
+        var subTotal      = 0.00;
+        var toPay         = 0.00;
+        var contactBalance = $("#contactBalanceAmount").html() * 1;
+        var dueToCharge   = $("#basketBalanceAmount").html() * 1;
+
         $(document).ready(function() {
             calculateLoanTotal();
 
@@ -480,6 +486,15 @@
                 } else {
                     $("#form-checkout").attr("disabled", true).html("Please complete all checks");
                 }
+
+            });
+
+            $("#loan_check_out_paymentAmount").on("keyup", function() {
+                if ($("#loan_check_out_paymentAmount").val() < depositsTotal) {
+                    $("#form-checkout").attr("disabled", true).html("Deposits require payment now");
+                } else {
+                    $("#form-checkout").attr("disabled", false).html("Complete check out");
+                }
             });
 
             form.on('click', '.action-save', function(e) {
@@ -497,12 +512,11 @@
         });
 
         function calculateLoanTotal(hideButton) {
-            var basketTotal   = 0.00;
-            var depositsTotal = 0.00;
-            var subTotal      = 0.00;
-            var toPay         = 0.00;
-            var contactBalance = $("#contactBalanceAmount").html() * 1;
-            var dueToCharge   = $("#basketBalanceAmount").html() * 1;
+
+            basketTotal   = 0.00;
+            depositsTotal = 0.00;
+            contactBalance = $("#contactBalanceAmount").html() * 1;
+            dueToCharge   = $("#basketBalanceAmount").html() * 1;
 
             $(".row-calc").each(function() {
                 basketTotal += $(this).val() * 1;
@@ -531,12 +545,6 @@
             toPay = depositsTotal + subTotal;
 
             console.log('toPay = depositsTotal + subTotal : '+toPay);
-
-            if (toPay > 0) {
-//                $(".row-paid").each(function() {
-//                    toPay -= $(this).val() * 1;
-//                });
-            }
 
             if (toPay < 0) {
                 toPay = 0;

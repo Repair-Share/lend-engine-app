@@ -2,7 +2,18 @@
 {% trans_default_domain 'member_site' %}
 
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+
+    {% if user is defined and user.id != app.user.id and user.balance < 0 and app.request.get('_route') != 'add_credit' %}
+        <div class="alert alert-warning">
+            {% trans %}public_item.account_balance_is{% endtrans %}
+            {{ tenantInformation.currencySymbol }}
+            {{ user.balance|number_format(2) }} ...
+            <a class="" href="{{ path('add_credit', {c: user.id}) }}">{% trans %}public_item.add_credit{% endtrans %}</a>
+        </div>
+    {% endif %}
+
     <div id="account-nav">
         {{ knp_menu_render('accountMenu') }}
     </div>
+
 {% endif %}

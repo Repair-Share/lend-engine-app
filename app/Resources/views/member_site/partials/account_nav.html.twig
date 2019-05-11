@@ -1,7 +1,0 @@
-{% trans_default_domain 'member_site' %}
-
-{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-    <div id="account-nav">
-        {{ knp_menu_render('accountMenu') }}
-    </div>
-{% endif %}
