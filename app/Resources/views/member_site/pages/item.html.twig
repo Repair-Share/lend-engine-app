@@ -155,7 +155,7 @@
                 $("#buttonNDays").show();
             });
 
-            page.on('click', '.charge-to', function () {
+            $("#extendModal").on('click', '.charge-to', function () {
                 if ($(this).prop("checked") == true) {
                     $("#paymentMethodId").val(stripePaymentMethodId);
                     $("#confirmDateChange").addClass("payment-submit");

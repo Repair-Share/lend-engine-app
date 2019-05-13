@@ -232,7 +232,7 @@ class StripeHandler
 
         $amount = $payment->getAmount();
         if (!$amount || $amount < 0) {
-            $this->errors[] = 'Positive amount is required to charge via Stripe.';
+            $this->errors[] = 'Positive amount is required to charge via Stripe. Tried with: '.$amount;
         }
 
         $contact = $payment->getContact();
@@ -275,11 +275,9 @@ class StripeHandler
 
         if ($cardId && $contact->getStripeCustomerId()) {
             $charge = $this->chargeWithCard($cardId, $contact->getStripeCustomerId(), $amount*100, $msg);
-//            $this->savePayment($payment);
             return $charge;
         } else if ($token) {
             $charge = $this->chargeWithToken($token, $amount*100, $msg);
-//            $this->savePayment($payment);
             return $charge;
         }
 

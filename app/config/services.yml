@@ -50,6 +50,8 @@ services:
 
     billing:
         class: AppBundle\Services\BillingService
+        arguments:
+            - '%env(SYMFONY_ENV)%'
 
     billing_listener:
         class: AppBundle\EventListener\BillingListener

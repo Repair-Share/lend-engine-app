@@ -26,9 +26,12 @@ class MembershipType extends AbstractType
             'required' => true,
         ));
 
-        $builder->add('price', TextType::class, array(
+        $builder->add('price', CurrencyamountType::class, array(
             'label' => 'Membership cost',
             'required' => true,
+            'attr' => [
+                'class' => 'input-100'
+            ]
         ));
 
         $builder->add('paymentMethod', EntityType::class, array(
@@ -42,12 +45,12 @@ class MembershipType extends AbstractType
             ]
         ));
 
-        $builder->add('paymentAmount', TextType::class, array(
-            'label' => 'Amount',
+        $builder->add('paymentAmount', CurrencyamountType::class, array(
+            'label' => 'Payment amount',
             'required' => false,
             'mapped' => false,
             'attr' => [
-                'class' => 'payment-amount'
+                'class' => 'payment-amount input-100'
             ]
         ));
 

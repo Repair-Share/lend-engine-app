@@ -230,7 +230,7 @@ EOT;
         } else {
             $minPayment = null;
         }
-        $builder->add('stripe_minimum_payment', NumberType::class, array(
+        $builder->add('stripe_minimum_payment', CurrencyamountType::class, array(
             'label' => 'Minimum payment amount via website',
             'data' => $minPayment,
             'required' => false,
@@ -251,7 +251,7 @@ EOT;
             ]
         ));
 
-        $builder->add('stripe_fee', NumberType::class, array(
+        $builder->add('stripe_fee', CurrencyamountType::class, array(
             'label' => 'Fixed payment fee',
             'data' => $dbData['stripe_fee'] ? (float)$dbData['stripe_fee'] : null,
             'required' => false,

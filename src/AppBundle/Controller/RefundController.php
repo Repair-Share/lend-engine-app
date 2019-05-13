@@ -45,7 +45,14 @@ class RefundController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             $chargeID = $p->getPspCode();
-            $amount   = $p->getAmount();
+            $originalAmount   = $p->getAmount();
+            $amount   = $form->get('amount')->getData();
+
+            if ($amount > $originalAmount) {
+                $this->addFlash("error", "You can't refund more than the original payment amount.");
+                return $this->redirectToRoute("payments");
+            }
+
             $note     = $form->get('note')->getData();
 
             $refund = new Payment();
@@ -54,6 +61,7 @@ class RefundController extends Controller
             $refund->setCreatedBy($this->getUser());
             $refund->setContact($p->getContact());
             $refund->setPaymentMethod($p->getPaymentMethod());
+
             if ($deposit = $p->getDeposit()) {
                 $refund->setDeposit($deposit);
                 $refund->setNote("Deposit refunded. ".$note);

@@ -215,8 +215,8 @@
         {% endfor %}
 
         {% for fee in loan.payments %}
-            {% if fee.inventoryItem %}
-                {#Fee included in items rows#}
+            {% if fee.inventoryItem or fee.type == 'PAYMENT' %}
+                {#Fee included in items rows, or is a payment received#}
             {% else %}
                 <tr>
                     <td></td>
@@ -235,9 +235,6 @@
 
                         {{ tenantInformation.currencySymbol }} {{ amt|number_format(2) }}
                         <input type="hidden" class="row-calc" value="{{ amt }}">
-                        {#<div class="row-charge">#}
-                            {#<i class="fa fa-check"></i> Charged to account#}
-                        {#</div>#}
                     </td>
                 </tr>
             {% endif %}
@@ -255,17 +252,29 @@
             </td>
         </tr>
 
-        {% if loan.balance != loan.totalFee and loan.balance > 0 %}
+        {#Charged to date (all payments with a loan ID)#}
         <tr class="checkout">
             <td></td>
-            <td class="basket-subtotal">
-                {% trans %}public_basket.balance{% endtrans %}
+            <td style="text-align:right; color: #10a422">
+                {% trans %}public_loan.charged{% endtrans %}
             </td>
-            <td class="basket-subtotal">
+            <td style="text-align:right; color: #10a422">
                 {{ tenantInformation.currencySymbol }}
-                <span class="basketBalanceAmount" id="basketBalanceAmount">{{ loan.balance|number_format(2) }}</span>
+                <span class="" id="">{{ loan.chargedTotal|number_format(2) }}</span>
             </td>
         </tr>
+
+        {% if loan.balance != loan.totalFee and loan.balance > 0 %}
+            <tr class="checkout">
+                <td></td>
+                <td class="basket-subtotal">
+                    {% trans %}public_basket.balance{% endtrans %}
+                </td>
+                <td class="basket-subtotal">
+                    {{ tenantInformation.currencySymbol }}
+                    <span class="basketBalanceAmount" id="basketBalanceAmount">{{ loan.balance|number_format(2) }}</span>
+                </td>
+            </tr>
         {% else %}
             <span class="basketBalanceAmount" style="display:none" id="basketBalanceAmount">{{ loan.balance|number_format(2) }}</span>
         {% endif %}
@@ -339,6 +348,10 @@
                     <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
                     {{ form_widget(form.paymentAmount) }}
                 </div>
+                {% if loan.contact.balance < 0 %}
+                    {% set balance = -loan.contact.balance %}
+                    <div style="padding: 4px; color: #ff671d">Including outstanding balance of {{ tenantInformation.currencySymbol }}{{ balance|number_format(2, '.') }}</div>
+                {% endif %}
             </div>
 
             {{ form_row(form.paymentMethod) }}
@@ -443,8 +456,6 @@
                 </div>
 
             </form>
-
-
         </div>
     </div>
 
@@ -475,26 +486,15 @@
             });
 
             form.on("change", ".confirm-checkout", function() {
-                var allowCheckOut = true;
-                $(".confirm-checkout").each(function(){
-                    if (!$(this).is(":checked")) {
-                        allowCheckOut = false;
-                    }
-                });
-                if (allowCheckOut == true) {
-                    $("#form-checkout").attr("disabled", false).html("Complete check out");
-                } else {
-                    $("#form-checkout").attr("disabled", true).html("Please complete all checks");
-                }
-
+                validateCheckout();
             });
 
             $("#loan_check_out_paymentAmount").on("keyup", function() {
-                if ($("#loan_check_out_paymentAmount").val() < depositsTotal) {
-                    $("#form-checkout").attr("disabled", true).html("Deposits require payment now");
-                } else {
-                    $("#form-checkout").attr("disabled", false).html("Complete check out");
-                }
+                validateCheckout();
+            });
+
+            $("#loan_check_out_paymentMethod").on("change", function() {
+                validateCheckout();
             });
 
             form.on('click', '.action-save', function(e) {
@@ -511,6 +511,43 @@
 
         });
 
+        function validateCheckout() {
+            var allowCheckOut = true;
+            var checkoutButton = $("#form-checkout");
+            var paymentValue = $("#loan_check_out_paymentAmount").val();
+
+            // Deposits
+            if (paymentValue < depositsTotal) {
+                checkoutButton.attr("disabled", true).html("Deposits require payment now");
+                allowCheckOut = false;
+            }
+
+            // Continue to check-out prompts if deposits are OK
+            if (allowCheckOut == true) {
+                $(".confirm-checkout").each(function(){
+                    if (!$(this).is(":checked")) {
+                        allowCheckOut = false;
+                    }
+                });
+                if (allowCheckOut == false) {
+                    checkoutButton.attr("disabled", true).html("Please complete all checks");
+                }
+            }
+
+            // Confirm user has chosen a payment method
+            if (allowCheckOut == true) {
+                if (paymentValue > 0 && !$("#loan_check_out_paymentMethod").val()) {
+                    checkoutButton.attr("disabled", true).html("Please select a payment method to take payment.");
+                    allowCheckOut = false;
+                }
+            }
+
+            // All tests pass, ensure user can check out now
+            if (allowCheckOut == true) {
+                checkoutButton.attr("disabled", false).html("Complete check out");
+            }
+        }
+
         function calculateLoanTotal(hideButton) {
 
             basketTotal   = 0.00;
@@ -525,10 +562,7 @@
             console.log('basketTotal : '+basketTotal);
             console.log('dueToCharge : '+dueToCharge);
 
-            if (contactBalance < 0) {
-                contactBalance = 0;
-            }
-            subTotal = dueToCharge - contactBalance;
+            subTotal = dueToCharge;
 
             console.log('dueToCharge - contactBalance = subTotal : '+subTotal);
 
@@ -554,13 +588,23 @@
             $("#loanDepositsAmount").html(depositsTotal.toFixed(2));
             $("#loanSubtotalAmount").html(subTotal.toFixed(2));
             $("#loanToPayAmount").html(toPay.toFixed(2));
+
+            // Add any overdue balance in here
+            if (contactBalance < 0) {
+                toPay += -contactBalance;
+            }
             $("#loan_check_out_paymentAmount").val(toPay.toFixed(2));
 
+            {% if loan.status in ['PENDING', 'RESERVED'] %}
             if (toPay == 0) {
                 $(".payment-details").hide();
             } else {
                 $(".payment-details").show();
             }
+            {% else %}
+            // We can't take payment now that we are past checkout so hide the payment form
+            $(".payment-details").hide();
+            {% endif %}
 
             if (hideButton == true) {
                 $(".hideOnFormChange").attr('disabled', true);

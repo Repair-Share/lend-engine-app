@@ -84,7 +84,7 @@ class LoanController extends Controller
             $contactBalance = 0;
         }
 
-        // If contact has balance, apply it to this loan
+        // If contact has balance still to charge to account, apply it to this loan
         $loanBalance = $loan->getBalance() - $contactBalance;
         if ($loanBalance < 0) {
             $loanBalance = 0;
@@ -166,6 +166,7 @@ class LoanController extends Controller
                     $payment->setNote($paymentNote);
                     $payment->setContact($loan->getContact());
                     $payment->setType(Payment::PAYMENT_TYPE_PAYMENT);
+                    $payment->setLoan($loan);
 
                     if (!$paymentService->create($payment, $cardDetails)) {
                         $paymentOk = false;

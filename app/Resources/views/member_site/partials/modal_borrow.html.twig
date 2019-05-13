@@ -38,10 +38,11 @@
                         </div>
                     {% endif %}
 
-                    {% if reservationFee > 0 and not is_granted('ROLE_ADMIN') %}
+                    {% if reservationFee > 0 %}
                         <div>
                             {{ tenantInformation.currencySymbol }} {{ reservationFee|number_format(2) }}
                             {% trans %}note_reservation_fee_will_be_added{% endtrans %}.
+                            <input type="hidden" name="booking_fee" value="{{ reservationFee }}">
                         </div>
                     {% endif %}
 

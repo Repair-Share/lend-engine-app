@@ -117,7 +117,7 @@ then the user will also be shown a button to continue to choose a membership.',
         ));
 
         $readOnlyCSS = true;
-        $planStarHtml = '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on Standard plan and above.';
+        $planStarHtml = '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on Starter plan and above.';
         if ($this->tenantInformationService->getFeature('CustomStyle')) {
             $readOnlyCSS = false;
             $planStarHtml = '';
@@ -211,7 +211,7 @@ then the user will also be shown a button to continue to choose a membership.',
                 'required' => true,
                 'attr' => array(
                     'class' => 'input-100 upgrade',
-                    'data-help' => '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on Standard plan and above.'
+                    'data-help' => '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on Starter plan and above.'
                 )
             ));
         }

@@ -137,24 +137,25 @@ class CustomConnectionFactory extends ConnectionFactory
             $this->session->set('time_zone', $timeZone);
             $this->session->set('subscription_id', $subscriptionId);
 
-            // This had to be replicated here as well as Entity/Account.php
+            // This had to be replicated here as well as Entity/Tenant.php
             switch ($plan) {
                 case 'free':
                     $plan = 'free';
                     break;
-
                 case 'standard':
                 case 'plan_Cv8Lg7fyOJSB0z': // standard monthly 5.00
                 case 'plan_Cv6TbQ0PPSnhyL': // test plan
                 case 'plan_Cv6rBge0LPVNin': // test plan
                 case 'single':
-                    $plan = 'standard';
+                    $plan = 'starter';
                     break;
-
                 case 'premium':
                 case 'plus':
                 case 'multiple':
                     $plan = 'plus';
+                    break;
+                case 'ultra':
+                    $plan = 'ultra';
                     break;
             }
             $this->session->set('plan', $plan);

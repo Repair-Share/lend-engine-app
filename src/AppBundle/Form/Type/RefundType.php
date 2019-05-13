@@ -4,11 +4,9 @@ namespace AppBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RefundType extends AbstractType
 {
@@ -27,12 +25,20 @@ class RefundType extends AbstractType
             ]
         ));
 
+        $builder->add('amount', CurrencyamountType::class, array(
+            'label' => 'Amount',
+            'required' => false,
+            'attr' => [
+                'class' => 'input-100'
+            ]
+        ));
+
         $builder->add('note', TextareaType::class, array(
             'label' => 'Optional note',
             'required' => false,
-            'attr' => array(
+            'attr' => [
                 'rows' => 2
-            )
+            ]
         ));
 
         $builder->add('paymentId', HiddenType::class, array(

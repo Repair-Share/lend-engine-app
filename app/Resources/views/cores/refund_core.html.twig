@@ -2,9 +2,9 @@
 
 <div class="row">
     <div class="col-md-12">
-        The original payment of {{ tenantInformation.currencySymbol }}{{ payment.amount }} was taken on {{ payment.paymentDate|date("d M Y H:i") }} with {{ payment.paymentMethod.name }}
+        The original payment of {{ tenantInformation.currencySymbol }}{{ payment.amount }} was taken on {{ payment.paymentDate|date("d M Y") }} with {{ payment.paymentMethod.name }}
         {% if payment.deposit %}
-        <br>This was a deposit payment and the refund will not affect the member account balance.
+        <div style="color:#ff671d">This was a deposit payment and the refund will not affect the member account balance.</div>
         {% endif %}
     </div>
 </div>
@@ -12,7 +12,7 @@
 <br>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         {{ form_start(form) }}
 
         {{ form_errors(form) }}
@@ -20,7 +20,14 @@
             <span class="help">{{ help }}</span>
         {% endif %}
 
-        {{ form_row(form.paymentMethod) }}
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_row(form.amount) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.paymentMethod) }}
+            </div>
+        </div>
 
         {{ form_row(form.note) }}
 
@@ -31,12 +38,6 @@
 </div>
 
 <br>
-
-<div class="row">
-    <div class="col-md-12 help-block">
-        If you need to keep part of a deposit as a fee for damage, first refund the whole deposit and then add a fee during the check in process, or by adding a fee to a loan on the loan screen.
-    </div>
-</div>
 
 {% block modalFooter %}
     <script>

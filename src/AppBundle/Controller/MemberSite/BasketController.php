@@ -227,6 +227,9 @@ class BasketController extends Controller
 
         $fee = $request->get('item_fee');
 
+        $reservationFee = $request->get('booking_fee');
+        $basket->setReservationFee($reservationFee);
+
         if (!$siteFrom = $siteRepo->find($request->get('from_site'))) {
             throw new \Exception("Cannot find site ".$request->get('from_site'));
         }
@@ -298,6 +301,7 @@ class BasketController extends Controller
     }
 
     /**
+     * Create out the loan or reservation
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @Route("basket/confirm", name="basket_confirm")
      */

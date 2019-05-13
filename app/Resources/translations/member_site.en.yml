@@ -28,6 +28,7 @@ th:
   date: Date
   payment_method: Payment method
   fee: Fee
+  deposit: Deposit
   payment: Payment
   ref: Reference
   items: Items
@@ -177,6 +178,7 @@ public_basket:
 
 public_loan:
   title: Loan
+  charged: Charged to account
 
 # Member site : Logged in : Menu
 public_user_menu:

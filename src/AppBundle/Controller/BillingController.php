@@ -18,12 +18,14 @@ class BillingController extends Controller
     public function signupAction(Request $request)
     {
 
-        $plans = $this->getPlans();
-
         $em = $this->getDoctrine()->getManager();
 
         /** @var \AppBundle\Services\StripeHandler $stripeService */
         $stripeService = $this->get('service.stripe');
+
+        /** @var \AppBundle\Services\BillingService $billingService */
+        $billingService = $this->get('billing');
+        $plans = $billingService->getPlans();
 
         // Override for Lend Engine subscriptions
         $stripeService->setApiKey($this->getParameter('billing_secret_key'));
@@ -113,68 +115,6 @@ class BillingController extends Controller
         }
 
         return $this->redirectToRoute('billing');
-    }
-
-    /**
-     * Returns the current billing plans
-     * Customers on legacy plans are dealt with in the view with extra values in the array
-     * @return array
-     */
-    private function getPlans()
-    {
-
-        if ($this->getParameter('billing_public_key') == 'pk_test_o3eRfmceedfgkBYuh5AoUxA5') {
-
-            // STAGING AND DEV SERVER
-
-            $plans = [
-                [
-                    'code' => 'free',
-                    'stripeCode' => 'free',
-                    'name' => 'Free',
-                    'amount' => 0
-                ],
-                [
-                    'code' => 'standard',
-                    'stripeCode' => 'plan_Cv6rBge0LPVNin',
-                    'name' => 'Standard',
-                    'amount' => 250
-                ],
-                [
-                    'code' => 'plus',
-                    'stripeCode' => 'plus',
-                    'name' => 'Plus',
-                    'amount' => 2000
-                ]
-            ];
-        } else {
-
-            // ALL PROD SERVERS
-
-            $plans = [
-                [
-                    'code' => 'free',
-                    'stripeCode' => 'free',
-                    'name' => 'Free',
-                    'amount' => 0
-                ],
-                [
-                    'code' => 'standard',
-                    'stripeCode' => 'plan_Cv8Lg7fyOJSB0z', // Standard monthly 5.00
-                    'name' => 'Standard',
-                    'amount' => 250
-                ],
-                [
-                    'code' => 'plus',
-                    'stripeCode' => 'plus',
-                    'name' => 'Plus',
-                    'amount' => 2000
-                ]
-            ];
-
-        }
-
-        return $plans;
     }
 
     /**

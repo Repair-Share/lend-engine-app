@@ -77,12 +77,10 @@
                     <a href="{{ path('item_history', {id: item.id}) }}" class="media_node" rel="tooltip"
                        data-toggle="tabajax" data-target="#item_info">Item history</a>
                 </li>
-                {% if tenantInformation.feature('ItemAttachment') %}
                 <li>
                     <a href="{{ path('item_files', {id: item.id}) }}" class="media_node" rel="tooltip"
                        data-toggle="tabajax" data-target="#item_files">Attachments</a>
                 </li>
-                {% endif %}
                 <li>
                     <a href="{{ path('item_reservations_html', {itemId: item.id}) }}" class="media_node" rel="tooltip"
                        data-toggle="tabajax" data-target="#item_reservations_html">Reservations</a>
@@ -303,11 +301,9 @@
                 <!-- ajax-content -->
             </div>
 
-            {% if tenantInformation.feature('ItemAttachment') %}
             <div class="tab-pane" id="item_files">
                 <!-- ajax-content -->
             </div>
-            {% endif %}
 
             <div class="tab-pane" id="item_reservations_html">
                 <!-- ajax-content -->

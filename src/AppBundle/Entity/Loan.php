@@ -569,6 +569,18 @@ class Loan
      */
     public function getBalance()
     {
+        $charges = $this->getChargedTotal();
+        $loanBalance = $this->getTotalFee() - $charges;
+
+        return $loanBalance;
+    }
+
+    /**
+     * Fees charged against the member account
+     * @return float
+     */
+    public function getChargedTotal()
+    {
         $charges = 0.00;
         foreach ($this->getPayments() AS $payment) {
             if ($payment->getType() == Payment::PAYMENT_TYPE_FEE) {
@@ -576,9 +588,7 @@ class Loan
             }
         }
 
-        $loanBalance = $this->getTotalFee() - $charges;
-
-        return $loanBalance;
+        return $charges;
     }
 
     /**

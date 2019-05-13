@@ -7,12 +7,17 @@
 {% block body %}
 
     <div class="row">
-
-        <div class="col-md-2">
-            {{ knp_menu_render('settingsMenu') }}
+        <div class="col-md-12" style="padding-left: 20px;">
+            <a href="{{ path('settings') }}">&laquo; Back to settings</a>
         </div>
+    </div>
+    <div class="row">
 
-        <div class="col-md-10" style="padding-left: 30px">
+        {#<div class="col-md-2">#}
+            {#{{ knp_menu_render('settingsMenu') }}#}
+        {#</div>#}
+
+        <div class="col-md-12" style="padding-left: 20px;">
 
             {% if tenantInformation.accountStatus == 'CANCELLED' %}
                 <div class="alert alert-danger">
@@ -21,9 +26,6 @@
             {% endif %}
 
             {% if tenantInformation.plan %}
-            <p>
-
-            </p>
             {% else %}
             <h1>Choose a plan.</h1>
             <p>
@@ -87,7 +89,8 @@
                     <input type="hidden" id="stripeToken" name="stripeToken" value="">
 
                     {% for plan in plans %}
-                        <div class="col-md-4">
+
+                        <div class="col-md-3">
 
                             <div class="plan-wrapper {% if tenantInformation.plan == plan.code %}active{% endif %}">
 
@@ -106,43 +109,59 @@
                                         <ul>
                                             <li><i class="fa fa-check"></i> Up to 100 items</li>
                                             <li><i class="fa fa-check"></i> Up to 100 members</li>
+                                            <li><i class="fa fa-check"></i> One site</li>
                                             <li><i class="fa fa-check"></i> Unlimited loans</li>
                                             <li><i class="fa fa-check"></i> Unlimited reservations</li>
                                             <li><i class="fa fa-check"></i> Member website</li>
                                             <li><i class="fa fa-check"></i> Credit card processing</li>
                                         </ul>
 
-                                    {% elseif plan.code == 'standard' %}
+                                    {% elseif plan.code == 'starter' %}
 
                                         <div class="price">£5<span> GBP per month*</span></div>
                                         <ul>
                                             <li>As free plan plus:</li>
-                                            <li><i class="fa fa-check"></i> Unlimited items</li>
-                                            <li><i class="fa fa-check"></i> Unlimited members</li>
+                                            <li><i class="fa fa-check"></i> Up to 500 items</li>
+                                            <li><i class="fa fa-check"></i> Up to 500 members</li>
+                                            <li><i class="fa fa-check"></i> One site</li>
                                             <li><i class="fa fa-check"></i> Automated emails</li>
-                                            <li><i class="fa fa-check"></i> Item custom fields</li>
-                                            <li><i class="fa fa-check"></i> Item attachments</li>
                                             <li><i class="fa fa-check"></i> Refundable deposits</li>
-                                            <li><i class="fa fa-check"></i> Check-out prompts</li>
-                                            <li><i class="fa fa-check"></i> Check-in prompts</li>
-                                            <li><i class="fa fa-check"></i> Member custom fields</li>
-                                            <li><i class="fa fa-check"></i> Multiple language support</li>
-                                            <li><i class="fa fa-check"></i> Attach files to contacts</li>
                                             <li><i class="fa fa-check"></i> Customise member emails</li>
-                                            <li><i class="fa fa-check"></i> Private member site (login required)</li>
+                                            <li><i class="fa fa-check"></i> Private member site</li>
+                                            <li><i class="fa fa-check"></i> Add web pages and links</li>
                                         </ul>
 
-                                    {% else %}
+                                    {% elseif plan.code == 'plus' %}
 
                                         <div class="price">£20 <span>GBP per month*</span></div>
                                         <ul>
-                                            <li>As standard plan plus:</li>
-                                            <li><i class="fa fa-check"></i> Multiple physical sites</li>
-                                            <li><i class="fa fa-check"></i> Custom domain / URL</li>
-                                            <li><i class="fa fa-check"></i> Custom web pages and menu links</li>
+                                            <li>As starter plan plus:</li>
+                                            <li><i class="fa fa-check"></i> Up to 2k items</li>
+                                            <li><i class="fa fa-check"></i> Up to 2k members</li>
+                                            <li><i class="fa fa-check"></i> Up to 5 sites</li>
+                                            <li><i class="fa fa-check"></i> Your domain name/URL</li>
                                             <li><i class="fa fa-check"></i> Custom website themes</li>
-                                            <li><i class="fa fa-check"></i> Barcode label printing</li>
-                                            <li><i class="fa fa-check"></i> SSL security</li>
+                                            <li><i class="fa fa-check"></i> Item custom fields</li>
+                                            <li><i class="fa fa-check"></i> Item attachments</li>
+                                            <li><i class="fa fa-check"></i> Member custom fields</li>
+                                            <li><i class="fa fa-check"></i> Attach files to contacts</li>
+                                            <li><i class="fa fa-check"></i> Barcode labels</li>
+                                            <li><i class="fa fa-check"></i> Check-out prompts</li>
+                                            <li><i class="fa fa-check"></i> Check-in prompts</li>
+                                            <li><i class="fa fa-check"></i> Service/maintenance schedule</li>
+                                            <li><i class="fa fa-check"></i> Multiple languages</li>
+                                        </ul>
+
+                                    {% elseif plan.code == 'business' %}
+
+                                        <div class="price">£40 <span>GBP per month*</span></div>
+                                        <ul>
+                                            <li>As plus plan plus:</li>
+                                            <li><i class="fa fa-check"></i> Up to 10k items</li>
+                                            <li><i class="fa fa-check"></i> Up to 10k members</li>
+                                            <li><i class="fa fa-check"></i> Up to 20 sites</li>
+                                            <li><i class="fa fa-check"></i> Remove Lend Engine branding</li>
+                                            <li><i class="fa fa-check"></i> Restrict members to sites</li>
                                         </ul>
 
                                     {% endif %}

@@ -102,3 +102,13 @@
         {% endfor -%}
     </div>
 {%- endblock toggle_widget -%}
+
+{%- block currencyamount_row -%}
+    <div class="form-group">
+        {{ form_label(form) }}
+        <div class="input-group">
+            <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
+            {{ form_widget(form) }}
+        </div>
+    </div>
+{%- endblock currencyamount_row -%}

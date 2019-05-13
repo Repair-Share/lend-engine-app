@@ -434,26 +434,32 @@ class Tenant
      */
     public function getPlan()
     {
-        switch ($this->plan) {
-            case 'free':
-                $this->plan = 'free';
-                break;
+        $plan = $this->plan;
 
+        // start replicated code
+        switch ($plan) {
+            case 'free':
+                $plan = 'free';
+                break;
             case 'standard':
             case 'plan_Cv8Lg7fyOJSB0z': // standard monthly 5.00
             case 'plan_Cv6TbQ0PPSnhyL': // test plan
             case 'plan_Cv6rBge0LPVNin': // test plan
             case 'single':
-                $this->plan = 'standard';
+                $plan = 'starter';
                 break;
-
             case 'premium':
             case 'plus':
             case 'multiple':
-                $this->plan = 'plus';
+                $plan = 'plus';
+                break;
+            case 'ultra':
+                $plan = 'ultra';
                 break;
         }
+        // end replicated code
 
+        $this->plan = $plan;
         return $this->plan;
     }
 

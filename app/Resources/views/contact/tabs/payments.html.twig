@@ -21,6 +21,7 @@
             <th>Payment method</th>
             <th>Note</th>
             <th></th>
+            <th style="text-align:right">Deposit</th>
             <th style="text-align:right">Amount</th>
         </tr>
         </thead>
@@ -48,10 +49,21 @@
                     {% endif %}
                 </td>
                 <td align="right">
-                    {% if payment.type == 'FEE' or payment.type == 'REFUND' %}
-                        <span style="color:#b90009">- {{ tenantInformation.currencySymbol }} {{ payment.amount|number_format(2) }}</span>
-                    {% else %}
-                        <span style="color:#419f43">+ {{ tenantInformation.currencySymbol }} {{ payment.amount|number_format(2) }}</span>
+                    {% if payment.isDeposit %}
+                        {% if payment.type == 'FEE' or payment.type == 'REFUND' %}
+                            <span style="color:#b90009">- {{ tenantInformation.currencySymbol }} {{ payment.amount|number_format(2) }}</span>
+                        {% else %}
+                            <span style="color:#419f43">+ {{ tenantInformation.currencySymbol }} {{ payment.amount|number_format(2) }}</span>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td align="right">
+                    {% if not payment.isDeposit %}
+                        {% if payment.type == 'FEE' or payment.type == 'REFUND' %}
+                            <span style="color:#b90009">- {{ tenantInformation.currencySymbol }} {{ payment.amount|number_format(2) }}</span>
+                        {% else %}
+                            <span style="color:#419f43">+ {{ tenantInformation.currencySymbol }} {{ payment.amount|number_format(2) }}</span>
+                        {% endif %}
                     {% endif %}
                 </td>
             </tr>

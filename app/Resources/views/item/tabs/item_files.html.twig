@@ -1,3 +1,5 @@
+{% if tenantInformation.feature('ItemAttachment') %}
+
 <div class="row" id="item-files">
     {% if product.fileAttachments | length == 0 %}
         <div class="col-md-12">
@@ -133,3 +135,13 @@
     });
 
 </script>
+{% else %}
+
+    <br>
+    <div class="upgrade">
+        Item file attachments are not available on your pay plan.
+        <a href="{{ path('billing') }}">Upgrade / view plans</a>
+    </div>
+    <br>
+
+{% endif %}

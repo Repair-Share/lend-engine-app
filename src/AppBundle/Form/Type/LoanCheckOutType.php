@@ -27,6 +27,7 @@ class LoanCheckOutType extends AbstractType
             'choice_label' => 'name',
             'required' => true,
             'mapped' => true,
+            'placeholder' => 'Choose an option',
             'attr' => [
                 'class' => 'payment-method'
             ]
