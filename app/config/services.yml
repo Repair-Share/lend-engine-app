@@ -21,8 +21,6 @@ services:
 
     doctrine.dbal.connection_factory:
         class: AppBundle\Account\CustomConnectionFactory
-        arguments:
-            - "@session"
 
     twigdate.listener.request:
         class: AppBundle\EventListener\TwigDateRequestListener
