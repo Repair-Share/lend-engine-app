@@ -44,12 +44,8 @@ class SettingsController extends Controller
         /** @var $repo \AppBundle\Repository\SettingRepository */
         $repo =  $em->getRepository('AppBundle:Setting');
 
-        /** @var $tenantRepo \AppBundle\Repository\TenantRepository */
-        $tenantRepo = $em->getRepository('AppBundle:Tenant');
-        $accountCode = $this->get('session')->get('account_code');
-
         /** @var \AppBundle\Entity\Tenant $tenant */
-        $tenant = $tenantRepo->findOneBy(['stub' => $accountCode]);
+        $tenant = $settingsService->getTenant();
 
         if ($form->isSubmitted()) {
 
@@ -72,7 +68,7 @@ class SettingsController extends Controller
 
                 // Also update Core (_core DB)
                 $settingsService->setTenant($tenant);
-                $settingsService->updateCore($accountCode);
+                $settingsService->updateCore($tenant->getStub());
 
                 $this->addFlash('success','Settings updated.');
             } catch (\PDOException $e) {

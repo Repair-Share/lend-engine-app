@@ -13,13 +13,6 @@ use Tests\AppBundle\Controller\AuthenticatedControllerTest;
 
 class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
 {
-    public function setUp()
-    {
-        // This is loaded here since it's the first test (alphabetically)
-        parent::loadTestDatabase();
-        parent::setUp();
-    }
-
     /**
      * @dataProvider urlProvider
      */
@@ -34,11 +27,64 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
      */
     public function urlProvider()
     {
-        return array(
+        return [
+            // Admin : settings
+            ['/admin/settings/general'],
+            ['/admin/billing'],
+            ['/admin/site/list'],
+            ['/admin/location/list'],
+            ['/admin/settings/reservations'],
+            ['/admin/settings/member_site'],
+            ['/admin/page/list'],
+            ['/admin/settings/templates'],
+            ['/admin/users/list'],
+            ['/admin/tags/list'],
+            ['/admin/productField/list'],
+            ['/admin/itemCondition/list'],
+            ['/admin/settings/labels'],
+            ['/admin/checkInPrompt/list'],
+            ['/admin/checkOutPrompt/list'],
+            ['/admin/import/contacts/'],
+            ['/admin/contactField/list'],
+            ['/admin/membershipType/list'],
+            ['/admin/payment-method/list'],
+
+            // Admin : other
+            ['/admin/'],
+            ['/admin/loan/list'],
+            ['/admin/item/list'],
+            ['/admin/item_type'],
+            ['/admin/contact/list'],
+
+            // Reports
+            ['/admin/report/report_loans'],
+            ['/admin/report/report_items'],
+            ['/admin/report/all_items'],
+            ['/admin/report/non_loaned_items'],
+            ['/admin/report/report_payments'],
+            ['/admin/report/report_costs'],
+            ['/admin/membership/list'],
+
+            // Admin datatables JSON
+            ['/admin/dt/loan/list'],
+            ['/admin/dt/item/list'],
+            ['/admin/dt/contact/list'],
+
             // FOS user bundle pages
-            array('/login'),
-            array('/profile/edit'),
-            array('/profile/change-password'),
-        );
+            ['/login'],
+            ['/profile/'],
+            ['/profile/edit'],
+            ['/profile/change-password'],
+
+            // Member site
+            ['/products?show=recent'],
+            ['/sites'],
+            ['/member/loans'],
+            ['/member/payments'],
+            ['/member/add-credit'],
+            ['/loan-search'],
+            ['/member-search?go=&member-search=test'],
+            ['/products?search=test'],
+        ];
     }
 }

@@ -79,6 +79,9 @@ class LoanListController extends Controller
      */
     public function tableListAction(Request $request)
     {
+        /** @var $settingsService \AppBundle\Services\SettingsService */
+        $settingsService = $this->get('settings');
+
         $authChecker = $this->get('security.authorization_checker');
 
         $em = $this->getDoctrine()->getManager();
@@ -147,7 +150,7 @@ class LoanListController extends Controller
 
         // Modify times to match local time for UI
         // Not sure why DateTime format() here is not working
-        $tz = $this->get('session')->get('time_zone');
+        $tz = $settingsService->getSettingValue('org_timezone');
         $timeZone = new \DateTimeZone($tz);
         $utc = new \DateTime('now', new \DateTimeZone("UTC"));
         $offSet = $timeZone->getOffset($utc)/3600;
