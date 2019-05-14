@@ -11,6 +11,7 @@
 
     <div>
         {% for row in loanRows %}
+            {% if row.dueInAt|date('Y-m-d') < "now"|date('Y-m-d') %}
             <div style="padding: 4px 0; clear: left;">
                 {% if row.inventoryItem.imageName %}
                     <div style="">
@@ -20,6 +21,7 @@
                 <strong style="font-size:1.2em">{{ row.inventoryItem.name }}</strong>
                 <br>{{ 'le_email.th_due_back'|trans() }} : {{ row.dueInAt|date('d F') }}
             </div>
+            {% endif %}
         {% endfor %}
         <div style="clear: both"></div>
     </div>

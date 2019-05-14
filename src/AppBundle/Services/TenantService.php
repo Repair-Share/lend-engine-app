@@ -59,6 +59,15 @@ class TenantService
     }
 
     /**
+     * Switch tenant (eg for scheduled nightly runs of reminders)
+     * @param $tenant
+     */
+    public function setTenant($tenant)
+    {
+        $this->settings->setTenant($tenant);
+    }
+
+    /**
      * Session information is set in CustomConnectionFactory, when we go to _core DB
      * We don't use container in CustomConnectionFactory due to "Impossible to call set() on a frozen ParameterBag"
      * @return mixed
@@ -167,7 +176,7 @@ class TenantService
 
     public function getCompanyName()
     {
-        return $this->settings->getSettingValue('org_name');
+        return $this->getSetting('org_name');
     }
 
     public function getCompanyEmail()
@@ -476,11 +485,7 @@ class TenantService
     // Allows whitelabelling
     public function getReplyToEmail()
     {
-        if ($fromEmail = $this->getSetting('from_email')) {
-            return $fromEmail;
-        } else {
-            return 'hello@lend-engine.com';
-        }
+        return $this->getSetting('from_email');
     }
 
     /**

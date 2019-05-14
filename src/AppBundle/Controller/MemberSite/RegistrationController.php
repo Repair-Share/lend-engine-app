@@ -122,17 +122,6 @@ class RegistrationController extends Controller
                 $replyToEmail
             );
 
-            // CC to system owner
-            $client->sendEmail(
-                "Lend Engine <hello@lend-engine.com>",
-                'hello@lend-engine.com',
-                "New registration on your Lend Engine site : ".$contact->getName(),
-                $message,
-                null,
-                null,
-                true
-            );
-
         } catch (PostmarkException $ex) {
             $this->addFlash('error', 'Failed to send email:' . $ex->message . ' : ' . $ex->postmarkApiErrorCode);
         } catch (\Exception $generalException) {

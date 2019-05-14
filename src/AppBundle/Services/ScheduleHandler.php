@@ -49,6 +49,8 @@ class ScheduleHandler
      */
     public function processLoanReminders()
     {
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->container->get('service.tenant');
 
         $startTime = microtime(true);
 
@@ -67,7 +69,7 @@ class ScheduleHandler
             $tenantStatus   = $tenant->getStatus();
             $tenantPlan     = $tenant->getPlan();
 
-            $resultString .= '  '.$tenant->getName().', '.$tenantStatus.PHP_EOL;
+            $resultString .= $tenant->getName().', '.$tenantStatus.PHP_EOL;
 
             if ($tenantPlan == 'free') {
                 $resultString .= '    ... skipping (free plan)'.PHP_EOL;
@@ -87,10 +89,9 @@ class ScheduleHandler
                 // Set the settings class to get data from the right DB
                 $this->settings->setTenant($tenant, $tenantEntityManager);
 
-                $senderName     = $this->container->get('service.tenant')->getCompanyName();
-                $replyToEmail   = $this->container->get('service.tenant')->getReplyToEmail();
-                $fromEmail      = $this->container->get('service.tenant')->getSetting('from_email');
-                $postmarkApiKey = $this->container->get('service.tenant')->getSetting('postmark_api_key');
+                $senderName     = $tenantService->getSetting('org_name');
+                $fromEmail      = $tenantService->getSetting('from_email');
+                $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
                 $automateThisEmail = $this->settings->getSettingValue('automate_email_loan_reminder');
                 if ($automateThisEmail != 1) {
@@ -149,7 +150,7 @@ class ScheduleHandler
                                     null,
                                     null,
                                     true,
-                                    $replyToEmail
+                                    $fromEmail
                                 );
 
                                 // Revert locale for the UI
@@ -160,6 +161,9 @@ class ScheduleHandler
                             }
 
                         }
+                    } else {
+                        $resultString .= '  No loan rows due tomorrow '.PHP_EOL;
+
                     }
 
                     $tenantEntityManager->getConnection()->close();
@@ -201,6 +205,9 @@ class ScheduleHandler
     public function processMemberships(OutputInterface $output)
     {
 
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->container->get('service.tenant');
+
         $output->writeln('Processing membership expiry notifications ...');
 
         $startTime = microtime(true);
@@ -219,11 +226,6 @@ class ScheduleHandler
             $tenantDbSchema = $tenant->getDbSchema();
             $tenantStatus   = $tenant->getStatus();
             $tenantPlan     = $tenant->getPlan();
-
-            $senderName     = $this->container->get('service.tenant')->getCompanyName();
-            $replyToEmail   = $this->container->get('service.tenant')->getReplyToEmail();
-            $fromEmail      = $this->container->get('service.tenant')->getSetting('from_email');
-            $postmarkApiKey = $this->container->get('service.tenant')->getSetting('postmark_api_key');
 
             $resultString .= '  '.$tenant->getName().', '.$tenantStatus;
 
@@ -244,6 +246,10 @@ class ScheduleHandler
 
                 // Set the settings class to get data from the right DB
                 $this->settings->setTenant($tenant, $tenantEntityManager);
+
+                $senderName     = $tenantService->getSetting('org_name');
+                $fromEmail      = $tenantService->getSetting('from_email');
+                $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
                 $automateThisEmail = $this->settings->getSettingValue('automate_email_membership');
                 if ($automateThisEmail != 1) {
@@ -314,7 +320,7 @@ class ScheduleHandler
                                         null,
                                         null,
                                         true,
-                                        $replyToEmail
+                                        $fromEmail
                                     );
 
                                     // Revert locale for the UI
@@ -370,6 +376,8 @@ class ScheduleHandler
      */
     public function processReservationReminders()
     {
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->container->get('service.tenant');
 
         $startTime = microtime(true);
 
@@ -387,11 +395,6 @@ class ScheduleHandler
             $tenantStatus   = $tenant->getStatus();
             $tenantPlan     = $tenant->getPlan();
 
-            $senderName     = $this->container->get('service.tenant')->getCompanyName();
-            $replyToEmail   = $this->container->get('service.tenant')->getReplyToEmail();
-            $fromEmail      = $this->container->get('service.tenant')->getSetting('from_email');
-            $postmarkApiKey = $this->container->get('service.tenant')->getSetting('postmark_api_key');
-
             $resultString .= '  '.$tenant->getName().', '.$tenantStatus;
 
             if ($tenantPlan == 'free') {
@@ -408,6 +411,10 @@ class ScheduleHandler
 
                 // Set the settings class to get data from the right DB
                 $this->settings->setTenant($tenant, $tenantEntityManager);
+
+                $senderName     = $tenantService->getCompanyName();
+                $fromEmail      = $tenantService->getSetting('from_email');
+                $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
                 $automateThisEmail = $this->settings->getSettingValue('automate_email_reservation_reminder');
                 if ($automateThisEmail != 1) {
@@ -461,7 +468,7 @@ class ScheduleHandler
                                     null,
                                     null,
                                     true,
-                                    $replyToEmail
+                                    $fromEmail
                                 );
 
                                 // Revert locale for the UI
@@ -513,6 +520,9 @@ class ScheduleHandler
      */
     public function processOverdueEmails()
     {
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->container->get('service.tenant');
+
         $startTime = microtime(true);
 
         $resultString = '';
@@ -528,11 +538,6 @@ class ScheduleHandler
             $tenantDbSchema = $tenant->getDbSchema();
             $tenantStatus   = $tenant->getStatus();
             $tenantPlan     = $tenant->getPlan();
-
-            $senderName     = $this->container->get('service.tenant')->getCompanyName();
-            $replyToEmail   = $this->container->get('service.tenant')->getReplyToEmail();
-            $fromEmail      = $this->container->get('service.tenant')->getSetting('from_email');
-            $postmarkApiKey = $this->container->get('service.tenant')->getSetting('postmark_api_key');
 
             $resultString .= '  '.$tenant->getName().', '.$tenantStatus;
 
@@ -550,6 +555,10 @@ class ScheduleHandler
 
                 // Set the settings class to get data from the right DB
                 $this->settings->setTenant($tenant, $tenantEntityManager);
+
+                $senderName     = $tenantService->getCompanyName();
+                $fromEmail      = $tenantService->getSetting('from_email');
+                $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
                 $overdueDays = $this->settings->getSettingValue('automate_email_overdue_days');
                 if ($overdueDays == null || $overdueDays == 0) {
@@ -606,7 +615,7 @@ class ScheduleHandler
                                     null,
                                     null,
                                     true,
-                                    $replyToEmail
+                                    $fromEmail
                                 );
 
                                 $note = new Note();

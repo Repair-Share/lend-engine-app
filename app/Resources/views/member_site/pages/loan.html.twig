@@ -595,7 +595,7 @@
             }
             $("#loan_check_out_paymentAmount").val(toPay.toFixed(2));
 
-            {% if loan.status in ['PENDING', 'RESERVED'] %}
+            {% if loan.status in ['PENDING', 'RESERVED'] and is_granted("ROLE_ADMIN") %}
             if (toPay == 0) {
                 $(".payment-details").hide();
             } else {

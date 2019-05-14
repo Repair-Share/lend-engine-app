@@ -610,7 +610,7 @@ class BasketController extends Controller
         }
 
         // Also send an email to company admin
-        if ($senderEmail != 'email@demo.com') {
+        if ($replyToEmail != 'email@demo.com') {
             try {
 
                 if ($toEmail) {
@@ -630,14 +630,14 @@ class BasketController extends Controller
                 );
 
                 $client->sendEmail(
-                    "{$senderName} <hello@lend-engine.com>",
-                    $senderEmail,
+                    "{$senderName} <{$fromEmail}>",
+                    $fromEmail,
                     "A new reservation has been placed : ".$loan->getId()."",
                     $message,
                     null,
                     null,
                     true,
-                    $senderEmail
+                    $replyToEmail
                 );
 
             } catch (\Exception $generalException) {
