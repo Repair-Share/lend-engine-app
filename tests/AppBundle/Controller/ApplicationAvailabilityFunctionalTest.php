@@ -31,23 +31,48 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             // Admin : settings
             ['/admin/settings/general'],
             ['/admin/billing'],
-            ['/admin/site/list'],
-            ['/admin/location/list'],
             ['/admin/settings/reservations'],
             ['/admin/settings/member_site'],
-            ['/admin/page/list'],
             ['/admin/settings/templates'],
+
+            ['/admin/site/list'],
+            ['/admin/site'],
+
+            ['/admin/location/list'],
+            ['/admin/location'],
+            
+            ['/admin/page/list'],
+
             ['/admin/users/list'],
+            ['/admin/user'],
+
             ['/admin/tags/list'],
+            ['/admin/productTag'],
+
             ['/admin/productField/list'],
+            ['/admin/productField'],
+
             ['/admin/itemCondition/list'],
+            ['/admin/itemCondition'],
+
             ['/admin/settings/labels'],
+
             ['/admin/checkInPrompt/list'],
+            ['/admin/checkInPrompt'],
+
             ['/admin/checkOutPrompt/list'],
+            ['/admin/checkOutPrompt'],
+
             ['/admin/import/contacts/'],
+
             ['/admin/contactField/list'],
+            ['/admin/contactField'],
+
             ['/admin/membershipType/list'],
+            ['/admin/membershipType'],
+
             ['/admin/payment-method/list'],
+            ['/admin/payment-method'],
 
             // Admin : other
             ['/admin/'],

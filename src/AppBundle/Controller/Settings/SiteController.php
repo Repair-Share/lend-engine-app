@@ -140,7 +140,7 @@ EOT;
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
 
-        $accountCode = $this->get('session')->get('account_code');
+        $accountCode = $settingsService->getTenant()->getStub();
 
         if ($id) {
             $site = $this->getDoctrine()->getRepository('AppBundle:Site')->find($id);
