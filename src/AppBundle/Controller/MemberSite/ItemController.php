@@ -64,10 +64,10 @@ class ItemController extends Controller
         $defaultLoanDays = (int)$this->get('settings')->getSettingValue('default_loan_days');
         $minLoanDays = (int)$this->get('settings')->getSettingValue('min_loan_days');
         $maxLoanDays = (int)$this->get('settings')->getSettingValue('max_loan_days');
-        $endLoanAt = $this->get('settings')->getSettingValue('end_loan_at');
-        if (!$endLoanAt) {
-            $endLoanAt = 'end';
-        }
+//        $endLoanAt = $this->get('settings')->getSettingValue('end_loan_at');
+//        if (!$endLoanAt) {
+//            $endLoanAt = 'end';
+//        }
 
         $loanEndDate = new \DateTime();
         $loanEndDate->modify("+ {$defaultLoanDays} days");
@@ -189,8 +189,6 @@ class ItemController extends Controller
             $product->$setter($string);
         }
 
-        $fixedFee = 43;
-
         return $this->render($template, array(
             'product' => $product,
             'user' => $contact,
@@ -207,7 +205,6 @@ class ItemController extends Controller
             'sites' => $sites,
             'allowBorrow' => 1,
             'pageTitle' => 'Borrow '.$product->getName(),
-            'endLoanAt' => $endLoanAt,
 
             // Used for admins to choose 'today' when reserving (time is overridden when calendar loads):
             'currentPickupTime' => $pickupTime->format("Y-m-d 09:00:00"),

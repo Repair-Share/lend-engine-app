@@ -8,7 +8,7 @@ class SettingsControllerTest extends AuthenticatedControllerTest
 {
     public function testSettingsAction()
     {
-        $crawler = $this->client->request('GET', '/admin/settings');
+        $crawler = $this->client->request('GET', '/admin/settings/general');
         $this->assertEquals(1, $crawler->filter('#settings-settings')->count());
     }
 }

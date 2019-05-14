@@ -6,7 +6,7 @@ namespace Tests\AppBundle\Controller\MemberSite;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class ItemListControllerTest extends WebTestCase
+class MemberSiteItemListControllerTest extends WebTestCase
 {
     public function testListProductsAction()
     {

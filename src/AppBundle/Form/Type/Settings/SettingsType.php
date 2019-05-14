@@ -40,6 +40,7 @@ class SettingsType extends AbstractType
         // Get the settings values
         $dbData = $this->settingsService->getAllSettingValues();
 
+        // @todo move this into the settings service
         if (!$dbData['org_timezone']) {
             $dbData['org_timezone'] = 'Europe/London';
         }
@@ -264,7 +265,7 @@ EOT;
 
         /** @var $repo \AppBundle\Repository\PaymentMethodRepository */
         $repo =  $this->em->getRepository('AppBundle:PaymentMethod');
-        $stripePaymentMethod = $repo->find($dbData['stripe_payment_method']);
+        $stripePaymentMethod = $repo->find((int)$dbData['stripe_payment_method']);
         $builder->add('stripe_payment_method', EntityType::class, array(
             'label' => 'Stripe.com payment method',
             'class' => 'AppBundle:PaymentMethod',

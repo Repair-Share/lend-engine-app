@@ -14,15 +14,6 @@ class SiteControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/');
 
-        $this->assertEquals(1, $crawler->filter('#site-welcome')->count());
-    }
-
-    public function testHomeAction()
-    {
-        $client = static::createClient();
-
-        $crawler = $client->request('GET', '/welcome');
-
-        $this->assertEquals(1, $crawler->filter('#site-welcome')->count());
+        $this->assertEquals(1, $crawler->filter('#nav-org-name')->count());
     }
 }

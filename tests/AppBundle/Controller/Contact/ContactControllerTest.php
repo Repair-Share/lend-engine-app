@@ -10,9 +10,6 @@ class ContactControllerTest extends AuthenticatedControllerTest
 
     public function setUp()
     {
-        // This is loaded here since it's the first test (alphabetically)
-        parent::loadTestDatabase();
-
         parent::setUp();
     }
 

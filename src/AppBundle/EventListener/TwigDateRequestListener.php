@@ -7,8 +7,7 @@
  */
 namespace AppBundle\EventListener;
 
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\HttpFoundation\Session\Session;
+use AppBundle\Services\SettingsService;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 class TwigDateRequestListener
@@ -16,16 +15,16 @@ class TwigDateRequestListener
     /** @var \Twig_Environment  */
     protected $twig;
 
-    /** @var Session  */
-    private $session;
+    /** @var \AppBundle\Services\SettingsService  */
+    private $settings;
 
-    function __construct(\Twig_Environment $twig, Session $session) {
+    function __construct(\Twig_Environment $twig, SettingsService $settings) {
         $this->twig = $twig;
-        $this->session = $session;
+        $this->settings = $settings;
     }
 
     public function onKernelRequest(GetResponseEvent $event) {
-        if (!$timezone = $this->session->get('time_zone')) {
+        if (!$timezone = $this->settings->getSettingValue('org_timezone')) {
             $timezone = 'Europe/London';
         }
         $this->twig->getExtension('Twig_Extension_Core')->setTimezone($timezone);

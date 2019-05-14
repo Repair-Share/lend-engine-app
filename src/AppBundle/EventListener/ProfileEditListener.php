@@ -24,8 +24,6 @@ class ProfileEditListener implements EventSubscriberInterface
 
     public function onProfileEditSuccess(FormEvent $event)
     {
-
-//        die('hit');
         $request = $event->getRequest();
         $session = $request->getSession();
         $form = $event->getForm();

@@ -26,6 +26,9 @@ class ItemBookingsController extends Controller
         /** @var $bookingService \AppBundle\Services\Booking\BookingService */
         $bookingService = $this->get("service.booking");
 
+        /** @var $settingsService \AppBundle\Services\SettingsService */
+        $settingsService = $this->get("settings");
+
         // From and To are passed in from the calendar view
         $filter = [
             'item_ids' => [$itemId],
@@ -50,7 +53,7 @@ class ItemBookingsController extends Controller
             }
 
             // Modify times to match local time for calendar
-            $tz = $this->get('session')->get('time_zone');
+            $tz = $settingsService->getSettingValue('org_timezone');
             $timeZone = new \DateTimeZone($tz);
             $utc = new \DateTime('now', new \DateTimeZone("UTC"));
             $offSet = $timeZone->getOffset($utc)/3600;

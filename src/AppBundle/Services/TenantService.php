@@ -45,12 +45,12 @@ class TenantService
 
     private $postmarkApiKey;
 
-    function __construct(Session $session,
-                         Container $container,
+    function __construct(Container $container,
                          EntityManager $entityManager,
                          BillingService $billingService,
                          SettingsService $settingsService,
-                         $postmarkApiKey
+                         $postmarkApiKey,
+                         Session $session
     )
     {
         $this->session = $session;

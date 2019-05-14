@@ -34,6 +34,9 @@ class SettingsService
         $this->db = $this->em->getConnection()->getDatabase();
 
         $tenant = $this->em->getRepository('AppBundle:Tenant')->findOneBy(['dbSchema' => $this->db]);
+        if (!$tenant) {
+            throw new \Exception("No tenant found when getting settings");
+        }
         $this->setTenant($tenant);
     }
 

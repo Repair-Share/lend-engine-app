@@ -28,7 +28,7 @@ services:
         class: AppBundle\EventListener\TwigDateRequestListener
         arguments:
             - "@twig"
-            - "@session"
+            - "@settings"
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
@@ -40,20 +40,10 @@ services:
     billing_listener:
         class: AppBundle\EventListener\BillingListener
         arguments:
-            - "@doctrine.orm.entity_manager"
-            - "@session"
+            - "@settings"
             - "@router"
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelController}
-
-    # To wipe data from entities not supported on a given pay plan
-    doctrine_event_listener:
-        class: AppBundle\EventListener\DoctrineEventListener
-        arguments:
-            - "@session"
-            - "@billing"
-        tags:
-            - { name: doctrine.event_listener, event: postLoad, method: onPostLoad }
 
     app.form.registration:
         class: AppBundle\Form\RegistrationType
@@ -137,12 +127,12 @@ services:
     service.tenant:
         class: AppBundle\Services\TenantService
         arguments:
-            - "@session"
             - "@service_container"
             - "@doctrine.orm.entity_manager"
             - "@billing"
             - "@settings"
             - '%env(SYMFONY__POSTMARK_API_KEY)%'
+            - "@session"
 
     settings:
         class: AppBundle\Services\SettingsService

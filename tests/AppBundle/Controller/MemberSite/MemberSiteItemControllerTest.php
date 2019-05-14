@@ -4,7 +4,7 @@ namespace Tests\AppBundle\Controller\MemberSite;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class ItemControllerTest extends WebTestCase
+class MemberSiteItemControllerTest extends WebTestCase
 {
     public function testListProductsAction()
     {
@@ -14,8 +14,5 @@ class ItemControllerTest extends WebTestCase
 
         // Item page shows
         $this->assertEquals(1, $crawler->filter('#item-core')->count());
-
-        // Product has loaded into the page
-        $this->assertEquals(1, $crawler->filter('#item-detail-description')->count());
     }
 }

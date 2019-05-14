@@ -3,6 +3,7 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Tenant;
+use AppBundle\Services\SettingsService;
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\DependencyInjection\Container;
@@ -13,21 +14,16 @@ use Symfony\Component\Routing\Router;
 
 class BillingListener
 {
-    private $em;
-    private $session;
+    private $settings;
     private $router;
 
-    function __construct(EntityManager $em, Session $session, Router $router) {
-        $this->em = $em;
-        $this->session = $session;
+    function __construct(SettingsService $settings, Router $router) {
+        $this->settings = $settings;
         $this->router = $router;
     }
 
     public function onKernelController(FilterControllerEvent $event)
     {
-        /** @var $repo \AppBundle\Repository\TenantRepository */
-        $repo = $this->em->getRepository('AppBundle:Tenant');
-
         $request = $event->getRequest();
 
         if (!in_array($request->attributes->get('_route'),
@@ -39,13 +35,9 @@ class BillingListener
                 'clear_site'
             ])) {
 
-            if ($accountCode = $this->session->get('account_code')) {
-
-                /** @var $tenant \AppBundle\Entity\Tenant */
-                if (!$tenant = $repo->findOneBy(['stub' => $accountCode])) {
-                    die('We could not find your account');
-                }
-
+            if (!$tenant = $this->settings->getTenant()) {
+                die('We could not find your account');
+            } else {
                 // If cancelled, redirect to home
                 if ($tenant->getStatus() == Tenant::STATUS_CANCEL) {
                     $redirectUrl = $this->router->generate('billing');
@@ -67,7 +59,6 @@ class BillingListener
                         }
                     }
                 }
-
             }
 
         }
