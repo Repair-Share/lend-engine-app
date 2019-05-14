@@ -18,7 +18,7 @@ class DashController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        /** @var $settingsService \AppBundle\Settings\Settings */
+        /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
         $accountCode = $this->get('session')->get('account_code');
 

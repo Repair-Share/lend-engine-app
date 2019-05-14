@@ -62,8 +62,8 @@ class ProfileType extends AbstractType
             )
         ));
 
-//        if ($this->container->get('tenant_information')->getLocale()) {
-//            $defaultLocale = $this->container->get('tenant_information')->getLocale();
+//        if ($this->container->get('service.tenant')->getLocale()) {
+//            $defaultLocale = $this->container->get('service.tenant')->getLocale();
 //        } else {
 //            $defaultLocale = 'en';
 //        }

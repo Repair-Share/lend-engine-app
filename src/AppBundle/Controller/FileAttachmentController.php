@@ -21,7 +21,7 @@ class FileAttachmentController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $schema    = $this->get('tenant_information')->getSchema();
+        $schema    = $this->get('service.tenant')->getSchema();
 
         /** @var \AppBundle\Repository\FileAttachmentRepository $repo */
         $repo = $em->getRepository('AppBundle:FileAttachment');

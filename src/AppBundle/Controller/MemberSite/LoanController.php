@@ -316,8 +316,8 @@ class LoanController extends Controller
                     /** @var $row \AppBundle\Entity\LoanRow */
                     $item = $row->getInventoryItem();
 
-                    $s3_bucket = $this->get('tenant_information')->getS3Bucket();
-                    $schema    = $this->get('tenant_information')->getSchema();
+                    $s3_bucket = $this->get('service.tenant')->getS3Bucket();
+                    $schema    = $this->get('service.tenant')->getSchema();
                     $imageUrl  = $s3_bucket.$schema.'/thumbs/'.$item->getImageName();
 
                     $nameParts = explode(' ', $loan->getContact()->getName());
@@ -349,8 +349,8 @@ class LoanController extends Controller
     private function sendCheckoutConfirmationEmail(Loan $loan)
     {
 
-        $senderName  = $this->get('tenant_information')->getCompanyName();
-        $senderEmail = $this->get('tenant_information')->getCompanyEmail();
+        $senderName  = $this->get('service.tenant')->getCompanyName();
+        $senderEmail = $this->get('service.tenant')->getCompanyEmail();
 
         // Send email confirmation
         $toEmail = $loan->getContact()->getEmail();
@@ -376,7 +376,7 @@ class LoanController extends Controller
 
                 // Send any attachments relating to the items being checked out
                 $attachments = [];
-                $accountCode = $this->get('tenant_information')->getAccountCode();
+                $accountCode = $this->get('service.tenant')->getAccountCode();
                 $filePathStub = 'https://s3-us-west-2.amazonaws.com/lend-engine/'.$accountCode.'/files/';
 
                 foreach ($loan->getLoanRows() AS $row) {

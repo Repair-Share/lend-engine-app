@@ -3,24 +3,20 @@
 namespace AppBundle\Form\Type;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
-use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
-use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SettingsTemplatesType extends AbstractType
 {
     /** @var \Doctrine\ORM\EntityManager  */
     public $em;
+
+    /** @var \AppBundle\Services\SettingsService */
+    public $settingsService;
 
     function __construct()
     {
@@ -31,11 +27,10 @@ class SettingsTemplatesType extends AbstractType
     {
 
         $this->em = $options['em'];
+        $this->settingsService = $options['settingsService'];
 
         // Get the settings
-        /** @var $repo \AppBundle\Repository\SettingRepository */
-        $repo =  $this->em->getRepository('AppBundle:Setting');
-        $dbData = $repo->getAllSettings();
+        $dbData = $this->settingsService->getAllSettingValues();
 
         $builder->add('org_email_footer', TextareaType::class, array(
             'label' => 'HTML footer for all outbound emails',
@@ -305,7 +300,8 @@ class SettingsTemplatesType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'em' => null
+            'em' => null,
+            'settingsService' => null
         ));
     }
 }

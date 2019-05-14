@@ -139,7 +139,7 @@ class UserController extends Controller
                 if ($sendUserEmail == true) {
 
                     $locale = $user->getLocale();
-                    $accountName = $this->get('tenant_information')->getCompanyName();
+                    $accountName = $this->get('service.tenant')->getCompanyName();
 
                     if (!$subject = $this->get('settings')->getSettingValue('email_welcome_subject')) {
                         $subject = $this->get('translator')->trans('le_email.login_details.subject', ['%accountName%' => $accountName], 'emails', $locale);

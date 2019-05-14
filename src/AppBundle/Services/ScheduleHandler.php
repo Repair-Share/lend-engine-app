@@ -4,7 +4,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Membership;
 use AppBundle\Entity\Note;
-use AppBundle\Settings\Settings;
+use AppBundle\Services\SettingsService;
 use Doctrine\ORM\EntityManager;
 use Postmark\PostmarkClient;
 use Postmark\Models\PostmarkException;
@@ -21,7 +21,7 @@ class ScheduleHandler
     /** @var Container  */
     private $container;
 
-    /** @var \AppBundle\Settings\Settings */
+    /** @var \AppBundle\Services\SettingsService */
     private $settings;
 
     /** @var EntityManager */
@@ -31,7 +31,7 @@ class ScheduleHandler
 
     private $logger;
 
-    public function __construct(\Twig_Environment $twig, Container $container, Settings $settings, EntityManager $em, LoggerInterface $logger)
+    public function __construct(\Twig_Environment $twig, Container $container, SettingsService $settings, EntityManager $em, LoggerInterface $logger)
     {
         $this->twig = $twig;
         $this->container = $container;

@@ -27,7 +27,7 @@ class PageEditController extends Controller
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
 
-        $tenantInformationService = $this->container->get('tenant_information');
+        $tenantInformationService = $this->container->get('service.tenant');
 
         if ($pageId == "new") {
 

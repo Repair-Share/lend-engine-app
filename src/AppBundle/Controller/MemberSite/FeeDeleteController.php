@@ -27,7 +27,7 @@ class FeeDeleteController extends Controller
         /** @var \AppBundle\Repository\PaymentRepository $repo */
         $repo = $em->getRepository('AppBundle:Payment');
 
-        $currencySymbol = $this->get('tenant_information')->getCurrencySymbol();
+        $currencySymbol = $this->get('service.tenant')->getCurrencySymbol();
 
         /** @var \AppBundle\Entity\Payment $payment */
         if (!$payment = $repo->find($id)) {

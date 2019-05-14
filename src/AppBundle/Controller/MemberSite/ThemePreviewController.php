@@ -33,7 +33,7 @@ class ThemePreviewController extends Controller
      */
     public function applyThemeController()
     {
-        /** @var \AppBundle\Settings\Settings $settings */
+        /** @var \AppBundle\Services\SettingsService $settings */
         $settings = $this->container->get('settings');
         if ($themeName = $this->container->get('session')->get('previewThemeName')) {
             $settings->setSettingValue('site_theme_name', $themeName);

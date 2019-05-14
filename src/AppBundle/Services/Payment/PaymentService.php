@@ -5,7 +5,7 @@ namespace AppBundle\Services\Payment;
 use AppBundle\Entity\Contact;
 use AppBundle\Entity\Deposit;
 use AppBundle\Services\StripeHandler;
-use AppBundle\Settings\Settings;
+use AppBundle\Services\SettingsService;
 use AppBundle\Entity\ItemMovement;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
@@ -25,7 +25,7 @@ class PaymentService
     private $em;
 
     /**
-     * @var Settings
+     * @var SettingsService
      */
     private $settings;
 
@@ -44,7 +44,7 @@ class PaymentService
      */
     public $errors = [];
 
-    public function __construct(EntityManager $em, Settings $settings, StripeHandler $stripeService)
+    public function __construct(EntityManager $em, SettingsService $settings, StripeHandler $stripeService)
     {
         $this->em        = $em;
         $this->settings  = $settings;

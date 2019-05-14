@@ -21,7 +21,7 @@ class ImageController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $schema   = $this->get('tenant_information')->getSchema();
+        $schema   = $this->get('service.tenant')->getSchema();
 
         /** @var \AppBundle\Repository\ImageRepository $repo */
         $repo = $em->getRepository('AppBundle:Image');
@@ -61,8 +61,8 @@ class ImageController extends Controller
     {
         $service = $this->get('helper.imageresizer');
 
-        $s3_bucket = $this->get('tenant_information')->getS3Bucket();
-        $schema    = $this->get('tenant_information')->getSchema();
+        $s3_bucket = $this->get('service.tenant')->getS3Bucket();
+        $schema    = $this->get('service.tenant')->getSchema();
 
         if ($request->get('rotate') == 'left') {
             $direction = 'left';

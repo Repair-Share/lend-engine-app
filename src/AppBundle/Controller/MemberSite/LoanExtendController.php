@@ -25,8 +25,8 @@ class LoanExtendController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $senderName  = $this->get('tenant_information')->getCompanyName();
-        $senderEmail = $this->get('tenant_information')->getCompanyEmail();
+        $senderName  = $this->get('service.tenant')->getCompanyName();
+        $senderEmail = $this->get('service.tenant')->getCompanyEmail();
 
         /** @var \AppBundle\Repository\LoanRowRepository $siteRepo */
         $loanRowRepo = $this->getDoctrine()->getRepository('AppBundle:LoanRow');

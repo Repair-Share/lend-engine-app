@@ -38,7 +38,7 @@ class LoanFeeController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
-        $currencySymbol = $this->get('tenant_information')->getCurrencySymbol();
+        $currencySymbol = $this->get('service.tenant')->getCurrencySymbol();
 
         /** @var \AppBundle\Entity\Loan $loan */
         if (!$loan = $repo->find($loanId)) {

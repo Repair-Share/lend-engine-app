@@ -36,8 +36,8 @@ class FOSMailer implements MailerInterface
     public function sendConfirmationEmailMessage(UserInterface $user)
     {
         $template        = $this->container->getParameter('fos_user.registration.confirmation.template');
-        $fromCompanyName = $this->container->get('tenant_information')->getCompanyName();
-        $replyToEmail    = $this->container->get('tenant_information')->getCompanyEmail();
+        $fromCompanyName = $this->container->get('service.tenant')->getCompanyName();
+        $replyToEmail    = $this->container->get('service.tenant')->getCompanyEmail();
 
         $url = $this->router->generate('fos_user_registration_confirm', array('token' => $user->getConfirmationToken()), UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -70,8 +70,8 @@ class FOSMailer implements MailerInterface
     public function sendResettingEmailMessage(UserInterface $user)
     {
         $template        = $this->container->getParameter('fos_user.resetting.email.template');
-        $fromCompanyName = $this->container->get('tenant_information')->getCompanyName();
-        $replyToEmail    = $this->container->get('tenant_information')->getCompanyEmail();
+        $fromCompanyName = $this->container->get('service.tenant')->getCompanyName();
+        $replyToEmail    = $this->container->get('service.tenant')->getCompanyEmail();
 
         $url = $this->router->generate('fos_user_resetting_reset', array('token' => $user->getConfirmationToken()), UrlGeneratorInterface::ABSOLUTE_URL);
 

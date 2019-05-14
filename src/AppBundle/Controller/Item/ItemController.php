@@ -35,7 +35,7 @@ class ItemController extends Controller
 
         $user = $this->getUser();
 
-        $skuStub = $this->get('tenant_information')->getCodeStub();
+        $skuStub = $this->get('service.tenant')->getCodeStub();
         $itemTypeId = null;
 
         if ($id) {
@@ -119,7 +119,7 @@ class ItemController extends Controller
 
         /** @var \AppBundle\Repository\ProductFieldRepository $fieldRepo */
         $fieldRepo = $this->getDoctrine()->getRepository('AppBundle:ProductField');
-        if ($this->get('tenant_information')->getFeature('ProductField')) {
+        if ($this->get('service.tenant')->getFeature('ProductField')) {
             $customFields = $fieldRepo->findAllOrderedBySort();
             $customFieldValues = $product->getFieldValues();
         } else {

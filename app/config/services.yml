@@ -24,22 +24,6 @@ services:
         arguments:
             - "@session"
 
-    tenant_information:
-        class: AppBundle\Extensions\TenantInformation
-        arguments:
-            - "@session"
-            - "@service_container"
-            - "@doctrine.orm.entity_manager"
-            - "@billing"
-            - "@settings"
-
-    twig.extension.tenant_information:
-        class: AppBundle\Extensions\TenantInformationExtension
-        arguments:
-            - "@tenant_information"
-        tags:
-            - { name: twig.extension }
-
     twigdate.listener.request:
         class: AppBundle\EventListener\TwigDateRequestListener
         arguments:
@@ -150,8 +134,18 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    service.tenant:
+        class: AppBundle\Services\TenantService
+        arguments:
+            - "@session"
+            - "@service_container"
+            - "@doctrine.orm.entity_manager"
+            - "@billing"
+            - "@settings"
+            - '%env(POSTMARK_API_KEY)%'
+
     settings:
-        class: AppBundle\Settings\Settings
+        class: AppBundle\Services\SettingsService
         arguments:
             - "@doctrine.orm.entity_manager"
 
@@ -311,7 +305,7 @@ services:
 
     app.locale_listener:
         class: AppBundle\EventListener\LocaleListener
-        arguments: ['%kernel.default_locale%', "@tenant_information"]
+        arguments: ['%kernel.default_locale%', "@service.tenant"]
         tags:
             - { name: kernel.event_subscriber }
 

@@ -4,13 +4,9 @@ namespace AppBundle\Form\Type\Settings;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use AppBundle\Form\Type\ToggleType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,8 +15,11 @@ class SettingsLabelsType extends AbstractType
     /** @var \Doctrine\ORM\EntityManager */
     public $em;
 
-    /** @var $tenantInformationService \AppBundle\Extensions\TenantInformation */
+    /** @var $tenantInformationService \AppBundle\Services\TenantService */
     private $tenantInformationService;
+
+    /** @var \AppBundle\Services\SettingsService */
+    public $settingsService;
 
     function __construct()
     {
@@ -31,6 +30,7 @@ class SettingsLabelsType extends AbstractType
     {
         $this->em = $options['em'];
         $this->tenantInformationService = $options['tenantInformationService'];
+        $this->settingsService = $options['settingsService'];
 
         $choices = [
             'Multi purpose 19mm x 51mm (11355)' => '11355',
@@ -38,9 +38,7 @@ class SettingsLabelsType extends AbstractType
         ];
 
         // Get the settings
-        /** @var $repo \AppBundle\Repository\SettingRepository */
-        $repo =  $this->em->getRepository('AppBundle:Setting');
-        $dbData = $repo->getAllSettings();
+        $dbData = $this->settingsService->getAllSettingValues();
 
         $builder->add('label_type', ChoiceType::class, array(
             'choices' => $choices,
@@ -80,7 +78,8 @@ class SettingsLabelsType extends AbstractType
     {
         $resolver->setDefaults(array(
             'em' => null,
-            'tenantInformationService' => null
+            'tenantInformationService' => null,
+            'settingsService' => null
         ));
     }
 }

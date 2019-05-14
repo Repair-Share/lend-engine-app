@@ -5,15 +5,12 @@ namespace AppBundle\Form\Type;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
-use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,8 +19,11 @@ class SettingsType extends AbstractType
     /** @var \Doctrine\ORM\EntityManager */
     public $em;
 
-    /** @var \AppBundle\Extensions\TenantInformation */
+    /** @var \AppBundle\Services\TenantService */
     public $tenantInformationService;
+
+    /** @var \AppBundle\Services\SettingsService */
+    public $settingsService;
 
     function __construct()
     {
@@ -34,11 +34,10 @@ class SettingsType extends AbstractType
     {
         $this->em = $options['em'];
         $this->tenantInformationService = $options['tenantInformationService'];
+        $this->settingsService = $options['settingsService'];
 
-        // Get the settings
-        /** @var $repo \AppBundle\Repository\SettingRepository */
-        $repo =  $this->em->getRepository('AppBundle:Setting');
-        $dbData = $repo->getAllSettings();
+        // Get the settings values
+        $dbData = $this->settingsService->getAllSettingValues();
 
         if (!$dbData['org_timezone']) {
             $dbData['org_timezone'] = 'Europe/London';
@@ -149,22 +148,52 @@ EOT;
             )
         ));
 
+//        WHITE LABELLING
+        if ($this->tenantInformationService->getFeature('WhiteLabel')) {
+            $brandingHelp = '';
+            $choices = ['Yes' => '1', 'No'  => '0',];
+        } else {
+            $brandingHelp = '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on the Business plan. Removes link to Lend Engine on website and email footers.';
+            $choices = ['No'  => '0',];
+        }
+        $builder->add('hide_branding', ToggleType::class, array(
+            'expanded' => true,
+            'multiple' => false,
+            'choices' => $choices,
+            'label' => 'Hide Lend Engine branding',
+            'data' => (bool)$dbData['hide_branding'],
+            'attr' => [
+                'data-help' => $brandingHelp,
+            ]
+        ));
+
+        $builder->add('postmark_api_key', TextType::class, array(
+            'label' => 'Postmark API key for outbound email',
+            'data' => $dbData['postmark_api_key'],
+            'attr' => [
+                'class' => '',
+            ]
+        ));
+
         /** EMAIL AUTOMATION */
 
         $emailDisabled = true;
         if ($this->tenantInformationService->getFeature('EmailAutomation')) {
             $emailDisabled = false;
             $emailHelp = "";
+            $choices = ['Yes' => '1', 'No'  => '0',];
         } else {
             $emailHelp = '<i class="fa fa-star" style="color:#ff9d00"></i> This requires a paid plan.';
             $dbData['automate_email_loan_reminder'] = false;
             $dbData['automate_email_reservation_reminder'] = false;
             $dbData['automate_email_membership'] = false;
             $dbData['automate_email_overdue_days'] = null;
+            $choices = ['No'  => '0',];
         }
 
         $builder->add('automate_email_loan_reminder', ToggleType::class, array(
             'expanded' => true,
+            'choices' => $choices,
             'label' => 'Send reminder the day before a loan is due back',
             'data' => (int)$dbData['automate_email_loan_reminder'],
             'attr' => [
@@ -176,6 +205,7 @@ EOT;
 
         $builder->add('automate_email_reservation_reminder', ToggleType::class, array(
             'expanded' => true,
+            'choices' => $choices,
             'label' => 'Send reminder the day before a reservation is due to be picked up',
             'data' => (int)$dbData['automate_email_reservation_reminder'],
             'attr' => [
@@ -187,6 +217,7 @@ EOT;
 
         $builder->add('automate_email_membership', ToggleType::class, array(
             'expanded' => true,
+            'choices' => $choices,
             'label' => 'Notify members when their membership has expired',
             'data' => (int)$dbData['automate_email_membership'],
             'attr' => [
@@ -313,7 +344,8 @@ EOT;
     {
         $resolver->setDefaults(array(
             'em' => null,
-            'tenantInformationService' => null
+            'tenantInformationService' => null,
+            'settingsService' => null,
         ));
     }
 }

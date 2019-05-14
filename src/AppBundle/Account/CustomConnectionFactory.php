@@ -154,8 +154,8 @@ class CustomConnectionFactory extends ConnectionFactory
                 case 'multiple':
                     $plan = 'plus';
                     break;
-                case 'ultra':
-                    $plan = 'ultra';
+                case 'business':
+                    $plan = 'business';
                     break;
             }
             $this->session->set('plan', $plan);

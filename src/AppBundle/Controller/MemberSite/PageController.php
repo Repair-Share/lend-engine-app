@@ -41,7 +41,7 @@ class PageController extends Controller
                 $this->addFlash("error", "Sorry, you can't access that.");
                 return $this->redirectToRoute('home');
             }
-        } else if ($page->getVisibility() == "HIDDEN" && !$this->container->get('tenant_information')->getIsEditMode()) {
+        } else if ($page->getVisibility() == "HIDDEN" && !$this->container->get('service.tenant')->getIsEditMode()) {
             $this->addFlash("error", "Sorry, you can't access that.");
             return $this->redirectToRoute('home');
         }
@@ -84,7 +84,7 @@ class PageController extends Controller
                 $this->addFlash("error", "Sorry, you can't access that.");
                 return $this->redirectToRoute('home');
             }
-        } else if ($page->getVisibility() == "HIDDEN" && !$this->container->get('tenant_information')->getIsEditMode()) {
+        } else if ($page->getVisibility() == "HIDDEN" && !$this->container->get('service.tenant')->getIsEditMode()) {
             $this->addFlash("error", "Sorry, you can't access that.");
             return $this->redirectToRoute('home');
         }

@@ -558,8 +558,8 @@ class BasketController extends Controller
             return $this->redirectToRoute('loan_list');
         }
 
-        $senderName  = $this->get('tenant_information')->getCompanyName();
-        $senderEmail = $this->get('tenant_information')->getCompanyEmail();
+        $senderName  = $this->get('service.tenant')->getCompanyName();
+        $senderEmail = $this->get('service.tenant')->getCompanyEmail();
         $locale = $loan->getContact()->getLocale();
 
         $client = new PostmarkClient($this->getParameter('postmark_api_key'));

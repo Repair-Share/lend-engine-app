@@ -47,6 +47,7 @@ class BillingService
             'MultipleLanguages' => false,
             'EmailAutomation'   => false,
             'Labels'            => false,
+            'WhiteLabel'        => false,
         ];
 
         switch ($plan) {
@@ -73,6 +74,7 @@ class BillingService
                     'MultipleLanguages' => true,
                     'EmailAutomation'   => true,
                     'Labels'            => false,
+                    'WhiteLabel'        => false,
                 ];
                 break;
 
@@ -94,6 +96,7 @@ class BillingService
                     'MultipleLanguages' => false,
                     'EmailAutomation'   => true,
                     'Labels'            => true,
+                    'WhiteLabel'        => false,
                 ];
                 break;
 
@@ -115,6 +118,7 @@ class BillingService
                     'MultipleLanguages' => true,
                     'EmailAutomation'   => true,
                     'Labels'            => true,
+                    'WhiteLabel'        => true,
                 ];
                 break;
 

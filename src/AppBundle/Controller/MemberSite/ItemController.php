@@ -98,8 +98,8 @@ class ItemController extends Controller
         $product->setMaxLoanDays($itemLoanDays);
 
         if ($product->getImageName()) {
-            $account_code   = $this->get('tenant_information')->getAccountCode();
-            $s3Bucket       = $this->get('tenant_information')->getS3Bucket();
+            $account_code   = $this->get('service.tenant')->getAccountCode();
+            $s3Bucket       = $this->get('service.tenant')->getS3Bucket();
             $product->setImagePath($s3Bucket.$account_code.'/large/'.$product->getImageName());
         }
 

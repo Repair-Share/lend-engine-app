@@ -85,9 +85,11 @@
 
                     <div class="col-sm-4">
                         {% include('member_site/themes/widgets/contact_info.html.twig') %}
-                        <br><br>
-                        {% trans %}public_footer.powered_by{% endtrans %}
-                        <a href="http://www.lend-engine.com" target="_blank">The Lend Engine</a>
+                        {% if not tenantInformation.setting('hide_branding') %}
+                            <br><br>
+                            {% trans %}public_footer.powered_by{% endtrans %}
+                            <a href="http://www.lend-engine.com" target="_blank">The Lend Engine</a>
+                        {% endif %}
                     </div>
 
                     <div class="col-sm-4">

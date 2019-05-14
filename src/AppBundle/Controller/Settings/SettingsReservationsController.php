@@ -9,33 +9,26 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Form\Type\SettingsType;
+use AppBundle\Form\Type\SettingsReservationsType;
 
-class SettingsController extends Controller
+class SettingsReservationsController extends Controller
 {
-
     /**
-     * @Route("admin/settings/general", name="settings")
+     * @Route("admin/settings/reservations", name="settings_reservations")
      * @Security("has_role('ROLE_SUPER_USER')")
      */
-    public function settingsAction(Request $request)
+    public function settingsReservationsAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-
-        /** @var $tenantInformationService \AppBundle\Services\TenantService */
-        $tenantInformationService = $this->get('service.tenant');
 
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
 
-        // Pass tenant info in so we can control settings based on pay plan
         $options = [
             'em' => $em,
-            'tenantInformationService' => $tenantInformationService,
-            'settingsService' => $settingsService,
+            'settingsService' => $settingsService
         ];
-
-        $form = $this->createForm(SettingsType::class, null, $options);
+        $form = $this->createForm(SettingsReservationsType::class, null, $options);
 
         $form->handleRequest($request);
 
@@ -44,50 +37,29 @@ class SettingsController extends Controller
         /** @var $repo \AppBundle\Repository\SettingRepository */
         $repo =  $em->getRepository('AppBundle:Setting');
 
-        /** @var $tenantRepo \AppBundle\Repository\TenantRepository */
-        $tenantRepo = $em->getRepository('AppBundle:Tenant');
-        $accountCode = $this->get('session')->get('account_code');
-
-        /** @var \AppBundle\Entity\Tenant $tenant */
-        $tenant = $tenantRepo->findOneBy(['stub' => $accountCode]);
-
         if ($form->isSubmitted()) {
-
-            foreach ($request->get('settings') AS $setup_key => $setup_data) {
+            foreach ($request->get('settings_reservations') AS $setup_key => $setup_data) {
                 if ($settingsService->isValidSettingsKey($setup_key)) {
                     if (!$setting = $repo->findOneBy(['setupKey' => $setup_key])) {
                         $setting = new Setting();
                         $setting->setSetupKey($setup_key);
                     }
-                    if (is_array($setup_data)) {
-                        $setup_data = implode(',', $setup_data);
-                    }
                     $setting->setSetupValue($setup_data);
                     $em->persist($setting);
                 }
             }
-
             try {
                 $em->flush();
-
-                // Also update Core (_core DB)
-                $settingsService->setTenant($tenant);
-                $settingsService->updateCore($accountCode);
-
                 $this->addFlash('success','Settings updated.');
             } catch (\PDOException $e) {
                 $this->addFlash('error','Error updating settings.');
             }
-
-            return $this->redirectToRoute('settings');
+            return $this->redirectToRoute('settings_reservations');
         }
 
-        return $this->render('settings/settings.html.twig', array(
-            'form'      => $form->createView(),
-            'title'     => 'Settings',
-            'php_time'  => new \DateTime()
+        return $this->render('settings/settings_reservations.html.twig', array(
+            'form' => $form->createView()
         ));
-
     }
 
 }

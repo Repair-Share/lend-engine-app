@@ -2,7 +2,7 @@
 // src/AppBundle/EventListener/LocaleListener.php
 namespace AppBundle\EventListener;
 
-use AppBundle\Extensions\TenantInformation;
+use AppBundle\Services\TenantService;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -12,14 +12,14 @@ class LocaleListener implements EventSubscriberInterface
     /** @var string */
     private $defaultLocale;
 
-    /** @var TenantInformation */
+    /** @var TenantService */
     private $tenantInformation;
 
     /**
      * @param string $defaultLocale
-     * @param TenantInformation $tenantInformation
+     * @param TenantService $tenantInformation
      */
-    public function __construct($defaultLocale = 'en', TenantInformation $tenantInformation)
+    public function __construct($defaultLocale = 'en', TenantService $tenantInformation)
     {
         $this->tenantInformation = $tenantInformation;
 

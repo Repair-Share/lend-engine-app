@@ -134,9 +134,11 @@
                             <br><br>
                         {% endif %}
 
+                        {% if not tenantInformation.setting('hide_branding') %}
                         This email was sent by <a href="http://www.lend-engine.com">www.lend-engine.com</a>
                         on behalf of {{ tenantInformation.companyName }}
                         <br><br>
+                        {% endif %}
 
                         <br><br>
 

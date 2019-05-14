@@ -3,18 +3,12 @@
 namespace AppBundle\Form\Type;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
-use Symfony\Component\Form\Extension\Core\Type\CurrencyType;
-use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SettingsMemberSiteType extends AbstractType
@@ -22,8 +16,11 @@ class SettingsMemberSiteType extends AbstractType
     /** @var \Doctrine\ORM\EntityManager */
     public $em;
 
-    /** @var \AppBundle\Extensions\TenantInformation */
+    /** @var \AppBundle\Services\TenantService */
     public $tenantInformationService;
+
+    /** @var \AppBundle\Services\SettingsService */
+    public $settingsService;
 
     function __construct()
     {
@@ -34,11 +31,10 @@ class SettingsMemberSiteType extends AbstractType
     {
         $this->em = $options['em'];
         $this->tenantInformationService = $options['tenantInformationService'];
+        $this->settingsService = $options['settingsService'];
 
         // Get the settings
-        /** @var $repo \AppBundle\Repository\SettingRepository */
-        $repo =  $this->em->getRepository('AppBundle:Setting');
-        $dbData = $repo->getAllSettings();
+        $dbData = $this->settingsService->getAllSettingValues();
 
         $languages = [
             'Deutsch'    => 'de',
@@ -190,8 +186,10 @@ then the user will also be shown a button to continue to choose a membership.',
 
         // Only on standard plans
         if ($this->tenantInformationService->getFeature('PrivateSite')) {
+            $choices = ['Yes' => '1', 'No'  => '0',];
             $builder->add('site_is_private', ToggleType::class, array(
                 'expanded' => true,
+                'choices' => $choices,
                 'label' => 'Require users to log in before they can view items',
                 'data' => (int)$dbData['site_is_private'],
                 'required' => true,
@@ -200,11 +198,9 @@ then the user will also be shown a button to continue to choose a membership.',
                 )
             ));
         } else {
-            $noChoice = [
-                'No' => 0
-            ];
-            $builder->add('site_is_private', ChoiceType::class, array(
-                'choices' => $noChoice,
+            $choices = ['No' => 0];
+            $builder->add('site_is_private', ToggleType::class, array(
+                'choices' => $choices,
                 'expanded' => true,
                 'label' => 'Require users to log in before they can view items',
                 'data' => (int)$dbData['site_is_private'],
@@ -235,7 +231,8 @@ then the user will also be shown a button to continue to choose a membership.',
     {
         $resolver->setDefaults(array(
             'em' => null,
-            'tenantInformationService' => null
+            'tenantInformationService' => null,
+            'settingsService' => null,
         ));
     }
 }

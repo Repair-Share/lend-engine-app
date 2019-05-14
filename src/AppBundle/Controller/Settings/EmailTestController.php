@@ -31,11 +31,11 @@ class EmailTestController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $senderName  = $this->get('tenant_information')->getCompanyName();
-        $senderEmail = $this->get('tenant_information')->getCompanyEmail();
-        $accountCode = $this->get('tenant_information')->getAccountCode();
+        $senderName  = $this->get('service.tenant')->getCompanyName();
+        $senderEmail = $this->get('service.tenant')->getCompanyEmail();
+        $accountCode = $this->get('service.tenant')->getAccountCode();
 
-        $locale = $this->get('tenant_information')->getLocale();
+        $locale = $this->get('service.tenant')->getLocale();
         $user = $this->getUser();
 
         $repo = $em->getRepository('AppBundle:Tenant');
@@ -49,7 +49,7 @@ class EmailTestController extends Controller
             case "welcome":
 
                 if (!$subject = $this->get('settings')->getSettingValue('email_welcome_subject')) {
-                    $subject = "Your login details for " . $this->get('tenant_information')->getCompanyName();
+                    $subject = "Your login details for " . $this->get('service.tenant')->getCompanyName();
                 }
 
                 $message = $this->renderView(

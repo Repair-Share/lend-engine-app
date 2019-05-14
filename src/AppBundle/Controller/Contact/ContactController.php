@@ -109,7 +109,7 @@ class ContactController extends Controller
         /** @var \AppBundle\Repository\ContactFieldRepository $fieldRepo */
         $fieldRepo = $this->getDoctrine()->getRepository('AppBundle:ContactField');
 
-        if ($this->get('tenant_information')->getFeature('ProductField')) {
+        if ($this->get('service.tenant')->getFeature('ProductField')) {
             $customFields = $fieldRepo->findAllOrderedBySort();
             $customFieldValues = $contact->getFieldValues();
         } else {
@@ -260,11 +260,11 @@ class ContactController extends Controller
         $locale = $contact->getLocale();
 
         if (!$subject = $this->get('settings')->getSettingValue('email_welcome_subject')) {
-            $subject = $this->get('translator')->trans('le_email.site_welcome.subject', ['%accountName%' => $this->get('tenant_information')->getCompanyName()], 'emails', $locale);
+            $subject = $this->get('translator')->trans('le_email.site_welcome.subject', ['%accountName%' => $this->get('service.tenant')->getCompanyName()], 'emails', $locale);
         }
 
-        $senderName = $this->get('tenant_information')->getCompanyName();
-        $senderEmail = $this->get('tenant_information')->getCompanyEmail();
+        $senderName = $this->get('service.tenant')->getCompanyName();
+        $senderEmail = $this->get('service.tenant')->getCompanyEmail();
 
         try {
             $client = new PostmarkClient($this->getParameter('postmark_api_key'));

@@ -79,7 +79,7 @@ class RegistrationType extends AbstractType
         ];
         $builder->add('locale', ChoiceType::class, array(
             'choices'  => $languages,
-            'data'     => $this->container->get('tenant_information')->getLocale(),
+            'data'     => $this->container->get('service.tenant')->getLocale(),
             'label'    => 'form.locale',
             'required' => true,
         ));
@@ -103,7 +103,7 @@ class RegistrationType extends AbstractType
         $builder->add('countryIsoCode', CountryType::class, array(
             'label' => 'form.country',
             'required' => true,
-            'data' => $this->container->get('tenant_information')->getCountry()
+            'data' => $this->container->get('service.tenant')->getCountry()
         ));
 
         $label = $translator->trans('public_registration.newsletter');
@@ -117,7 +117,7 @@ class RegistrationType extends AbstractType
         $label = $translator->trans('public_registration.terms_label', [], 'member_site');
 
         $termsHelp = '';
-        if ($termsUri = $this->container->get('tenant_information')->getTermsUri()) {
+        if ($termsUri = $this->container->get('service.tenant')->getTermsUri()) {
             $linkText = $translator->trans('public_registration.terms_link', [], 'member_site');
             $termsHelp = '<a href="'.$termsUri.'" target="_blank">'.$linkText.'</a>';
         }

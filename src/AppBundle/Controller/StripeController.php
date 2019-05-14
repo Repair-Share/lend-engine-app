@@ -22,8 +22,8 @@ class StripeController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         // XX.lend-engine-app.com unless a custom SSL domain is set
-        $accountDomain = $this->get('tenant_information')->getAccountDomain();
-        $accountCode   = $this->get('tenant_information')->getAccountCode();
+        $accountDomain = $this->get('service.tenant')->getAccountDomain();
+        $accountCode   = $this->get('service.tenant')->getAccountCode();
 
         /** @var $settingsRepo \AppBundle\Entity\Setting */
         $settingsRepo =  $em->getRepository('AppBundle:Setting');

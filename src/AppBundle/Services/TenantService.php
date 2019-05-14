@@ -1,8 +1,8 @@
 <?php
-namespace AppBundle\Extensions;
+namespace AppBundle\Services;
 
 use AppBundle\Services\BillingService;
-use AppBundle\Settings\Settings;
+use AppBundle\Services\SettingsService;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Doctrine\ORM\EntityManager;
@@ -15,7 +15,7 @@ use Doctrine\ORM\EntityManager;
  *
  * Much of the session variables are set in CustomConnectionFactory class
  */
-class TenantInformation
+class TenantService
 {
     /**
      * @var Session
@@ -38,22 +38,26 @@ class TenantInformation
     private $billingService;
 
     /**
-     * @var Settings
+     * @var SettingsService
      */
     private $settings;
+
+    private $postmarkApiKey;
 
     function __construct(Session $session,
                          Container $container,
                          EntityManager $entityManager,
-                          BillingService $billingService,
-                         Settings $settingsService
-                    )
+                         BillingService $billingService,
+                         SettingsService $settingsService,
+                         $postmarkApiKey
+    )
     {
         $this->session = $session;
         $this->container = $container;
         $this->entityManager = $entityManager;
         $this->billingService = $billingService;
         $this->settings = $settingsService;
+        $this->postmarkApiKey = $postmarkApiKey;
     }
 
     /**
@@ -478,7 +482,13 @@ class TenantInformation
      */
     public function getSetting($key)
     {
-        return $this->settings->getSettingValue($key);
+        $value = $this->settings->getSettingValue($key);
+        // Populate in here rather than in settings service since values from settings service
+        // are used in the settings form fields
+        if ($key == 'postmark_api_key' && !$value) {
+            return $this->postmarkApiKey;
+        }
+        return $value;
     }
 
     public function getLoanTerms()

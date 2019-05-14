@@ -7,7 +7,7 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Entity\FileAttachment;
 use AppBundle\Entity\Image;
-use AppBundle\Settings\Settings;
+use AppBundle\Services\SettingsService;
 use Doctrine\ORM\EntityManager;
 use Oneup\UploaderBundle\Event\PostPersistEvent;
 use Symfony\Component\DependencyInjection\Container;
@@ -20,10 +20,10 @@ class UploadListener
     /** @var Container  */
     private $container;
 
-    /** @var Settings  */
+    /** @var SettingsService */
     private $settings;
 
-    public function __construct(EntityManager $em, Container $container, Settings $settings)
+    public function __construct(EntityManager $em, Container $container, SettingsService $settings)
     {
         $this->em = $em;
         $this->container = $container;
@@ -33,8 +33,8 @@ class UploadListener
     public function onUpload(PostPersistEvent $event)
     {
 
-        $s3_bucket = $this->container->get('tenant_information')->getS3Bucket();
-        $schema    = $this->container->get('tenant_information')->getSchema();
+        $s3_bucket = $this->container->get('service.tenant')->getS3Bucket();
+        $schema    = $this->container->get('service.tenant')->getSchema();
 
         $request  = $event->getRequest();
         $response = $event->getResponse();

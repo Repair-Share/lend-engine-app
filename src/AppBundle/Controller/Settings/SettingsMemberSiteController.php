@@ -27,16 +27,17 @@ class SettingsMemberSiteController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        /** @var $tenantInformationService \AppBundle\Extensions\TenantInformation */
-        $tenantInformationService = $this->get('tenant_information');
+        /** @var $tenantInformationService \AppBundle\Services\TenantService */
+        $tenantInformationService = $this->get('service.tenant');
 
-        /** @var $settingsService \AppBundle\Settings\Settings */
+        /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
 
         // Pass tenant info in so we can control settings based on pay plan
         $options = [
             'em' => $em,
-            'tenantInformationService' => $tenantInformationService
+            'tenantInformationService' => $tenantInformationService,
+            'settingsService' => $settingsService
         ];
 
         $form = $this->createForm(SettingsMemberSiteType::class, null, $options);
@@ -53,7 +54,7 @@ class SettingsMemberSiteController extends Controller
         if ($form->isSubmitted()) {
 
             foreach ($request->get('settings_member_site') AS $setup_key => $setup_data) {
-                if ($this->isValidSettingsKey($setup_key)) {
+                if ($settingsService->isValidSettingsKey($setup_key)) {
                     if (!$setting = $repo->findOneBy(['setupKey' => $setup_key])) {
                         $setting = new Setting();
                         $setting->setSetupKey($setup_key);
@@ -84,25 +85,6 @@ class SettingsMemberSiteController extends Controller
         return $this->render('settings/settings_member_site.html.twig', array(
             'form' => $form->createView()
         ));
-    }
-
-    /**
-     * @param $key
-     * @return bool
-     */
-    private function isValidSettingsKey($key)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        /** @var $repo \AppBundle\Repository\SettingRepository */
-        $repo =  $em->getRepository('AppBundle:Setting');
-        $validKeys = $repo->getSettingsKeys();
-
-        if (in_array($key, $validKeys)) {
-            return true;
-        }
-
-        return false;
     }
 
     /**

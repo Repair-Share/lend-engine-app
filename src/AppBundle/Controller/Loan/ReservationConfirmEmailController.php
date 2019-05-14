@@ -23,8 +23,8 @@ class ReservationConfirmEmailController extends Controller
             return $this->redirectToRoute('loan_list');
         }
 
-        $senderName = $this->get('tenant_information')->getCompanyName();
-        $senderEmail = $this->get('tenant_information')->getCompanyEmail();
+        $senderName = $this->get('service.tenant')->getCompanyName();
+        $senderEmail = $this->get('service.tenant')->getCompanyEmail();
         $locale = $loan->getContact()->getLocale();
 
         // Send email confirmation

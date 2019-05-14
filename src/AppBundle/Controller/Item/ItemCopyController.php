@@ -63,7 +63,7 @@ class ItemCopyController extends Controller
         $em->persist($note);
 
         // Set initial field value if auto-sku is turned on
-        $skuStub = $this->get('tenant_information')->getCodeStub();
+        $skuStub = $this->get('service.tenant')->getCodeStub();
         if ($skuStub) {
             $sku = $this->generateAutoSku($skuStub);
             $newProduct->setSku($sku);
@@ -129,7 +129,7 @@ class ItemCopyController extends Controller
     private function copyImage($imageName)
     {
         $filesystem = $this->container->get('oneup_flysystem.product_image_fs_filesystem');
-        $schema = $this->get('tenant_information')->getSchema();
+        $schema = $this->get('service.tenant')->getSchema();
 
         $newImageName = preg_replace('/.+\.(.+)/', uniqid().".$1", $imageName);
 

@@ -151,7 +151,7 @@ class DevController extends Controller
                 $sendResult = $client->sendEmail(
                     "chris@re-use.network",
                     $toEmail,
-                    "Hello from ".$this->get('tenant_information')->getAccountDomain(),
+                    "Hello from ".$this->get('service.tenant')->getAccountDomain(),
                     $message
                 );
 

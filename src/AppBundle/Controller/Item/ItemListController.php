@@ -23,7 +23,7 @@ class ItemListController extends Controller
         $tags = $em->getRepository('AppBundle:ProductTag')->findAllOrderedByName();
 
         $customFields = [];
-        if ($this->get('tenant_information')->getFeature('ProductField')) {
+        if ($this->get('service.tenant')->getFeature('ProductField')) {
             /** @var \AppBundle\Repository\ProductFieldRepository $fieldRepo */
             $fieldRepo = $this->getDoctrine()->getRepository('AppBundle:ProductField');
             $customFields = $fieldRepo->findAllOrderedBySort();
@@ -123,7 +123,7 @@ class ItemListController extends Controller
         }
 
         $customFields = [];
-        if ($this->get('tenant_information')->getFeature('ProductField')) {
+        if ($this->get('service.tenant')->getFeature('ProductField')) {
             /** @var \AppBundle\Repository\ProductFieldRepository $fieldRepo */
             $fieldRepo = $this->getDoctrine()->getRepository('AppBundle:ProductField');
 

@@ -79,7 +79,7 @@ class MenuBuilder
         $this->addChildItem('Reports', 'Item costs', 'report_costs', '');
         $this->addChildItem('Reports', 'Memberships', 'membership_list', '');
 
-        if ($this->container->get('tenant_information')->getIndustry() == "toys") {
+        if ($this->container->get('service.tenant')->getIndustry() == "toys") {
             $this->addChildItem('Reports', 'Children', 'report_children', '');
         }
 
@@ -110,7 +110,7 @@ class MenuBuilder
         $this->menu->addChild('Member site', array('route' => 'settings_member_site'));
         $this->menu->addChild('Site pages & links', array('route' => 'page_list'));
 
-        if ($this->container->get('tenant_information')->getFeature('CustomEmail')) {
+        if ($this->container->get('service.tenant')->getFeature('CustomEmail')) {
             $this->menu->addChild('Email templates', array('route' => 'settings_templates'));
         }
         $this->menu->addChild('Staff / team', array('route' => 'users_list'));
@@ -273,7 +273,7 @@ class MenuBuilder
             $n++;
 
             // Don't show any pages that may have been created when user was on free trial
-            if (!$this->container->get('tenant_information')->getFeature("Page") && $n > 1) {
+            if (!$this->container->get('service.tenant')->getFeature("Page") && $n > 1) {
                 continue;
             }
 
@@ -311,7 +311,7 @@ class MenuBuilder
 
             if ($url = $page->getUrl()) {
 
-                if ($this->container->get('tenant_information')->getIsEditMode()) {
+                if ($this->container->get('service.tenant')->getIsEditMode()) {
 
                     $this->menu->addChild($page->getName(), array(
                         'route' => 'public_page_edit',

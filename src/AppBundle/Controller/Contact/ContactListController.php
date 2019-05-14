@@ -23,7 +23,7 @@ class ContactListController extends Controller
 
         $this->setDateRange($request);
 
-        if ($this->get('tenant_information')->getFeature('ContactField')) {
+        if ($this->get('service.tenant')->getFeature('ContactField')) {
             /** @var \AppBundle\Repository\ContactFieldRepository $fieldRepo */
             $fieldRepo = $this->getDoctrine()->getRepository('AppBundle:ContactField');
             $customFields = $fieldRepo->findAllOrderedBySort();
@@ -60,7 +60,7 @@ class ContactListController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
-        $currencySymbol = $this->get('tenant_information')->getCurrencySymbol();
+        $currencySymbol = $this->get('service.tenant')->getCurrencySymbol();
 
         $data = array();
 
@@ -72,7 +72,7 @@ class ContactListController extends Controller
         $start  = $request->get('start');
         $length = $request->get('length');
 
-        if ($this->get('tenant_information')->getFeature('ContactField')) {
+        if ($this->get('service.tenant')->getFeature('ContactField')) {
             /** @var \AppBundle\Repository\ContactFieldRepository $fieldRepo */
             $fieldRepo = $this->getDoctrine()->getRepository('AppBundle:ContactField');
             $customFields = $fieldRepo->findAllOrderedBySort();

@@ -39,8 +39,9 @@ twig:
     strict_variables: "%kernel.debug%"
     form_themes:      [':form:fields.html.twig']
     globals:
-        app_version:      "%app_version%"
-        stripe_client_id: "%stripe_client_id%"
+        tenantInformation: "@service.tenant"
+        app_version:       "%app_version%"
+        stripe_client_id:  "%stripe_client_id%"
         rollbar_client_token : "%rollbar_client_token%"
         billing_public_key: "%billing_public_key%"
 
