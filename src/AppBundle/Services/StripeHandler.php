@@ -315,36 +315,6 @@ class StripeHandler
     }
 
     /**
-     * Save the payment as soon as it's deemed OK by Stripe in case of downstream problems
-     * @param Payment $payment
-     */
-    private function savePayment(Payment $payment)
-    {
-//        if ($this->cardFee > 0) {
-//            // Add a fee to reduce the customer balance by the fee amount
-//            // (will have been added into the $payment amount to charge to Stripe already)
-//            $fee = new Payment();
-//            $fee->setCreatedBy($payment->getCreatedBy());
-//            $fee->setAmount(-$this->cardFee);
-//            $fee->setContact($payment->getContact());
-//            $fee->setLoan($payment->getLoan());
-//            $fee->setNote("Card fee.");
-//            $this->em->persist($fee);
-//        }
-//
-//        $this->em->persist($payment);
-//
-//        try {
-//            $this->em->flush($payment);
-//            if (isset($fee)) {
-//                $this->em->flush($fee);
-//            }
-//        } catch (\Exception $generalException) {
-//            $this->errors[] = 'Failed to save Payment: '.$generalException->getMessage();
-//        }
-    }
-
-    /**
      * Subscribe the tenant to a Lend Engine plan
      * @param $token
      * @param Tenant $tenant
@@ -385,7 +355,18 @@ class StripeHandler
             }
         }
 
+        // We should now have a customer
         if ($tenant->getStripeCustomerId()) {
+
+            // Cancel any existing plans
+            if ($subscriptionId = $tenant->getSubscriptionId()) {
+                if ($this->cancelSubscription($tenant, $subscriptionId)) {
+                    // Save in case the subscribe to new plan failed
+                    $tenant->setPlan(null);
+                    $this->em->persist($tenant);
+                    $this->em->flush();
+                }
+            }
 
             if ($subscription = $this->subscribeCustomer($tenant->getStripeCustomerId(), $planCode)) {
                 // Save the new plan

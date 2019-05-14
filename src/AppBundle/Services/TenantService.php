@@ -81,68 +81,59 @@ class TenantService
     public function getAccountCode()
     {
         return $this->tenant->getStub();
-//        return $this->session->get('account_code');
     }
 
     // Used for the location of files on S3 bucket too
     public function getSchema()
     {
         return $this->tenant->getDbSchema();
-//        return $this->session->get('account_schema');
     }
 
     public function getTrialExpiresAt()
     {
         return $this->tenant->getTrialExpiresAt();
-//        return $this->session->get('trial_expires_at');
     }
 
     public function getPlan()
     {
-        return $this->tenant->getPlan();
-//        return $this->session->get('plan');
+        $plan = $this->tenant->getPlan();
+        $mappedPlan = $this->billingService->getPlanCode($plan);
+        return $mappedPlan;
     }
 
     public function getSubscriptionId()
     {
         return $this->tenant->getSubscriptionId();
-//        return $this->session->get('subscription_id');
     }
 
     public function getAccountName()
     {
         return $this->tenant->getName();
-//        return $this->session->get('account_name');
     }
 
     public function getAccountOwnerName()
     {
         return $this->tenant->getOwnerName();
-//        return $this->session->get('account_owner_name');
     }
 
     public function getAccountOwnerEmail()
     {
         return $this->tenant->getOwnerEmail();
-//        return $this->session->get('account_owner_email');
     }
 
     public function getAccountStatus()
     {
         return $this->tenant->getStatus();
-//        return $this->session->get('account_status');
     }
 
     public function getServerName()
     {
         return $this->tenant->getServer();
-//        return $this->session->get('server_name');
     }
 
     public function getAccountDomain()
     {
         return $this->tenant->getDomain();
-//        return $this->session->get('account_domain');
     }
 
     public function getCurrency()
@@ -496,7 +487,7 @@ class TenantService
 
     public function getFeature($feature)
     {
-        return $this->billingService->isEnabled($this->tenant->getPlan(), $feature);
+        return $this->billingService->isEnabled($this->getPlan(), $feature);
     }
 
     // Allows whitelabelling

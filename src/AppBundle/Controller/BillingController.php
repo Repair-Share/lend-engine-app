@@ -23,6 +23,9 @@ class BillingController extends Controller
         /** @var \AppBundle\Services\StripeHandler $stripeService */
         $stripeService = $this->get('service.stripe');
 
+        /** @var $settingsService \AppBundle\Services\SettingsService */
+        $settingsService = $this->get('settings');
+
         /** @var \AppBundle\Services\BillingService $billingService */
         $billingService = $this->get('billing');
         $plans = $billingService->getPlans();
@@ -31,13 +34,8 @@ class BillingController extends Controller
         $stripeService->setApiKey($this->getParameter('billing_secret_key'));
         $stripeService->currency = 'gbp';
 
-        /** @var $repo \AppBundle\Repository\TenantRepository */
-        $repo = $em->getRepository('AppBundle:Tenant');
-
-        $accountCode = $request->getSession()->get('account_code');
-
         /** @var \AppBundle\Entity\Tenant $tenant */
-        $tenant = $repo->findOneBy(['stub' => $accountCode]);
+        $tenant = $settingsService->getTenant();
 
         // Subscribing for a new plan
         if ($request->get('plan')) {
@@ -47,6 +45,10 @@ class BillingController extends Controller
 
             $success = false;
             if ($plan == 'free') {
+                // Cancel any existing plans if they are downgrading
+                if ($subscriptionId = $tenant->getSubscriptionId()) {
+                    $stripeService->cancelSubscription($tenant, $subscriptionId);
+                }
                 $tenant->setPlan($plan);
                 $tenant->setStatus(Tenant::STATUS_LIVE);
                 $em->persist($tenant);
@@ -64,7 +66,8 @@ class BillingController extends Controller
             }
 
             if ($success == true) {
-                $this->sendBillingConfirmationEmail($tenant, $plan);
+                // Map the Stripe plan code to something neater.
+                $this->sendBillingConfirmationEmail($tenant, $billingService->getPlanCode($plan));
             }
 
             return $this->redirectToRoute('billing');
@@ -85,17 +88,15 @@ class BillingController extends Controller
         /** @var \AppBundle\Services\StripeHandler $stripeService */
         $stripeService = $this->get('service.stripe');
 
+        /** @var $settingsService \AppBundle\Services\SettingsService */
+        $settingsService = $this->get('settings');
+
         // Override for Lend Engine subscriptions
         $stripeService->setApiKey($this->getParameter('billing_secret_key'));
         $stripeService->currency = 'gbp';
 
-        /** @var $repo \AppBundle\Repository\TenantRepository */
-        $repo = $em->getRepository('AppBundle:Tenant');
-
-        $accountCode = $request->getSession()->get('account_code');
-
         /** @var \AppBundle\Entity\Tenant $tenant */
-        $tenant = $repo->findOneBy(['stub' => $accountCode]);
+        $tenant = $settingsService->getTenant();
 
         // Optionally set for Stripe subscriptions
         $subscriptionId = $request->get('id');

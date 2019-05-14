@@ -261,7 +261,7 @@ class BillingService
                 ],
                 [
                     'code' => 'business',
-                    'stripeCode' => 'business',
+                    'stripeCode' => 'plan_F4HgQehPQ2nOlN',
                     'name' => 'Business',
                     'amount' => 4000
                 ]
@@ -292,7 +292,7 @@ class BillingService
                 ],
                 [
                     'code' => 'business',
-                    'stripeCode' => 'business',
+                    'stripeCode' => 'plan_F4HR4VG76biNcB',
                     'name' => 'Business',
                     'amount' => 4000
                 ]
@@ -301,5 +301,39 @@ class BillingService
         }
 
         return $plans;
+    }
+
+    /**
+     * Transform plan_Cv6rBge0LPVNin to starter to allow dynamic plans on Stripe while keeping fixed codes in app
+     * @param $planStripeCode
+     * @return mixed
+     */
+    public function getPlanCode($planStripeCode)
+    {
+        $plan = 'NOTSET';
+        switch ($planStripeCode) {
+            case 'free':
+                $plan = 'free';
+                break;
+            case 'standard':
+            case 'plan_Cv8Lg7fyOJSB0z': // standard monthly 5.00
+            case 'plan_Cv6TbQ0PPSnhyL': // test plan
+            case 'plan_Cv6rBge0LPVNin': // test plan
+            case 'single':
+                $plan = 'starter';
+                break;
+            case 'premium':
+            case 'plus':
+            case 'multiple':
+                $plan = 'plus';
+                break;
+            case 'business':
+            case 'plan_F4HR4VG76biNcB': // test
+            case 'plan_F4HgQehPQ2nOlN': // prod
+                $plan = 'business';
+                break;
+        }
+
+        return $plan;
     }
 }
