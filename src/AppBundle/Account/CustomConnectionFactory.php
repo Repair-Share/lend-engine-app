@@ -117,7 +117,7 @@ class CustomConnectionFactory extends ConnectionFactory
 
         // Hack to get around https://github.com/symfony/symfony/issues/13450
         /*
-         * I defined a twig globals var in config.yml and I assigned a service.
+         * I defined a twig global in config.yml and I assigned a service (tenant service).
          * This service had @session as an argument, which caused all the trouble.
          *
          * It would be better to get the tenant (Account) information with each request rather than from session vars
@@ -126,48 +126,49 @@ class CustomConnectionFactory extends ConnectionFactory
         // Since we don't have HTTP_HOST for unit testing
         if (isset($_SERVER['HTTP_HOST'])) {
 
-            $this->session->set('account_code', $account_code);
-            $this->session->set('account_name', $account_name);
-            $this->session->set('account_owner_name', $owner_name);
-            $this->session->set('account_owner_email', $owner_email);
-            $this->session->set('account_status', $account_status);
-            $this->session->set('account_schema', $dbName);
-            $this->session->set('trial_expires_at', $trial_expires);
-            $this->session->set('server_name', $server_name);
-            $this->session->set('time_zone', $timeZone);
-            $this->session->set('subscription_id', $subscriptionId);
+//            $this->session->set('account_code', $account_code);
+//            $this->session->set('account_name', $account_name);
+//            $this->session->set('account_owner_name', $owner_name);
+//            $this->session->set('account_owner_email', $owner_email);
+//            $this->session->set('account_status', $account_status);
+//            $this->session->set('account_schema', $dbName);
+//            $this->session->set('trial_expires_at', $trial_expires);
+//            $this->session->set('server_name', $server_name);
+//            $this->session->set('time_zone', $timeZone);
+//            $this->session->set('subscription_id', $subscriptionId);
 
             // This had to be replicated here as well as Entity/Tenant.php
-            switch ($plan) {
-                case 'free':
-                    $plan = 'free';
-                    break;
-                case 'standard':
-                case 'plan_Cv8Lg7fyOJSB0z': // standard monthly 5.00
-                case 'plan_Cv6TbQ0PPSnhyL': // test plan
-                case 'plan_Cv6rBge0LPVNin': // test plan
-                case 'single':
-                    $plan = 'starter';
-                    break;
-                case 'premium':
-                case 'plus':
-                case 'multiple':
-                    $plan = 'plus';
-                    break;
-                case 'business':
-                    $plan = 'business';
-                    break;
-            }
-            $this->session->set('plan', $plan);
+//            switch ($plan) {
+//                case 'free':
+//                    $plan = 'free';
+//                    break;
+//                case 'standard':
+//                case 'plan_Cv8Lg7fyOJSB0z': // standard monthly 5.00
+//                case 'plan_Cv6TbQ0PPSnhyL': // test plan
+//                case 'plan_Cv6rBge0LPVNin': // test plan
+//                case 'single':
+//                    $plan = 'starter';
+//                    break;
+//                case 'premium':
+//                case 'plus':
+//                case 'multiple':
+//                    $plan = 'plus';
+//                    break;
+//                case 'business':
+//                    $plan = 'business';
+//                    break;
+//            }
+
+//            $this->session->set('plan', $plan);
             // End
 
-            if ($account_code == 'localhost:8000') {
-                $this->session->set('account_domain', $account_code);
-            } else if ($customDomain) {
-                $this->session->set('account_domain', $customDomain);
-            } else {
-                $this->session->set('account_domain', $account_code.'.lend-engine-app.com');
-            }
+//            if ($account_code == 'localhost:8000') {
+//                $this->session->set('account_domain', $account_code);
+//            } else if ($customDomain) {
+//                $this->session->set('account_domain', $customDomain);
+//            } else {
+//                $this->session->set('account_domain', $account_code.'.lend-engine-app.com');
+//            }
 
         }
 

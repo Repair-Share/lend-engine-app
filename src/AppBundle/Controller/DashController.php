@@ -16,21 +16,12 @@ class DashController extends Controller
     {
         /** START UPDATE OF CORE */
 
-        $em = $this->getDoctrine()->getManager();
-
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
-        $accountCode = $this->get('session')->get('account_code');
-
-        /** @var $tenantRepo \AppBundle\Repository\TenantRepository */
-        $tenantRepo = $em->getRepository('AppBundle:Tenant');
-
-        /** @var \AppBundle\Entity\Tenant $tenant */
-        $tenant = $tenantRepo->findOneBy(['stub' => $accountCode]);
+        $tenant = $settingsService->getTenant();
 
         // Update Core (_core DB)
-        $settingsService->setTenant($tenant);
-        $settingsService->updateCore($accountCode);
+        $settingsService->updateCore($tenant->getStub());
 
         /** END UPDATE OF CORE */
 

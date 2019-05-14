@@ -39,6 +39,9 @@ class TenantService
      * @var SettingsService
      */
     private $settings;
+    
+    /** @var \AppBundle\Entity\Tenant */
+    private $tenant;
 
     private $postmarkApiKey;
 
@@ -56,6 +59,9 @@ class TenantService
         $this->billingService = $billingService;
         $this->settings = $settingsService;
         $this->postmarkApiKey = $postmarkApiKey;
+        
+        // Tenant is set in settings when first constructed
+        $this->tenant = $this->settings->getTenant();
     }
 
     /**
@@ -74,58 +80,69 @@ class TenantService
      */
     public function getAccountCode()
     {
-        return $this->session->get('account_code');
+        return $this->tenant->getStub();
+//        return $this->session->get('account_code');
     }
 
     // Used for the location of files on S3 bucket too
     public function getSchema()
     {
-        return $this->session->get('account_schema');
+        return $this->tenant->getDbSchema();
+//        return $this->session->get('account_schema');
     }
 
     public function getTrialExpiresAt()
     {
-        return $this->session->get('trial_expires_at');
+        return $this->tenant->getTrialExpiresAt();
+//        return $this->session->get('trial_expires_at');
     }
 
     public function getPlan()
     {
-        return $this->session->get('plan');
+        return $this->tenant->getPlan();
+//        return $this->session->get('plan');
     }
 
     public function getSubscriptionId()
     {
-        return $this->session->get('subscription_id');
+        return $this->tenant->getSubscriptionId();
+//        return $this->session->get('subscription_id');
     }
 
     public function getAccountName()
     {
-        return $this->session->get('account_name');
+        return $this->tenant->getName();
+//        return $this->session->get('account_name');
     }
 
     public function getAccountOwnerName()
     {
-        return $this->session->get('account_owner_name');
+        return $this->tenant->getOwnerName();
+//        return $this->session->get('account_owner_name');
     }
 
     public function getAccountOwnerEmail()
     {
-        return $this->session->get('account_owner_email');
+        return $this->tenant->getOwnerEmail();
+//        return $this->session->get('account_owner_email');
     }
 
     public function getAccountStatus()
     {
-        return $this->session->get('account_status');
+        return $this->tenant->getStatus();
+//        return $this->session->get('account_status');
     }
 
     public function getServerName()
     {
-        return $this->session->get('server_name');
+        return $this->tenant->getServer();
+//        return $this->session->get('server_name');
     }
 
     public function getAccountDomain()
     {
-        return $this->session->get('account_domain');
+        return $this->tenant->getDomain();
+//        return $this->session->get('account_domain');
     }
 
     public function getCurrency()
@@ -479,7 +496,7 @@ class TenantService
 
     public function getFeature($feature)
     {
-        return $this->billingService->isEnabled($this->session->get('plan'), $feature);
+        return $this->billingService->isEnabled($this->tenant->getPlan(), $feature);
     }
 
     // Allows whitelabelling

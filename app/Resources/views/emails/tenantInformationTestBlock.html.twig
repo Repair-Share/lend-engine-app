@@ -1,0 +1,12 @@
+{#A block of variables to test that we are getting the right values from the multi-tenant schedule handler#}
+{#Insert into any template while testing#}
+
+{#From session (not available in scheduled emails)#}
+Domain: {{ tenantInformation.accountDomain }}<br>
+Schema: {{ tenantInformation.schema }}<br>
+Account code: {{ tenantInformation.accountCode }}<br>
+Plan: {{ tenantInformation.plan }}<br>
+
+{#From settings#}
+Company: {{ tenantInformation.companyName }}<br>
+Company email: {{ tenantInformation.companyEmail }}<br>

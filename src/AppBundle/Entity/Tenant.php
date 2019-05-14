@@ -272,7 +272,7 @@ class Tenant
         if ($this->domain) {
             return $this->domain;
         } else {
-            return $this->dbSchema.'.lend-engine-app.com';
+            return $this->stub.'.lend-engine-app.com';
         }
     }
 
@@ -453,8 +453,8 @@ class Tenant
             case 'multiple':
                 $plan = 'plus';
                 break;
-            case 'ultra':
-                $plan = 'ultra';
+            case 'business':
+                $plan = 'business';
                 break;
         }
         // end replicated code

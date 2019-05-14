@@ -32,6 +32,9 @@ class SettingsService
     {
         $this->em = $em;
         $this->db = $this->em->getConnection()->getDatabase();
+
+        $tenant = $this->em->getRepository('AppBundle:Tenant')->findOneBy(['dbSchema' => $this->db]);
+        $this->setTenant($tenant);
     }
 
     /**
@@ -46,6 +49,14 @@ class SettingsService
             $this->em = $em;
             $this->db = $this->em->getConnection()->getDatabase();
         }
+    }
+
+    /**
+     * @return Tenant
+     */
+    public function getTenant()
+    {
+        return $this->tenant;
     }
 
     /**

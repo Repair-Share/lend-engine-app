@@ -37,7 +37,7 @@ abstract class AuthenticatedControllerTest extends \Symfony\Bundle\FrameworkBund
      */
     protected function createAuthorizedClient()
     {
-        fwrite(STDERR, print_r("Logging in as admin user hello@lend-engine.com ... ".PHP_EOL, TRUE));
+//        fwrite(STDERR, print_r("Logging in as admin user hello@lend-engine.com ... ".PHP_EOL, TRUE));
 
         $client = static::createClient();
         $container = $client->getContainer();
