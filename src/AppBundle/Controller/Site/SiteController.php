@@ -33,6 +33,9 @@ class SiteController extends Controller
         /** @var $extraRepo \AppBundle\Repository\OpeningTimeExceptionRepository */
         $extraRepo = $this->getDoctrine()->getRepository('AppBundle:OpeningTimeException');
 
+        /** @var $settingsService \AppBundle\Services\SettingsService */
+        $settingsService = $this->get('settings');
+
         /** @var $site \AppBundle\Entity\Site */
         if (!$site = $siteRepo->find($siteId)) {
             return $this->json(["Error", "Site {$siteId} not found"]);
@@ -80,7 +83,7 @@ class SiteController extends Controller
         }
 
         // Modify times to match local time for calendar
-        $tz = $this->get('session')->get('time_zone');
+        $tz = $settingsService->getSettingValue('org_timezone');
         $timeZone = new \DateTimeZone($tz);
         $utc = new \DateTime('now', new \DateTimeZone("UTC"));
         $offSet = $timeZone->getOffset($utc)/3600;

@@ -85,6 +85,7 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/loan-search'],
             ['/member-search?go=&member-search=test'],
             ['/products?search=test'],
+            ['/site-data?site=1'],
         ];
     }
 }
