@@ -23,8 +23,8 @@ class SettingsLabelsController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        /** @var $tenantInformationService \AppBundle\Services\TenantService */
-        $tenantInformationService = $this->get('service.tenant');
+        /** @var $tenantService \AppBundle\Services\TenantService */
+        $tenantService = $this->get('service.tenant');
 
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
@@ -32,7 +32,7 @@ class SettingsLabelsController extends Controller
         // Pass tenant info in so we can control settings based on pay plan
         $options = [
             'em' => $em,
-            'tenantInformationService' => $tenantInformationService,
+            'tenantService' => $tenantService,
             'settingsService' => $settingsService
         ];
 

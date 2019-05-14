@@ -85,7 +85,13 @@ class RegistrationController extends Controller
         // Send an email to admin
 
         try {
-            $client = new PostmarkClient($this->getParameter('postmark_api_key'));
+
+            $senderName     = $this->get('service.tenant')->getCompanyName();
+            $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
+            $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
+            $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
+
+            $client = new PostmarkClient($postmarkApiKey);
             $ownerEmail = $this->get('service.tenant')->getCompanyEmail();
 
             $extra = '';
@@ -106,13 +112,14 @@ class RegistrationController extends Controller
             );
 
             $client->sendEmail(
-                "Lend Engine <hello@lend-engine.com>",
+                "{$senderName} <{$fromEmail}>",
                 $ownerEmail,
-                "New registration on your Lend Engine site : ".$contact->getName(),
+                "New registration on your member site : ".$contact->getName(),
                 $message,
                 null,
                 null,
-                true
+                true,
+                $replyToEmail
             );
 
             // CC to system owner

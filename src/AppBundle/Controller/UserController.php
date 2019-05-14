@@ -145,8 +145,13 @@ class UserController extends Controller
                         $subject = $this->get('translator')->trans('le_email.login_details.subject', ['%accountName%' => $accountName], 'emails', $locale);
                     }
 
+                    $senderName     = $this->get('service.tenant')->getCompanyName();
+                    $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
+                    $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
+                    $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
+
                     try {
-                        $client = new PostmarkClient($this->getParameter('postmark_api_key'));
+                        $client = new PostmarkClient($postmarkApiKey);
 
                         // Save and switch locale for sending the email
                         $sessionLocale = $this->get('translator')->getLocale();
@@ -162,10 +167,14 @@ class UserController extends Controller
 
                         $toEmail = $emailAddress;
                         $client->sendEmail(
-                            "hello@lend-engine.com",
+                            "{$senderName} <{$fromEmail}>",
                             $toEmail,
                             $subject,
-                            $message
+                            $message,
+                            null,
+                            null,
+                            true,
+                            $replyToEmail
                         );
 
                         // Revert locale for the UI

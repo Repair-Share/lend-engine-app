@@ -558,11 +558,14 @@ class BasketController extends Controller
             return $this->redirectToRoute('loan_list');
         }
 
-        $senderName  = $this->get('service.tenant')->getCompanyName();
-        $senderEmail = $this->get('service.tenant')->getCompanyEmail();
+        $senderName     = $this->get('service.tenant')->getCompanyName();
+        $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
+        $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
+        $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
+
         $locale = $loan->getContact()->getLocale();
 
-        $client = new PostmarkClient($this->getParameter('postmark_api_key'));
+        $client = new PostmarkClient($postmarkApiKey);
 
         // Send email confirmation
         if ($toEmail = $loan->getContact()->getEmail()) {
@@ -587,14 +590,14 @@ class BasketController extends Controller
                 );
 
                 $client->sendEmail(
-                    "{$senderName} <hello@lend-engine.com>",
+                    "{$senderName} <{$fromEmail}>",
                     $toEmail,
                     $subject." (Ref ".$loan->getId().")",
                     $message,
                     null,
                     null,
                     true,
-                    $senderEmail
+                    $replyToEmail
                 );
 
                 // Revert locale for the UI

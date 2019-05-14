@@ -1,8 +1,9 @@
 <?php
 // src/AppBundle/Form/Type/SettingsType.php
-namespace AppBundle\Form\Type;
+namespace AppBundle\Form\Type\Settings;
 
-use Doctrine\ORM\EntityManager;
+use AppBundle\Form\Type\ToggleType;
+use AppBundle\Form\Type\CurrencyamountType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,7 +21,7 @@ class SettingsType extends AbstractType
     public $em;
 
     /** @var \AppBundle\Services\TenantService */
-    public $tenantInformationService;
+    public $tenantService;
 
     /** @var \AppBundle\Services\SettingsService */
     public $settingsService;
@@ -33,7 +34,7 @@ class SettingsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->em = $options['em'];
-        $this->tenantInformationService = $options['tenantInformationService'];
+        $this->tenantService = $options['tenantService'];
         $this->settingsService = $options['settingsService'];
 
         // Get the settings values
@@ -149,12 +150,16 @@ EOT;
         ));
 
 //        WHITE LABELLING
-        if ($this->tenantInformationService->getFeature('WhiteLabel')) {
-            $brandingHelp = '';
+        $whiteLabelDisabled = true;
+        if ($this->tenantService->getFeature('WhiteLabel')) {
+            $whiteLabelDisabled = false;
+            $onlyOnBusiness = '';
             $choices = ['Yes' => '1', 'No'  => '0',];
+            $class = '';
         } else {
-            $brandingHelp = '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on the Business plan. Removes link to Lend Engine on website and email footers.';
+            $onlyOnBusiness = '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on the Business plan. ';
             $choices = ['No'  => '0',];
+            $class = 'hidden';
         }
         $builder->add('hide_branding', ToggleType::class, array(
             'expanded' => true,
@@ -163,22 +168,37 @@ EOT;
             'label' => 'Hide Lend Engine branding',
             'data' => (bool)$dbData['hide_branding'],
             'attr' => [
-                'data-help' => $brandingHelp,
+                'data-help' => $onlyOnBusiness.'Removes link to Lend Engine on website and email footers.',
+                'class' => $class
             ]
         ));
 
         $builder->add('postmark_api_key', TextType::class, array(
             'label' => 'Postmark API key for outbound email',
             'data' => $dbData['postmark_api_key'],
+            'disabled' => $whiteLabelDisabled,
+            'required' => false,
             'attr' => [
-                'class' => '',
+                'data-help' => $onlyOnBusiness."We'll connect to your account to send emails.",
+                'class' => $class
+            ]
+        ));
+
+        $builder->add('from_email', TextType::class, array(
+            'label' => '"From" email address for outbound email',
+            'data' => $dbData['from_email'],
+            'disabled' => $whiteLabelDisabled,
+            'required' => false,
+            'attr' => [
+                'data-help' => $onlyOnBusiness.'Must match one of the server sender signatures in your Postmark account.',
+                'class' => $class
             ]
         ));
 
         /** EMAIL AUTOMATION */
 
         $emailDisabled = true;
-        if ($this->tenantInformationService->getFeature('EmailAutomation')) {
+        if ($this->tenantService->getFeature('EmailAutomation')) {
             $emailDisabled = false;
             $emailHelp = "";
             $choices = ['Yes' => '1', 'No'  => '0',];
@@ -344,7 +364,7 @@ EOT;
     {
         $resolver->setDefaults(array(
             'em' => null,
-            'tenantInformationService' => null,
+            'tenantService' => null,
             'settingsService' => null,
         ));
     }

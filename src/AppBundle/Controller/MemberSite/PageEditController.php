@@ -27,11 +27,11 @@ class PageEditController extends Controller
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
 
-        $tenantInformationService = $this->container->get('service.tenant');
+        $tenantService = $this->container->get('service.tenant');
 
         if ($pageId == "new") {
 
-            if (!$tenantInformationService->getFeature("Page")) {
+            if (!$tenantService->getFeature("Page")) {
                 $this->addFlash("info", "Adding new pages isn't available on your plan. Please upgrade via the billing page at Admin &raquo; Settings.");
                 return $this->redirectToRoute("home");
             }

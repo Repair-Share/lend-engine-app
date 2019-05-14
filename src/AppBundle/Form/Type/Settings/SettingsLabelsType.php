@@ -15,8 +15,8 @@ class SettingsLabelsType extends AbstractType
     /** @var \Doctrine\ORM\EntityManager */
     public $em;
 
-    /** @var $tenantInformationService \AppBundle\Services\TenantService */
-    private $tenantInformationService;
+    /** @var $tenantService \AppBundle\Services\TenantService */
+    private $tenantService;
 
     /** @var \AppBundle\Services\SettingsService */
     public $settingsService;
@@ -29,7 +29,7 @@ class SettingsLabelsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->em = $options['em'];
-        $this->tenantInformationService = $options['tenantInformationService'];
+        $this->tenantService = $options['tenantService'];
         $this->settingsService = $options['settingsService'];
 
         $choices = [
@@ -51,7 +51,7 @@ class SettingsLabelsType extends AbstractType
         ));
 
         $disabled = false;
-        if ($this->tenantInformationService->getFeature("Labels")) {
+        if ($this->tenantService->getFeature("Labels")) {
             $dataHelp = "";
         } else {
             $dataHelp = "Label printing is only available on the Plus plan";
@@ -78,7 +78,7 @@ class SettingsLabelsType extends AbstractType
     {
         $resolver->setDefaults(array(
             'em' => null,
-            'tenantInformationService' => null,
+            'tenantService' => null,
             'settingsService' => null
         ));
     }

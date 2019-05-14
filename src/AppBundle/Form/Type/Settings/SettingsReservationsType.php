@@ -1,11 +1,12 @@
 <?php
 // src/AppBundle/Form/Type/SettingsReservationsType.php
-namespace AppBundle\Form\Type;
+namespace AppBundle\Form\Type\Settings;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use AppBundle\Form\Type\ToggleType;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;

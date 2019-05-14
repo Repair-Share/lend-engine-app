@@ -257,17 +257,21 @@ class ContactController extends Controller
      */
     private function sendWelcomeEmail(Contact $contact, $plainPassword)
     {
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->get('service.tenant');
         $locale = $contact->getLocale();
 
         if (!$subject = $this->get('settings')->getSettingValue('email_welcome_subject')) {
             $subject = $this->get('translator')->trans('le_email.site_welcome.subject', ['%accountName%' => $this->get('service.tenant')->getCompanyName()], 'emails', $locale);
         }
 
-        $senderName = $this->get('service.tenant')->getCompanyName();
-        $senderEmail = $this->get('service.tenant')->getCompanyEmail();
+        $senderName     = $tenantService->getCompanyName();
+        $replyToEmail   = $tenantService->getReplyToEmail();
+        $fromEmail      = $tenantService->getSetting('from_email');
+        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
         try {
-            $client = new PostmarkClient($this->getParameter('postmark_api_key'));
+            $client = new PostmarkClient($postmarkApiKey);
 
             // Save and switch locale for sending the email
             $sessionLocale = $this->get('translator')->getLocale();
@@ -282,14 +286,14 @@ class ContactController extends Controller
             );
 
             $client->sendEmail(
-                "{$senderName} <hello@lend-engine.com>",
+                "{$senderName} <{$fromEmail}>",
                 $contact->getEmail(),
                 $subject,
                 $message,
                 null,
                 null,
                 true,
-                $senderEmail
+                $replyToEmail
             );
 
             // Revert locale for the UI

@@ -3,7 +3,7 @@
 namespace AppBundle\Controller\Settings;
 
 use AppBundle\Entity\Setting;
-use AppBundle\Form\Type\SettingsTemplatesType;
+use AppBundle\Form\Type\Settings\SettingsTemplatesType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;

@@ -13,18 +13,18 @@ class LocaleListener implements EventSubscriberInterface
     private $defaultLocale;
 
     /** @var TenantService */
-    private $tenantInformation;
+    private $tenantService;
 
     /**
      * @param string $defaultLocale
-     * @param TenantService $tenantInformation
+     * @param TenantService $tenantService
      */
-    public function __construct($defaultLocale = 'en', TenantService $tenantInformation)
+    public function __construct($defaultLocale = 'en', TenantService $tenantService)
     {
-        $this->tenantInformation = $tenantInformation;
+        $this->tenantService = $tenantService;
 
         try {
-            if ($locale = $tenantInformation->getLocale()) {
+            if ($locale = $tenantService->getLocale()) {
                 $this->defaultLocale = $locale;
             } else {
                 $this->defaultLocale = $defaultLocale;

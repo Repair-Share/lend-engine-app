@@ -62,11 +62,16 @@ class ItemMoveController extends Controller
 
                 $this->addFlash('success', 'Item location has been updated.');
 
+                $senderName     = $this->get('service.tenant')->getCompanyName();
+                $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
+                $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
+                $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
+
                 if ($contact) {
                     $toEmail = $contact->getEmail();
                     $user = $this->getUser();
                     try {
-                        $client = new PostmarkClient($this->getParameter('postmark_api_key'));
+                        $client = new PostmarkClient($postmarkApiKey);
 
                         // Save and switch locale for sending the email
                         $sessionLocale = $this->get('translator')->getLocale();
@@ -83,10 +88,14 @@ class ItemMoveController extends Controller
                         );
 
                         $client->sendEmail(
-                            "hello@lend-engine.com",
+                            "{$senderName} <{$fromEmail}>",
                             $toEmail,
                             'You have been assigned "'.$inventoryItem->getName().'"',
-                            $message
+                            $message,
+                            null,
+                            null,
+                            true,
+                            $replyToEmail
                         );
 
                         // Revert locale for the UI

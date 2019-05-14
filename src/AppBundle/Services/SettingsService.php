@@ -292,6 +292,7 @@ class SettingsService
 
             // To allow whitelabel users to send from their own email address
             'postmark_api_key',
+            'from_email',
 
             //labels
             'use_labels',

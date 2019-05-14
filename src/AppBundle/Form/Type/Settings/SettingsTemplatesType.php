@@ -1,6 +1,6 @@
 <?php
 // src/AppBundle/Form/Type/SettingsType.php
-namespace AppBundle\Form\Type;
+namespace AppBundle\Form\Type\Settings;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;

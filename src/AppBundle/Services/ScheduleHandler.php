@@ -53,7 +53,6 @@ class ScheduleHandler
         $startTime = microtime(true);
 
         $resultString = '';
-        $postMarkApiKey = getenv('SYMFONY__POSTMARK_API_KEY');
 
         // Connect to core and get tenants on this server
         $repo = $this->em->getRepository('AppBundle:Tenant');
@@ -87,8 +86,11 @@ class ScheduleHandler
 
                 // Set the settings class to get data from the right DB
                 $this->settings->setTenant($tenant, $tenantEntityManager);
-                $tenantOrgName  = $this->settings->getSettingValue('org_name');
-                $senderEmail    = $this->settings->getSettingValue('org_email');
+
+                $senderName     = $this->container->get('service.tenant')->getCompanyName();
+                $replyToEmail   = $this->container->get('service.tenant')->getReplyToEmail();
+                $fromEmail      = $this->container->get('service.tenant')->getSetting('from_email');
+                $postmarkApiKey = $this->container->get('service.tenant')->getSetting('postmark_api_key');
 
                 $automateThisEmail = $this->settings->getSettingValue('automate_email_loan_reminder');
                 if ($automateThisEmail != 1) {
@@ -118,7 +120,8 @@ class ScheduleHandler
 
                             try {
                                 $toEmail = $contact->getEmail();
-                                $client = new PostmarkClient($postMarkApiKey);
+
+                                $client = new PostmarkClient($postmarkApiKey);
 
                                 // Save and switch locale for sending the email
                                 $sessionLocale = $this->container->get('translator')->getLocale();
@@ -139,14 +142,14 @@ class ScheduleHandler
                                 );
 
                                 $client->sendEmail(
-                                    "{$tenantOrgName} <hello@lend-engine.com>",
+                                    "{$senderName} <{$fromEmail}>",
                                     $toEmail,
                                     $subject,
                                     $message,
                                     null,
                                     null,
                                     true,
-                                    $senderEmail
+                                    $replyToEmail
                                 );
 
                                 // Revert locale for the UI
@@ -179,7 +182,7 @@ class ScheduleHandler
         $resultString .= '  Total T: '.$timeElapsed.PHP_EOL;
 
         // And then finally send a log.
-        $client = new PostmarkClient($postMarkApiKey);
+        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
         $client->sendEmail(
             "hello@lend-engine.com",
             'chris@lend-engine.com',
@@ -203,7 +206,6 @@ class ScheduleHandler
         $startTime = microtime(true);
 
         $resultString = '';
-        $postMarkApiKey = getenv('SYMFONY__POSTMARK_API_KEY');
 
         $repo = $this->em->getRepository('AppBundle:Tenant');
         $tenants = $repo->findBy(['server' => $this->serverName, 'status' => 'LIVE']);
@@ -217,6 +219,11 @@ class ScheduleHandler
             $tenantDbSchema = $tenant->getDbSchema();
             $tenantStatus   = $tenant->getStatus();
             $tenantPlan     = $tenant->getPlan();
+
+            $senderName     = $this->container->get('service.tenant')->getCompanyName();
+            $replyToEmail   = $this->container->get('service.tenant')->getReplyToEmail();
+            $fromEmail      = $this->container->get('service.tenant')->getSetting('from_email');
+            $postmarkApiKey = $this->container->get('service.tenant')->getSetting('postmark_api_key');
 
             $resultString .= '  '.$tenant->getName().', '.$tenantStatus;
 
@@ -237,8 +244,6 @@ class ScheduleHandler
 
                 // Set the settings class to get data from the right DB
                 $this->settings->setTenant($tenant, $tenantEntityManager);
-                $tenantOrgName  = $this->settings->getSettingValue('org_name');
-                $senderEmail    = $this->settings->getSettingValue('org_email');
 
                 $automateThisEmail = $this->settings->getSettingValue('automate_email_membership');
                 if ($automateThisEmail != 1) {
@@ -284,7 +289,7 @@ class ScheduleHandler
 
                                 try {
 
-                                    $emailClient = new PostmarkClient($postMarkApiKey);
+                                    $emailClient = new PostmarkClient($postmarkApiKey);
 
                                     // Save and switch locale for sending the email
                                     $sessionLocale = $this->container->get('translator')->getLocale();
@@ -302,14 +307,14 @@ class ScheduleHandler
                                     $subject = $this->container->get('translator')->trans('le_email.membership_expired.subject', [], 'emails', $contact->getLocale());
 
                                     $emailClient->sendEmail(
-                                        "{$tenantOrgName} <hello@lend-engine.com>",
+                                        "{$senderName} <{$fromEmail}>",
                                         $toEmail,
                                         $subject,
                                         $message,
                                         null,
                                         null,
                                         true,
-                                        $senderEmail
+                                        $replyToEmail
                                     );
 
                                     // Revert locale for the UI
@@ -347,7 +352,7 @@ class ScheduleHandler
         $resultString .= '  Total T: '.$timeElapsed.PHP_EOL;
 
         // And then finally send a log.
-        $client = new PostmarkClient($postMarkApiKey);
+        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
         $client->sendEmail(
             "hello@lend-engine.com",
             'chris@lend-engine.com',
@@ -369,7 +374,6 @@ class ScheduleHandler
         $startTime = microtime(true);
 
         $resultString = '';
-        $postMarkApiKey = getenv('SYMFONY__POSTMARK_API_KEY');
 
         $repo = $this->em->getRepository('AppBundle:Tenant');
         $tenants = $repo->findBy(['server' => $this->serverName, 'status' => 'LIVE']);
@@ -382,6 +386,11 @@ class ScheduleHandler
             $tenantDbSchema = $tenant->getDbSchema();
             $tenantStatus   = $tenant->getStatus();
             $tenantPlan     = $tenant->getPlan();
+
+            $senderName     = $this->container->get('service.tenant')->getCompanyName();
+            $replyToEmail   = $this->container->get('service.tenant')->getReplyToEmail();
+            $fromEmail      = $this->container->get('service.tenant')->getSetting('from_email');
+            $postmarkApiKey = $this->container->get('service.tenant')->getSetting('postmark_api_key');
 
             $resultString .= '  '.$tenant->getName().', '.$tenantStatus;
 
@@ -399,8 +408,6 @@ class ScheduleHandler
 
                 // Set the settings class to get data from the right DB
                 $this->settings->setTenant($tenant, $tenantEntityManager);
-                $tenantOrgName  = $this->settings->getSettingValue('org_name');
-                $senderEmail    = $this->settings->getSettingValue('org_email');
 
                 $automateThisEmail = $this->settings->getSettingValue('automate_email_reservation_reminder');
                 if ($automateThisEmail != 1) {
@@ -425,7 +432,7 @@ class ScheduleHandler
 
                             try {
                                 $toEmail = $contact->getEmail();
-                                $client = new PostmarkClient($postMarkApiKey);
+                                $client = new PostmarkClient($postmarkApiKey);
 
                                 // Save and switch locale for sending the email
                                 $sessionLocale = $this->container->get('translator')->getLocale();
@@ -447,14 +454,14 @@ class ScheduleHandler
                                 );
 
                                 $client->sendEmail(
-                                    "{$tenantOrgName} <hello@lend-engine.com>",
+                                    "{$senderName} <{$fromEmail}>",
                                     $toEmail,
                                     $subject,
                                     $message,
                                     null,
                                     null,
                                     true,
-                                    $senderEmail
+                                    $replyToEmail
                                 );
 
                                 // Revert locale for the UI
@@ -488,7 +495,7 @@ class ScheduleHandler
         $resultString .= '  Total T: '.$timeElapsed.PHP_EOL;
 
         // And then finally send a log.
-        $client = new PostmarkClient($postMarkApiKey);
+        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
         $client->sendEmail(
             "hello@lend-engine.com",
             'chris@lend-engine.com',
@@ -509,7 +516,6 @@ class ScheduleHandler
         $startTime = microtime(true);
 
         $resultString = '';
-        $postMarkApiKey = getenv('SYMFONY__POSTMARK_API_KEY');
 
         $repo = $this->em->getRepository('AppBundle:Tenant');
         $tenants = $repo->findBy(['server' => $this->serverName, 'status' => 'LIVE']);
@@ -522,6 +528,11 @@ class ScheduleHandler
             $tenantDbSchema = $tenant->getDbSchema();
             $tenantStatus   = $tenant->getStatus();
             $tenantPlan     = $tenant->getPlan();
+
+            $senderName     = $this->container->get('service.tenant')->getCompanyName();
+            $replyToEmail   = $this->container->get('service.tenant')->getReplyToEmail();
+            $fromEmail      = $this->container->get('service.tenant')->getSetting('from_email');
+            $postmarkApiKey = $this->container->get('service.tenant')->getSetting('postmark_api_key');
 
             $resultString .= '  '.$tenant->getName().', '.$tenantStatus;
 
@@ -539,8 +550,6 @@ class ScheduleHandler
 
                 // Set the settings class to get data from the right DB
                 $this->settings->setTenant($tenant, $tenantEntityManager);
-                $tenantOrgName  = $this->settings->getSettingValue('org_name');
-                $senderEmail    = $this->settings->getSettingValue('org_email');
 
                 $overdueDays = $this->settings->getSettingValue('automate_email_overdue_days');
                 if ($overdueDays == null || $overdueDays == 0) {
@@ -568,7 +577,7 @@ class ScheduleHandler
 
                             try {
                                 $toEmail = $contact->getEmail();
-                                $client = new PostmarkClient($postMarkApiKey);
+                                $client = new PostmarkClient($postmarkApiKey);
 
                                 // Save and switch locale for sending the email
                                 $sessionLocale = $this->container->get('translator')->getLocale();
@@ -590,14 +599,14 @@ class ScheduleHandler
                                 );
 
                                 $client->sendEmail(
-                                    "{$tenantOrgName} <hello@lend-engine.com>",
+                                    "{$senderName} <{$fromEmail}>",
                                     $toEmail,
                                     $subject,
                                     $message,
                                     null,
                                     null,
                                     true,
-                                    $senderEmail
+                                    $replyToEmail
                                 );
 
                                 $note = new Note();
@@ -637,7 +646,7 @@ class ScheduleHandler
         $resultString .= '  Total T: '.$timeElapsed.PHP_EOL;
 
         // And then finally send a log.
-        $client = new PostmarkClient($postMarkApiKey);
+        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
         $client->sendEmail(
             "hello@lend-engine.com",
             'chris@lend-engine.com',

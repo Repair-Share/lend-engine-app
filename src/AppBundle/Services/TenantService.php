@@ -1,8 +1,6 @@
 <?php
 namespace AppBundle\Services;
 
-use AppBundle\Services\BillingService;
-use AppBundle\Services\SettingsService;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Doctrine\ORM\EntityManager;
@@ -475,6 +473,16 @@ class TenantService
         return $this->billingService->isEnabled($this->session->get('plan'), $feature);
     }
 
+    // Allows whitelabelling
+    public function getReplyToEmail()
+    {
+        if ($fromEmail = $this->getSetting('from_email')) {
+            return $fromEmail;
+        } else {
+            return 'hello@lend-engine.com';
+        }
+    }
+
     /**
      * @todo map all separate settings functions to this one, and update usages in Twig templates
      * @param $key
@@ -483,10 +491,14 @@ class TenantService
     public function getSetting($key)
     {
         $value = $this->settings->getSettingValue($key);
+
         // Populate in here rather than in settings service since values from settings service
         // are used in the settings form fields
         if ($key == 'postmark_api_key' && !$value) {
             return $this->postmarkApiKey;
+        } else if ($key == 'from_email' && !$value) {
+            // Should match a sender email address in the connected PostMark account
+            return 'hello@lend-engine.com';
         }
         return $value;
     }

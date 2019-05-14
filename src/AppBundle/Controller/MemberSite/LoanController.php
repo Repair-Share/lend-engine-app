@@ -349,8 +349,10 @@ class LoanController extends Controller
     private function sendCheckoutConfirmationEmail(Loan $loan)
     {
 
-        $senderName  = $this->get('service.tenant')->getCompanyName();
-        $senderEmail = $this->get('service.tenant')->getCompanyEmail();
+        $senderName     = $this->get('service.tenant')->getCompanyName();
+        $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
+        $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
+        $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
 
         // Send email confirmation
         $toEmail = $loan->getContact()->getEmail();
@@ -361,7 +363,7 @@ class LoanController extends Controller
 
             try {
 
-                $client = new PostmarkClient($this->getParameter('postmark_api_key'));
+                $client = new PostmarkClient($postmarkApiKey);
 
                 // Save and switch locale for sending the email
                 $sessionLocale = $this->get('translator')->getLocale();
@@ -398,14 +400,14 @@ class LoanController extends Controller
                 }
 
                 $client->sendEmail(
-                    "{$senderName} <hello@lend-engine.com>",
+                    "{$senderName} <{$fromEmail}>",
                     $toEmail,
                     $subject." (Ref ".$loan->getId().")",
                     $message,
                     null,
                     null,
                     null,
-                    $senderEmail,
+                    $replyToEmail,
                     null,
                     null,
                     null,

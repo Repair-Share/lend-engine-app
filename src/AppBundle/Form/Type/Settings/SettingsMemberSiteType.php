@@ -1,8 +1,8 @@
 <?php
 // src/AppBundle/Form/Type/SettingsType.php
-namespace AppBundle\Form\Type;
+namespace AppBundle\Form\Type\Settings;
 
-use Doctrine\ORM\EntityManager;
+use AppBundle\Form\Type\ToggleType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -17,7 +17,7 @@ class SettingsMemberSiteType extends AbstractType
     public $em;
 
     /** @var \AppBundle\Services\TenantService */
-    public $tenantInformationService;
+    public $tenantService;
 
     /** @var \AppBundle\Services\SettingsService */
     public $settingsService;
@@ -30,7 +30,7 @@ class SettingsMemberSiteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->em = $options['em'];
-        $this->tenantInformationService = $options['tenantInformationService'];
+        $this->tenantService = $options['tenantService'];
         $this->settingsService = $options['settingsService'];
 
         // Get the settings
@@ -60,7 +60,7 @@ class SettingsMemberSiteType extends AbstractType
         ));
 
         $lingoData = explode(',', $dbData['org_languages']);
-        if ($this->tenantInformationService->getFeature('MultipleLanguages')) {
+        if ($this->tenantService->getFeature('MultipleLanguages')) {
             $multi = true;
             $lingoHelp = "Choose multiple languages here if your members require a choice. You'll be able to add item names and descriptions in each language.";
         } else {
@@ -96,7 +96,7 @@ then the user will also be shown a button to continue to choose a membership.',
 
         $readOnlyCustomTheme = true;
         $planStarHtml = '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on Plus plan.';
-        if ($this->tenantInformationService->getFeature('CustomTheme')) {
+        if ($this->tenantService->getFeature('CustomTheme')) {
             $readOnlyCustomTheme = false;
             $planStarHtml = '';
         }
@@ -114,7 +114,7 @@ then the user will also be shown a button to continue to choose a membership.',
 
         $readOnlyCSS = true;
         $planStarHtml = '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on Starter plan and above.';
-        if ($this->tenantInformationService->getFeature('CustomStyle')) {
+        if ($this->tenantService->getFeature('CustomStyle')) {
             $readOnlyCSS = false;
             $planStarHtml = '';
         }
@@ -131,7 +131,7 @@ then the user will also be shown a button to continue to choose a membership.',
         ));
 
         $readOnlyJs = true;
-        if ($this->tenantInformationService->getFeature('CustomStyle')) {
+        if ($this->tenantService->getFeature('CustomStyle')) {
             $readOnlyJs = false;
             $planStarHtml = '';
         }
@@ -148,7 +148,7 @@ then the user will also be shown a button to continue to choose a membership.',
         ));
 
         $readOnlyFontName = true;
-        if ($this->tenantInformationService->getFeature('CustomStyle')) {
+        if ($this->tenantService->getFeature('CustomStyle')) {
             $readOnlyFontName = false;
             $planStarHtml = '';
         }
@@ -185,7 +185,7 @@ then the user will also be shown a button to continue to choose a membership.',
         ));
 
         // Only on standard plans
-        if ($this->tenantInformationService->getFeature('PrivateSite')) {
+        if ($this->tenantService->getFeature('PrivateSite')) {
             $choices = ['Yes' => '1', 'No'  => '0',];
             $builder->add('site_is_private', ToggleType::class, array(
                 'expanded' => true,
@@ -231,7 +231,7 @@ then the user will also be shown a button to continue to choose a membership.',
     {
         $resolver->setDefaults(array(
             'em' => null,
-            'tenantInformationService' => null,
+            'tenantService' => null,
             'settingsService' => null,
         ));
     }

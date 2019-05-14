@@ -26,13 +26,15 @@ class EmailTestController extends Controller
      */
     public function emailTestAction(Request $request)
     {
+        $senderName     = $this->get('service.tenant')->getCompanyName();
+        $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
+        $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
+        $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
 
-        $client = new PostmarkClient($this->getParameter('postmark_api_key'));
+        $client = new PostmarkClient($postmarkApiKey);
 
         $em = $this->getDoctrine()->getManager();
 
-        $senderName  = $this->get('service.tenant')->getCompanyName();
-        $senderEmail = $this->get('service.tenant')->getCompanyEmail();
         $accountCode = $this->get('service.tenant')->getAccountCode();
 
         $locale = $this->get('service.tenant')->getLocale();
@@ -301,14 +303,14 @@ class EmailTestController extends Controller
             }
 
             $client->sendEmail(
-                "{$senderName} <hello@lend-engine.com>",
+                "{$senderName} <{$fromEmail}>",
                 $toEmailAddress,
                 $subject,
                 $message,
                 null,
                 null,
                 true,
-                $senderEmail
+                $replyToEmail
             );
 
             $this->addFlash('success', "Sent a test email to ".$user->getEmail());

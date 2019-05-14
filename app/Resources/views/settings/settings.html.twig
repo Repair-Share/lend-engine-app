@@ -48,8 +48,13 @@
             {{ form_row(form.org_currency) }}
 
             <h2>White labelling</h2>
+            <p class="help-block">
+                These settings allow you to hide all mention of the Lend Engine brand.
+            </p>
+
             {{ form_row(form.hide_branding) }}
             {{ form_row(form.postmark_api_key) }}
+            {{ form_row(form.from_email) }}
 
             <h2>Mailchimp integration</h2>
 

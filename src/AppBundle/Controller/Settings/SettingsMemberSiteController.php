@@ -2,19 +2,14 @@
 
 namespace AppBundle\Controller\Settings;
 
-use AppBundle\Entity\PaymentMethod;
 use AppBundle\Entity\Setting;
-use AppBundle\Form\Type\SettingsMemberSiteType;
-use AppBundle\Form\Type\SettingsTemplatesType;
+use AppBundle\Form\Type\Settings\SettingsMemberSiteType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Form\Type\SettingsType;
-use AppBundle\Form\Type\SettingsReservationsType;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class SettingsMemberSiteController extends Controller
 {
@@ -27,8 +22,8 @@ class SettingsMemberSiteController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        /** @var $tenantInformationService \AppBundle\Services\TenantService */
-        $tenantInformationService = $this->get('service.tenant');
+        /** @var $tenantService \AppBundle\Services\TenantService */
+        $tenantService = $this->get('service.tenant');
 
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
@@ -36,7 +31,7 @@ class SettingsMemberSiteController extends Controller
         // Pass tenant info in so we can control settings based on pay plan
         $options = [
             'em' => $em,
-            'tenantInformationService' => $tenantInformationService,
+            'tenantService' => $tenantService,
             'settingsService' => $settingsService
         ];
 
@@ -49,7 +44,7 @@ class SettingsMemberSiteController extends Controller
         /** @var $repo \AppBundle\Repository\SettingRepository */
         $repo =  $em->getRepository('AppBundle:Setting');
 
-        $locale = $tenantInformationService->getLocale();
+        $locale = $tenantService->getLocale();
 
         if ($form->isSubmitted()) {
 
