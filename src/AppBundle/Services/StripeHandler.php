@@ -113,6 +113,21 @@ class StripeHandler
     }
 
     /**
+     * @param $subscriptionId
+     * @return bool|\Stripe\StripeObject
+     */
+    public function getSubscription($subscriptionId)
+    {
+        try {
+            $sub = \Stripe\Subscription::retrieve($subscriptionId);
+            return $sub;
+        } catch (\Exception $e) {
+            $this->errors[] = $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
      * @param $customerStripeId
      * @return \Stripe\Customer
      */

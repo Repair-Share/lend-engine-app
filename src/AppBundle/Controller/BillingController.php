@@ -73,8 +73,14 @@ class BillingController extends Controller
             return $this->redirectToRoute('billing');
         }
 
+        $subscription = null;
+        if ($subscriptionId = $tenant->getSubscriptionId()) {
+            $subscription = $stripeService->getSubscription($subscriptionId);
+        }
+
         return $this->render('default/billing.html.twig', array(
-            'plans' => $plans
+            'plans' => $plans,
+            'subscription' => $subscription
         ));
     }
 

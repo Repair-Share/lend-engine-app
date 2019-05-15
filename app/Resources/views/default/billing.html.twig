@@ -27,6 +27,7 @@
             {% endif %}
 
             {% if tenantInformation.plan %}
+
             {% else %}
             <h1>Choose a plan.</h1>
             <p>
@@ -34,7 +35,6 @@
                 <br>You can cancel at any time. Our subscriptions are handled securely by Stripe.com and we never see or store your card details.
             </p>
             {% endif %}
-
 
             <div class="row">
 
@@ -96,7 +96,16 @@
                             <div class="plan-wrapper {% if tenantInformation.plan == plan.code %}active{% endif %}">
 
                                 {% if tenantInformation.plan == plan.code %}
-                                    <div class="plan-active">This is your plan</div>
+                                    <div class="plan-active">
+                                        This is your plan
+                                        {% if subscription %}
+                                            {% if subscription.plan.amount < plan.amount %}
+                                                <div style="padding: 4px 0; color: #fff;">
+                                                    You're paying a discounted rate of &pound;{{ subscription.plan.amount/100|number_format(2) }}
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
                                 {% else %}
                                     <div style="padding: 4px">&nbsp;</div>
                                 {% endif %}
@@ -119,7 +128,7 @@
 
                                     {% elseif plan.code == 'starter' %}
 
-                                        <div class="price">£5<span> GBP per month*</span></div>
+                                        <div class="price">£{{ plan.amount/100|number_format(2) }}<span> GBP per month*</span></div>
                                         <ul>
                                             <li>As free plan plus:</li>
                                             <li><i class="fa fa-check"></i> Up to 500 items</li>
@@ -134,7 +143,7 @@
 
                                     {% elseif plan.code == 'plus' %}
 
-                                        <div class="price">£20 <span>GBP per month*</span></div>
+                                        <div class="price">£{{ plan.amount/100|number_format(2) }} <span>GBP per month*</span></div>
                                         <ul>
                                             <li>As starter plan plus:</li>
                                             <li><i class="fa fa-check"></i> Up to 2k items</li>
@@ -155,7 +164,7 @@
 
                                     {% elseif plan.code == 'business' %}
 
-                                        <div class="price">£40 <span>GBP per month*</span></div>
+                                        <div class="price">£{{ plan.amount/100|number_format(2) }} <span>GBP per month*</span></div>
                                         <ul>
                                             <li>As plus plan plus:</li>
                                             <li><i class="fa fa-check"></i> Up to 10k items</li>

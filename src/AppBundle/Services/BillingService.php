@@ -251,7 +251,7 @@ class BillingService
                     'code' => 'starter',
                     'stripeCode' => 'plan_Cv8Lg7fyOJSB0z', // Standard monthly 5.00
                     'name' => 'Starter',
-                    'amount' => 250
+                    'amount' => 500
                 ],
                 [
                     'code' => 'plus',
@@ -282,7 +282,7 @@ class BillingService
                     'code' => 'starter',
                     'stripeCode' => 'plan_Cv6rBge0LPVNin',
                     'name' => 'Starter',
-                    'amount' => 250
+                    'amount' => 500
                 ],
                 [
                     'code' => 'plus',
