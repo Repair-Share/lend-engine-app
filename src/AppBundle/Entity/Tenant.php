@@ -442,6 +442,7 @@ class Tenant
                 $plan = 'free';
                 break;
             case 'standard':
+            case 'starter':
             case 'plan_Cv8Lg7fyOJSB0z': // standard monthly 5.00
             case 'plan_Cv6TbQ0PPSnhyL': // test plan
             case 'plan_Cv6rBge0LPVNin': // test plan
@@ -454,6 +455,8 @@ class Tenant
                 $plan = 'plus';
                 break;
             case 'business':
+            case 'plan_F4HR4VG76biNcB': // test
+            case 'plan_F4HgQehPQ2nOlN': // prod
                 $plan = 'business';
                 break;
         }

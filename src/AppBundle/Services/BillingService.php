@@ -316,6 +316,7 @@ class BillingService
                 $plan = 'free';
                 break;
             case 'standard':
+            case 'starter':
             case 'plan_Cv8Lg7fyOJSB0z': // standard monthly 5.00
             case 'plan_Cv6TbQ0PPSnhyL': // test plan
             case 'plan_Cv6rBge0LPVNin': // test plan
