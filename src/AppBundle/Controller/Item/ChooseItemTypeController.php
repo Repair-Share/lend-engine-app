@@ -17,13 +17,16 @@ class ChooseItemTypeController extends Controller
         // Check to see if user has exceeded item count
         $em = $this->getDoctrine()->getManager();
 
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
+
         /** @var $repo \AppBundle\Repository\InventoryItemRepository */
         $repo = $em->getRepository('AppBundle:InventoryItem');
 
         /** @var $billingService \AppBundle\Services\BillingService */
         $billingService = $this->get('billing');
 
-        $plan = $this->get('session')->get('plan');
+        $plan = $settingsService->getTenant()->getPlan();
         $maxItems = $billingService->getMaxItems($plan);
 
         $count = $repo->countItems();

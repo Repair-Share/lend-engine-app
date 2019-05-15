@@ -137,7 +137,7 @@ We detected you have one or more of the following in your account:
 - Item custom fields or attachments
 - Member custom fields or attachments
 
-Log in at https://{$tenant->getStub()}.lend-engine-app.com
+Log in at http://{$tenant->getStub()}.lend-engine-app.com
 
 If you've got any questions, please just reply to this email!
 
@@ -200,10 +200,14 @@ EOB;
         $this->addUser();
         $this->setOrganisationDetails();
 
-        $name  = $this->get('session')->get('account_owner_name');
-        $email = $this->get('session')->get('account_owner_email');
-        $org   = $this->get('session')->get('account_name');
-        $accountCode   = $this->get('session')->get('account_code');
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
+
+        $name  = $settingsService->getTenant()->getOwnerName();
+        $email = $settingsService->getTenant()->getOwnerEmail();
+        $org   = $settingsService->getSettingValue('org_name');
+        $accountCode = $settingsService->getTenant()->getStub();
+
         $this->subscribeToMailchimp($name, $email, $org, $accountCode);
 
         return $this->redirect($this->generateUrl('homepage'));
@@ -245,7 +249,10 @@ EOB;
         /** @var \Doctrine\DBAL\Driver\PDOConnection $db */
         $db = $this->get('database_connection');
 
-        $orgName = $this->get('session')->get('account_name');
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
+        $orgName   = $settingsService->getSettingValue('org_name');
+
         $raw = "REPLACE INTO setting (setup_key, setup_value) VALUES ('org_name', :org_name)";
 
         /** @var \Doctrine\DBAL\Driver\PDOStatement $s */
@@ -262,9 +269,14 @@ EOB;
     public function addUser()
     {
 
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
+
+        $ownerName  = $settingsService->getTenant()->getOwnerName();
+        $email = $settingsService->getTenant()->getOwnerEmail();
+
         $pass  = $this->generatePassword();
-        $name  = explode(' ', $this->get('session')->get('account_owner_name'));
-        $email = $this->get('session')->get('account_owner_email');
+        $name  = explode(' ', $ownerName);
 
         $firstName = $name[0];
         $lastName  = '';
@@ -420,14 +432,12 @@ EOB;
     {
         $em = $this->getDoctrine()->getManager();
 
-        /** @var \AppBundle\Repository\TenantRepository $tenantRepo */
-        $tenantRepo = $em->getRepository('AppBundle:Tenant');
-
-        $stub = $this->get('session')->get('account_code');
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
 
         /** @var \AppBundle\Entity\Tenant $tenant */
-        if (!$tenant = $tenantRepo->findOneBy(['stub' => $stub])) {
-            $this->addFlash('error', "Could not find tenant with {$stub}");
+        if (!$tenant = $settingsService->getTenant()) {
+            $this->addFlash('error', "Could not find tenant");
             return false;
         }
 

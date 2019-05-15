@@ -28,8 +28,8 @@ class LoanExtendController extends Controller
         /** @var \AppBundle\Repository\LoanRowRepository $siteRepo */
         $loanRowRepo = $this->getDoctrine()->getRepository('AppBundle:LoanRow');
 
-        /** @var \AppBundle\Services\StripeHandler $stripeService */
-        $stripeService = $this->get('service.stripe');
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
 
         /** @var \AppBundle\Repository\SiteRepository $siteRepo */
         $siteRepo = $this->getDoctrine()->getRepository('AppBundle:Site');
@@ -72,7 +72,7 @@ class LoanExtendController extends Controller
 
         // Update the row (offsetting for timezone so that time is serialized as UTC)
         // Also done in basketController (should be anywhere we take in dates from the calendar picker)
-        $tz = $this->get('session')->get('time_zone');
+        $tz = $settingsService->getSettingValue('org_timezone');
         $timeZone = new \DateTimeZone($tz);
         $utc = new \DateTime('now', new \DateTimeZone("UTC"));
         $offSet = -$timeZone->getOffset($utc)/3600;

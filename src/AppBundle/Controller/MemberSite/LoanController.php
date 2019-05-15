@@ -307,11 +307,10 @@ class LoanController extends Controller
 
             $em = $this->getDoctrine()->getManager();
 
-            /** @var \AppBundle\Repository\TenantRepository $repo */
-            $repo = $em->getRepository('AppBundle:Tenant');
-            $libraryId = $this->get('session')->get('account_code');
+            /** @var \AppBundle\Services\SettingsService $settingsService */
+            $settingsService = $this->get('settings');
 
-            if ($tenant = $repo->findOneBy(['stub' => $libraryId])) {
+            if ($tenant = $settingsService->getTenant()) {
                 foreach ($loan->getLoanRows() AS $row) {
                     /** @var $row \AppBundle\Entity\LoanRow */
                     $item = $row->getInventoryItem();
