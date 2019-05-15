@@ -2,18 +2,18 @@
 
 namespace AppBundle\Uploader\Naming;
 
-use Symfony\Component\HttpFoundation\Session\Session;
+use AppBundle\Services\SettingsService;
 use Oneup\UploaderBundle\Uploader\File\FileInterface;
 use Oneup\UploaderBundle\Uploader\Naming\NamerInterface;
 
 class FileNamer implements NamerInterface
 {
 
-    private $session;
+    private $settings;
 
-    public function __construct(Session $session)
+    public function __construct(SettingsService $settings)
     {
-        $this->session = $session;
+        $this->settings = $settings;
     }
 
     /**
@@ -23,7 +23,7 @@ class FileNamer implements NamerInterface
      */
     public function name(FileInterface $file)
     {
-        $directory = $this->session->get('account_schema');
+        $directory = $this->settings->getTenant()->getDbSchema();
         return $directory.'/files/'.uniqid().'-'.$file->getClientOriginalName();
     }
 }

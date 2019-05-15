@@ -2,18 +2,18 @@
 
 namespace AppBundle\Uploader\Naming;
 
-use Symfony\Component\HttpFoundation\Session\Session;
+use AppBundle\Services\SettingsService;
 use Oneup\UploaderBundle\Uploader\File\FileInterface;
 use Oneup\UploaderBundle\Uploader\Naming\NamerInterface;
 
 class ImageNamer implements NamerInterface
 {
 
-    private $session;
+    private $settings;
 
-    public function __construct(Session $session)
+    public function __construct(SettingsService $settings)
     {
-        $this->session = $session;
+        $this->settings = $settings;
     }
 
     /**
@@ -25,7 +25,7 @@ class ImageNamer implements NamerInterface
     {
         // Client side re-sizing now always produces a JPG
         $imageName = sprintf('%s.%s', uniqid(), 'jpg');
-        $directory = $this->session->get('account_schema');
+        $directory = $this->settings->getTenant()->getDbSchema();
         return $directory.'/'.$imageName;
     }
 }

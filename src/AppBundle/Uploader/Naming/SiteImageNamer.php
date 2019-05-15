@@ -2,6 +2,7 @@
 
 namespace AppBundle\Uploader\Naming;
 
+use AppBundle\Services\SettingsService;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Oneup\UploaderBundle\Uploader\File\FileInterface;
 use Oneup\UploaderBundle\Uploader\Naming\NamerInterface;
@@ -9,11 +10,11 @@ use Oneup\UploaderBundle\Uploader\Naming\NamerInterface;
 class SiteImageNamer implements NamerInterface
 {
 
-    private $session;
+    private $settings;
 
-    public function __construct(Session $session)
+    public function __construct(SettingsService $settings)
     {
-        $this->session = $session;
+        $this->settings = $settings;
     }
 
     /**
@@ -23,7 +24,7 @@ class SiteImageNamer implements NamerInterface
      */
     public function name(FileInterface $file)
     {
-        $directory = $this->session->get('account_schema');
+        $directory = $this->settings->getTenant()->getDbSchema();
         return $directory.'/site_images/'.uniqid().'-'.$file->getClientOriginalName();
     }
 }

@@ -88,17 +88,17 @@ services:
     uploader.image_namer:
         class: AppBundle\Uploader\Naming\ImageNamer
         arguments:
-            - "@session"
+            - "@settings"
 
     uploader.file_namer:
         class: AppBundle\Uploader\Naming\FileNamer
         arguments:
-            - "@session"
+            - "@settings"
 
     uploader.siteimage_namer:
         class: AppBundle\Uploader\Naming\SiteImageNamer
         arguments:
-            - "@session"
+            - "@settings"
 
     uploader.upload_listener:
         class: AppBundle\EventListener\UploadListener
