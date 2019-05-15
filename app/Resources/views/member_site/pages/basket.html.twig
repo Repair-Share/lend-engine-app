@@ -34,7 +34,7 @@
 
         {% if tenantInformation.basket.loanRows|length > 0 %}
             <div style="padding: 10px">
-                <i class="fa fa-clock" style="color: #5cb85c"></i>
+                <i class="far fa-clock" style="color: #5cb85c"></i>
                 {% trans %}public_basket.pickup_after{% endtrans %} <strong>{{ tenantInformation.basket.loanRows|first.dueOutAt|date("l j F g:i a") }}</strong>
                 <span class="multi-site">
                     {% trans %}public_basket.from{% endtrans %} <strong>{{ tenantInformation.basket.loanRows|first.siteFrom.name }}</strong>

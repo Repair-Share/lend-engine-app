@@ -217,11 +217,11 @@ class BillingService
                 break;
 
             case 'plus':
-                return 5;
+                return 10;
                 break;
 
             case 'business':
-                return 20;
+                return 30;
                 break;
         }
 

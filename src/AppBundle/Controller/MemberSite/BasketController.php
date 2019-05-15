@@ -631,7 +631,7 @@ class BasketController extends Controller
 
                 $client->sendEmail(
                     "{$senderName} <{$fromEmail}>",
-                    $fromEmail,
+                    $replyToEmail,
                     "A new reservation has been placed : ".$loan->getId()."",
                     $message,
                     null,
