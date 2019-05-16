@@ -34,6 +34,9 @@ class RegistrationController extends Controller
         /** @var \AppBundle\Entity\Contact $contact */
         $contact = $this->getUser();
 
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->get('service.tenant');
+
         if (!$contact->getEmail()) {
             return true;
         }
@@ -83,13 +86,12 @@ class RegistrationController extends Controller
         }
 
         // Send an email to admin
-
         try {
 
-            $senderName     = $this->get('service.tenant')->getCompanyName();
-            $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
-            $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
-            $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
+            $senderName     = $tenantService->getCompanyName();
+            $replyToEmail   = $tenantService->getReplyToEmail();
+            $fromEmail      = $tenantService->getSenderEmail();
+            $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
             $client = new PostmarkClient($postmarkApiKey);
             $ownerEmail = $this->get('service.tenant')->getCompanyEmail();

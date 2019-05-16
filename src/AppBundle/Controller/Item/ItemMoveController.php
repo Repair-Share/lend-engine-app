@@ -32,6 +32,9 @@ class ItemMoveController extends Controller
         /** @var \AppBundle\Services\WaitingList\WaitingListService $waitingListService */
         $waitingListService = $this->get('service.waiting_list');
 
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->get('service.tenant');
+
         $em = $this->getDoctrine()->getManager();
 
         /** @var \AppBundle\Entity\InventoryItem $inventoryItem */
@@ -62,10 +65,10 @@ class ItemMoveController extends Controller
 
                 $this->addFlash('success', 'Item location has been updated.');
 
-                $senderName     = $this->get('service.tenant')->getCompanyName();
-                $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
-                $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
-                $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
+                $senderName     = $tenantService->getCompanyName();
+                $replyToEmail   = $tenantService->getReplyToEmail();
+                $fromEmail      = $tenantService->getSenderEmail();
+                $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
                 if ($contact) {
                     $toEmail = $contact->getEmail();

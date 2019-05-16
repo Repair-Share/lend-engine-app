@@ -74,6 +74,14 @@ class TenantService
     }
 
     /**
+     * @return \AppBundle\Entity\Tenant
+     */
+    public function getTenant()
+    {
+        return $this->tenant;
+    }
+
+    /**
      * Session information is set in CustomConnectionFactory, when we go to _core DB
      * We don't use container in CustomConnectionFactory due to "Impossible to call set() on a frozen ParameterBag"
      * @return mixed
@@ -490,10 +498,33 @@ class TenantService
         return $this->billingService->isEnabled($this->getPlan(), $feature);
     }
 
-    // Allows whitelabelling
+    /**
+     * @return string
+     */
     public function getReplyToEmail()
     {
-        return $this->getSetting('from_email');
+        if ($this->getSetting('from_email')) {
+            return $this->getSetting('from_email');
+        } else if ($this->getSetting('org_email') != 'email@demo.com') {
+            // Should match a sender email address in the connected PostMark account
+            return $this->getSetting('org_email');
+        } else {
+            return 'hello@lend-engine.com';
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getSenderEmail()
+    {
+        if ($this->getSetting('from_email')) {
+            // We've got PostMark sender set up
+            return $this->getSetting('from_email');
+        } else {
+            // use default sender signature
+            return 'hello@lend-engine.com';
+        }
     }
 
     /**
@@ -509,9 +540,6 @@ class TenantService
         // are used in the settings form fields
         if ($key == 'postmark_api_key' && !$value) {
             return $this->postmarkApiKey;
-        } else if ($key == 'from_email' && !$value) {
-            // Should match a sender email address in the connected PostMark account
-            return 'hello@lend-engine.com';
         }
         return $value;
     }

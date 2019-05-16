@@ -90,7 +90,8 @@ class ScheduleHandler
                 $this->settings->setTenant($tenant, $tenantEntityManager);
 
                 $senderName     = $tenantService->getSetting('org_name');
-                $fromEmail      = $tenantService->getSetting('from_email');
+                $replyToEmail   = $tenantService->getReplyToEmail();
+                $fromEmail      = $tenantService->getSenderEmail();
                 $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
                 $automateThisEmail = $this->settings->getSettingValue('automate_email_loan_reminder');
@@ -150,7 +151,7 @@ class ScheduleHandler
                                     null,
                                     null,
                                     true,
-                                    $fromEmail
+                                    $replyToEmail
                                 );
 
                                 // Revert locale for the UI
@@ -248,7 +249,8 @@ class ScheduleHandler
                 $this->settings->setTenant($tenant, $tenantEntityManager);
 
                 $senderName     = $tenantService->getSetting('org_name');
-                $fromEmail      = $tenantService->getSetting('from_email');
+                $fromEmail      = $tenantService->getSenderEmail();
+                $replyToEmail   = $tenantService->getReplyToEmail();
                 $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
                 $automateThisEmail = $this->settings->getSettingValue('automate_email_membership');
@@ -320,7 +322,7 @@ class ScheduleHandler
                                         null,
                                         null,
                                         true,
-                                        $fromEmail
+                                        $replyToEmail
                                     );
 
                                     // Revert locale for the UI
@@ -413,7 +415,8 @@ class ScheduleHandler
                 $this->settings->setTenant($tenant, $tenantEntityManager);
 
                 $senderName     = $tenantService->getCompanyName();
-                $fromEmail      = $tenantService->getSetting('from_email');
+                $fromEmail      = $tenantService->getSenderEmail();
+                $replyToEmail   = $tenantService->getReplyToEmail();
                 $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
                 $automateThisEmail = $this->settings->getSettingValue('automate_email_reservation_reminder');
@@ -468,7 +471,7 @@ class ScheduleHandler
                                     null,
                                     null,
                                     true,
-                                    $fromEmail
+                                    $replyToEmail
                                 );
 
                                 // Revert locale for the UI
@@ -557,7 +560,8 @@ class ScheduleHandler
                 $this->settings->setTenant($tenant, $tenantEntityManager);
 
                 $senderName     = $tenantService->getCompanyName();
-                $fromEmail      = $tenantService->getSetting('from_email');
+                $fromEmail      = $tenantService->getSenderEmail();
+                $replyToEmail   = $tenantService->getReplyToEmail();
                 $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
                 $overdueDays = $this->settings->getSettingValue('automate_email_overdue_days');
@@ -615,7 +619,7 @@ class ScheduleHandler
                                     null,
                                     null,
                                     true,
-                                    $fromEmail
+                                    $replyToEmail
                                 );
 
                                 $note = new Note();

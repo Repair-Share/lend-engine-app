@@ -17,16 +17,19 @@ class ReservationConfirmEmailController extends Controller
      */
     public function reservationConfirmEmail($loanId)
     {
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->get('service.tenant');
+
         /** @var $loan \AppBundle\Entity\Loan */
         if (!$loan = $this->getDoctrine()->getRepository('AppBundle:Loan')->find($loanId)) {
             $this->addFlash('error', "Could not find loan ID {$loanId}");
             return $this->redirectToRoute('loan_list');
         }
 
-        $senderName     = $this->get('service.tenant')->getCompanyName();
-        $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
-        $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
-        $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
+        $senderName     = $tenantService->getCompanyName();
+        $replyToEmail   = $tenantService->getReplyToEmail();
+        $fromEmail      = $tenantService->getSenderEmail();
+        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
         $locale = $loan->getContact()->getLocale();
 

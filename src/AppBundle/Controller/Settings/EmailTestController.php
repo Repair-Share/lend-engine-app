@@ -26,10 +26,14 @@ class EmailTestController extends Controller
      */
     public function emailTestAction(Request $request)
     {
-        $senderName     = $this->get('service.tenant')->getCompanyName();
-        $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
-        $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
-        $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
+
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->get('service.tenant');
+
+        $senderName     = $tenantService->getCompanyName();
+        $replyToEmail   = $tenantService->getReplyToEmail();
+        $fromEmail      = $tenantService->getSenderEmail();
+        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
         $client = new PostmarkClient($postmarkApiKey);
 

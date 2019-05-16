@@ -40,6 +40,9 @@ class LoanExtendController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->get('service.tenant');
+
         $user = $this->getUser();
 
         if (!$newReturnDate = $request->get('new_return_date')) {
@@ -191,10 +194,10 @@ class LoanExtendController extends Controller
                     $subject = $this->get('translator')->trans('le_email.extend.subject', [], 'emails', $locale);
                 }
 
-                $senderName     = $this->get('service.tenant')->getCompanyName();
-                $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
-                $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
-                $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
+                $senderName     = $tenantService->getCompanyName();
+                $replyToEmail   = $tenantService->getReplyToEmail();
+                $fromEmail      = $tenantService->getSenderEmail();
+                $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
                 try {
                     $client = new PostmarkClient($postmarkApiKey);

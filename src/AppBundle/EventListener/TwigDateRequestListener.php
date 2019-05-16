@@ -24,7 +24,11 @@ class TwigDateRequestListener
     }
 
     public function onKernelRequest(GetResponseEvent $event) {
-        if (!$timezone = $this->settings->getSettingValue('org_timezone')) {
+        try {
+            if (!$timezone = $this->settings->getSettingValue('org_timezone')) {
+                $timezone = 'Europe/London';
+            }
+        } catch (\Exception $e) {
             $timezone = 'Europe/London';
         }
         $this->twig->getExtension('Twig_Extension_Core')->setTimezone($timezone);

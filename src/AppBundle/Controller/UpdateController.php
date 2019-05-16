@@ -190,7 +190,7 @@ EOB;
     /**
      * @Route("deploy", name="deploy")
      */
-    public function deployNewDatabase()
+    public function deployNewDatabase(Request $request)
     {
         // We should already have an empty database created from the marketing site
         // CREATE DATABASE xxx CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
@@ -202,10 +202,22 @@ EOB;
 
         /** @var \AppBundle\Services\SettingsService $settingsService */
         $settingsService = $this->get('settings');
+        $tenant = $settingsService->getTenant();
 
-        $name  = $settingsService->getTenant()->getOwnerName();
-        $email = $settingsService->getTenant()->getOwnerEmail();
-        $org   = $settingsService->getSettingValue('org_name');
+        // Complete the deployment and activate the trial
+        $em = $this->getDoctrine()->getManager();
+
+        $tenant->setStatus("TRIAL");
+        $trialExpiresAt = new \DateTime();
+        $trialExpiresAt->modify("+30 days");
+        $tenant->setTrialExpiresAt($trialExpiresAt);
+
+        $em->persist($tenant);
+        $em->flush();
+
+        $name  = $tenant->getOwnerName();
+        $email = $tenant->getOwnerEmail();
+        $org   = $tenant->getName();
         $accountCode = $settingsService->getTenant()->getStub();
 
         $this->subscribeToMailchimp($name, $email, $org, $accountCode);
@@ -249,16 +261,18 @@ EOB;
         /** @var \Doctrine\DBAL\Driver\PDOConnection $db */
         $db = $this->get('database_connection');
 
-        /** @var \AppBundle\Services\SettingsService $settingsService */
-        $settingsService = $this->get('settings');
-        $orgName   = $settingsService->getSettingValue('org_name');
-
-        $raw = "REPLACE INTO setting (setup_key, setup_value) VALUES ('org_name', :org_name)";
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->get('settings');
+        $tenant = $tenantService->getTenant();
 
         /** @var \Doctrine\DBAL\Driver\PDOStatement $s */
+        $raw = "REPLACE INTO setting (setup_key, setup_value) VALUES ('org_name', '{$tenant->getName()}')";
         $s = $db->prepare($raw);
+        $s->execute();
 
-        $s->execute([':org_name' => $orgName]);
+        $raw = "REPLACE INTO setting (setup_key, setup_value) VALUES ('org_email', '{$tenant->getOwnerEmail()}')";
+        $s = $db->prepare($raw);
+        $s->execute();
 
         return true;
     }

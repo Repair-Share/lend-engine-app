@@ -266,7 +266,7 @@ class ContactController extends Controller
 
         $senderName     = $tenantService->getCompanyName();
         $replyToEmail   = $tenantService->getReplyToEmail();
-        $fromEmail      = $tenantService->getSetting('from_email');
+        $fromEmail      = $tenantService->getSenderEmail();
         $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
         try {

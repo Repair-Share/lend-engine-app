@@ -347,11 +347,13 @@ class LoanController extends Controller
      */
     private function sendCheckoutConfirmationEmail(Loan $loan)
     {
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->get('service.tenant');
 
-        $senderName     = $this->get('service.tenant')->getCompanyName();
-        $replyToEmail   = $this->get('service.tenant')->getReplyToEmail();
-        $fromEmail      = $this->get('service.tenant')->getSetting('from_email');
-        $postmarkApiKey = $this->get('service.tenant')->getSetting('postmark_api_key');
+        $senderName     = $tenantService->getCompanyName();
+        $replyToEmail   = $tenantService->getReplyToEmail();
+        $fromEmail      = $tenantService->getSenderEmail();
+        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
         // Send email confirmation
         $toEmail = $loan->getContact()->getEmail();
