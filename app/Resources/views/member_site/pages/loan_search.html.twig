@@ -8,29 +8,35 @@
     </h2>
 
     {% if loans|length > 0 %}
-        {% for loan in loans %}
-            <div class="search-result">
 
-                <h5>
-                    <a href="{{ path('public_loan', {loanId: loan.id}) }}">{{ loan.id }} / {{ loan.contact.name }}</a>
-                    <span class="pull-right">
+        <table class="table table-responsive data-table dataTable">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>ID</th>
+                    <th>Items</th>
+                </tr>
+            </thead>
+            <tbody class="search-result">
+            {% for loan in loans %}
+                <tr>
+                    <td>
                         {{ include('partials/loan_status_label.html.twig') }}
-                    </span>
-                </h5>
-
-                {% for row in loan.loanRows %}
-                <div class="loan-row">
-                    <strong>{{ row.inventoryItem.name }}</strong><br>
-                    {{ row.dueOutAt|date("l F j, g:i a") }} to <br>
-                    {{ row.dueInAt|date("l F j, g:i a") }} ({{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %})
-                </div>
-                {% endfor %}
-                {#<a href="{{ path('switch_contact', {contactId: contact.id}) }}" class="btn btn-xs btn-success">Browse as {{ contact.firstName }}</a>#}
-
-                {#<a href="{{ path('contact', {id: contact.id}) }}" class="btn btn-xs btn-default">Edit in admin</a>#}
-
-            </div>
-        {% endfor %}
+                    </td>
+                    <td><a href="{{ path('public_loan', {loanId: loan.id}) }}">{{ loan.id }} / {{ loan.contact.name }}</a></td>
+                    <td>
+                        {% for row in loan.loanRows %}
+                            <div style="margin-bottom: 10px;">
+                                <strong>{{ row.inventoryItem.name }}</strong><br>
+                                {{ row.dueOutAt|date("l F j, g:i a") }} to <br>
+                                {{ row.dueInAt|date("l F j, g:i a") }} ({{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %})
+                            </div>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     {% else %}
         <p>No loans found</p>
     {% endif %}
@@ -49,6 +55,11 @@
             };
             $(".search-result").mark("{{ app.request.get('loan-search') }}", options);
             {% endif %}
+
+            $('.data-table').DataTable({
+                pageLength: 50,
+                ordering: true
+            });
         });
     </script>
 {% endblock %}
