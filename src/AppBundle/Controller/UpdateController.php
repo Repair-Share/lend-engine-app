@@ -101,6 +101,9 @@ class UpdateController extends Controller
      */
     private function isUpgradeRequired(Tenant $tenant)
     {
+        // We've had a week of automatic upgrades, further users will need to get in touch.
+        return false;
+
         $em = $this->getDoctrine()->getManager();
         if ($tenant->getPlan() == "starter") {
             if ($em->getRepository('AppBundle:CheckOutPrompt')->findAll()) {
