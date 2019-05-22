@@ -67,7 +67,7 @@ class MembershipService
         $repository = $this->em->getRepository('AppBundle:Membership');
         $builder = $repository->createQueryBuilder('m');
         $builder->add('select', 'COUNT(m) AS qty');
-//        $builder->where('m.isActive = 1');
+        $builder->where("m.status = 'ACTIVE'");
         if ($dateTo) {
             $builder->andWhere("m.createdAt < :dateTo");
             $builder->setParameter('dateTo', $dateTo->format("Y-m-01"));
