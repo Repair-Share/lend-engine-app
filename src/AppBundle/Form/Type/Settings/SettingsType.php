@@ -116,18 +116,24 @@ class SettingsType extends AbstractType
 
         $industries = [
             '' => '',
+            'Assistive technology' => 'assistive',
             'Electronic equipment' => 'electronics',
-            'Sports equipment' => 'sports',
+            'Nappies' => 'nappies',
             'Plant and machinery' => 'plant',
+            'Sports equipment' => 'sports',
+            'Slings / baby carriers' => 'slings',
             'Toys' => 'toys',
             'Tools' => 'tools',
             'Other' => 'other',
         ];
+
+        $data = explode(',', $dbData['industry']);
         $builder->add('industry', ChoiceType::class, array(
             'label' => 'What do you lend?',
             'required' => true,
+            'multiple' => true,
             'choices' => $industries,
-            'data' => $dbData['industry'],
+            'data' => $data,
             'attr' => array(
                 'data-help' => '',
             )

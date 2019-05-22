@@ -48,20 +48,29 @@ class InventoryService
         $repository = $this->em->getRepository('AppBundle:InventoryItem');
 
         $builder = $repository->createQueryBuilder('item');
+        $builder->leftJoin('item.inventoryLocation', 'loc');
 
-        $builder->select('item');
+        if (isset($filter['grouped']) && $filter['grouped'] == true) {
+            $builder->select('item.id, item.name, IDENTITY(item.inventoryLocation) AS location, loc.isAvailable');
+        } else {
+            $builder->select('item');
+        }
+
+        // Add filters:
 
         if (isset($filter['tagIds']) && count($filter['tagIds']) > 0) {
             $builder->innerJoin('item.tags', 't', 'WITH', 't.id IN (:productTagIds)');
             $builder->setParameter('productTagIds', $filter['tagIds']);
         }
 
-        // Add filters:
-
         if (isset($filter['isActive']) && $filter['isActive'] == false) {
             $builder->where('item.isActive = 0');
         } else {
             $builder->where('item.isActive = 1');
+        }
+
+        if (isset($filter['idSet']) && count($filter['idSet']) > 0) {
+            $builder->andWhere('item.id IN ('.implode(',', $filter['idSet']).')');
         }
 
         if (isset($filter['showOnline']) && $filter['showOnline'] == true) {
@@ -95,13 +104,11 @@ class InventoryService
         }
 
         if (isset($filter['locationId']) && $filter['locationId']) {
-            $builder->leftJoin('item.inventoryLocation', 'loc');
             $builder->andWhere('loc.id = :locationId');
             $builder->setParameter('locationId', $filter['locationId']);
         }
 
         if (isset($filter['siteId']) && $filter['siteId']) {
-            $builder->leftJoin('item.inventoryLocation', 'loc');
             $builder->andWhere('loc.site = :siteId');
             $builder->setParameter('siteId', $filter['siteId']);
         }
@@ -117,32 +124,22 @@ class InventoryService
         }
 
         if (isset($filter['filter']) && $filter['filter'] == 'available') {
-            $builder->leftJoin('item.inventoryLocation', 'loc');
             $builder->andWhere('loc.isAvailable = 1');
         }
 
-//        if (isset($filter['grouped']) && $filter['grouped'] == true) {
-//            $builder->leftJoin('item.inventoryLocation', 'loc');
-//            $builder->andWhere('loc.isAvailable = 1');
-//            $builder->addGroupBy('item.name');
-//        }
-
         // First get the total count:
-
         $queryTotalResults = $builder->getQuery();
         $totalResults = count($queryTotalResults->getResult());
 
         // Add limit:
-
         $builder->setFirstResult($start);
         $builder->setMaxResults($length);
 
         // Add order by:
-
         if (isset($filter['sortBy']) && isset($filter['sortDir'])) {
             $builder->addOrderBy($filter['sortBy'], $filter['sortDir']);
         } else {
-            $builder->addOrderBy("item.name, item.inventoryLocation");
+            $builder->addOrderBy("item.name");
         }
 
         $query = $builder->getQuery();

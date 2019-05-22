@@ -105,7 +105,44 @@ class ItemListController extends Controller
 
         $length = $resultsTo - $resultsFrom;
 
-        $searchResults = $inventoryService->itemSearch($resultsFrom, $length, $filter);
+        // Store how many of each item we have, keyed by name
+        $itemQuantity = [];
+
+        if ($groupItemsWithSameName && !$request->get('see_variations')) {
+            // Get ALL item IDs that match the filters
+            $filter['grouped'] = true;
+            $arrayOfItems = $inventoryService->itemSearch(0, 1000, $filter);
+            unset($filter['grouped']);
+
+            $itemsKeyedByName = [];
+
+            foreach ($arrayOfItems['data'] AS $item) {
+                $itemName = $item['name'];
+
+                if (!isset($itemQuantity[$itemName])) {
+                    $itemQuantity[$itemName] = 1;
+                }
+
+                if (isset($itemsKeyedByName[$itemName])) {
+                    // we already have one of these. Increment the quantity which we'll set on the item object later
+                    $itemQuantity[$itemName]++;
+                    // replace only if this one is available
+                    if ($item['isAvailable']) {
+                        $itemsKeyedByName[$itemName] = $item['id'];
+                    }
+                } else {
+                    $itemsKeyedByName[$itemName] = $item['id'];
+                }
+            }
+
+            // Run the search again only with the chosen IDs
+            $filter['idSet'] = array_values($itemsKeyedByName);
+            $searchResults = $inventoryService->itemSearch($resultsFrom, $length, $filter);
+        } else {
+            // Return an array of objects
+            $searchResults = $inventoryService->itemSearch($resultsFrom, $length, $filter);
+        }
+
         $products     = $searchResults['data'];
         $totalRecords = $searchResults['totalResults'];
 
@@ -117,14 +154,8 @@ class ItemListController extends Controller
 
         // Turn into array of objects
         $items = [];
-        $count = [];
         foreach ($products AS $item) {
             /** @var \AppBundle\Entity\InventoryItem $item */
-
-            // How many are available
-            if (!isset($count[$item->getName()])) {
-                $count[$item->getName()] = 1;
-            }
 
             $itemFee = $itemService->determineItemFee($item, $contact);
 
@@ -144,33 +175,12 @@ class ItemListController extends Controller
 
             if ($request->get('see_variations') || !$groupItemsWithSameName) {
                 $item->setQuantity(1);
-                $items[] = $item;
             } else {
-                if (isset($items[$item->getName()]) ) {
-                    // We've found one with the same name
-                    $count[$item->getName()]++;
-                    if ($item->getInventoryLocation()->getIsAvailable() == true) {
-                        // show this group as available by replacing with the available one
-                        $items[$item->getName()] = $item;
-                    } else {
-                        continue;
-                    }
-                }
-                // Key the items by name so we only get one of each
-                $items[$item->getName()] = $item;
+                $item->setQuantity($itemQuantity[$item->getName()]);
             }
 
-        }
+            $items[] = $item;
 
-        if (!$request->get('see_variations') && $groupItemsWithSameName) {
-            foreach ($count AS $itemName => $qty) {
-                $items[$itemName]->setQuantity($qty);
-                if ($qty > 1) {
-                    // @todo this is a hack to improve the paginator when grouping items
-                    // we're going to have to do another query to count grouped items
-                    $totalRecords = count($items);
-                }
-            }
         }
 
         $filterSites = [];
