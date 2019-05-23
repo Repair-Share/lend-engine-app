@@ -133,6 +133,7 @@ class MembershipController extends Controller
         $membership->setContact($contact);
 
         $form = $this->createForm(MembershipType::class, $membership, [
+            'em' => $em,
             'action' => $this->generateUrl('membership', ['contactId' => $contact->getId()])
         ]);
 

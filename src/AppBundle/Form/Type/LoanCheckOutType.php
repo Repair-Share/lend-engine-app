@@ -13,18 +13,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class LoanCheckOutType extends AbstractType
 {
     protected $em;
-
     protected $paymentDue;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
+        $this->em = $options['em'];
         $this->paymentDue = $options['paymentDue'];
+
+        $activePaymentMethods = $this->em->getRepository("AppBundle:PaymentMethod")->findAllOrderedByName();
 
         $builder->add('paymentMethod', EntityType::class, array(
             'label' => 'Payment method',
             'class' => 'AppBundle:PaymentMethod',
             'choice_label' => 'name',
+            'choices' => $activePaymentMethods,
             'required' => true,
             'mapped' => true,
             'placeholder' => 'Choose an option',

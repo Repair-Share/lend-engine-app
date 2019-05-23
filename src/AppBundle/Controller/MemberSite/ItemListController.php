@@ -78,7 +78,6 @@ class ItemListController extends Controller
         if ($request->get('sortBy')) {
             $newSortDir = 'DESC';
         }
-        // @TODO
 
         $filter['sortDir'] = 'ASC';
 
@@ -86,6 +85,7 @@ class ItemListController extends Controller
             $filter['sortBy']  = 'item.createdAt';
             $filter['sortDir'] = 'DESC';
         } else if ($request->get('sortBy')) {
+            // @TODO remove the direct injection of sort SQL info via URL
             $filter['sortBy']  = $request->get('sortBy');
             if ($request->get('sortDir')) {
                 $filter['sortDir'] = $request->get('sortDir');

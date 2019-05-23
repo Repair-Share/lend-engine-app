@@ -35,6 +35,7 @@ class RefundController extends Controller
         }
 
         $form = $this->createForm(RefundType::class, null, [
+            'em' => $this->getDoctrine()->getManager(),
             'action' => $this->generateUrl('refund', [
                 'id' => $paymentID,
                 'goToCheckInItem' => $loanRowId

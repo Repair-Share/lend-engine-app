@@ -14,9 +14,11 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class MembershipType extends AbstractType
 {
+    protected $em;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $this->em = $options['em'];
 
         $builder->add('membershipType', EntityType::class, array(
             'class' => 'AppBundle:MembershipType',
@@ -34,10 +36,12 @@ class MembershipType extends AbstractType
             ]
         ));
 
+        $activePaymentMethods = $this->em->getRepository("AppBundle:PaymentMethod")->findAllOrderedByName();
         $builder->add('paymentMethod', EntityType::class, array(
             'label' => 'Payment method',
             'class' => 'AppBundle:PaymentMethod',
             'choice_label' => 'name',
+            'choices' => $activePaymentMethods,
             'required' => false,
             'mapped' => false,
             'attr' => [
@@ -90,7 +94,8 @@ class MembershipType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Membership'
+            'data_class' => 'AppBundle\Entity\Membership',
+            'em' => null,
         ));
     }
 
