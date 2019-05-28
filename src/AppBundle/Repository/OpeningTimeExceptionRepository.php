@@ -44,7 +44,7 @@ class OpeningTimeExceptionRepository extends \Doctrine\ORM\EntityRepository
         $em = $this->getEntityManager();
 
         $today = new \DateTime();
-        $today->modify("-60 day");
+        $today->modify("-30 day");
         $filter = ['to' => $today->format("Y-m-d")];
         $o = $this->search($filter);
         foreach ($o AS $s) {

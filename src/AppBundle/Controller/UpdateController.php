@@ -68,19 +68,19 @@ class UpdateController extends Controller
         $tenant = $settingService->getTenant();
 
         // May 15th 2019 upgrade user if they are using features which moved up a plan
-        if ($this->isUpgradeRequired($tenant)) {
-            try {
-                $tenant->setPlan('plus');
-                if ($this->getUser()->hasRole("ROLE_ADMIN")) {
-                    $this->addFlash("success", "<strong>Welcome back!</strong>
-<br>We've upgraded your account to the Plus plan as you're using features which have moved to that plan.
-<br>You won't be charged any extra.");
-                }
-                $this->sendUpgradeEmail($tenant);
-            } catch (\Exception $e) {
-
-            }
-        }
+//        if ($this->isUpgradeRequired($tenant)) {
+//            try {
+//                $tenant->setPlan('plus');
+//                if ($this->getUser()->hasRole("ROLE_ADMIN")) {
+//                    $this->addFlash("success", "<strong>Welcome back!</strong>
+//<br>We've upgraded your account to the Plus plan as you're using features which have moved to that plan.
+//<br>You won't be charged any extra.");
+//                }
+//                $this->sendUpgradeEmail($tenant);
+//            } catch (\Exception $e) {
+//
+//            }
+//        }
 
         // Mark loans as overdue
         /** @var \AppBundle\Repository\LoanRepository $repository */

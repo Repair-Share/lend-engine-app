@@ -125,7 +125,7 @@ class Tenant
      * @var string
      * @ORM\Column(name="server_name", type="string", length=255, nullable=false)
      */
-    private $server;
+    private $server = 'lend-engine-eu';
 
     /**
      * @var string
@@ -135,20 +135,18 @@ class Tenant
 
     /**
      * @var string
-     * @ORM\Column(name="schema_version", type="string", length=255, nullable=false)
+     * @ORM\Column(name="schema_version", type="string", length=255, nullable=true)
      */
     private $schemaVersion;
-
-    /**
-     * @ORM\OneToOne(targetEntity="TenantSite", inversedBy="tenant", cascade={"remove"})
-     */
-    private $site;
 
     /**
      * @ORM\OneToMany(targetEntity="TenantNote", mappedBy="tenant", cascade={"remove"})
      */
     private $notes;
 
+    /**
+     * @var
+     */
     private $age;
 
     /**
@@ -590,25 +588,6 @@ class Tenant
     public function getNotes()
     {
         return $this->notes;
-    }
-
-    /**
-     * @param TenantSite $site
-     * @return $this
-     */
-    public function setSite(TenantSite $site)
-    {
-        $this->site = $site;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSite()
-    {
-        return $this->site;
     }
 
     /**
