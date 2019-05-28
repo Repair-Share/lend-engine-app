@@ -225,47 +225,8 @@ class SettingsService
         /** @var $tenantRepo \AppBundle\Repository\TenantRepository */
         $tenantRepo = $this->em->getRepository('AppBundle:Tenant');
 
-        /** @var $tenantSiteRepo \AppBundle\Repository\TenantSiteRepository */
-        $tenantSiteRepo = $this->em->getRepository('AppBundle:TenantSite');
-
         /** @var \AppBundle\Entity\Tenant $tenant */
         $tenant = $tenantRepo->findOneBy(['stub' => $accountCode]);
-
-        /** @var \AppBundle\Entity\Site $site */
-        $sites = $this->em->getRepository('AppBundle:Site')->findAll();
-
-        foreach ($sites AS $site) {
-
-            if ($site->getAddress() && $site->getPostCode() && $site->getCountry()) {
-
-                // Update the site in the _core library
-                $uniqueSiteId = $tenant->getId().'-'.$site->getId();
-                if (!$tenantSite = $tenantSiteRepo->findOneBy(['uniqueId' => $uniqueSiteId])) {
-                    $tenantSite = new TenantSite();
-                    $tenantSite->setTenant($tenant);
-                    $tenantSite->setUniqueId($uniqueSiteId);
-                }
-
-                // Set the tenant's default site as the first site saved, or preferably site ID 1
-                if ($site->getId() == 1 || !$tenant->getSite()) {
-                    $tenant->setSite($tenantSite);
-                }
-
-                if ($site->getIsListed()) {
-                    $tenantSite->setStatus(TenantSite::STATUS_ACTIVE);
-                } else {
-                    $tenantSite->setStatus(TenantSite::STATUS_HIDDEN);
-                }
-
-                $tenantSite->setAddress($site->getAddress());
-                $tenantSite->setName($site->getName());
-                $tenantSite->setPostCode($site->getPostCode());
-                $tenantSite->setCountry($site->getCountry());
-                $this->em->persist($tenantSite);
-
-            }
-
-        }
 
         $tenant->setTimeZone($this->getSettingValue('org_timezone'));
         $tenant->setIndustry($this->getSettingValue('industry'));
