@@ -168,44 +168,6 @@ oneup_uploader:
                 type: flysystem
                 filesystem: oneup_flysystem.product_image_fs_filesystem
 
-hwi_oauth:
-    # name of the firewall in which this bundle is active, this setting MUST be set
-    firewall_names: [main]
-    fosub:
-        username_iterations: 30
-        properties:
-            # these properties will be used/redefined later in the custom FOSUBUserProvider service.
-            facebook: facebook_id
-            google: google_id
-            twitter: twitter_id
-    resource_owners:
-        facebook:
-            type:                facebook
-            client_id:           "%facebook_client_id%"
-            client_secret:       "%facebook_client_secret%"
-            scope:               "email, public_profile"
-            infos_url:           "https://graph.facebook.com/me?fields=id,first_name,last_name,email"
-            paths:
-                email:     email
-                firstname: first_name
-                lastname:  last_name
-        google:
-            type:                google
-            client_id:           "%google_client_id%"
-            client_secret:       "%google_client_secret%"
-            scope:               "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
-            paths:
-                email: email
-        twitter:
-            type:           twitter
-            infos_url:      "https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true"
-            paths:
-                email:      email
-                firstname:  name
-                username:   screen_name
-            client_id:      "%twitter_consumer_key%"
-            client_secret:  "%twitter_consumer_secret%"
-
 hype_mailchimp:
     api_key: "%mailchimp_api_key%"
     default_list: "%mailchimp_default_list%"

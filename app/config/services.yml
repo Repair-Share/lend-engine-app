@@ -303,14 +303,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
 
-    app.provider.oauth:
-        class: UserBundle\Security\Core\User\OAuthUserProvider
-        arguments:
-            - "@fos_user.user_manager"
-            - { facebook: facebook_id, google: google_id, twitter: twitter_id }
-            - "@session"
-            - "@security.token_storage"
-
     app.translatable.mapper:
         class:     AppBundle\Form\TranslatableDataMapper
         arguments: ["@doctrine.orm.entity_manager"]

@@ -24,8 +24,6 @@ class AppKernel extends Kernel
             new Oneup\FlysystemBundle\OneupFlysystemBundle(),
             new Oneup\UploaderBundle\OneupUploaderBundle(),
             new Staffim\RollbarBundle\StaffimRollbarBundle(),
-            new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
-            new Http\HttplugBundle\HttplugBundle(),
             new Hype\MailchimpBundle\HypeMailchimpBundle(),
             new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
