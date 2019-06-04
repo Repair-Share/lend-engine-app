@@ -67,21 +67,6 @@ class UpdateController extends Controller
 
         $tenant = $settingService->getTenant();
 
-        // May 15th 2019 upgrade user if they are using features which moved up a plan
-//        if ($this->isUpgradeRequired($tenant)) {
-//            try {
-//                $tenant->setPlan('plus');
-//                if ($this->getUser()->hasRole("ROLE_ADMIN")) {
-//                    $this->addFlash("success", "<strong>Welcome back!</strong>
-//<br>We've upgraded your account to the Plus plan as you're using features which have moved to that plan.
-//<br>You won't be charged any extra.");
-//                }
-//                $this->sendUpgradeEmail($tenant);
-//            } catch (\Exception $e) {
-//
-//            }
-//        }
-
         // Mark loans as overdue
         /** @var \AppBundle\Repository\LoanRepository $repository */
         $repository = $em->getRepository('AppBundle:Loan');
@@ -93,101 +78,6 @@ class UpdateController extends Controller
         $repository->removeHistoricOpeningHours();
 
         return $this->redirect($this->generateUrl('home'));
-    }
-
-    /**
-     * @param Tenant $tenant
-     * @return bool
-     */
-    private function isUpgradeRequired(Tenant $tenant)
-    {
-        // We've had a week of automatic upgrades, further users will need to get in touch.
-        return false;
-
-        $em = $this->getDoctrine()->getManager();
-        if ($tenant->getPlan() == "starter") {
-            if ($em->getRepository('AppBundle:CheckOutPrompt')->findAll()) {
-                return true;
-            }
-            if ($em->getRepository('AppBundle:CheckInPrompt')->findAll()) {
-                return true;
-            }
-            if ($em->getRepository('AppBundle:ContactField')->findAll()) {
-                return true;
-            }
-            if ($em->getRepository('AppBundle:ProductField')->findAll()) {
-                return true;
-            }
-            if ($em->getRepository('AppBundle:FileAttachment')->findAll()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function sendUpgradeEmail(Tenant $tenant)
-    {
-        try {
-            $client = new PostmarkClient($this->getParameter('postmark_api_key'));
-
-            $body = <<<EOB
-You've been upgraded to Plus plan at no extra cost, as we've moved some of the features you are using up to the higher plan.
-
-We detected you have one or more of the following in your account:
-
-- Check in or check out prompts
-- Item custom fields or attachments
-- Member custom fields or attachments
-
-Log in at http://{$tenant->getStub()}.lend-engine-app.com
-
-If you've got any questions, please just reply to this email!
-
-##
-
-p.s. Take a look at some of the other features available:
-
-- Upload your logo into the member site settings page.
-- Print and scan barcode labels.
-- A new report: 'Loan item detail'.
-- Select more than one membership type to be available self-serve online (paid or unpaid).
-- Group items that have the same name into one result on the member site (see member site settings).
-- Add extra pages or menu links to your website.
-- Add images to your website pages.
-- Partial refunds are now possible.
-
-And if you want full control over your member experience, with your own URL and removal of all Lend Engine branding, it's now possible on the new 'Business' plan.
-EOB;
-
-            $message = $this->renderView(
-                'emails/template.html.twig',
-                array(
-                    'heading' => 'Your account has been upgraded to the Plus plan',
-                    'message' => $body,
-                )
-            );
-
-            $client->sendEmail(
-                "Lend Engine <hello@lend-engine.com>",
-                $tenant->getOwnerEmail(),
-                "We've upgraded your Lend Engine account",
-                $message
-            );
-
-            $toEmail = 'chris@lend-engine.com';
-            $client->sendEmail(
-                "Lend Engine <hello@lend-engine.com>",
-                $toEmail,
-                "We've upgraded your Lend Engine account ({$tenant->getName()})",
-                $message
-            );
-
-        } catch (PostmarkException $ex) {
-            $this->addFlash('error', 'Failed to send email:'.$ex->message.' : '.$ex->postmarkApiErrorCode);
-        } catch (\Exception $generalException) {
-            $this->addFlash('error', 'Failed to send email:'.$generalException->getMessage());
-        }
     }
 
     /**

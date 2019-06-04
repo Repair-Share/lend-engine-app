@@ -373,15 +373,7 @@ class StripeHandler
         // We should now have a customer
         if ($tenant->getStripeCustomerId()) {
 
-            // Cancel any existing plans
-            if ($subscriptionId = $tenant->getSubscriptionId()) {
-                if ($this->cancelSubscription($tenant, $subscriptionId)) {
-                    // Save in case the subscribe to new plan failed
-                    $tenant->setPlan(null);
-                    $this->em->persist($tenant);
-                    $this->em->flush();
-                }
-            }
+            $oldSubscriptionId = $tenant->getSubscriptionId();
 
             if ($subscription = $this->subscribeCustomer($tenant->getStripeCustomerId(), $planCode)) {
                 // Save the new plan
@@ -391,6 +383,16 @@ class StripeHandler
                 $this->em->persist($tenant);
                 try {
                     $this->em->flush($tenant);
+
+                    // Cancel any existing plans
+                    if ($oldSubscriptionId) {
+                        if ($this->cancelSubscription($tenant, $oldSubscriptionId)) {
+                            // Save in case the subscribe to new plan failed
+                            $tenant->setPlan(null);
+                            $this->em->persist($tenant);
+                            $this->em->flush();
+                        }
+                    }
                     return true;
                 } catch (\Exception $generalException) {
                     $this->errors[] = 'Failed to update account with new plan: '.$generalException->getMessage();
