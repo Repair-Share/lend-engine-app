@@ -71,6 +71,7 @@ class ItemBookingsController extends Controller
             $title = $reservation->getDueOutAt()->format("jS g:i a").' to '.$reservation->getDueInAt()->format("jS g:i a");
 
             $data[] = [
+                'id'     => $reservation->getLoan()->getId(),
                 'loanId' => $reservation->getLoan()->getId(),
                 'loanTo' => $reservation->getLoan()->getContact()->getName(),
                 'contactId' => $reservation->getLoan()->getContact()->getId(),

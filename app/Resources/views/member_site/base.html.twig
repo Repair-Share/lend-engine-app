@@ -21,7 +21,6 @@
     {% stylesheets
     '@AppBundle/Resources/css/bootstrap.css'
     '@AppBundle/Resources/css/member_site.css'
-    '@AppBundle/Resources/css/fullcalendar.css'
     '@AppBundle/Resources/css/bootstrap-social.css'
     '@AppBundle/Resources/admin/css/plugins/datatables.css'
     '@AppBundle/Resources/admin/css/plugins/dataTables.fontAwesome.css'
@@ -32,6 +31,9 @@
     <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
 
+    <link rel="stylesheet" href="/plugins/fullcalendar/core/main.min.css">
+    <link rel="stylesheet" href="/plugins/fullcalendar/daygrid/main.min.css">
+    <link rel="stylesheet" href="/plugins/fullcalendar/timegrid/main.min.css">
     <link rel="stylesheet" href="/plugins/timepicker/timepicker.css">
 
     <style>
@@ -85,7 +87,6 @@
     '@AppBundle/Resources/js/bootstrap.js'
     '@AppBundle/Resources/js/payment.js'
     '@AppBundle/Resources/js/moment.js'
-    '@AppBundle/Resources/js/fullcalendar.js'
     '@AppBundle/Resources/js/member_site.js'
     '@AppBundle/Resources/js/jquery.mark.min.js'
     '@AppBundle/Resources/admin/js/plugins/datatables.js'
@@ -94,10 +95,15 @@
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 
+    <script src="/plugins/fullcalendar/core/main.min.js"></script>
+    <script src="/plugins/fullcalendar/daygrid/main.min.js"></script>
+    <script src="/plugins/fullcalendar/timegrid/main.min.js"></script>
+    <script src="/plugins/fullcalendar/interaction/main.min.js"></script>
+    {#<script src="/plugins/fullcalendar/moment/main.min.js"></script>#}
     <script src="/plugins/timepicker/timepicker.js"></script>
 
     {% if app.request.locale != 'en' %}
-    <script src='/js/fullcalendar/locale/{{ app.request.locale }}.js'></script>
+    <script src='/plugins/fullcalendar/core/locales/{{ app.request.locale }}.js'></script>
     {% endif %}
 
     {% if tenantInformation.siteFontName %}
@@ -148,6 +154,7 @@
 </div>
 
 {% block pagejs %}{% endblock %}
+
 {% if app.environment == 'prod' %}
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

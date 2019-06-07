@@ -44,10 +44,10 @@
 
     <form method="POST" id="reserve_form" action="{{ path('basket_add_item', {itemId: product.id}) }}">
 
-        <input type="text" name="date_from" id="date_from">
-        <input type="text" name="time_from" id="time_from">
-        <input type="text" name="date_to" id="date_to">
-        <input type="text" name="time_to" id="time_to">
+        <input type="hidden" name="date_from" id="date_from">
+        <input type="hidden" name="time_from" id="time_from">
+        <input type="hidden" name="date_to" id="date_to">
+        <input type="hidden" name="time_to" id="time_to">
         <input type="hidden" name="from_site" id="from_site">
         <input type="hidden" name="to_site" id="to_site">
         <input type="hidden" name="item_fee" id="total_fee">
@@ -144,6 +144,117 @@
                 'step' : 15
             });
 
+            var calendarEl = document.getElementById('calendar');
+            var txt;
+            var url = '{{ path('item_reservations_json', {itemId: product.id}) }}';
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
+                eventSources: [
+                    {
+                        url: url,
+                        type: 'GET',
+                        failure: function() {
+                            alert('There was an error while fetching reservations');
+                        },
+                        success: function(events) {
+                            bookings = events; // Save for booking validation
+                        },
+                        color: '#d61702',
+                        textColor: 'white'
+                    }
+                ],
+                defaultView: 'dayGridMonth',
+                allDaySlot: false,
+                selectable: true,
+                header: {
+                    left:   'title',
+                    center: '',
+                    right:  'dayGridMonth,timeGridWeek,timeGridDay prev,next'
+                },
+//                businessHours: {
+//                    // (0=Sunday)
+//                    dow: [ 1, 2, 3, 4, 5 ],
+//                    start: '00:00',
+//                    end: '23:59'
+//                },
+                select: function(selection) {
+                    console.log("Dates selected from "+selection.startStr+" to "+selection.endStr);
+                },
+                eventClick: function(info) {
+                    if (info.event.extendedProps.siteId) {
+                        eventClickHandler(info.event, info.jsEvent);
+                    } else {
+                        goToLoan(info.event);
+                    }
+                },
+                eventRender: function(e) {
+                    var calEvent = e.event;
+                    var element  = e.el;
+                    var today = moment();
+                    var start = moment(calEvent.start);
+                    var end   = moment(calEvent.end);
+                    if (start.format("YYYY-MM-DD") == today.format("YYYY-MM-DD")) {
+                        currentPickupTime = start;
+                        $("#buttonToday").html("Today ("+start.format("HH:mm")+")").show();
+                    }
+                    changeOverTime = moment(calEvent.extendedProps.changeover);
+                    var start_display, end_display;
+                    if (calendarMode == 'extend') {
+                        start_display = "none";
+                        end_display = "block";
+                    } else {
+                        start_display = "block";
+                        end_display = "none";
+                    }
+                    if (calEvent.extendedProps.siteName) {
+                        // It's a time slot for user selection
+                        txt = '';
+                        if (end.format("HHmm") == changeOverTime.format("HHmm")) {
+                            // just show the opening hours as we're going end-slot to end-slot
+                            txt = txt + '<div class="t_start" style="font-size: 14px; font-weight: bold; display:'+start_display+'">' + start.format("h:mm a ") + '</div>';
+                            txt = txt + '<div class="t_end" style="font-size: 14px; font-weight: bold; display:'+end_display+'">' + end.format("h:mm a ") + '</div>';
+                        } else {
+                            txt = txt + '<div class="t_start" style="font-size: 14px; font-weight: bold; display:'+start_display+'">' + changeOverTime.format("h:mm a ") + '</div>';
+                            txt = txt + '<div class="t_end" style="font-size: 14px; font-weight: bold; display:'+end_display+'">' + changeOverTime.format("h:mm a ") + '</div>';
+                        }
+                        txt = txt + '<div class="openinghours">' + start.format("HH:mm ")+" to "+end.format("HH:mm ") + '</div>';
+                        txt = txt + '<div class="hidden-xs multi-site">'+calEvent.extendedProps.siteName+'</div>';
+                        $(element).html(txt);
+                    } else {
+                        // booking
+                        if (isAdmin == true) {
+                            $(element).html(calEvent.extendedProps.statusName+'<br>'+calEvent.extendedProps.loanTo);
+                        } else if (currentUserId == calEvent.extendedProps.contactId) {
+                            $(element).html(text_my_booking).css('backgroundColor', '#5cb85c').css('borderColor', '#5cb85c');
+                        } else if (calEvent.extendedProps.statusName == 'RESERVED') {
+                            $(element).html(text_reserved);
+                        } else if (calEvent.extendedProps.statusName == 'ON LOAN' || calEvent.extendedProps.statusName == 'OVERDUE') {
+                            $(element).html(text_on_loan);
+                        }
+                    }
+                },
+                viewRender: function() {
+                    if (basketPickupTime) {
+                        // User has a basket
+                        setPickup(basketPickupTime, null, basketSiteFromId, basketSiteFromName);
+                    }
+                },
+                loading: function(bool) {
+                    if (bool){
+                        // loading
+                    } else{
+                        // loaded, render a preset pickup time
+                        if (basketPickupTime) {
+                            setPickup(basketPickupTime, null, basketSiteFromId, basketSiteFromName);
+                        }
+                    }
+                }
+            });
+            calendar.render();
+
+            // FUNCTIONS ::
+
             // Change the pick up time text and value
             $('body').on('selectTime', '#time_from_picker', function() {
                 var t = timeFromPicker.timepicker('getTime');
@@ -229,22 +340,23 @@
 
             function eventClickHandler(calEvent, jsEvent) {
 
-                var start    = calEvent.start;
-                var eventEnd = calEvent.end;
+                var start    = moment(calEvent.start);
+                var eventEnd = moment(calEvent.end);
 
-                changeOverTime = moment(calEvent.changeover);
+                // Get the changeover time for the clicked opening slot
+                changeOverTime = moment(calEvent.extendedProps.changeover);
 
-                var siteName = calEvent.siteName;
-                var siteId   = calEvent.siteId;
+                var siteName = calEvent.extendedProps.siteName;
+                var siteId   = calEvent.extendedProps.siteId;
 
                 // If a slot has a changeover time, use that for the start date
                 // else use the start and end times
-                if (calEvent.end.format("HHmm") != changeOverTime.format("HHmm")) {
-                    start = changeOverTime;
+                if (eventEnd.format("HHmm") != changeOverTime.format("HHmm")) {
+                    start    = changeOverTime;
                     eventEnd = changeOverTime;
                 }
 
-                var duration, days, extensionFee;
+                var duration, days, hours, extensionFee;
 
                 var eventClicked = $(jsEvent.target);
 
@@ -285,8 +397,9 @@
 
                         // Check the period is OK
                         var dateFrom = moment($("#date_from").val());
-                        duration = moment.duration(eventEnd.diff(dateFrom));
-                        days = duration.asDays();
+                        duration     = moment.duration(eventEnd.diff(dateFrom));
+                        days         = duration.asDays();
+                        hours        = duration.asHours();
 
                         // Round to nearest day
                         days = Math.round(days);
@@ -295,7 +408,6 @@
                             alert(alert_max_days);
                             return false;
                         }
-
                         if (minLoanDays > 0 && days < minLoanDays && isAdmin == false) {
                             alert(alert_min_days);
                             return false;
@@ -307,43 +419,36 @@
                         }
 
                         // Start may have been set to changeover time above
-                        return setReturn(dateFrom, eventEnd, siteId, siteName, days);
-
+                        return setReturn(dateFrom, eventEnd, siteId, siteName);
                     } else {
                         setPickup(start, eventEnd, siteId, siteName);
                         $("#borrowModal").modal();
                     }
                 }
-
             }
 
-            function setReturn(dateFrom, time, siteId, siteName, days) {
-
-                if (!validateBookingPeriod(dateFrom, time, days)) {
+            function setReturn(start, end, siteId, siteName) {
+                if (!validateBookingPeriod(start, end)) {
                     return false;
                 }
-
                 // Set the return date
-                $("#date_to").val(time.format("YYYY-MM-DD"));
-                $("#time_to").val(time.format("HH:mm"));
+                $("#date_to").val(end.format("YYYY-MM-DD"));
+                $("#time_to").val(end.format("HH:mm"));
                 $("#to_site").val(siteId);
-                $(".show_date_to").html(time.format("DD MMMM"));
-                $(".show_time_to").html(time.format("h:mm a"));
+                $(".show_date_to").html(end.format("DD MMMM"));
+                $(".show_time_to").html(end.format("h:mm a"));
                 $(".site_to").html(siteName);
 
                 $("#borrowModal").modal();
 
-                $(".count_days").html(days);
+                calculateTotalFee();
 
-                calculateTotalFee(days);
-
-                var returnCell = $(".fc-bg").find("[data-date='"+time.format("YYYY-MM-DD")+"']");
+                var returnCell = $(".fc-bg").find("[data-date='"+end.format("YYYY-MM-DD")+"']");
                 $(".return-day").remove();
                 var text_return_day = 'Return';
                 returnCell.html('<div class="label label-xs label-default return-day">'+text_return_day+'</div>');
 
                 $("#chooseReturnButton").hide();
-
                 $("#borrowModalConfirm").show();
             }
 
@@ -382,14 +487,12 @@
                 basketSiteFromId = siteId;
                 basketSiteFromName = siteName;
 
-                // Set the default return day if user has manually chosen pickup time
+                // Set the default return day based on item loan days if user has manually chosen pickup time
                 if (timeEnd && itemLoanDays > 1) {
                     var returnTime;
                     returnTime = moment(coTime);
                     returnTime = returnTime.add(itemLoanDays, 'd');
-
                     var r = setReturn(coTime, returnTime, siteId, siteName, itemLoanDays);
-
                     if (r === false) {
                         // failed validation
 //                        location.reload();
@@ -421,8 +524,7 @@
                 return returnValue;
             }
 
-            function validateBookingPeriod(start, end, days) {
-
+            function validateBookingPeriod(start, end) {
                 var bookingPeriodIsValid = true;
 
                 // Check against other bookings
@@ -463,145 +565,24 @@
             }
 
             function goToLoan(calEvent) {
-                if (currentUserId != calEvent.contactId && isAdmin == false) {
+                if (currentUserId != calEvent.extendedProps.contactId && isAdmin == false) {
                     alert(alert_not_your_booking);
                     return false;
                 }
-                var loanId   = calEvent.loanId;
+                var loanId   = calEvent.extendedProps.loanId;
                 loanUrl = loanUrl.replace("99", loanId);
                 document.location.href = loanUrl;
             }
 
-            var txt;
-
-            $('#calendar').fullCalendar({
-
-                defaultView: 'month',
-                allDaySlot: false,
-                selectable: true,
-                selectHelper: true,
-
-                header: {
-                    left:   'title',
-                    center: '',
-                    right:  'month,agendaWeek prev,next'
-                },
-
-//                businessHours: {
-//                    // (0=Sunday)
-//                    dow: [ 1, 2, 3, 4, 5 ],
-//                    start: '00:00',
-//                    end: '23:59'
-//                },
-
-                eventClick: function(calEvent, jsEvent, view) {
-                    if (calEvent.siteId) {
-                        eventClickHandler(calEvent, jsEvent);
-                    } else {
-                        goToLoan(calEvent);
-                    }
-                },
-
-                eventRender: function(calEvent, element) {
-                    var today = moment();
-                    if (calEvent.start.format("YYYY-MM-DD") == today.format("YYYY-MM-DD")) {
-                        currentPickupTime = calEvent.start;
-                        $("#buttonToday").html("Today ("+calEvent.start.format("HH:mm")+")").show();
-                    }
-
-                    changeOverTime = moment(calEvent.changeover);
-
-                    var start_display, end_display;
-
-                    if (calendarMode == 'extend') {
-                        start_display = "none";
-                        end_display = "block";
-                    } else {
-                        start_display = "block";
-                        end_display = "none";
-                    }
-
-                    if (calEvent.siteName) {
-                        // It's a time slot for user selection
-                        txt = '';
-                        if (calEvent.end.format("HHmm") == changeOverTime.format("HHmm")) {
-                            // just show the opening hours as we're going end-slot to end-slot
-                            txt = txt + '<div class="t_start" style="font-size: 14px; font-weight: bold; display:'+start_display+'">' + calEvent.start.format("h:mm a ") + '</div>';
-                            txt = txt + '<div class="t_end" style="font-size: 14px; font-weight: bold; display:'+end_display+'">' + calEvent.end.format("h:mm a ") + '</div>';
-                        } else {
-                            txt = txt + '<div class="t_start" style="font-size: 14px; font-weight: bold; display:'+start_display+'">' + changeOverTime.format("h:mm a ") + '</div>';
-                            txt = txt + '<div class="t_end" style="font-size: 14px; font-weight: bold; display:'+end_display+'">' + changeOverTime.format("h:mm a ") + '</div>';
-                        }
-                        txt = txt + '<div class="openinghours">' + calEvent.start.format("HH:mm ")+" to "+calEvent.end.format("HH:mm ") + '</div>';
-                        txt = txt + '<div class="hidden-xs multi-site">'+calEvent.siteName+'</div>';
-                        $(element).html(txt);
-                    } else {
-                        // booking
-                        if (isAdmin == true) {
-                            $(element).html(calEvent.statusName+'<br>'+calEvent.loanTo);
-                        } else if (currentUserId == calEvent.contactId) {
-                            $(element).html(text_my_booking).css('backgroundColor', '#5cb85c').css('borderColor', '#5cb85c');
-                        } else if (calEvent.statusName == 'RESERVED') {
-                            $(element).html(text_reserved);
-                        } else if (calEvent.statusName == 'ON LOAN' || calEvent.statusName == 'OVERDUE') {
-                            $(element).html(text_on_loan);
-                        }
-                    }
-                },
-
-                viewRender: function() {
-                    if (basketPickupTime) {
-                        // User has a basket
-                        setPickup(basketPickupTime, null, basketSiteFromId, basketSiteFromName);
-                    }
-                },
-
-                loading: function(bool) {
-                    if (bool){
-                        // loading
-                    } else{
-                        // loaded, render a preset pickup time
-                        if (basketPickupTime) {
-                            setPickup(basketPickupTime, null, basketSiteFromId, basketSiteFromName);
-                        }
-                    }
-                }
-
-            });
-
-            function addReservationsToCal() {
-                var url = '{{ path('item_reservations_json', {itemId: product.id}) }}';
-                $('#calendar').fullCalendar( 'addEventSource', {
-                    url: url,
-                    type: 'GET',
-                    error: function() {
-                        alert('There was an error while fetching reservations');
-                    },
-                    success: function(events) {
-                        bookings = events; // Save for booking validation
-                    },
-                    color: '#d61702',
-                    textColor: 'white'
-                });
-            }
-
-            function addSiteToCal(siteId, colour) {
-                var url = '{{ path('site_data') }}?site='+siteId+"&itemId={{ product.id }}";
-                $('#calendar').fullCalendar( 'addEventSource', {
-                    url: url,
-                    type: 'GET',
-                    error: function() {
-                        alert('There was an error while fetching events!');
-                    },
-                    color: colour,
-                    textColor: 'black',
-                    className: 'siteOpening'
-                });
-            }
-
             var accountBalance = {{ contactBalance }};
 
-            function calculateTotalFee(days) {
+            function calculateTotalFee() {
+                var start = moment($("#date_from").val()+" "+$("#time_from").val());
+                var end   = moment($("#date_to").val()+" "+$("#time_to").val());
+                var duration   = moment.duration(end.diff(start));
+                var days       = duration.asDays();
+                var hours      = duration.asHours();
+
                 var totalFee;
                 if (fixedFeePricing == 1) {
                     totalFee = itemFee;
@@ -616,10 +597,27 @@
                 }
                 $(".total_fee").html(totalFee.toFixed(2));
                 $("#total_fee").val(totalFee.toFixed(2)); // form input
+
+                if (days < 1) {
+                    $(".count_days").html(hours+" {% transchoice 2 %}hours{% endtranschoice %}");
+                } else {
+                    $(".count_days").html(days+" {% transchoice 2 %}days{% endtranschoice %}");
+                }
             }
 
-            // Add reservations feed and populate array for booking validator
-            addReservationsToCal();
+            function addSiteToCal(siteId, colour) {
+                var url = '{{ path('site_data') }}?site='+siteId+"&itemId={{ product.id }}";
+                calendar.addEventSource( {
+                    url: url,
+                    type: 'GET',
+                    failure: function() {
+                        alert('There was an error while fetching events!');
+                    },
+                    color: colour,
+                    textColor: 'black',
+                    className: 'siteOpening'
+                });
+            }
 
             // EXTENDING A LOAN
             {% if app.request.get('extend') %}
@@ -628,6 +626,7 @@
             pickupCell.css('backgroundColor', '#d9edf7');
             pickupCell.html('<div style="padding: 5px; font-size: 10px;">Due back</div>');
             {% endif %}
+
         });
     </script>
 {% endblock %}
