@@ -238,8 +238,8 @@ class BasketController extends Controller
             throw new \Exception("Cannot find site ".$request->get('to_site'));
         }
 
-        $dFrom = new \DateTime($request->get('date_from'));
-        $dTo   = new \DateTime($request->get('date_to'));
+        $dFrom = new \DateTime($request->get('date_from').' '.$request->get('time_from'));
+        $dTo   = new \DateTime($request->get('date_to').' '.$request->get('time_to'));
 
         $row = new LoanRow();
         $row->setLoan($basket);

@@ -44,8 +44,10 @@
 
     <form method="POST" id="reserve_form" action="{{ path('basket_add_item', {itemId: product.id}) }}">
 
-        <input type="hidden" name="date_from" id="date_from">
-        <input type="hidden" name="date_to" id="date_to">
+        <input type="text" name="date_from" id="date_from">
+        <input type="text" name="time_from" id="time_from">
+        <input type="text" name="date_to" id="date_to">
+        <input type="text" name="time_to" id="time_to">
         <input type="hidden" name="from_site" id="from_site">
         <input type="hidden" name="to_site" id="to_site">
         <input type="hidden" name="item_fee" id="total_fee">
@@ -130,6 +132,32 @@
             basketSiteFromName = '{{ tenantInformation.basket.loanRows|first.siteFrom.name }}';
             {% endif %}
 
+            var timeFromPicker = $('#time_from_picker');
+            var timeToPicker   = $('#time_to_picker');
+            timeFromPicker.timepicker({
+                'scrollDefault': 'now',
+                'step' : 15
+            });
+
+            timeToPicker.timepicker({
+                'scrollDefault': 'now',
+                'step' : 15
+            });
+
+            // Change the pick up time text and value
+            $('body').on('selectTime', '#time_from_picker', function() {
+                var t = timeFromPicker.timepicker('getTime');
+                timeFromPicker.html(moment(t).format("h:mm a"));
+                $("#time_from").val(moment(t).format("HH:mm"));
+            });
+
+            // Change the return up time text and value
+            $('body').on('selectTime', '#time_to_picker', function() {
+                var t = timeToPicker.timepicker('getTime');
+                timeToPicker.html(moment(t).format("h:mm a"));
+                $("#time_to").val(moment(t).format("HH:mm"));
+            });
+
             page.on('click', '.button-borrow', function(event) {
                 loadSiteOpeningTimes();
                 $("#borrowModal").modal();
@@ -139,6 +167,15 @@
             });
 
             page.on('click', '.borrowModalCancel', function () {
+                resetDates();
+                $("#borrowModal").modal('hide');
+            });
+
+            $('body').on('click', '#choosePickup', function () {
+//                if (basketPickupTime) {
+//                    alert("You can't change the pickup time as you have other items in your basket.");
+//                    return false;
+//                }
                 resetDates();
                 $("#borrowModal").modal('hide');
             });
@@ -285,9 +322,11 @@
                 }
 
                 // Set the return date
-                $("#date_to").val(time.format("YYYY-MM-DD HH:mm"));
+                $("#date_to").val(time.format("YYYY-MM-DD"));
+                $("#time_to").val(time.format("HH:mm"));
                 $("#to_site").val(siteId);
-                $(".date_to").html(time.format("DD MMMM h:mm a"));
+                $(".show_date_to").html(time.format("DD MMMM"));
+                $(".show_time_to").html(time.format("h:mm a"));
                 $(".site_to").html(siteName);
 
                 $("#borrowModal").modal();
@@ -301,7 +340,7 @@
                 var text_return_day = 'Return';
                 returnCell.html('<div class="label label-xs label-default return-day">'+text_return_day+'</div>');
 
-                $("#chooseReturn").html("Change return time").removeClass("btn-success").addClass("btn-default");
+                $("#chooseReturnButton").hide();
 
                 $("#borrowModalConfirm").show();
             }
@@ -321,12 +360,17 @@
                 }
 
                 // Set the pickup date
-                $("#date_from").val(coTime.format("YYYY-MM-DD HH:mm"));
+                $("#date_from").val(coTime.format("YYYY-MM-DD"));
+                $("#time_from").val(coTime.format("HH:mm"));
                 $("#from_site").val(siteId);
-                $(".date_from").html(coTime.format("DD MMMM h:mm a"));
+
+                $(".show_date_from").html( coTime.format("DD MMMM") );
+                $(".show_time_from").html( coTime.format("h:mm a") );
+
                 $(".site_from").html(siteName);
-                $("#choosePickup").hide();
+                $("#choosePickupButton").hide();
                 $("#chooseReturn").show();
+                $("#chooseReturnButton").show();
                 $("#choosePickupFirst").hide();
 
                 var pickupCell = $(".fc-bg").find("[data-date='"+coTime.format("YYYY-MM-DD")+"']");

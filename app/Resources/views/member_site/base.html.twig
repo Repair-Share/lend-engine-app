@@ -32,6 +32,8 @@
     <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
 
+    <link rel="stylesheet" href="/plugins/timepicker/timepicker.css">
+
     <style>
         {% include('member_site/themes/css/' ~ tenantInformation.siteTheme ~ '.css') %}
 
@@ -91,6 +93,8 @@
     filter='uglifyjs2' %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
+
+    <script src="/plugins/timepicker/timepicker.js"></script>
 
     {% if app.request.locale != 'en' %}
     <script src='/js/fullcalendar/locale/{{ app.request.locale }}.js'></script>
