@@ -82,8 +82,8 @@
                             {#<button type="button" class="btn btn-xs btn-default" style="margin-top: 10px; display:none" id="buttonToday">Today</button>#}
                         {#{% endif %}#}
                     </div>
-                    <div class="col-md-1 hidden-sm" style="padding-top: 20px; font-size: 26px;"><i class="fas fa-angle-double-right"></i></div>
-                    <div class="col-md-3" style="padding-top:10px; text-align: center">
+                    <div class="col-md-1 hidden-sm hidden-xs" style="padding-top: 20px; font-size: 26px;"><i class="fas fa-angle-double-right"></i></div>
+                    <div class="col-md-3" style="padding-top:10px;">
                         <div style="font-size: 20px;">
                             <span class="count_days">0</span> {% transchoice 2 %}days{% endtranschoice %}
                         </div>
@@ -91,7 +91,7 @@
                             {{ tenantInformation.currencySymbol }} <span class="total_fee">0</span>
                         </div>
                     </div>
-                    <div class="col-md-1 hidden-sm" style="padding-top: 20px; font-size: 26px;"><i class="fas fa-angle-double-right"></i></div>
+                    <div class="col-md-1 hidden-sm hidden-xs" style="padding-top: 20px; font-size: 26px;"><i class="fas fa-angle-double-right"></i></div>
                     <div class="col-md-4" style="padding-bottom: 20px;">
                         <h4>{% trans %}public_item.return_by{% endtrans %} ...</h4>
                         <div>

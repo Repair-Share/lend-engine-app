@@ -149,6 +149,7 @@
                 var t = timeFromPicker.timepicker('getTime');
                 timeFromPicker.html(moment(t).format("h:mm a"));
                 $("#time_from").val(moment(t).format("HH:mm"));
+                calculateTotalFee();
             });
 
             // Change the return up time text and value
@@ -156,6 +157,7 @@
                 var t = timeToPicker.timepicker('getTime');
                 timeToPicker.html(moment(t).format("h:mm a"));
                 $("#time_to").val(moment(t).format("HH:mm"));
+                calculateTotalFee();
             });
 
             page.on('click', '.button-borrow', function(event) {
