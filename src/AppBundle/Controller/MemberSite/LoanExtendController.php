@@ -50,6 +50,11 @@ class LoanExtendController extends Controller
             return $this->redirectToRoute('home');
         }
 
+        if (!$newReturnTime = $request->get('new_return_time')) {
+            $this->addFlash('error', "No new return time given");
+            return $this->redirectToRoute('home');
+        }
+
         if (!$newReturnSiteId = $request->get('new_return_site_id')) {
             $this->addFlash('error', "No new return site given");
             return $this->redirectToRoute('home');
@@ -63,7 +68,7 @@ class LoanExtendController extends Controller
 
         $inventoryItem = $loanRow->getInventoryItem();
 
-        $newDueDate = new \DateTime($newReturnDate);
+        $newDueDate = new \DateTime($newReturnDate.' '.$newReturnTime);
         $interval = $newDueDate->diff($loanRow->getDueInAt());
         $days = round($interval->format('%a'), 0);
 

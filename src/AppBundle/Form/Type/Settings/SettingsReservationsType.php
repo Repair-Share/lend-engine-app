@@ -111,6 +111,20 @@ EOH;
             ]
         ));
 
+        $builder->add('drag_to_book', ToggleType::class, array(
+            'expanded' => true,
+            'multiple' => false,
+            'label' => 'Click and drag on the calendar to create bookings (beta)',
+            'data' => (int)$dbData['drag_to_book'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100 toggle-switch',
+                'data-help' => "Click and drag on the calendar month or week view to book an item.
+                Click-and-drag booking does not utilize site opening hours so is best for organisations wanting flexibility.
+                The pickup and return site is currently restricted to the item's current site."
+            ]
+        ));
+
         $builder->add('daily_overdue_fee', TextType::class, array(
             'label' => 'Late return fee (per day)',
             'data' => $dbData['daily_overdue_fee'],

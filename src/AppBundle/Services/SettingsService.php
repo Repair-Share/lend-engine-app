@@ -247,6 +247,7 @@ class SettingsService
             // Setup values
             'multi_site',
             'setup_opening_hours',
+            'drag_to_book',
 
             // Stripe card details
             'stripe_access_token',

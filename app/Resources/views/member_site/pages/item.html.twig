@@ -35,6 +35,7 @@
 
     <form method="POST" id="reserve_form" class="payment-form" action="{{ path('extend_loan', {loanRowId: app.request.get('extend')}) }}">
         <input type="hidden" name="new_return_date" id="newReturnDate">
+        <input type="hidden" name="new_return_time" id="newReturnTime">
         <input type="hidden" name="new_return_site_id" id="newReturnSiteId">
         <input type="hidden" name="contactEmail" id="contactEmail" class="contact-email" value="{{ user.email }}">
 
@@ -112,6 +113,8 @@
 
             var basketPickupTime, basketSiteFromId, basketSiteFromName;
             var page = $("#productMain");
+            var borrowModal = $("#borrowModal");
+            var extendModal = $("#extendModal");
             var bookings = [];
             var loanUrl = "{{ path('public_loan', {loanId: 99}) }}";
 
@@ -124,11 +127,13 @@
             var originalReturnDate = '{{ app.request.get('from') }}';
 
             var sites = [];
+            var activeSiteId;
             {% for site in sites %}
             sites[{{ site.id }}] = "{{ site.name }}";
             {% endfor %}
-            var activeSiteId   = '{{ app.user.activeSite.id }}';
-            var activeSiteName = sites[activeSiteId];
+            {#activeSiteId = '{% if app.user %}{{ app.user.activeSite.id }}{% else %}{{ sites[0].id }}{% endif %}';#}
+            var itemSiteId = '{{ product.inventoryLocation.site.id }}';
+            var itemSiteName = sites[itemSiteId];
 
             // Set the pickup time and location if we already have a basket
             {% if tenantInformation.basket.loanRows is defined and tenantInformation.basket.loanRows|length > 0 %}
@@ -137,15 +142,21 @@
             basketSiteFromName = '{{ tenantInformation.basket.loanRows|first.siteFrom.name }}';
             {% endif %}
 
-            var timeFromPicker = $('#time_from_picker');
-            var timeToPicker   = $('#time_to_picker');
+            // Set up timepickers
+            var timeFromPicker  = $('.show_time_from');
+            var timeToPicker    = $('.show_time_to');
+            var newTimeToPicker = $('.new_time_to');
             timeFromPicker.timepicker({
                 'step' : 15,
                 'minTime': '7:00am',
                 'maxTime': '10:00pm'
             });
-
             timeToPicker.timepicker({
+                'step' : 15,
+                'minTime': '7:00am',
+                'maxTime': '10:00pm'
+            });
+            newTimeToPicker.timepicker({
                 'step' : 15,
                 'minTime': '7:00am',
                 'maxTime': '10:00pm'
@@ -178,10 +189,9 @@
                         textColor: 'white'
                     }
                 ],
-//                columnHeaderFormat: { weekday: 'short', month: 'numeric', day: '2-digit', omitCommas: true },
                 defaultView: 'dayGridMonth',
                 allDaySlot: false,
-                selectable: true,
+                {% if app.user and tenantInformation.setting('drag_to_book') and not app.request.get('extend') %}selectable: true,{% endif %}
                 header: {
                     left:   'title',
                     center: '',
@@ -190,8 +200,8 @@
 //                businessHours: {
 //                    // (0=Sunday)
 //                    dow: [ 1, 2, 3, 4, 5 ],
-//                    start: '00:00',
-//                    end: '23:59'
+//                    start: '09:00',
+//                    end: '17:09'
 //                },
                 select: function(selection) {
                     var start, end, e, endDay;
@@ -209,8 +219,8 @@
                         start = moment(selection.startStr);
                         end   = moment(selection.endStr);
                     }
-                    setPickup(start, end, activeSiteId, activeSiteName);
-                    setReturn(start, end, activeSiteId, activeSiteName);
+                    setPickup(start, end, itemSiteId, itemSiteName);
+                    setReturn(start, end, itemSiteId, itemSiteName);
                 },
                 eventClick: function(info) {
                     if (info.event.extendedProps.siteId) {
@@ -287,7 +297,7 @@
             // FUNCTIONS ::
 
             // Change the pick up time text and value
-            $('body').on('selectTime', '#time_from_picker', function() {
+            borrowModal.on('selectTime', '#time_from_picker', function() {
                 var t = timeFromPicker.timepicker('getTime');
                 timeFromPicker.html(moment(t).format("h:mm a"));
                 $("#time_from").val(moment(t).format("HH:mm"));
@@ -295,16 +305,23 @@
             });
 
             // Change the return up time text and value
-            $('body').on('selectTime', '#time_to_picker', function() {
+            borrowModal.on('selectTime', '#time_to_picker', function() {
                 var t = timeToPicker.timepicker('getTime');
                 timeToPicker.html(moment(t).format("h:mm a"));
                 $("#time_to").val(moment(t).format("HH:mm"));
                 calculateTotalFee();
             });
 
+            // Change the return up time text and value when extending a loan
+            extendModal.on('selectTime', '.new_time_to', function() {
+                var t = newTimeToPicker.timepicker('getTime');
+                newTimeToPicker.html(moment(t).format("h:mm a"));
+                $("#newReturnTime").val(moment(t).format("HH:mm"));
+            });
+
             page.on('click', '.button-borrow', function(event) {
                 loadSiteOpeningTimes();
-                $("#borrowModal").modal();
+                borrowModal.modal();
 
                 $(".t_start").show();
                 $(".t_end").hide();
@@ -312,7 +329,7 @@
 
             page.on('click', '.borrowModalCancel', function () {
                 resetDates();
-                $("#borrowModal").modal('hide');
+                borrowModal.modal('hide');
             });
 
             $('body').on('click', '#choosePickup', function () {
@@ -321,7 +338,7 @@
 //                    return false;
 //                }
                 resetDates();
-                $("#borrowModal").modal('hide');
+                borrowModal.modal('hide');
             });
 
             page.on('click', '#chooseReturn', function () {
@@ -329,13 +346,13 @@
                 $(".t_end").show();
             });
 
-            $("#borrowModal").on('click', '#buttonToday', function () {
+            borrowModal.on('click', '#buttonToday', function () {
                 console.log("Setting reservation from today");
                 setPickup(currentPickupTime, null, currentPickupSiteId, currentPickupSiteName);
                 $("#buttonNDays").show();
             });
 
-            $("#extendModal").on('click', '.charge-to', function () {
+            extendModal.on('click', '.charge-to', function () {
                 if ($(this).prop("checked") == true) {
                     $("#paymentMethodId").val(stripePaymentMethodId);
                     $("#confirmDateChange").addClass("payment-submit");
@@ -389,8 +406,6 @@
 
                 var duration, days, hours, extensionFee;
 
-                var eventClicked = $(jsEvent.target);
-
                 if (calendarMode == 'extend') {
                     // Extending a loan
 
@@ -401,15 +416,18 @@
                     var originalDate = moment(originalReturnDate);
                     duration = moment.duration(eventEnd.diff(originalDate));
                     days = duration.asDays();
+
                     // Round to nearest day
                     days = Math.round(days);
 
                     // UI
-                    $(".new_return_date").html(eventEnd.format("dddd DD MMMM h:mm a"));
+                    $(".new_date_to").html(eventEnd.format("dddd DD MMMM"));
+                    $(".new_time_to").html(eventEnd.format("h:mm a"));
                     $(".new_return_site").html(siteName);
 
-                    // Form data
-                    $("#newReturnDate").val(eventEnd.format("YYYY-MM-DD HH:mm:00"));
+                    // Populate the form data
+                    $("#newReturnDate").val(eventEnd.format("YYYY-MM-DD"));
+                    $("#newReturnTime").val(eventEnd.format("HH:mm:00"));
                     $("#newReturnSiteId").val(siteId);
                     $(".original_return_date").html(originalDate.format("dddd DD MMMM h:mm a"));
                     $(".extend_days").html(days);
@@ -420,7 +438,7 @@
                         $("#extensionFeeMessage").show();
                     }
 
-                    $("#extendModal").modal();
+                    extendModal.modal();
 
                 } else {
                     // Booking or reserving
@@ -453,7 +471,7 @@
                         return setReturn(dateFrom, eventEnd, siteId, siteName);
                     } else {
                         setPickup(start, eventEnd, siteId, siteName);
-                        $("#borrowModal").modal();
+                        borrowModal.modal();
                     }
                 }
             }
@@ -470,7 +488,7 @@
                 $(".show_time_to").html(end.format("h:mm a"));
                 $(".site_to").html(siteName);
 
-                $("#borrowModal").modal();
+                borrowModal.modal();
 
                 calculateTotalFee();
 
@@ -497,6 +515,8 @@
                     return false;
                 }
 
+                $(".pickup-day").remove();
+
                 // Set the pickup date
                 $("#date_from").val(dateTimeFrom.format("YYYY-MM-DD"));
                 $("#time_from").val(dateTimeFrom.format("HH:mm"));
@@ -511,7 +531,7 @@
                 $("#chooseReturnButton").show();
 
                 var pickupCell = $(".fc-bg").find("[data-date='"+dateTimeFrom.format("YYYY-MM-DD")+"']");
-                pickupCell.html('<div class="label label-xs label-default">'+text_pickup_day+'</div>');
+                pickupCell.html('<div class="label label-xs label-default pickup-day">'+text_pickup_day+'</div>');
 
                 basketPickupTime = dateTimeFrom;
                 basketSiteFromId = siteId;
