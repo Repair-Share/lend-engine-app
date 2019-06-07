@@ -10,12 +10,5 @@ namespace AppBundle\Repository;
  */
 class SettingRepository extends \Doctrine\ORM\EntityRepository
 {
-    /**
-     * @return array
-     */
-    public function getAllSettings()
-    {
-        die("Called setting repo for values");
-    }
 
 }

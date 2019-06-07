@@ -23,9 +23,6 @@ class SettingsService
     /** @var \AppBundle\Entity\Tenant */
     private $tenant;
 
-    /** @var  */
-    private $repo;
-
     public $settings = array();
 
     public function __construct(EntityManager $em)
@@ -67,7 +64,9 @@ class SettingsService
      */
     public function getAllSettingValues()
     {
-        $this->getAllSettings();
+        if (!isset($this->settings[$this->db])) {
+            $this->getAllSettings();
+        }
         return $this->settings[$this->db];
     }
 
@@ -79,82 +78,48 @@ class SettingsService
         /** @var $repo \AppBundle\Repository\SettingRepository */
         $repo =  $this->em->getRepository('AppBundle:Setting');
 
-        // Init with empty values
+        // We've already populated the settings for this account, send them back
+        if (isset($this->settings[$this->db]) && count($this->settings[$this->db]) > 0) {
+            return true;
+        }
+
+        // Initialise with empty values
         $allSettings = $this->getSettingsKeys();
         foreach ($allSettings AS $k) {
             $this->settings[$this->db][$k] = null;
         }
 
         $settings = $repo->findAll();
+
         foreach ($settings AS $setting) {
             /** @var $setting \AppBundle\Entity\Setting */
+
             if ($setting->getSetupKey() == 'org_languages' && !$setting->getSetupValue()) {
-                // Languages has not yet been set, so use the default locale
+                // Languages has not yet been set, so use the default locale for the language
                 $locale = $repo->findOneBy(['setupKey' => 'org_locale']);
                 $setting->setSetupValue($locale);
             }
+
             $k = $setting->getSetupKey();
-            $this->settings[$this->db][$k] = $setting->getSetupValue();
-        }
-
-        // Set predefined values for new (as yet unset) settings
-        // These will be shown in the UI, used in the app, and saved when settings are next saved
-        $newSettings = [
-            'automate_email_loan_reminder' => 1,
-            'automate_email_reservation_reminder' => 1,
-            'automate_email_membership' => 1,
-            'org_locale' => 'en',
-            'label_type' => '11355'
-        ];
-        foreach ($newSettings AS $k => $v) {
-            if ($this->settings[$this->db][$k] == null) {
-                $this->settings[$this->db][$k] = $v;
-            }
-        }
-    }
-
-    /**
-     * Pull all settings from the DB
-     * @return array
-     */
-    public function getAllSettingsOld()
-    {
-        $settingsArray = array();
-        /** @var \AppBundle\Repository\SettingRepository repo */
-        $this->repo = $this->em->getRepository('AppBundle:Setting');
-
-        // initialise the settings array in case the DB has no values
-        $keys = $this->getSettingsKeys();
-        foreach ($keys AS $key) {
-            $settingsArray[$key] = '';
-        }
-
-        $settings = $this->repo->findAll();
-
-        foreach ($settings AS $setting) {
-            /** @var $setting \AppBundle\Entity\Setting */
-            $setupKey   = $setting->getSetupKey();
             $setupValue = $setting->getSetupValue();
-            $settingsArray[$setupKey] = $setupValue;
+
+            $this->settings[$this->db][$k] = $setupValue;
         }
 
-        // Set predefined values for new (as yet unset) settings
-        // These will be shown in the UI, used in the app, and saved when settings are next saved
-        // THIS CODE IS IN SettingRepository AND Setting service
-        $newSettings = [
-            'automate_email_loan_reminder' => 1,
-            'automate_email_reservation_reminder' => 1,
-            'automate_email_membership' => 1,
+        // For new as-yet-unset values
+        $defaultSettings = [
+            'group_similar_items' => 1,
             'org_locale' => 'en',
             'label_type' => '11355'
         ];
-        foreach ($newSettings AS $k => $v) {
-            if ($settingsArray[$k] == null) {
-                $settingsArray[$k] = $v;
+
+        foreach ($this->settings[$this->db] AS $k => $v) {
+            if (!$v && isset($defaultSettings[$k])) {
+                $this->settings[$this->db][$k] = $defaultSettings[$k];
             }
         }
 
-        return $settingsArray;
+        return true;
     }
 
     /**

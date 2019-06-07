@@ -115,7 +115,6 @@ class ItemListController extends Controller
             $arrayOfItems = $inventoryService->itemSearch(0, 1000, $filter);
             unset($filter['grouped']);
 
-            dump($arrayOfItems);
             $itemsKeyedByName = [];
 
             foreach ($arrayOfItems['data'] AS $item) {
