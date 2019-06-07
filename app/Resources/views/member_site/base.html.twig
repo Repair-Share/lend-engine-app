@@ -18,6 +18,11 @@
 
     <meta name="keywords" content="">
 
+    <link rel="stylesheet" href="/plugins/fullcalendar/core/main.min.css">
+    <link rel="stylesheet" href="/plugins/fullcalendar/daygrid/main.min.css">
+    <link rel="stylesheet" href="/plugins/fullcalendar/timegrid/main.min.css">
+    <link rel="stylesheet" href="/plugins/timepicker/timepicker.css">
+
     {% stylesheets
     '@AppBundle/Resources/css/bootstrap.css'
     '@AppBundle/Resources/css/member_site.css'
@@ -30,11 +35,6 @@
     %}
     <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
-
-    <link rel="stylesheet" href="/plugins/fullcalendar/core/main.min.css">
-    <link rel="stylesheet" href="/plugins/fullcalendar/daygrid/main.min.css">
-    <link rel="stylesheet" href="/plugins/fullcalendar/timegrid/main.min.css">
-    <link rel="stylesheet" href="/plugins/timepicker/timepicker.css">
 
     <style>
         {% include('member_site/themes/css/' ~ tenantInformation.siteTheme ~ '.css') %}
@@ -99,12 +99,9 @@
     <script src="/plugins/fullcalendar/daygrid/main.min.js"></script>
     <script src="/plugins/fullcalendar/timegrid/main.min.js"></script>
     <script src="/plugins/fullcalendar/interaction/main.min.js"></script>
-    {#<script src="/plugins/fullcalendar/moment/main.min.js"></script>#}
     <script src="/plugins/timepicker/timepicker.js"></script>
 
-    {% if app.request.locale != 'en' %}
     <script src='/plugins/fullcalendar/core/locales/{{ app.request.locale }}.js'></script>
-    {% endif %}
 
     {% if tenantInformation.siteFontName %}
         <!-- Settings font //-->

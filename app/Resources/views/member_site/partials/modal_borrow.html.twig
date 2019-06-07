@@ -67,44 +67,36 @@
                 {% endif %}
 
                 <div class="row">
-                    <div class="col-md-3" style="padding-bottom: 20px;">
+                    <div class="col-md-4">
                         <h4>{% trans %}public_item.pickup_at{% endtrans %} ...</h4>
                         <div>
                             <a href="javascript:void(0);" class="show_date_from" id="choosePickup"></a> &nbsp;
                             <a href="javascript:void(0);" class="time ui-timepicker-input show_time_from" id="time_from_picker"></a>
                         </div>
                         <div class="site_from multi-site"></div>
-                        <button type="button" class="btn btn-success" data-dismiss="modal" id="choosePickupButton">
+                        <button type="button" class="btn btn-success" data-dismiss="modal" id="choosePickupButton" style="margin: 10px 0;">
                             {% trans %}public_item.button_choose_pickup{% endtrans %}
                         </button>
-                        {#{% if is_granted('ROLE_ADMIN') %}#}
-                            {#<br>#}
-                            {#<button type="button" class="btn btn-xs btn-default" style="margin-top: 10px; display:none" id="buttonToday">Today</button>#}
-                        {#{% endif %}#}
                     </div>
-                    <div class="col-md-1 hidden-sm hidden-xs" style="padding-top: 20px; font-size: 26px;"><i class="fas fa-angle-double-right"></i></div>
-                    <div class="col-md-3" style="padding-top:10px;">
-                        <div style="font-size: 20px;">
-                            <span class="count_days">0</span>
-                        </div>
-                        <div style="font-weight: bold; font-size: 20px;">
-                            {{ tenantInformation.currencySymbol }} <span class="total_fee">0</span>
-                        </div>
-                    </div>
-                    <div class="col-md-1 hidden-sm hidden-xs" style="padding-top: 20px; font-size: 26px;"><i class="fas fa-angle-double-right"></i></div>
-                    <div class="col-md-4" style="padding-bottom: 20px;">
+                    <div class="col-md-4">
                         <h4>{% trans %}public_item.return_by{% endtrans %} ...</h4>
                         <div>
                             <a href="javascript:void(0);" class="show_date_to chooseReturn" data-dismiss="modal" id="chooseReturn"></a> &nbsp;
                             <a href="javascript:void(0);" class="time ui-timepicker-input show_time_to" id="time_to_picker"></a>
                         </div>
                         <div class="site_to multi-site"></div>
-                        <div class="data-help" id="choosePickupFirst">{% trans %}public_item.choose_pickup_first{% endtrans %}</div>
-
                         <br>
                         <button type="button" class="btn btn-xs btn-success chooseReturnButton" data-dismiss="modal" id="chooseReturnButton" style="margin-top: 10px; display: none">
                             {% trans %}public_item.button_choose_return{% endtrans %}
                         </button>
+                    </div>
+                    <div class="col-md-3" style="padding-top: 10px">
+                        <div style="font-size: 20px;">
+                            <span class="count_days">0</span>
+                        </div>
+                        <div style="font-weight: bold; font-size: 20px;">
+                            {{ tenantInformation.currencySymbol }} <span class="total_fee">0</span>
+                        </div>
                     </div>
                 </div>
 

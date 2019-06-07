@@ -74,12 +74,10 @@
     <div class="row">
         {% for site in sites %}
             <div class="col-xs-6 col-md-4 site-id-{{ site.id }}">
-                <div class="site">
-                    <div style="border-bottom: 8px solid {{ site.colour }}; padding-bottom: 6px;">{{ site.name }}</div>
-                    {{ site.address }}<br>
+                <div class="site" style="border-left: 8px solid {{ site.colour }};">
+                    <div style="padding-bottom: 6px;">{{ site.name }}</div>
                     <a href="https://www.google.co.uk/maps/search/{{ site.address }},{{ site.postCode }}" target="_blank">
-                        <i class="fa fa-external-link-alt" style="font-size: 0.8em"></i>
-                        {% trans %}public_item.maps_link{% endtrans %}
+                        {{ site.address }} <i class="fa fa-external-link-alt" style="font-size: 0.8em"></i>
                     </a>
                 </div>
             </div>
@@ -125,6 +123,13 @@
             var calendarMode = '{% if app.request.get('extend') %}extend{% else %}booking{% endif %}';
             var originalReturnDate = '{{ app.request.get('from') }}';
 
+            var sites = [];
+            {% for site in sites %}
+            sites[{{ site.id }}] = "{{ site.name }}";
+            {% endfor %}
+            var activeSiteId   = '{{ app.user.activeSite.id }}';
+            var activeSiteName = sites[activeSiteId];
+
             // Set the pickup time and location if we already have a basket
             {% if tenantInformation.basket.loanRows is defined and tenantInformation.basket.loanRows|length > 0 %}
             basketPickupTime = moment("{{ tenantInformation.basket.loanRows|first.dueOutAt|date("Y-m-d H:i") }}");
@@ -135,13 +140,15 @@
             var timeFromPicker = $('#time_from_picker');
             var timeToPicker   = $('#time_to_picker');
             timeFromPicker.timepicker({
-                'scrollDefault': 'now',
-                'step' : 15
+                'step' : 15,
+                'minTime': '7:00am',
+                'maxTime': '10:00pm'
             });
 
             timeToPicker.timepicker({
-                'scrollDefault': 'now',
-                'step' : 15
+                'step' : 15,
+                'minTime': '7:00am',
+                'maxTime': '10:00pm'
             });
 
             var calendarEl = document.getElementById('calendar');
@@ -150,6 +157,13 @@
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
+                locale: "{{ app.request.locale }}",
+                views: {
+                    week: { // name of view
+//                        columnHeaderFormat: 'ddd d-M'
+                        // other view-specific options here
+                    }
+                },
                 eventSources: [
                     {
                         url: url,
@@ -164,13 +178,14 @@
                         textColor: 'white'
                     }
                 ],
+//                columnHeaderFormat: { weekday: 'short', month: 'numeric', day: '2-digit', omitCommas: true },
                 defaultView: 'dayGridMonth',
                 allDaySlot: false,
                 selectable: true,
                 header: {
                     left:   'title',
                     center: '',
-                    right:  'dayGridMonth,timeGridWeek,timeGridDay prev,next'
+                    right:  'dayGridMonth,timeGridWeek prev,next'
                 },
 //                businessHours: {
 //                    // (0=Sunday)
@@ -179,7 +194,23 @@
 //                    end: '23:59'
 //                },
                 select: function(selection) {
+                    var start, end, e, endDay;
                     console.log("Dates selected from "+selection.startStr+" to "+selection.endStr);
+                    if (selection.startStr.length == 10) {
+                        // We're picking from the month view
+                        start = moment(selection.startStr+" 09:00:00");
+                        e = moment(selection.endStr);
+                        e.subtract(1, "days");
+                        endDay = e.format("YYYY-MM-DD");
+                        end = moment(endDay+" 17:00:00");
+                        console.log(endDay);
+                    } else {
+                        // we're picking from the week view
+                        start = moment(selection.startStr);
+                        end   = moment(selection.endStr);
+                    }
+                    setPickup(start, end, activeSiteId, activeSiteName);
+                    setReturn(start, end, activeSiteId, activeSiteName);
                 },
                 eventClick: function(info) {
                     if (info.event.extendedProps.siteId) {
@@ -452,9 +483,9 @@
                 $("#borrowModalConfirm").show();
             }
 
-            function setPickup(coTime, timeEnd, siteId, siteName) {
+            function setPickup(dateTimeFrom, dateTimeTo, siteId, siteName) {
 
-                if (!validatePickupDate(coTime)) {
+                if (!validatePickupDate(dateTimeFrom)) {
                     $("#button-borrow").remove();
                     alert(text_clash_date);
                     return false;
@@ -467,32 +498,31 @@
                 }
 
                 // Set the pickup date
-                $("#date_from").val(coTime.format("YYYY-MM-DD"));
-                $("#time_from").val(coTime.format("HH:mm"));
+                $("#date_from").val(dateTimeFrom.format("YYYY-MM-DD"));
+                $("#time_from").val(dateTimeFrom.format("HH:mm"));
                 $("#from_site").val(siteId);
 
-                $(".show_date_from").html( coTime.format("DD MMMM") );
-                $(".show_time_from").html( coTime.format("h:mm a") );
+                $(".show_date_from").html( dateTimeFrom.format("DD MMMM") );
+                $(".show_time_from").html( dateTimeFrom.format("h:mm a") );
 
                 $(".site_from").html(siteName);
                 $("#choosePickupButton").hide();
                 $("#chooseReturn").show();
                 $("#chooseReturnButton").show();
-                $("#choosePickupFirst").hide();
 
-                var pickupCell = $(".fc-bg").find("[data-date='"+coTime.format("YYYY-MM-DD")+"']");
+                var pickupCell = $(".fc-bg").find("[data-date='"+dateTimeFrom.format("YYYY-MM-DD")+"']");
                 pickupCell.html('<div class="label label-xs label-default">'+text_pickup_day+'</div>');
 
-                basketPickupTime = coTime;
+                basketPickupTime = dateTimeFrom;
                 basketSiteFromId = siteId;
                 basketSiteFromName = siteName;
 
                 // Set the default return day based on item loan days if user has manually chosen pickup time
-                if (timeEnd && itemLoanDays > 1) {
+                if (dateTimeTo && itemLoanDays > 1) {
                     var returnTime;
-                    returnTime = moment(coTime);
+                    returnTime = moment(dateTimeFrom);
                     returnTime = returnTime.add(itemLoanDays, 'd');
-                    var r = setReturn(coTime, returnTime, siteId, siteName, itemLoanDays);
+                    var r = setReturn(dateTimeFrom, returnTime, siteId, siteName, itemLoanDays);
                     if (r === false) {
                         // failed validation
 //                        location.reload();
@@ -582,8 +612,11 @@
                 var duration   = moment.duration(end.diff(start));
                 var days       = duration.asDays();
                 var hours      = duration.asHours();
-
                 var totalFee;
+
+                // Round to nearest day
+                days = Math.round(days);
+
                 if (fixedFeePricing == 1) {
                     totalFee = itemFee;
                 } else {

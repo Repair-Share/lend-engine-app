@@ -6919,6 +6919,14 @@ h2 {
     font-weight: normal;
 }
 
+/* FullCalendar */
+
+.fc-button-primary {
+    color: #000;
+    background-color: #f9f9f9;
+    border-color: #cecfd0;
+}
+
 /* ITEM LIST */
 
 div#item-list-filter {
