@@ -84,7 +84,7 @@
                             <a href="javascript:void(0);" class="show_date_to chooseReturn" data-dismiss="modal" id="chooseReturn"></a> &nbsp;
                             <a href="javascript:void(0);" class="time ui-timepicker-input show_time_to" id="time_to_picker"></a>
                         </div>
-                        <div class="site_to multi-site"></div>
+                        <a class="site_to multi-site" href="javascript:void(0);" data-dismiss="modal"></a>
                         <br>
                         <button type="button" class="btn btn-xs btn-success chooseReturnButton" data-dismiss="modal" id="chooseReturnButton" style="margin-top: 10px; display: none">
                             {% trans %}public_item.button_choose_return{% endtrans %}
@@ -100,8 +100,9 @@
                     </div>
                 </div>
 
-                <div class="row" id="booking-help">
-                    <div class="col-md-12">Click a date or time to change your booking.</div>
+                <div class="row" id="booking-help" style="display:none">
+                    <div class="col-md-12 help-block"><br>
+                        <span class="label bg-orange">NEW</span> Click a date, time or site to change your booking.</div>
                 </div>
 
                 {#<div class="alert alert-warning credit-warning" style="margin-top: 6px; display: none">#}

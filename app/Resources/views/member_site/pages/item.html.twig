@@ -503,6 +503,8 @@
 
             function setPickup(dateTimeFrom, dateTimeTo, siteId, siteName) {
 
+                $("#booking-help").show();
+                
                 if (!validatePickupDate(dateTimeFrom)) {
                     $("#button-borrow").remove();
                     alert(text_clash_date);
