@@ -284,6 +284,9 @@ class InventoryItem
     /** @var string */
     private $quantity;
 
+    /** @var string */
+    private $quantityAvailable;
+
     /**
      * Empty constructor
      */
@@ -1437,5 +1440,24 @@ class InventoryItem
     public function getQuantity()
     {
         return $this->quantity;
+    }
+
+    /**
+     * @param $quantityAvailable
+     * @return $this
+     */
+    public function setQuantityAvailable($quantityAvailable)
+    {
+        $this->quantityAvailable = $quantityAvailable;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getQuantityAvailable()
+    {
+        return $this->quantityAvailable;
     }
 }

@@ -106,7 +106,9 @@
                                 {{ product.name }}
                             </a>
                             {% if product.quantity > 1 %}
-                                <div style="font-weight: normal" class="item-list-qty">{% trans %}Quantity{% endtrans %} : {{ product.quantity }}</div>
+                                <div style="font-weight: normal; font-size: 11px;" class="item-list-qty">
+                                    {{ product.quantityAvailable }} of {{ product.quantity }} {% trans %}public_item.available{% endtrans %}
+                                </div>
                             {% endif %}
                             <div class="item-list-serial">
                                 {% if product.serial and product.quantity == 1 %}

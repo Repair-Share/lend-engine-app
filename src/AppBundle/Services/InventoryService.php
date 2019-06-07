@@ -77,7 +77,10 @@ class InventoryService
             $builder->andWhere('item.showOnWebsite = 1');
         }
 
-        if (isset($filter['search']) && $filter['search']) {
+        if (isset($filter['exactNameMatch']) && $filter['exactNameMatch']) {
+            $builder->andWhere('item.name = :string');
+            $builder->setParameter('string', trim($filter['search']));
+        } else if (isset($filter['search']) && $filter['search']) {
             $builder->andWhere('item.name LIKE :string
                     OR item.sku LIKE :string
                     OR item.serial LIKE :string

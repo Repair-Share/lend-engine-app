@@ -338,6 +338,7 @@ class StripeHandler
      */
     public function createSubscription($token, Tenant $tenant, $planCode)
     {
+        $oldSubscriptionId = $tenant->getSubscriptionId();
 
         if ($token && !$tenant->getStripeCustomerId()) {
 
@@ -373,8 +374,6 @@ class StripeHandler
         // We should now have a customer
         if ($tenant->getStripeCustomerId()) {
 
-            $oldSubscriptionId = $tenant->getSubscriptionId();
-
             if ($subscription = $this->subscribeCustomer($tenant->getStripeCustomerId(), $planCode)) {
                 // Save the new plan
                 $tenant->setPlan($planCode);
@@ -383,14 +382,14 @@ class StripeHandler
                 $this->em->persist($tenant);
                 try {
                     $this->em->flush($tenant);
-
                     // Cancel any existing plans
                     if ($oldSubscriptionId) {
-                        if ($this->cancelSubscription($tenant, $oldSubscriptionId)) {
-                            // Save in case the subscribe to new plan failed
-                            $tenant->setPlan(null);
-                            $this->em->persist($tenant);
-                            $this->em->flush();
+                        try {
+                            $sub = \Stripe\Subscription::retrieve($oldSubscriptionId);
+                            $sub->cancel();
+                        } catch (\Exception $e) {
+                            $this->errors[] = 'Failed to cancel previous subscription: '.$e->getMessage();
+                            $this->errors[] = $e->getMessage();
                         }
                     }
                     return true;
@@ -423,8 +422,8 @@ class StripeHandler
             return true;
         }
 
-        if (!$subscriptionId = $tenant->getSubscriptionId()) {
-            // May have a customer ID, but no subscription on Stripe
+        if (!$tenant->getSubscriptionId()) {
+            // May have a customer ID, but no active subscription on Stripe
             $this->cancelAccount($tenant);
             return true;
         }

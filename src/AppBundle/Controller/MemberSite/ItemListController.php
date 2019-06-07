@@ -107,6 +107,7 @@ class ItemListController extends Controller
 
         // Store how many of each item we have, keyed by name
         $itemQuantity = [];
+        $itemQuantityAvailable = [];
 
         if ($groupItemsWithSameName && !$request->get('see_variations')) {
             // Get ALL item IDs that match the filters
@@ -114,13 +115,21 @@ class ItemListController extends Controller
             $arrayOfItems = $inventoryService->itemSearch(0, 1000, $filter);
             unset($filter['grouped']);
 
+            dump($arrayOfItems);
             $itemsKeyedByName = [];
 
             foreach ($arrayOfItems['data'] AS $item) {
-                $itemName = $item['name'];
+
+                // Lowercase the key
+                $itemName = strtolower($item['name']);
 
                 if (!isset($itemQuantity[$itemName])) {
                     $itemQuantity[$itemName] = 1;
+                    $itemQuantityAvailable[$itemName] = 0;
+                }
+
+                if ($item['isAvailable']) {
+                    $itemQuantityAvailable[$itemName]++;
                 }
 
                 if (isset($itemsKeyedByName[$itemName])) {
@@ -139,6 +148,9 @@ class ItemListController extends Controller
             $filter['idSet'] = array_values($itemsKeyedByName);
             $searchResults = $inventoryService->itemSearch($resultsFrom, $length, $filter);
         } else {
+            if ($request->get('see_variations')) {
+                $filter['exactNameMatch'] = true;
+            }
             // Return an array of objects
             $searchResults = $inventoryService->itemSearch($resultsFrom, $length, $filter);
         }
@@ -175,8 +187,10 @@ class ItemListController extends Controller
 
             if ($request->get('see_variations') || !$groupItemsWithSameName) {
                 $item->setQuantity(1);
+                $item->setQuantityAvailable(1);
             } else {
-                $item->setQuantity($itemQuantity[$item->getName()]);
+                $item->setQuantity($itemQuantity[strtolower($item->getName())]);
+                $item->setQuantityAvailable($itemQuantityAvailable[strtolower($item->getName())]);
             }
 
             $items[] = $item;
