@@ -39,10 +39,14 @@ class ItemBookingsController extends Controller
 
         foreach ($reservations AS $reservation) {
 
+            $color = '#d61702';
             /** @var $reservation \AppBundle\Entity\LoanRow */
             $statusName = $reservation->getLoan()->getStatus();
             if ($statusName == 'ACTIVE') {
                 $statusName = 'ON LOAN';
+                $color = '#39cccc';
+            } else if ($statusName == 'RESERVED') {
+                $color = '#ff851b';
             }
 
             if (in_array($reservation->getLoan()->getStatus(), [Loan::STATUS_ACTIVE, Loan::STATUS_OVERDUE])) {
@@ -77,6 +81,7 @@ class ItemBookingsController extends Controller
                 'contactId' => $reservation->getLoan()->getContact()->getId(),
                 'statusName' => $statusName,
                 'title'  => $title,
+                'color' => $color,
                 'start'  => $reservation->getDueOutAt()->format('Y-m-d H:i:s'),
                 'end'    => $reservation->getDueInAt()->format('Y-m-d H:i:s'),
             ];

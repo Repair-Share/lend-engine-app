@@ -125,6 +125,21 @@ EOH;
             ]
         ));
 
+        $choices = [
+            'Month' => 'dayGridMonth',
+            'Week' => 'timeGridWeek',
+        ];
+        $builder->add('default_calendar_view', ChoiceType::class, array(
+            'choices' => $choices,
+            'label' => 'Default calendar view',
+            'data' => (int)$dbData['default_calendar_view'],
+            'required' => true,
+            'attr' => [
+                'class' => '',
+                'data-help' => "Choose 'week' if your loans are mainly short-term per-hour."
+            ]
+        ));
+
         $builder->add('daily_overdue_fee', TextType::class, array(
             'label' => 'Late return fee (per day)',
             'data' => $dbData['daily_overdue_fee'],

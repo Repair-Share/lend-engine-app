@@ -109,6 +109,7 @@ class SettingsService
         // For new as-yet-unset values
         $defaultSettings = [
             'group_similar_items' => 1,
+            'default_calendar_view' => 'dayGridMonth',
             'org_locale' => 'en',
             'label_type' => '11355'
         ];
@@ -248,6 +249,7 @@ class SettingsService
             'multi_site',
             'setup_opening_hours',
             'drag_to_book',
+            'default_calendar_view',
 
             // Stripe card details
             'stripe_access_token',
