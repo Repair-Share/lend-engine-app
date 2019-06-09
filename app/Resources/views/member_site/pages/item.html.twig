@@ -525,6 +525,7 @@
                             selectedTime = eventStart;
                         }
                         setPickup(selectedTime, eventStart, eventEnd, siteId, siteName);
+                        borrowModal.modal();
                     }
                 }
             }
@@ -634,8 +635,6 @@
 ////                        location.reload();
 //                    }
 //                }
-
-                borrowModal.modal();
             }
 
             // We used to have this function which checked the left menu contained the site key

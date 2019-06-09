@@ -368,6 +368,10 @@ class AjaxDeleteController extends Controller
      */
     private function deleteSite($id)
     {
+        if ($id == 1) {
+            return "You cannot delete the site with ID 1.";
+        }
+
         $em = $this->getDoctrine()->getManager();
 
         /** @var \AppBundle\Repository\SiteRepository $repo */

@@ -37,7 +37,9 @@ class SiteController extends Controller
         $settingsService = $this->get('settings');
 
         /** @var $site \AppBundle\Entity\Site */
-        $sites = $siteRepo->findBy(['id' => [1,2,3]]);
+        // Use the following from the UI if we get users with loads of sites
+//        $sites = $siteRepo->findBy(['id' => [1,2,3]]);
+        $sites = $siteRepo->findAll();
 
         foreach ($sites AS $site) {
 
