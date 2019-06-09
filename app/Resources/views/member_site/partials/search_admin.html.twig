@@ -3,18 +3,21 @@
 <div id="admin-tools" class="row admin-tools">
 
     <div class="row admin-tools-title">
-        <div class="col-md-12">
+        <div class="col-md-12 hidden-xs">
             <i class="fa fa-wrench"></i>
             This box is only visible for staff.
-        <span class="pull-right">
-            To create a loan or reservation:
-        1. Search for a member and choose 'browse as'
-        2. Choose your item(s)
-        </span>
+            <span class="pull-right">
+                To create a loan or reservation:
+            1. Search for a member and choose 'browse as'
+            2. Choose your item(s)
+            </span>
+        </div>
+        <div class="col-md-12 hidden-sm hidden-md hidden-lg hidden-xl">
+            <button class="btn btn-xs btn-primary" id="show-admin-tools">Show admin tools</button>
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-6 hidden-xs">
         <form role="search" action="{{ path('member_search') }}" method="GET">
             <input type="hidden" name="go" value="{{ app.request.get('go') }}">
             {% if app.request.get('itemId') %}
@@ -34,7 +37,7 @@
             </div>
         </form>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 hidden-xs">
         <form role="search" action="{{ path('loan_search') }}" method="GET">
             <div class="input-group">
                 <input type="text" name="loan-search" id="loan-search" class="form-control" placeholder="Search loans">
@@ -53,42 +56,38 @@
         </form>
     </div>
 
-        <div class="col-md-6" >
+    <div class="col-md-6 hidden-xs">
+        {% if user is defined and user.id != app.user.id %}
+            <i class="fa fa-user"></i> Browsing as <strong><a title="Edit contact" data-toggle="tooltip" href="{{ path('contact', {id: user.id}) }}">{{ user.name }}</a></strong>
+            <div class="help-block" style="font-size: 11px">
+                Change user with the search box above.
+            </div>
+        {% endif %}
 
-            {% if user is defined and user.id != app.user.id %}
-                <i class="fa fa-user"></i> Browsing as <strong><a title="Edit contact" data-toggle="tooltip" href="{{ path('contact', {id: user.id}) }}">{{ user.name }}</a></strong>
-                <div class="help-block" style="font-size: 11px">
-                    Change user with the search box above.
-                </div>
-            {% endif %}
+        {% if not tenantInformation.isEditMode %}
+            <a href="{{ path('site_edit_begin') }}" class="btn btn-xs btn-primary">Edit website</a>
+        {% endif %}
+    </div>
 
-            {% if not tenantInformation.isEditMode %}
-                <a href="{{ path('site_edit_begin') }}" class="btn btn-xs btn-primary">Edit website</a>
-            {% endif %}
+    <div class="col-md-6" style="text-align: right">
+        {% if user is defined and user.id != app.user.id %}
 
-            {#<a class="btn btn-xs btn-primary" href="{{ path('item_type') }}">Add a new item</a>#}
-
-        </div>
-
-        <div class="col-md-6" style="text-align: right">
-            {% if user is defined and user.id != app.user.id %}
-
-                {% if user.activeMembership %}
-                    <strong>{{ user.activeMembership.memberShipType.name }}</strong> member until {{ user.activeMembership.expiresAt|date("F d, Y") }}
-                    <br><strong>{{ tenantInformation.currencySymbol }} {{ user.balance|number_format(2) }}</strong> available balance.
-                    {% if user.activeMembership.memberShipType.discount > 0 %}
-                        <br>Prices include {{ user.activeMembership.memberShipType.discount }}% discount
-                    {% endif %}
+            {% if user.activeMembership %}
+                <strong>{{ user.activeMembership.memberShipType.name }}</strong> member until {{ user.activeMembership.expiresAt|date("F d, Y") }}
+                <br><strong>{{ tenantInformation.currencySymbol }} {{ user.balance|number_format(2) }}</strong> available balance.
+                {% if user.activeMembership.memberShipType.discount > 0 %}
+                    <br>Prices include {{ user.activeMembership.memberShipType.discount }}% discount
                 {% endif %}
-
-                <div style="padding-top: 4px;">
-                    <a href="{{ path('loan_search', {'loan-search': user.name|trim }) }}"><i class="fa fa-shopping-bag"></i> Loans</a>&nbsp;&nbsp;
-                    <a href="{{ path('payments') }}"><i class="fa fa-credit-card"></i> Payments</a>&nbsp;&nbsp;
-                    <a href="{{ path('add_credit') }}?c={{ user.id }}"><i class="fa fa-plus-circle"></i> Add credit</a>
-                </div>
-
-            {% else %}
-
             {% endif %}
-        </div>
+
+            <div style="padding-top: 4px;">
+                <a href="{{ path('loan_search', {'loan-search': user.name|trim }) }}"><i class="fa fa-shopping-bag"></i> Loans</a>&nbsp;&nbsp;
+                <a href="{{ path('payments') }}"><i class="fa fa-credit-card"></i> Payments</a>&nbsp;&nbsp;
+                <a href="{{ path('add_credit') }}?c={{ user.id }}"><i class="fa fa-plus-circle"></i> Add credit</a>
+            </div>
+
+        {% else %}
+
+        {% endif %}
+    </div>
     </div>

@@ -194,6 +194,12 @@
 </script>
 {% endif %}
 
+<script>
+    $("#admin-tools").on('click', '#show-admin-tools', function() {
+        $('#admin-tools .hidden-xs').removeClass('hidden-xs');
+        $("#show-admin-tools").hide();
+    });
+</script>
 {% if tenantInformation.siteJs %}
     <script>
         {{ tenantInformation.siteJs|raw }}
