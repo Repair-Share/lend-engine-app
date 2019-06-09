@@ -504,6 +504,11 @@
                     $(".original_return_date").html(originalDate.format("dddd DD MMMM h:mm a"));
                     $(".extend_days").html(days);
 
+                    // Set the valid times on the time picker, if we are setting pickup from a time slot
+                    if (eventStart && eventEnd) {
+                        newTimeToPicker.timepicker('option', { 'minTime': eventStart.format("h:mma"), 'maxTime': eventEnd.format("h:mma") });
+                    }
+
                     if (dailyFee > 0) {
                         extensionFee = dailyFee * days;
                         $("#extensionFeeAmount").val(extensionFee.toFixed(2));
@@ -550,7 +555,7 @@
                     alert(alert_min_days);
                     return false;
                 }
-                if (!validateBookingPeriod(bookingStartFrom, selectedTime)) {
+                if (!validateBookingPeriod(bookingStartFrom, selectedTime, siteId)) {
                     return false;
                 }
 
@@ -633,6 +638,8 @@
                     returnTime = returnTime.add(itemLoanDays, 'd');
                     if (overlapsExistingBooking(selectedTime, returnTime)) {
                         console.log("Cannot auto-set end date as conflicts with another booking.");
+                    } else if (!isValidBookingTime(returnTime, siteId)) {
+                        console.log("Cannot auto-set end date as there is no opening hour slot.");
                     } else {
                         setReturn(returnTime, clickedSlotFrom, clickedSlotTo, siteId, siteName);
                     }
@@ -663,11 +670,23 @@
                 return returnValue;
             }
 
-            function validateBookingPeriod(start, end) {
+            function validateBookingPeriod(start, end, siteId) {
                 var bookingPeriodIsValid = true;
 
                 if (overlapsExistingBooking(start, end)) {
                     bookingPeriodIsValid = false;
+                }
+
+                if (!isValidBookingTime(start, siteId)) {
+                    console.log("validateBookingPeriod : start time is not within opening hours");
+                    alert("Start time is not within opening hours");
+                    return false;
+                }
+
+                if (!isValidBookingTime(end, siteId)) {
+                    console.log("validateBookingPeriod : end time is not within opening hours");
+                    alert("End time is not within opening hours");
+                    return false;
                 }
 
                 if (bookingPeriodIsValid == false) {
@@ -682,6 +701,22 @@
                 }
 
                 return true;
+            }
+
+            function isValidBookingTime(time, siteId) {
+                var timeLiesWithinOpeningHours = false;
+                $(calendar.getEvents()).each(function(i, event) {
+//                    Enable this extra validation when we figure out how to click-drag over multiple sites
+//                    For now, just return OK if there is any site open at this time
+//                    @TODO
+//                    if (event.extendedProps.siteId == siteId) {
+                    if (event.extendedProps.siteId > 0) {
+                        if (time >= moment(event.start) && time <= moment(event.end)) {
+                            timeLiesWithinOpeningHours = true;
+                        }
+                    }
+                });
+                return timeLiesWithinOpeningHours;
             }
 
             function overlapsExistingBooking(start, end) {
@@ -721,14 +756,13 @@
                 document.location.href = loanUrl;
             }
 
-            var accountBalance = {{ contactBalance }};
-
             function calculateTotalFee() {
                 var start = moment($("#date_from").val()+" "+$("#time_from").val());
                 var end   = moment($("#date_to").val()+" "+$("#time_to").val());
                 var duration   = moment.duration(end.diff(start));
                 var days       = duration.asDays();
                 var hours      = duration.asHours();
+                var accountBalance = {{ contactBalance }};
                 var totalFee;
 
                 // Round to nearest day
@@ -786,7 +820,7 @@
                 });
             }
 
-            // Used for selectAllow logic
+            // Used for selectAllow logic (create greyed-out days outside of site hours)
             function setBookableDays(events) {
                 var date;
                 $(events).each(function() {
