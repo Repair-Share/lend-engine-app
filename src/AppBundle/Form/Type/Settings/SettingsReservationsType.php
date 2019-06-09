@@ -119,8 +119,7 @@ EOH;
             'required' => true,
             'attr' => [
                 'class' => 'input-100 toggle-switch',
-                'data-help' => "Click and drag on the calendar month or week view to book an item.
-                Click-and-drag booking does not utilize site opening hours so is best for organisations wanting flexibility.
+                'data-help' => "Click and drag on the calendar month or week view to book an item for the chosen period.
                 The pickup and return site is currently restricted to the item's current site."
             ]
         ));
@@ -135,7 +134,7 @@ EOH;
             'data' => (int)$dbData['default_calendar_view'],
             'required' => true,
             'attr' => [
-                'class' => '',
+                'class' => 'input-100',
                 'data-help' => "Choose 'week' if your loans are mainly short-term per-hour."
             ]
         ));

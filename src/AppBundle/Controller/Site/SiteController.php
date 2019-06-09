@@ -46,11 +46,12 @@ class SiteController extends Controller
             foreach ($site->getSiteOpenings() AS $opening) {
                 /** @var $opening \AppBundle\Entity\SiteOpening */
                 $d = $opening->getWeekDay();
-
-                if (!$opening->getTimeChangeover()) {
-                    $opening->setTimeChangeover($opening->getTimeTo());
+                if ($opening->getTimeChangeover()) {
+//                    $opening->setTimeChangeover($opening->getTimeTo());
+                    $t_changeover = substr($opening->getTimeChangeover(), 0, 2).':'.substr($opening->getTimeChangeover(), 2, 2);
+                } else {
+                    $t_changeover = null;
                 }
-                $t_changeover = substr($opening->getTimeChangeover(), 0, 2).':'.substr($opening->getTimeChangeover(), 2, 2);
 
                 $openDays[$d][] = [
                     substr($opening->getTimeFrom(), 0, 2).':'.substr($opening->getTimeFrom(), 2, 2),
@@ -111,10 +112,10 @@ class SiteController extends Controller
                         // Changeover time (stored as time HHmm not UTC)
                         // If no changeover is set, or it's not the same as the end, update the beginning time
                         // Use the changeover time for the start of slots to allow same day return and pickup
-                        $changeOver = $slot[2];
-                        if ($changeOver != $slot[1]) {
-                            $start    = $day->format("Y-m-d").' '.$slot[2].':00';
-                        }
+//                        $changeOver = $slot[2];
+//                        if ($changeOver != $slot[1]) {
+//                            $start    = $day->format("Y-m-d").' '.$slot[2].':00';
+//                        }
 
                         foreach ($bookings AS $loanRow) {
                             /** @var $loanRow \AppBundle\Entity\LoanRow */
@@ -139,13 +140,17 @@ class SiteController extends Controller
                         }
 
                         if ($slotIsValid == true || 1) {
+                            if ($slot[2]) {
+                                $changeOverTime = $day->format("Y-m-d").' '.$slot[2].':00';
+                            } else {
+                                $changeOverTime = null;
+                            }
                             $data[] = [
                                 'siteId' => $site->getId(),
                                 'siteName' => $site->getName(),
                                 'title'  => $slot[0].' - '.$slot[1],
-//                                'rendering' => 'background',
                                 'color' => $site->getColour(),
-                                'changeover' => $day->format("Y-m-d").' '.$slot[2].':00',
+                                'changeover' => $changeOverTime,
                                 'start'  => $start,
                                 'end'    => $end,
                             ];

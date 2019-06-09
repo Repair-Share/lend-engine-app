@@ -126,7 +126,7 @@
             var currentPickupTime     = moment("{{ currentPickupTime }}");
             var currentPickupSiteId   = {{ currentPickupSiteId }};
             var currentPickupSiteName = "{{ currentPickupSiteName }}";
-            var changeOverTime;
+            var bookingStartFrom;
             var bookableDays = []; // an array of YYYY-mm-dd for selectAllow
             var openingTimesByDate = [];
             var closingTimesByDate = [];
@@ -156,16 +156,17 @@
             var timeFromPicker  = $('.show_time_from');
             var timeToPicker    = $('.show_time_to');
             var newTimeToPicker = $('.new_time_to');
-            timeFromPicker.timepicker({
+            var tFrom = timeFromPicker.timepicker({
                 'step' : 15,
                 'minTime': '7:00am',
                 'maxTime': '10:00pm'
             });
-            timeToPicker.timepicker({
+            var tTo = timeToPicker.timepicker({
                 'step' : 15,
                 'minTime': '7:00am',
                 'maxTime': '10:00pm'
             });
+            // For extending a loan:
             newTimeToPicker.timepicker({
                 'step' : 15,
                 'minTime': '7:00am',
@@ -240,8 +241,8 @@
                 },
                 select: function(selection) {
                     var start, end, e;
-                    if (dragSelect == false) {
-                        alert("Please choose a site");
+                    if (dragSelect == false || basketPickupTime) {
+                        alert("Drag select is not available. Please choose a site from the month view.");
                         return false;
                     }
                     if (selection.startStr.length == 10) {
@@ -255,8 +256,8 @@
                         start = moment(selection.startStr);
                         end   = moment(selection.endStr);
                     }
-                    setPickup(start, end, itemSiteId, itemSiteName);
-                    setReturn(start, end, itemSiteId, itemSiteName);
+                    setPickup(start, start, end, itemSiteId, itemSiteName);
+                    setReturn(end, start, end, itemSiteId, itemSiteName);
                 },
                 eventClick: function(info) {
                     if (info.event.extendedProps.siteId) {
@@ -279,7 +280,6 @@
                         currentPickupTime = start;
                         $("#buttonToday").html("Today ("+start.format("HH:mm")+")").show();
                     }
-                    changeOverTime = moment(calEvent.extendedProps.changeover);
                     var start_display, end_display;
                     if (calendarMode == 'extend') {
                         start_display = "none";
@@ -291,7 +291,9 @@
                     if (calEvent.extendedProps.siteName) {
                         // It's a time slot for user selection
                         if (calendar.view.type == 'timeGridWeek') {
-                           return false;
+                            // We're assuming in week view the user is dragging times not clicking sites
+                            // so hide the sites. The site passed to the booking modal is the item's current site.
+                            return false;
                         }
                         txt = '';
 //                        if (end.format("HHmm") == changeOverTime.format("HHmm")) {
@@ -302,6 +304,9 @@
 //                            txt = txt + '<div class="t_start" style="font-size: 14px; font-weight: bold; display:'+start_display+'">' + changeOverTime.format("h:mm a ") + '</div>';
 //                            txt = txt + '<div class="t_end" style="font-size: 14px; font-weight: bold; display:'+end_display+'">' + changeOverTime.format("h:mm a ") + '</div>';
 //                        }
+                        if (calEvent.extendedProps.changeover) {
+                            txt = txt + '<div class="t_end" style="font-size: 14px; font-weight: bold; ">' + moment(calEvent.extendedProps.changeover).format("h:mm a ") + '</div>';
+                        }
                         txt = txt + '<div class="hidden-xs multi-site">'+calEvent.extendedProps.siteName+'</div>';
                         txt = txt + '<div class="openinghours">' + start.format("HH:mm ")+" to "+end.format("HH:mm ") + '</div>';
                         $(element).html(txt);
@@ -323,7 +328,7 @@
                 viewRender: function() {
                     if (basketPickupTime) {
                         // User has a basket
-                        setPickup(basketPickupTime, null, basketSiteFromId, basketSiteFromName);
+                        setPickup(basketPickupTime, null, null, basketSiteFromId, basketSiteFromName);
                     }
                 },
                 loading: function(bool) {
@@ -332,7 +337,7 @@
                     } else{
                         // loaded, render a preset pickup time
                         if (basketPickupTime) {
-                            setPickup(basketPickupTime, null, basketSiteFromId, basketSiteFromName);
+                            setPickup(basketPickupTime, null, null, basketSiteFromId, basketSiteFromName);
                         }
                     }
                 }
@@ -371,17 +376,38 @@
                 $(".t_end").hide();
             });
 
-            page.on('click', '.borrowModalCancel', function () {
+            borrowModal.on('click', '.borrowModalCancel', function () {
                 resetDates();
                 borrowModal.modal('hide');
             });
 
+            borrowModal.on('click', '.site_from', function () {
+                if (basketPickupTime) {
+                    alert("You can't change the pickup time as you have other items in your basket.");
+                    return false;
+                }
+                resetDates();
+                borrowModal.modal('hide');
+            });
+
+            borrowModal.on('click', '.site_to', function () {
+                borrowModal.modal('hide');
+            });
+
+            borrowModal.on('click', '#borrowModalConfirm', function () {
+                if (!$("#date_from").val()) { alert("Please set a pickup date."); return false; }
+                if (!$("#time_from").val()) { alert("Please set a pickup time."); return false; }
+                if (!$("#date_to").val()) { alert("Please set a return date."); return false; }
+                if (!$("#time_to").val()) { alert("Please set a return time."); return false; }
+                $("#reserve_form").submit();
+            });
+
             // User clicks the 'from' date to choose another day
             borrowModal.on('click', '#choosePickup', function () {
-//                if (basketPickupTime) {
-//                    alert("You can't change the pickup time as you have other items in your basket.");
-//                    return false;
-//                }
+                if (basketPickupTime) {
+                    alert("You can't change the pickup time as you have other items in your basket.");
+                    return false;
+                }
                 resetDates();
                 borrowModal.modal('hide');
                 dragSelect = false; // we just want to choose a date so don't set start AND end dates when click/drag
@@ -390,12 +416,6 @@
             borrowModal.on('click', '#chooseReturn', function () {
                 borrowModal.modal('hide');
                 dragSelect = false; // we just want to choose a date so don't set start AND end dates when click/drag
-            });
-
-            borrowModal.on('click', '#buttonToday', function () {
-                console.log("Setting reservation from today");
-                setPickup(currentPickupTime, null, currentPickupSiteId, currentPickupSiteName);
-                $("#buttonNDays").show();
             });
 
             extendModal.on('click', '.charge-to', function () {
@@ -445,36 +465,29 @@
 
             function eventClickHandler(calEvent, jsEvent) {
 
-                var start    = moment(calEvent.start);
-                var eventEnd = moment(calEvent.end);
+                var eventStart = moment(calEvent.start);
+                var eventEnd   = moment(calEvent.end);
 
                 // Get the changeover time for the clicked opening slot
-                changeOverTime = moment(calEvent.extendedProps.changeover);
+                // If this is null, we use the slot start for pickup and slot end for return
+                var selectedTime = null;
+                if (calEvent.extendedProps.changeover) {
+                    selectedTime = moment(calEvent.extendedProps.changeover);
+                }
 
                 var siteName = calEvent.extendedProps.siteName;
                 var siteId   = calEvent.extendedProps.siteId;
-
-                // If a slot has a changeover time, use that for the start date
-                // else use the start and end times
-                if (eventEnd.format("HHmm") != changeOverTime.format("HHmm")) {
-                    start    = changeOverTime;
-                    eventEnd = changeOverTime;
-                }
 
                 var duration, days, hours, extensionFee;
 
                 if (calendarMode == 'extend') {
                     // Extending a loan
-
                     if (!validateExtensionDate(eventEnd)) {
                         return false;
                     }
-
                     var originalDate = moment(originalReturnDate);
                     duration = moment.duration(eventEnd.diff(originalDate));
                     days = duration.asDays();
-
-                    // Round to nearest day
                     days = Math.round(days);
 
                     // UI
@@ -496,72 +509,78 @@
                     }
 
                     extendModal.modal();
-
                 } else {
                     // Booking or reserving
                     if ($("#date_from").val()) {
-                        // Check the period is OK
-                        var dateFrom = moment($("#date_from").val());
-                        duration     = moment.duration(eventEnd.diff(dateFrom));
-                        days         = duration.asDays();
-                        hours        = duration.asHours();
-
-                        // Round to nearest day
-                        days = Math.round(days);
-
-                        if (maxLoanDays > 0 && days > maxLoanDays && isAdmin == false) {
-                            alert(alert_max_days);
-                            return false;
+                        // We've already set the start date, check the period is OK
+                        if (!selectedTime) {
+                            // No changeover time, use the end of the slot
+                            selectedTime = eventEnd;
                         }
-                        if (minLoanDays > 0 && days < minLoanDays && isAdmin == false) {
-                            alert(alert_min_days);
-                            return false;
-                        }
-
-                        // Deal with same-day loans
-                        if (days < 1) {
-                            days = 1;
-                        }
-
-                        // Start may have been set to changeover time above
-                        return setReturn(dateFrom, eventEnd, siteId, siteName);
+                        setReturn(selectedTime, eventStart, eventEnd, siteId, siteName);
                     } else {
-                        setPickup(start, eventEnd, siteId, siteName);
-                        borrowModal.modal();
+                        // We've not chosen a start date yet, user is selecting pick up
+                        if (!selectedTime) {
+                            // No changeover time, use the beginning of the slot
+                            selectedTime = eventStart;
+                        }
+                        setPickup(selectedTime, eventStart, eventEnd, siteId, siteName);
                     }
                 }
             }
 
-            function setReturn(start, end, siteId, siteName) {
-                if (!validateBookingPeriod(start, end)) {
+            function setReturn(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName) {
+
+                var duration, days, hours;
+                bookingStartFrom = moment($("#date_from").val()+" "+$("#time_from").val());
+
+                duration     = moment.duration(selectedTime.diff(bookingStartFrom));
+                days         = duration.asDays();
+                hours        = duration.asHours();
+                days         = Math.round(days);
+
+                if (maxLoanDays > 0 && days > maxLoanDays && isAdmin == false) {
+                    alert(alert_max_days);
                     return false;
                 }
-                // Set the return date
-                $("#date_to").val(end.format("YYYY-MM-DD"));
-                $("#time_to").val(end.format("HH:mm"));
+                if (minLoanDays > 0 && days < minLoanDays && isAdmin == false) {
+                    alert(alert_min_days);
+                    return false;
+                }
+                if (!validateBookingPeriod(bookingStartFrom, selectedTime)) {
+                    return false;
+                }
+
+                // Set the return date, time and site
+                $("#date_to").val(selectedTime.format("YYYY-MM-DD"));
+                $("#time_to").val(selectedTime.format("HH:mm"));
                 $("#to_site").val(siteId);
-                $(".show_date_to").html(end.format("DD MMMM"));
-                $(".show_time_to").html(end.format("h:mm a"));
-                $(".site_to").html(siteName);
+                $(".show_date_to").html('<i class="far fa-clock"></i> '+selectedTime.format("DD MMMM"));
+                $(".show_time_to").html(selectedTime.format("h:mm a"));
+                $(".site_to").html('<i class="far fa-hospital"></i> '+siteName);
+
+                // Set the valid times on the time picker based on opening slot times
+                timeToPicker.timepicker('option', { 'minTime': clickedSlotFrom.format("h:mma"), 'maxTime': clickedSlotTo.format("h:mma") });
 
                 borrowModal.modal();
 
                 calculateTotalFee();
 
-                var returnCell = $(".fc-bg").find("[data-date='"+end.format("YYYY-MM-DD")+"']");
+                var returnCell = $(".fc-bg").find("[data-date='"+selectedTime.format("YYYY-MM-DD")+"']");
                 $(".return-day").remove();
                 var text_return_day = 'Return';
                 returnCell.html('<div class="label label-xs label-default return-day">'+text_return_day+'</div>');
 
                 $("#chooseReturnButton").hide();
                 $("#borrowModalConfirm").show();
+
             }
 
-            function setPickup(dateTimeFrom, dateTimeTo, siteId, siteName) {
+            function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName) {
 
                 $("#booking-help").show();
 
-                if (!validatePickupDate(dateTimeFrom)) {
+                if (!validatePickupDate(selectedTime)) {
                     $("#button-borrow").remove();
                     alert(text_clash_date);
                     return false;
@@ -576,40 +595,47 @@
                 $(".pickup-day").remove();
 
                 // Set the pickup date
-                $("#date_from").val(dateTimeFrom.format("YYYY-MM-DD"));
-                $("#time_from").val(dateTimeFrom.format("HH:mm"));
+                $("#date_from").val(selectedTime.format("YYYY-MM-DD"));
+                $("#time_from").val(selectedTime.format("HH:mm"));
                 $("#from_site").val(siteId);
 
-                $(".show_date_from").html( dateTimeFrom.format("DD MMMM") );
-                $(".show_time_from").html( dateTimeFrom.format("h:mm a") );
+                $(".show_date_from").html('<i class="far fa-clock"></i> '+selectedTime.format("DD MMMM") );
+                $(".show_time_from").html( selectedTime.format("h:mm a") );
 
-                $(".site_from").html(siteName);
+                $(".site_from").html('<i class="far fa-hospital"></i> '+siteName);
                 $("#choosePickupButton").hide();
                 $("#chooseReturn").show();
+
+                // Set the valid times on the time picker, if we are setting pickup from a time slot
+                if (clickedSlotFrom && clickedSlotTo) {
+                    timeFromPicker.timepicker('option', { 'minTime': clickedSlotFrom.format("h:mma"), 'maxTime': clickedSlotTo.format("h:mma") });
+                }
 
                 if (!$("#date_to").val()) {
                     // This is the first time we're setting pickup
                     $("#chooseReturnButton").show();
                 }
 
-                var pickupCell = $(".fc-bg").find("[data-date='"+dateTimeFrom.format("YYYY-MM-DD")+"']");
+                var pickupCell = $(".fc-bg").find("[data-date='"+selectedTime.format("YYYY-MM-DD")+"']");
                 pickupCell.html('<div class="label label-xs label-default pickup-day">'+text_pickup_day+'</div>');
 
-                basketPickupTime = dateTimeFrom;
+                basketPickupTime = selectedTime;
                 basketSiteFromId = siteId;
                 basketSiteFromName = siteName;
 
                 // Set the default return day based on item loan days if user has manually chosen pickup time
-                if (dateTimeTo && itemLoanDays > 1 && 0) {
-                    var returnTime;
-                    returnTime = moment(dateTimeFrom);
-                    returnTime = returnTime.add(itemLoanDays, 'd');
-                    var r = setReturn(dateTimeFrom, returnTime, siteId, siteName, itemLoanDays);
-                    if (r === false) {
-                        // failed validation
-//                        location.reload();
-                    }
-                }
+//                if (dateTimeTo && itemLoanDays > 1 && 0) {
+//                    var returnTime;
+//                    returnTime = moment(selectedTime);
+//                    returnTime = returnTime.add(itemLoanDays, 'd');
+//                    var r = setReturn(selectedTime, returnTime, siteId, siteName, itemLoanDays);
+//                    if (r === false) {
+//                        // failed validation
+////                        location.reload();
+//                    }
+//                }
+
+                borrowModal.modal();
             }
 
             // We used to have this function which checked the left menu contained the site key
