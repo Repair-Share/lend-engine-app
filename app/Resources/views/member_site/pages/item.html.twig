@@ -144,12 +144,14 @@
             var itemSiteName = sites[itemSiteId];
 
             var dragSelect = true;
+            var hasBasket = false;
 
             // Set the pickup time and location if we already have a basket
             {% if tenantInformation.basket.loanRows is defined and tenantInformation.basket.loanRows|length > 0 %}
             basketPickupTime = moment("{{ tenantInformation.basket.loanRows|first.dueOutAt|date("Y-m-d H:i") }}");
             basketSiteFromId = {{ tenantInformation.basket.loanRows|first.siteFrom.id }};
             basketSiteFromName = '{{ tenantInformation.basket.loanRows|first.siteFrom.name }}';
+            hasBasket = true;
             {% endif %}
 
             // Set up timepickers
@@ -382,7 +384,7 @@
             });
 
             borrowModal.on('click', '.site_from', function () {
-                if (basketPickupTime) {
+                if (hasBasket == true) {
                     alert("You can't change the pickup time as you have other items in your basket.");
                     return false;
                 }
@@ -404,7 +406,7 @@
 
             // User clicks the 'from' date to choose another day
             borrowModal.on('click', '#choosePickup', function () {
-                if (basketPickupTime) {
+                if (hasBasket == true) {
                     alert("You can't change the pickup time as you have other items in your basket.");
                     return false;
                 }
@@ -625,16 +627,16 @@
                 basketSiteFromName = siteName;
 
                 // Set the default return day based on item loan days if user has manually chosen pickup time
-//                if (dateTimeTo && itemLoanDays > 1 && 0) {
-//                    var returnTime;
-//                    returnTime = moment(selectedTime);
-//                    returnTime = returnTime.add(itemLoanDays, 'd');
-//                    var r = setReturn(selectedTime, returnTime, siteId, siteName, itemLoanDays);
-//                    if (r === false) {
-//                        // failed validation
-////                        location.reload();
-//                    }
-//                }
+                if (selectedTime && itemLoanDays > 1) {
+                    var returnTime;
+                    returnTime = moment(selectedTime);
+                    returnTime = returnTime.add(itemLoanDays, 'd');
+                    if (overlapsExistingBooking(selectedTime, returnTime)) {
+                        console.log("Cannot auto-set end date as conflicts with another booking.");
+                    } else {
+                        setReturn(returnTime, clickedSlotFrom, clickedSlotTo, siteId, siteName);
+                    }
+                }
             }
 
             // We used to have this function which checked the left menu contained the site key
@@ -664,13 +666,9 @@
             function validateBookingPeriod(start, end) {
                 var bookingPeriodIsValid = true;
 
-                // Check against other bookings
-                $(bookings).each(function() {
-                    var bookingStart = moment(this.start);
-                    if (bookingStart > moment(start) && bookingStart < moment(end)) {
-                        bookingPeriodIsValid = false;
-                    }
-                });
+                if (overlapsExistingBooking(start, end)) {
+                    bookingPeriodIsValid = false;
+                }
 
                 if (bookingPeriodIsValid == false) {
                     console.log("validateBookingPeriod : booking within other booking");
@@ -684,6 +682,18 @@
                 }
 
                 return true;
+            }
+
+            function overlapsExistingBooking(start, end) {
+                var overlaps = false;
+                // Check against other bookings
+                $(bookings).each(function() {
+                    var bookingStart = moment(this.start);
+                    if (bookingStart > moment(start) && bookingStart < moment(end)) {
+                        overlaps = true;
+                    }
+                });
+                return overlaps;
             }
 
             function validateExtensionDate(newDate) {
