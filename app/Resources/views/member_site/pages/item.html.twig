@@ -139,7 +139,7 @@
             {% for site in sites %}
             sites[{{ site.id }}] = "{{ site.name }}";
             {% endfor %}
-            {#activeSiteId = '{% if app.user %}{{ app.user.activeSite.id }}{% else %}{{ sites[0].id }}{% endif %}';#}
+            activeSiteId = '{% if app.user %}{{ app.user.activeSite.id }}{% else %}{{ sites[0].id }}{% endif %}';
             var itemSiteId = '{{ product.inventoryLocation.site.id }}';
             var itemSiteName = sites[itemSiteId];
 
@@ -282,14 +282,6 @@
                         currentPickupTime = start;
                         $("#buttonToday").html("Today ("+start.format("HH:mm")+")").show();
                     }
-                    var start_display, end_display;
-                    if (calendarMode == 'extend') {
-                        start_display = "none";
-                        end_display = "block";
-                    } else {
-                        start_display = "block";
-                        end_display = "none";
-                    }
                     if (calEvent.extendedProps.siteName) {
                         // It's a time slot for user selection
                         if (calendar.view.type == 'timeGridWeek') {
@@ -298,14 +290,6 @@
                             return false;
                         }
                         txt = '';
-//                        if (end.format("HHmm") == changeOverTime.format("HHmm")) {
-//                            // just show the opening hours as we're going end-slot to end-slot
-//                            txt = txt + '<div class="t_start" style="font-size: 14px; font-weight: bold; display:'+start_display+'">' + start.format("h:mm a ") + '</div>';
-//                            txt = txt + '<div class="t_end" style="font-size: 14px; font-weight: bold; display:'+end_display+'">' + end.format("h:mm a ") + '</div>';
-//                        } else {
-//                            txt = txt + '<div class="t_start" style="font-size: 14px; font-weight: bold; display:'+start_display+'">' + changeOverTime.format("h:mm a ") + '</div>';
-//                            txt = txt + '<div class="t_end" style="font-size: 14px; font-weight: bold; display:'+end_display+'">' + changeOverTime.format("h:mm a ") + '</div>';
-//                        }
                         if (calEvent.extendedProps.changeover) {
                             txt = txt + '<div class="t_end" style="font-size: 14px; font-weight: bold; ">' + moment(calEvent.extendedProps.changeover).format("h:mm a ") + '</div>';
                         }
@@ -372,10 +356,8 @@
             });
 
             page.on('click', '.button-borrow', function(event) {
-                loadSiteOpeningTimes();
+                loadSiteOpeningTimes(true);
                 borrowModal.modal();
-                $(".t_start").show();
-                $(".t_end").hide();
             });
 
             borrowModal.on('click', '.borrowModalCancel', function () {
@@ -432,8 +414,8 @@
                 }
             });
 
-            function loadSiteOpeningTimes() {
-                addSitesToCal();
+            function loadSiteOpeningTimes(autoSetPickup) {
+                addSitesToCal(autoSetPickup);
                 $("#item-core").hide();
                 $(".block-borrow").fadeIn(100);
                 $('html, body').animate({
@@ -568,7 +550,9 @@
                 $(".site_to").html('<i class="far fa-hospital"></i> '+siteName);
 
                 // Set the valid times on the time picker based on opening slot times
-                timeToPicker.timepicker('option', { 'minTime': clickedSlotFrom.format("h:mma"), 'maxTime': clickedSlotTo.format("h:mma") });
+                if (clickedSlotFrom && clickedSlotTo) {
+                    timeToPicker.timepicker('option', { 'minTime': clickedSlotFrom.format("h:mma"), 'maxTime': clickedSlotTo.format("h:mma") });
+                }
 
                 borrowModal.modal();
 
@@ -703,8 +687,9 @@
                 return true;
             }
 
+            /** Returns the site ID that the time was found in */
             function isValidBookingTime(time, siteId) {
-                var timeLiesWithinOpeningHours = false;
+                var timeFoundWithinSiteOpening = false;
                 $(calendar.getEvents()).each(function(i, event) {
 //                    Enable this extra validation when we figure out how to click-drag over multiple sites
 //                    For now, just return OK if there is any site open at this time
@@ -712,11 +697,13 @@
 //                    if (event.extendedProps.siteId == siteId) {
                     if (event.extendedProps.siteId > 0) {
                         if (time >= moment(event.start) && time <= moment(event.end)) {
-                            timeLiesWithinOpeningHours = true;
+                            timeFoundWithinSiteOpening = event.extendedProps.siteId;
+                            console.log("Time found in site "+timeFoundWithinSiteOpening);
+                        } else {
                         }
                     }
                 });
-                return timeLiesWithinOpeningHours;
+                return timeFoundWithinSiteOpening;
             }
 
             function overlapsExistingBooking(start, end) {
@@ -789,7 +776,7 @@
                 }
             }
 
-            function addSitesToCal() {
+            function addSitesToCal(autoSetPickup) {
                 var url = "{{ path('site_data') }}?itemId={{ product.id }}";
                 calendar.addEventSource( {
                     url: url,
@@ -799,10 +786,36 @@
                     },
                     success: function(events) {
                         setBookableDays(events);
+                        if (autoSetPickup) {
+                            // Try and set the pickup date based on the user time and item location
+                            window.setTimeout(function() {
+                                var now = moment();
+                                if (isValidBookingTime(now)) {
+                                    // We're at a[ny] site during opening hours, no need to click.
+                                    // @TODO time should be validated against the item location
+                                    // @TODO we should use the site opening/closing times for the loan, not NOW
+                                    // @TODO the null times should be set to the start/end times for the found slot
+                                    setPickup(now, null, null, itemSiteId, itemSiteName);
+                                } else {
+                                    console.log("Can't auto-set the booking: "+now.format("YYYY-MM-DD h:mm a"));
+                                }
+                            }, 1000);
+                        }
                     },
                     textColor: 'black',
                     className: 'siteOpening'
                 });
+            }
+
+            function autoSetPickup() {
+                var now = moment();
+                if (isValidBookingTime(now)) {
+                    // We're at a site during opening hours, no need to click.
+                    console.log("Setting pick up");
+                    setPickup(now, null, null, itemSiteId, itemSiteName);
+                } else {
+                    console.log("Can't auto-set the booking: "+now.format("YYYY-MM-DD h:mm a"));
+                }
             }
 
             function addBookingsToCal() {

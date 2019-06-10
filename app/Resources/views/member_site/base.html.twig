@@ -195,8 +195,8 @@
 {% endif %}
 
 <script>
-    $("#admin-tools").on('click', '#show-admin-tools', function() {
-        $('#admin-tools .hidden-xs').removeClass('hidden-xs');
+    $(document).on('click', '#show-admin-tools', function() {
+        $('#admin-tools').removeClass('hidden-xs');
         $("#show-admin-tools").hide();
     });
 </script>
