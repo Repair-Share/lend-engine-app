@@ -79,6 +79,7 @@
     <br>
     <div class="row">
         {% for site in sites %}
+            {% if site.isActive %}
             <div class="col-xs-6 col-md-4 site-id-{{ site.id }}">
                 <div class="site" style="border-left: 8px solid {{ site.colour }};">
                     <div style="padding-bottom: 6px;">{{ site.name }}</div>
@@ -87,6 +88,7 @@
                     </a>
                 </div>
             </div>
+            {% endif %}
         {% endfor %}
     </div>
 
