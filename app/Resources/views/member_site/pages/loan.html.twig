@@ -72,7 +72,7 @@
     {% if loan.loanRows|length > 0 %}
         <div style="padding: 10px">
             <i class="fa fa-clock" style="color: #5cb85c"></i>
-            {% trans %}public_basket.pickup_after{% endtrans %} <strong>{{ loan.loanRows|first.dueOutAt|date("d F g:i a") }}</strong>
+            {% trans %}public_basket.pickup_after{% endtrans %} <strong>{{ loan.loanRows|first.dueOutAt|date("d F g:i a", false) }}</strong>
             {% trans %}public_basket.from{% endtrans %} <strong>{{ loan.loanRows|first.siteFrom.name }}</strong>
         </div>
     {% endif %}
@@ -118,7 +118,7 @@
                     <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a> <br>
 
                     <i class="far fa-clock"></i>
-                    {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
+                    {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a", false) }}</strong>
 
                     ( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
 
