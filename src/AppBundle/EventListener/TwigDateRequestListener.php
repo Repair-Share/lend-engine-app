@@ -31,6 +31,7 @@ class TwigDateRequestListener
         } catch (\Exception $e) {
             $timezone = 'Europe/London';
         }
+        $timezone = 'Europe/London';
         $this->twig->getExtension('Twig_Extension_Core')->setTimezone($timezone);
     }
 }

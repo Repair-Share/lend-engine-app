@@ -141,7 +141,7 @@
             {% for site in sites %}
             sites[{{ site.id }}] = "{{ site.name }}";
             {% endfor %}
-            activeSiteId = '{% if app.user %}{{ app.user.activeSite.id }}{% else %}{{ sites[0].id }}{% endif %}';
+            {#activeSiteId = '{% if app.user and app.user.activeSite %}{{ app.user.activeSite.id }}{% else %}{{ sites[0].id }}{% endif %}';#}
             var itemSiteId = '{{ product.inventoryLocation.site.id }}';
             var itemSiteName = sites[itemSiteId];
 

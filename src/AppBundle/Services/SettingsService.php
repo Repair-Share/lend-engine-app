@@ -111,7 +111,8 @@ class SettingsService
             'group_similar_items' => 1,
             'default_calendar_view' => 'dayGridMonth',
             'org_locale' => 'en',
-            'label_type' => '11355'
+            'label_type' => '11355',
+            'org_timezone' => 'Europe/London'
         ];
 
         foreach ($this->settings[$this->db] AS $k => $v) {
