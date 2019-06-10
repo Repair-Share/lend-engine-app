@@ -109,7 +109,6 @@
 
                     </div>
 
-
                 </div>
                 <div class="col-md-1">
                     <label>&nbsp;</label>
@@ -119,30 +118,62 @@
         </div>
     </div>
 
-    <div class="row" id="batch-action-wrapper">
-        <div class="col-md-12" style="padding-bottom: 15px">
-            With <span id="count-rows"></span> selected items :
-            <button type="button" class="btn btn-xs btn-default" id="batch-move">Move / assign</button>
+    <form method="POST" id="batchActionForm" action="{{ path('batch_update_item') }}">
+        <div class="row" id="batch-action-wrapper" style="padding-bottom: 15px">
+            <div class="col-md-12">
+                With <span id="count-rows"></span> selected items :
+                <select id="batch-option" name="batch-option" style="width:200px">
+                    <option value="">-- choose --</option>
+                    <option value="move">Move / assign</option>
+                    <option value="fee">Set loan fee</option>
+                    <option value="period">Set loan period (days)</option>
+                    <option value="tag">Set category</option>
+                    <option value="condition">Set condition</option>
+                </select>
+                <span id="batchConditionWrapper" class="batchSelectWrapper" style="display:none;">
+                    <select id="batchCondition" name="batchCondition" style="width:200px;">
+                        <option></option>
+                        {% for condition in conditions %}
+                            <option value="{{ condition.id }}">{{ condition.name }}</option>
+                        {% endfor %}
+                    </select>
+                </span>
+                <span id="batchTagWrapper" class="batchSelectWrapper" style="display:none;">
+                    <select id="batchTag" name="batchTag" class="select-hidden" style="width:400px;">
+                        <option value=""></option>
+                        {% for tag in tags %}
+                            <option value="{{ tag.id }}">{{ tag.name }}</option>
+                        {% endfor %}
+                    </select>
+                </span>
+                <span id="batchFeeWrapper" class="batchSelectWrapper" style="display:none;">
+                    <input id="batchFee" name="batchFee" class="form-control input-100" style="display: inline; position: relative; top: 1px;">
+                </span>
+                <span id="batchPeriodWrapper" class="batchSelectWrapper" style="display:none;">
+                    <input id="batchPeriod" name="batchPeriod" class="form-control input-100" style="display: inline; position: relative; top: 1px;">
+                </span>
+                <button type="button" id="batchCommit" style="display:none;" class="btn btn-sm btn-default batchSelectWrapper">Update</button>
+            </div>
         </div>
-    </div>
-    <div class="row" id="item-list-body">
-        <div class="col-md-12 table-responsive">
-            <table cellspacing="0" class="table table-hover table-striped has-actions" id="data-table-inventory">
-                <thead>
-                <th style="width:10px;"><input type="checkbox" id="select-all"></th>
-                <th>Product</th>
-                <th>Location</th>
-                <th>&nbsp;</th>
-                {% for field in customFields %}
-                    {% if field.showOnItemList == true %}
-                        <th>{{ field.name }}</th>
-                    {% endif %}
-                {% endfor %}
-                <th class="hidden-print" style="width:100px"> </th>
-                </thead>
-            </table>
+        <div class="row" id="item-list-body">
+            <div class="col-md-12 table-responsive">
+                <table cellspacing="0" class="table table-hover table-striped has-actions" id="data-table-inventory">
+                    <thead>
+                    <th style="width:10px;"><input type="checkbox" id="select-all"></th>
+                    <th>Product</th>
+                    <th>Location</th>
+                    <th>&nbsp;</th>
+                    {% for field in customFields %}
+                        {% if field.showOnItemList == true %}
+                            <th>{{ field.name }}</th>
+                        {% endif %}
+                    {% endfor %}
+                    <th class="hidden-print" style="width:100px"> </th>
+                    </thead>
+                </table>
+            </div>
         </div>
-    </div>
+    </form>
 
 {% endblock %}
 
@@ -216,7 +247,12 @@
                 }
             }
 
-            $("#batch-action-wrapper").on('click', "#batch-move", function() {
+            $("#batch-action-wrapper").on('click', "#batchCommit", function() {
+                $("#batchActionForm").submit();
+            });
+
+            $("#batch-action-wrapper").on('change', "#batch-option", function() {
+                var action = $("#batch-option").val();
                 var selectedItemIds = '';
                 var countSelectedRows = 0;
                 $(".row-checkbox").each(function() {
@@ -227,8 +263,27 @@
                 });
                 if (countSelectedRows > 50) {
                     alert("You can only batch process up to 50 items at a time.");
-                } else {
+                    return false;
+                } else if (countSelectedRows == 0) {
+                    alert("Easy tiger. Select some rows before batch updating.");
+                    $("#batch-option").val("");
+                    $(".batchSelectWrapper").hide();
+                    return false;
+                }
+                if (action == 'move') {
                     loadModal("{{ path('item_move') }}/"+selectedItemIds);
+                } else if (action == 'fee') {
+                    $(".batchSelectWrapper").hide();
+                    $("#batchFeeWrapper, #batchCommit").fadeIn();
+                } else if (action == 'period') {
+                    $(".batchSelectWrapper").hide();
+                    $("#batchPeriodWrapper, #batchCommit").fadeIn();
+                } else if (action == 'tag') {
+                    $(".batchSelectWrapper").hide();
+                    $("#batchTagWrapper, #batchCommit").fadeIn();
+                } else if (action = 'condition') {
+                    $(".batchSelectWrapper").hide();
+                    $("#batchConditionWrapper, #batchCommit").fadeIn();
                 }
             });
 

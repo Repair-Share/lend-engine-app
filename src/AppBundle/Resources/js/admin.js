@@ -69,7 +69,7 @@ $(document).on('click', '#show-admin-tools', function() {
 
 $(document).ready(function(){
 
-    // Add a div to hold "x characters left"
+    // Add a div to hold "x characters left" under a form field
     $(".limited").after('<div class="limiter"></div>');
 
     dateToday = moment().format('ddd MMM D YYYY');

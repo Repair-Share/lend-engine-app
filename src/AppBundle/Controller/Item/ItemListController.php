@@ -261,7 +261,7 @@ class ItemListController extends Controller
             );
 
             // Add the standard columns
-            $columns[] = '<input type="checkbox" class="row-checkbox" data-id="'.$item->getId().'">';
+            $columns[] = '<input type="checkbox" class="row-checkbox" data-id="'.$item->getId().'" name="itemId[]" value="'.$item->getId().'">';
             $columns[] = $itemHtml;
 
             // Location / assignment

@@ -907,6 +907,20 @@ class InventoryItem
     }
 
     /**
+     * @param $tags
+     * @return $this
+     */
+    public function setTags($tags)
+    {
+        $this->tags = new ArrayCollection();
+        foreach ($tags AS $tag) {
+            $this->tags[] = $tag;
+        }
+
+        return $this;
+    }
+
+    /**
      * Add site
      *
      * @param \AppBundle\Entity\Site $site

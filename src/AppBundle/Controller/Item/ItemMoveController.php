@@ -79,6 +79,10 @@ class ItemMoveController extends Controller
                     $this->addFlash("error", "Item ID {$itemId} cannot be moved - it does not exist.");
                     continue;
                 } else {
+                    if ($inventoryItem->getInventoryLocation()->getId() == 1) {
+                        $this->addFlash("error", "Item ID {$itemId} cannot be moved - it is on loan.");
+                        continue;
+                    }
                     if ( $inventoryService->itemMove($inventoryItem, $toLocation, null, $contact, $userNote, $cost) ) {
                         $updatedItems++;
                         $assignedItemNames .= '<div>- '.$inventoryItem->getName().'</div>';
