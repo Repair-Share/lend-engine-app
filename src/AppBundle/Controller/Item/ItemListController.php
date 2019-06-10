@@ -226,7 +226,7 @@ class ItemListController extends Controller
             }
 
             if ($item->getInventoryLocation()->getId() > 1) {
-                $moveUrl = $this->generateUrl('item_move', ['id' => $itemId,]);
+                $moveUrl = $this->generateUrl('item_move', ['idSet' => $itemId,]);
                 $links .= '<li><a class="modal-link" href="'.$moveUrl.'">Move / Assign</a></li>';
 
                 $removeUrl = $this->generateUrl('item_archive', ['id' => $itemId]);
@@ -261,6 +261,7 @@ class ItemListController extends Controller
             );
 
             // Add the standard columns
+            $columns[] = '<input type="checkbox" class="row-checkbox" data-id="'.$item->getId().'">';
             $columns[] = $itemHtml;
 
             // Location / assignment

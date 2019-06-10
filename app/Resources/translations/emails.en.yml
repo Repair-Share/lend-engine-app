@@ -14,8 +14,8 @@ le_email:
 
   assign: # When a team member is assigned an item (eg for repair)
     subject:
-    title: You've been assigned an item
-    message: %firstName%, you have been assigned item "%itemName%" by %assignorName%.
+    title: You've been assigned item(s)
+    message: "%firstName%, you have been assigned item(s) by %assignorName% : %itemName%"
     added_note: also added a note
     all_items: See all items assigned to you
     current_location: Current location

@@ -117,13 +117,19 @@
                 </div>
             </form>
         </div>
-
     </div>
 
+    <div class="row" id="batch-action-wrapper">
+        <div class="col-md-12" style="padding-bottom: 15px">
+            With <span id="count-rows"></span> selected items :
+            <button type="button" class="btn btn-xs btn-default" id="batch-move">Move / assign</button>
+        </div>
+    </div>
     <div class="row" id="item-list-body">
         <div class="col-md-12 table-responsive">
             <table cellspacing="0" class="table table-hover table-striped has-actions" id="data-table-inventory">
                 <thead>
+                <th style="width:10px;"><input type="checkbox" id="select-all"></th>
                 <th>Product</th>
                 <th>Location</th>
                 <th>&nbsp;</th>
@@ -143,8 +149,8 @@
 {% block pagejs %}
     <script>
         $(document).ready(function() {
-
-            var dataTable = $('#data-table-inventory').DataTable({
+            var itemTable = $('#data-table-inventory');
+            var dataTable = itemTable.DataTable({
                 ordering: false,
                 serverSide: true,
                 autoWidth: true,
@@ -170,6 +176,7 @@
                     null,
                     null,
                     null,
+                    null,
                 {% for field in customFields %}
                     {% if field.showOnItemList == true %}
                     null,
@@ -177,6 +184,52 @@
                 {% endfor %}
                     { className: "hidden-print" }
                 ]
+            });
+
+            $("table.table").on('click', "#select-all", function() {
+                if ($(this).is(":checked")) {
+                    $(".row-checkbox").prop('checked', true);
+                } else {
+                    $(".row-checkbox").prop('checked', false);
+                }
+                highlightSelectedRows();
+            });
+
+            $("table.table").on('click', ".row-checkbox", function() {
+                highlightSelectedRows();
+            });
+
+            function highlightSelectedRows() {
+                var selectedRows = 0;
+                $(".row-checkbox").each(function() {
+                    if ($(this).is(":checked")) {
+                        $(this).parents("tr").addClass('selected-row');
+                        selectedRows++;
+                    } else {
+                        $(this).parents("tr").removeClass('selected-row');
+                    }
+                });
+                if (selectedRows > 0) {
+                    $("#count-rows").html(selectedRows);
+                } else {
+                    $("#count-rows").html("");
+                }
+            }
+
+            $("#batch-action-wrapper").on('click', "#batch-move", function() {
+                var selectedItemIds = '';
+                var countSelectedRows = 0;
+                $(".row-checkbox").each(function() {
+                    if ($(this).is(':checked')) {
+                        selectedItemIds += $(this).data('id')+',';
+                        countSelectedRows++;
+                    }
+                });
+                if (countSelectedRows > 50) {
+                    alert("You can only batch process up to 50 items at a time.");
+                } else {
+                    loadModal("{{ path('item_move') }}/"+selectedItemIds);
+                }
             });
 
             dataTable.buttons().container().appendTo('#data-table-inventory_length').css('padding-right', '20px');

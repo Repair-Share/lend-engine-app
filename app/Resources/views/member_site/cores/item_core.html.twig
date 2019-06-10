@@ -17,7 +17,7 @@
                                 <div style="position:absolute; bottom: 10px; left: 25px;">
                                     <a href="{{ path('item', {id: product.id}) }}" class="btn btn-xs btn-primary role-admin">Edit</a>
                                     {% if product.inventoryLocation.id > 1 %}
-                                        <a href="{{ url('item_move', {id: product.id}) }}" class="btn btn-xs btn-primary modal-link">Move / assign</a>
+                                        <a href="{{ url('item_move', {idSet: product.id}) }}" class="btn btn-xs btn-primary modal-link">Move / assign</a>
                                         <a href="{{ url('item_archive', {id: product.id}) }}" class="btn btn-xs btn-primary modal-link">Delete</a>
                                     {% endif %}
                                 </div>
@@ -57,7 +57,7 @@
                             <a href="{{ path('item', {id: product.id}) }}" class="btn btn-xs btn-primary role-admin">Edit</a>
 
                             {% if product.inventoryLocation.id > 1 %}
-                                <a href="{{ url('item_move', {id: product.id}) }}" class="btn btn-xs btn-primary modal-link">Move / assign</a>
+                                <a href="{{ url('item_move', {idSet: product.id}) }}" class="btn btn-xs btn-primary modal-link">Move / assign</a>
                                 <a href="{{ url('item_archive', {id: product.id}) }}" class="btn btn-xs btn-primary modal-link">Delete</a>
                             {% endif %}
                         </div>

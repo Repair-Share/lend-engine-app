@@ -48,18 +48,12 @@ class ItemMoveType extends AbstractType
         /** @var $contactRepo \AppBundle\Repository\ContactRepository */
         $contactRepo = $this->em->getRepository('AppBundle:Contact');
         $contacts = $contactRepo->findAllStaff();
-        if ($options['assignedTo'] && 0) {
-            $defaultValue = $options['assignedTo'];
-        } else {
-            $defaultValue = '';
-        }
         $builder->add('contact', EntityType::class, array(
             'class' => 'AppBundle:Contact',
             'choices' => $contacts,
             'choice_label' => 'name',
             'label' => 'Assign to:',
             'required' => false,
-            'data' => $defaultValue,
             'attr' => [
                 'data-name' => 'Assigned to',
                 'data-help' => 'Notify a staff member that work needs to be done on this item.'
@@ -95,8 +89,7 @@ class ItemMoveType extends AbstractType
     {
         $resolver->setDefaults(array(
             'em'         => null,
-            'location'   => null,
-            'assignedTo' => null
+            'location'   => null
         ));
     }
 }

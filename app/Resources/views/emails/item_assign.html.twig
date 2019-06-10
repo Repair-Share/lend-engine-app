@@ -7,12 +7,12 @@
 
 {% block content %}
 
-    {{ 'le_email.assign.message'|trans({"%firstName%": assignee.firstName, '%itemName%': item.name, '%assignorName%': assignor.Name}) }}
-    <br><br>
+    {{ 'le_email.assign.message'|trans({"%firstName%": assignee.firstName, '%itemName%': itemNames, '%assignorName%': assignor.Name})|raw }}
+    <br>
 
     <div>{% trans %}le_email.assign.current_location{% endtrans %}:</div>
-    <div style="font-size: 20px; padding-bottom: 10px;">
-        {{ item.inventoryLocation.Name }}
+    <div style="font-weight: bold; padding-bottom: 10px;">
+        {{ newLocationName }}
     </div>
 
     {% if notes %}
