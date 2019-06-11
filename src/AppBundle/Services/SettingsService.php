@@ -314,6 +314,7 @@ class SettingsService
             'mailchimp_default_list_id',
             'mailchimp_double_optin',
             'enable_waiting_list',
+            'google_tracking_id',
 
             'reservation_fee',
             'charge_daily_fee',

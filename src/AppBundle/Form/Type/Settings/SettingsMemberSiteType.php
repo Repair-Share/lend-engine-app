@@ -222,6 +222,16 @@ then the user will also be shown a button to continue to choose a membership.',
             )
         ));
 
+        $builder->add('google_tracking_id', TextType::class, array(
+            'label' => 'Google Analytics tracking ID',
+            'data' => $dbData['google_tracking_id'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => 'eg UA-7133303-X',
+                'data-help' => 'Adds a Global Site Tag (gtag.js) to your member site for visitor analytics.',
+            )
+        ));
+
     }
 
     /**
