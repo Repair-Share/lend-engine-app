@@ -34,6 +34,7 @@ class ReportLoanedItemsController extends Controller
      */
     public function ItemsReport(Request $request)
     {
+        /** @var \Doctrine\ORM\EntityManager $em */
         $em = $this->getDoctrine()->getManager();
         $tags = $em->getRepository('AppBundle:ProductTag')->findAllOrderedByName();
 
@@ -57,6 +58,7 @@ class ReportLoanedItemsController extends Controller
         $this->setDateRange($request);
 
         // Set up filters
+        // @TODO remove direct dependency on REQUEST here
         $filter = array(
             'search'    => $request->get('search'),
             'group_by'  => $request->get('group_by'),
@@ -66,7 +68,30 @@ class ReportLoanedItemsController extends Controller
             'date_to'   => $this->dateTo,
         );
 
+        // Main report data
         $data = $report->run($filter);
+
+        // Get the extra fees for the same dates
+        $itemFeesByItemName = [];
+        $itemFeesCaptured = false;
+        if ($request->get('include_other_fees') == 'yes') {
+            if ($request->get('group_by') == 'product') {
+                /** @var \AppBundle\Services\Report\ReportPayments $paymentReport */
+                $paymentReport = $this->get('report.payments');
+                $payments = $paymentReport->run($filter);
+                foreach ($payments AS $payment) {
+                    if (!isset($itemFeesByItemName[$payment['itemName']])) {
+                        $itemFeesByItemName[$payment['itemName']] = 0;
+                    }
+                    if ($payment['type'] == 'FEE' && $payment['note'] != null) {
+                        $itemFeesByItemName[$payment['itemName']] += $payment['amount'];
+                    }
+                }
+                $itemFeesCaptured = true;
+            } else {
+                $this->addFlash("info", "Extra fees are only included when you report by item name.");
+            }
+        }
 
         $n = 0;
         foreach ($data AS $reportRow) {
@@ -82,12 +107,19 @@ class ReportLoanedItemsController extends Controller
                 }
             }
 
+            $itemName = $reportRow['group_name'];
+
+            $fees = $reportRow['fees'];
+            if ($itemFeesCaptured == true && isset($itemFeesByItemName[$itemName])) {
+                $fees += $itemFeesByItemName[$itemName];
+            }
+
             $tableRows[] = array(
                 'id' => $n,
                 'data' => array(
                     $reportRow['group_name'],
                     $reportRow['qty'],
-                    $reportRow['fees']
+                    number_format($fees, 2)
                 )
             );
             $n++;

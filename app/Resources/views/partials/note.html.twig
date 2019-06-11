@@ -3,7 +3,7 @@
         {% if note.adminOnly %}
             <i class="fa fa-user-secret session-user" data-toggle="tooltip" title="Visible for administrators only"></i>
         {% endif %}
-        <strong>{{ note.createdBy.firstName }}</strong>,
+        <strong>{{ note.createdBy.firstName }} {{ note.createdBy.lastName }}</strong>,
         {{ note.createdAt|date('d M Y g:i a') }}
         {% if note.loan %}
             : loan {{ note.loan.id }}

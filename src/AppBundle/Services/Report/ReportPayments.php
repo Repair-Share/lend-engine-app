@@ -39,6 +39,7 @@ class ReportPayments
             p.amount AS amount,
             p.note AS note,
             p.pspCode AS pspCode,
+            i.name AS itemName,
             IDENTITY(p.deposit) AS deposit_id,
             IDENTITY(p.loan) AS loan_id,
             IDENTITY(p.membership) AS membership_id
@@ -46,6 +47,7 @@ class ReportPayments
 
         $builder->leftJoin('p.contact', 'c');
         $builder->leftJoin('p.paymentMethod', 'pm');
+        $builder->leftJoin('p.inventoryItem', 'i');
 
         if (isset($filter['search']) && $filter['search']) {
             $builder->andWhere('c.firstName LIKE :string');

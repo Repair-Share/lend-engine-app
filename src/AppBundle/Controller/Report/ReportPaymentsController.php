@@ -28,6 +28,7 @@ class ReportPaymentsController extends Controller
             'Member',
             'Type',
             'Payment method',
+            'Item',
             'Note',
             'Amount',
         );
@@ -60,7 +61,7 @@ class ReportPaymentsController extends Controller
             if ($reportRow['deposit_id']) {
                 $type = 'Deposit';
             } else if ($reportRow['loan_id']) {
-                $type = 'Loan';
+                $type = 'Loan '.$reportRow['loan_id'];
             } else if ($reportRow['membership_id']) {
                 $type = 'Membership';
             } else {
@@ -76,6 +77,12 @@ class ReportPaymentsController extends Controller
                 $paymentMethodString .= '<div class="help-block">'.$reportRow['pspCode'].'</div>';
             }
 
+            if ($reportRow['itemName']) {
+                $itemName = $reportRow['itemName'];
+            } else {
+                $itemName = '';
+            }
+
             $tableRows[] = array(
                 'id' => $n,
                 'data' => array(
@@ -83,6 +90,7 @@ class ReportPaymentsController extends Controller
                     '<a href="'.$contactUrl.'">'.$reportRow['contact_name'].'</a>',
                     $type,
                     $paymentMethodString,
+                    $itemName,
                     $reportRow['note'],
                     $fee,
                 )

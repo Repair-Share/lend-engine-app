@@ -191,6 +191,7 @@ class LoanCheckInController extends Controller
                 $payment->setLoan($loanRow->getLoan());
                 $payment->setNote("Check-in fee for ".$inventoryItem->getName().".");
                 $payment->setCreatedBy($user);
+                $payment->setInventoryItem($inventoryItem);
                 $em->persist($payment);
 
                 try {

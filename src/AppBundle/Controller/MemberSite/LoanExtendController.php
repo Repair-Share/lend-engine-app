@@ -119,6 +119,7 @@ class LoanExtendController extends Controller
             $payment->setLoan($loan);
             $payment->setNote("Extend ".$inventoryItem->getName()." {$days} {$dayWord} to ".$newDueDateLocalFormat.".");
             $payment->setCreatedBy($user);
+            $payment->setInventoryItem($inventoryItem);
             $em->persist($payment);
             $noteText .= " (extension fee ".number_format($extensionFee, 2).")";
 

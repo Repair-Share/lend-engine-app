@@ -46,15 +46,14 @@ class ReportNonLoanedItemsController extends Controller
 
         $n = 0;
         foreach ($data AS $reportRow) {
-
             $name = $reportRow['name'];
-
+            $itemPath = $this->generateUrl('item', ['id' => $reportRow['id']]);
             $tableRows[] = array(
                 'id' => $n,
                 'data' => array(
                     $reportRow['sku'],
                     $reportRow['serial'],
-                    $name
+                    '<a href="'.$itemPath.'">'.$name.'</a>'
                 )
             );
             $n++;

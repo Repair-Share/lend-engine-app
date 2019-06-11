@@ -215,7 +215,7 @@
         {% endfor %}
 
         {% for fee in loan.payments %}
-            {% if fee.inventoryItem or fee.type == 'PAYMENT' %}
+            {% if fee.note is null or fee.type == 'PAYMENT' %}
                 {#Fee included in items rows, or is a payment received#}
             {% else %}
                 <tr>

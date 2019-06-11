@@ -428,16 +428,10 @@ class Loan
     public function getTotalFee()
     {
         $totalFee = 0.00;
-        if (count($this->getLoanRows()) > 0) {
-            foreach ($this->getLoanRows() AS $row) {
-                $totalFee += $row->getFee();
-            }
-        }
         if (count($this->getPayments()) > 0) {
-            foreach ($this->getPayments() AS $fee) {
-                if ($fee->getType() == Payment::PAYMENT_TYPE_FEE
-                    && !$fee->getInventoryItem()) {
-                    $totalFee += $fee->getAmount();
+            foreach ($this->getPayments() AS $payment) {
+                if ($payment->getType() == Payment::PAYMENT_TYPE_FEE) {
+                    $totalFee += $payment->getAmount();
                 }
             }
         }

@@ -60,12 +60,8 @@ class UpdateController extends Controller
         // Make any DB updates required running database migrations
         $this->updateSchema();
 
+        /** @var \Doctrine\ORM\EntityManager $em */
         $em = $this->getDoctrine()->getManager();
-
-        /** @var \AppBundle\Services\SettingsService $settingService */
-        $settingService = $this->get('settings');
-
-        $tenant = $settingService->getTenant();
 
         // Mark loans as overdue
         /** @var \AppBundle\Repository\LoanRepository $repository */
@@ -76,6 +72,44 @@ class UpdateController extends Controller
         /** @var \AppBundle\Repository\OpeningTimeExceptionRepository $repository */
         $repository = $em->getRepository('AppBundle:OpeningTimeException');
         $repository->removeHistoricOpeningHours();
+
+        /*   START DATA PATCH TO ADD ITEM ID INTO PAYMENTS FOR EXTENSIONS AND CHECK IN  */
+        /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
+        $itemRepo = $this->getDoctrine()->getRepository('AppBundle:InventoryItem');
+        $sql = "SELECT id,
+reverse(
+    substring(
+    reverse(substring_index(REPLACE(p2.note, 'Extend ', ''), ' days', 1)),
+      (POSITION(' ' IN reverse(substring_index(REPLACE(p2.note, 'Extend ', ''), ' days', 1)))+1)
+    )
+) as name
+FROM payment p2 where p2.note REGEXP 'Extend (.*) [0-9]+ days.*'
+";
+        $stmt = $em->getConnection()->prepare($sql);
+        $stmt->execute();
+        $extensionPayments = $stmt->fetchAll();
+        foreach ($extensionPayments AS $result) {
+            $paymentId = $result['id'];
+            $itemName = $result['name'];
+            if ($item = $itemRepo->findOneBy(['name' => $itemName])) {
+                $updateSql = "UPDATE payment SET item_id = {$item->getId()} WHERE id = {$paymentId}";
+                $em->getConnection()->prepare($updateSql)->execute();
+            }
+        }
+
+        $sql = "select id, item_id, REPLACE(note, 'Check-in fee for ', '') AS name from payment where note REGEXP 'Check-in fee for(.*)'";
+        $stmt = $em->getConnection()->prepare($sql);
+        $stmt->execute();
+        $checkInPayments = $stmt->fetchAll();
+        foreach ($checkInPayments AS $result) {
+            $paymentId = $result['id'];
+            $itemName = trim($result['name'], '.');
+            if ($item = $itemRepo->findOneBy(['name' => $itemName])) {
+                $updateSql = "UPDATE payment SET item_id = {$item->getId()} WHERE id = {$paymentId}";
+                $em->getConnection()->prepare($updateSql)->execute();
+            }
+        }
+        /*   END DATA PATCH   */
 
         return $this->redirect($this->generateUrl('home'));
     }

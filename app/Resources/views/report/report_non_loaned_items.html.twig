@@ -63,7 +63,7 @@
             {% for row in tableRows %}
             <tr id="tr{{ row.id }}">
                 {% for column in row.data %}
-                <td>{{ column }}</td>
+                <td>{{ column|raw }}</td>
                 {% endfor %}
             </tr>
             {% endfor %}
