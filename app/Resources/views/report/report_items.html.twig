@@ -60,8 +60,8 @@
                         <div class="col-md-4 form-group">
                             <label for="include_other_fees">Include extension/other fees</label>
                             <select id="include_other_fees" name="include_other_fees" class="form-control">
-                                <option value="yes" {% if app.request.get('include_other_fees') == 'yes' %}SELECTED{% endif %}>Yes</option>
                                 <option value="no" {% if app.request.get('include_other_fees') == 'no' %}SELECTED{% endif %}>No</option>
+                                <option value="yes" {% if app.request.get('include_other_fees') == 'yes' %}SELECTED{% endif %}>Yes</option>
                             </select>
                         </div>
                     </div>
