@@ -358,7 +358,7 @@
             });
 
             page.on('click', '.button-borrow', function(event) {
-                loadSiteOpeningTimes(true);
+                loadSiteOpeningTimes();
                 borrowModal.modal();
             });
 
@@ -416,8 +416,8 @@
                 }
             });
 
-            function loadSiteOpeningTimes(autoSetPickup) {
-                addSitesToCal(autoSetPickup);
+            function loadSiteOpeningTimes() {
+                addSitesToCal();
                 $("#item-core").hide();
                 $(".block-borrow").fadeIn(100);
                 $('html, body').animate({
@@ -515,7 +515,8 @@
                             // No changeover time, use the beginning of the slot
                             selectedTime = eventStart;
                         }
-                        setPickup(selectedTime, eventStart, eventEnd, siteId, siteName);
+                        // Set pickup time, allowing the system to auto-set the return time if there is a visible slot
+                        setPickup(selectedTime, eventStart, eventEnd, siteId, siteName, true);
                         borrowModal.modal();
                     }
                 }
@@ -570,7 +571,7 @@
 
             }
 
-            function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName) {
+            function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName, autoSetReturn) {
 
                 $("#booking-help").show();
 
@@ -618,16 +619,17 @@
                 basketSiteFromName = siteName;
 
                 // Set the default return day based on item loan days if user has manually chosen pickup time
-                if (selectedTime && itemLoanDays > 1) {
+                if (selectedTime && itemLoanDays > 1 && autoSetReturn == true) {
                     var returnTime;
                     returnTime = moment(selectedTime);
                     returnTime = returnTime.add(itemLoanDays, 'd');
                     if (overlapsExistingBooking(selectedTime, returnTime)) {
                         console.log("Cannot auto-set end date as conflicts with another booking.");
                     } else if (!isValidBookingTime(returnTime, siteId)) {
-                        console.log("Cannot auto-set end date as there is no opening hour slot.");
+                        console.log("Cannot auto-set end date as there is no opening hour slot for T+"+itemLoanDays);
                     } else {
-                        setReturn(returnTime, clickedSlotFrom, clickedSlotTo, siteId, siteName);
+                        console.log("Auto-setting return time based on item loan period.");
+                        setReturn(returnTime, null, null, siteId, siteName);
                     }
                 }
             }
@@ -689,7 +691,7 @@
                 return true;
             }
 
-            /** Returns the site ID that the time was found in */
+            /** Returns the event that the time was found in */
             function isValidBookingTime(time, siteId) {
                 var eventFound = null;
                 $(calendar.getEvents()).each(function(i, event) {
@@ -703,7 +705,6 @@
                         }
                     }
                 });
-                return true;
                 return eventFound;
             }
 
@@ -777,7 +778,7 @@
                 }
             }
 
-            function addSitesToCal(autoSetPickup) {
+            function addSitesToCal() {
                 var url = "{{ path('site_data') }}?itemId={{ product.id }}";
                 calendar.addEventSource( {
                     url: url,
@@ -787,37 +788,27 @@
                     },
                     success: function(events) {
                         setBookableDays(events);
-                        if (autoSetPickup && !hasBasket && isAdmin && itemLoanDays > 1) {
-                            // Try and set the pickup date based on the user time and item location
-                            window.setTimeout(function() {
-                                var now = moment();
-                                var currentSlot = isValidBookingTime(now);
-                                if (currentSlot) {
-                                    // We're at a[ny] site during opening hours, no need to click.
-                                    // @TODO time should be validated against the item location
-//                                    if (window.confirm("Book from today?")) {
-                                        setPickup(moment(currentSlot.start), moment(currentSlot.start), moment(currentSlot.end), itemSiteId, itemSiteName);
-//                                    }
-                                } else {
-                                    console.log("Can't auto-set the booking: "+now.format("YYYY-MM-DD h:mm a"));
-                                }
-                            }, 500);
-                        }
+//                        if (autoSetPickup && !hasBasket && isAdmin && itemLoanDays > 1) {
+//                            // Try and set the pickup date based on the user time and item location
+//                            window.setTimeout(function() {
+//                                var now = moment();
+//                                var currentSlot = isValidBookingTime(now);
+//                                if (currentSlot) {
+//                                    // We're at a[ny] site during opening hours, no need to click.
+//                                    // @TODO time should be validated against the item location
+////                                    if (window.confirm("Book from today?")) {
+//                                    console.log("Auto setting pickup time as site is open now.");
+//                                    setPickup(moment(currentSlot.start), moment(currentSlot.start), moment(currentSlot.end), itemSiteId, itemSiteName);
+////                                    }
+//                                } else {
+//                                    console.log("Can't auto-set the booking: "+now.format("YYYY-MM-DD h:mm a"));
+//                                }
+//                            }, 1000);
+//                        }
                     },
                     textColor: 'black',
                     className: 'siteOpening'
                 });
-            }
-
-            function autoSetPickup() {
-                var now = moment();
-                if (isValidBookingTime(now)) {
-                    // We're at a site during opening hours, no need to click.
-                    console.log("Setting pick up");
-                    setPickup(now, null, null, itemSiteId, itemSiteName);
-                } else {
-                    console.log("Can't auto-set the booking: "+now.format("YYYY-MM-DD h:mm a"));
-                }
             }
 
             function addBookingsToCal() {

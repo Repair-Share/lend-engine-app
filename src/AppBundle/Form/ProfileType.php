@@ -62,25 +62,22 @@ class ProfileType extends AbstractType
             )
         ));
 
-//        if ($this->container->get('service.tenant')->getLocale()) {
-//            $defaultLocale = $this->container->get('service.tenant')->getLocale();
-//        } else {
-//            $defaultLocale = 'en';
-//        }
-
         $languages = [
             'English'    => 'en',
+            'Espanol'    => 'es',
             'Francais'   => 'fr',
-            'Nederlands' => 'nl'
+            'íslensku'   => 'is',
+            'Nederlands' => 'nl',
+            'Română'     => 'ro',
+            'Slovak'     => 'sk',
+            'Svenska'    => 'sv-SE',
+            'Welsh'      => 'cy'
         ];
         $builder->add('locale', ChoiceType::class, array(
             'choices'  => $languages,
-//            'data'     => $defaultLocale,
             'label'    => 'form.locale',
             'required' => true,
         ));
-
-
 
     }
 

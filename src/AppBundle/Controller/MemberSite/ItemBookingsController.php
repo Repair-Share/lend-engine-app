@@ -30,10 +30,11 @@ class ItemBookingsController extends Controller
         $settingsService = $this->get("settings");
 
         // From and To are passed in from the calendar view
+        $end = new \DateTime($dateTo);
         $filter = [
             'item_ids' => [$itemId],
             'from'     => new \DateTime($dateFrom),
-            'to'       => new \DateTime($dateTo)
+            'to'       => $end->modify("+14 days")
         ];
         $reservations = $bookingService->getBookings($filter);
 

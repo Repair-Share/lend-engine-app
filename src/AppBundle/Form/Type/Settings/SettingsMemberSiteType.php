@@ -45,7 +45,7 @@ class SettingsMemberSiteType extends AbstractType
             'Nederlands' => 'nl',
             'Română'     => 'ro',
             'Slovak'     => 'sk',
-            'Svenska'    => 'se',
+            'Svenska'    => 'sv-SE',
             'Welsh'      => 'cy'
         ];
         $builder->add('org_locale', ChoiceType::class, array(

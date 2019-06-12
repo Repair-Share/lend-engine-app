@@ -64,13 +64,17 @@ class SiteController extends Controller
 
             // Users only get to see dates from today
             // Admins get to choose from start of the month
-            $authChecker = $this->get('security.authorization_checker');
-            if ($authChecker->isGranted('ROLE_ADMIN')) {
-                $day = new \DateTime($dateFrom);
-            } else {
+//            $authChecker = $this->get('security.authorization_checker');
+//            if ($authChecker->isGranted('ROLE_ADMIN')) {
+//                $day = new \DateTime($dateFrom);
+//            } else {
                 $day = new \DateTime();
-            }
+            $day->modify("-28 days");
+//            }
+
+            // $dateTo is the end of the visible calendar but we need more slots for auto-setting loan end date
             $to  = new \DateTime($dateTo);
+            $to->modify("+28 days");
 
             // Get loan dates to hide available booking days
             $bookings = [];
