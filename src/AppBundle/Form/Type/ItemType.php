@@ -356,7 +356,7 @@ class ItemType extends AbstractTranslatableType
                 foreach ($choices AS $choice) {
                     $choiceArray[$choice->getOptionName()] = $choice->getId();
                 }
-                $builder->add('fieldValue' . $fieldId, ChoiceType::class, array(
+                $builder->add('fieldValue'.$fieldId, ChoiceType::class, array(
                     'label' => $fieldName,
                     'required' => $field->getRequired(),
                     'choices' => $choiceArray,
@@ -373,7 +373,7 @@ class ItemType extends AbstractTranslatableType
                     $choiceArray[$choice->getOptionName()] = $choice->getId();
                 }
                 $defaultData = explode(',', $defaultData);
-                $builder->add('fieldValue' . $fieldId, ChoiceType::class, array(
+                $builder->add('fieldValue'.$fieldId, ChoiceType::class, array(
                     'label' => $fieldName,
                     'required' => $field->getRequired(),
                     'choices' => $choiceArray,

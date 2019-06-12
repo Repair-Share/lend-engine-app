@@ -128,7 +128,7 @@ class ItemController extends Controller
         }
 
         $locales = explode(',', $this->get('settings')->getSettingValue('org_languages'));
-        $formData = [
+        $formOptions = [
             'em' => $em,
             'locales' => $locales,
             'customFields' => $customFields,
@@ -136,7 +136,7 @@ class ItemController extends Controller
             'itemTypeId' => $itemTypeId // manually set as it's unmapped
         ];
 
-        $form = $this->createForm(ItemType::class, $product, $formData);
+        $form = $this->createForm(ItemType::class, $product, $formOptions);
 
         $form->handleRequest($request);
 

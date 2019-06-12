@@ -38,7 +38,7 @@
                     {% if row.inventoryItem.description|length > 0 %}
                         <div style="padding: 4px; font-size: 12px;">
                             <strong>{{ 'le_email.item_description'|trans() }}:</strong><br />
-                            {{ row.inventoryItem.description|nl2br }}</div>
+                            {{ row.inventoryItem.description|nl2br|raw }}</div>
                     {% endif %}
 
                     {% if row.inventoryItem.componentInformation|length > 0 %}

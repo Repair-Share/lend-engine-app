@@ -60,13 +60,10 @@ class TranslatableDataMapper implements TranslatableDataMapperInterface {
     }
 
     public function getTranslations($entity){
-
         if(!count($this->translations)){
             $this->translations = $this->repository->findTranslations($entity);
         }
-
         return $this->translations;
-
     }
 
     /**
@@ -110,9 +107,7 @@ class TranslatableDataMapper implements TranslatableDataMapperInterface {
      */
     public function mapDataToForms($data, $forms)
     {
-
         foreach($forms as $form){
-
             // Added some code here to hydrate the translated array for tabbed form fields
             $getter = 'get'.ucfirst($form->getName());
             $defaultValue = $data->$getter();
