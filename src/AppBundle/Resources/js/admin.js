@@ -75,7 +75,7 @@ $(document).ready(function(){
     dateToday = moment().format('ddd MMM D YYYY');
 
     $('#data-table').DataTable({
-        pageLength: 50,
+        pageLength: 100,
         ordering: false
     });
 

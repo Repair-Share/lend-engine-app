@@ -70,6 +70,8 @@ class MenuBuilder
 
         $this->addMenuItem('Contacts / Members', 'contact_list', 'fa-group');
 
+//        $this->addMenuItem('Events <span class="label bg-orange">NEW</span>', 'contact_list', 'fa-calendar');
+
         $this->addMenuItem('Reports', 'null', 'fa-signal');
         $this->addChildItem('Reports', 'Loans by status/member', 'report_loans', '');
         $this->addChildItem('Reports', 'Loans by item', 'report_items', '');
