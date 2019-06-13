@@ -276,6 +276,8 @@ class ItemController extends Controller
             if (count($items) > 1) {
                 /** @var \AppBundle\Entity\InventoryItem $copyItem */
                 foreach($items AS $copyItem) {
+
+                    // The following are copied across to other items
                     if ($copyItem->getId() == $product->getId()) {
                         continue;
                     }
@@ -334,6 +336,15 @@ class ItemController extends Controller
                             $newFileAttachment->setSendToMemberOnCheckout($file->getSendToMemberOnCheckout());
                             $copyItem->addFileAttachment($newFileAttachment);
                         }
+                    }
+
+                    /** @var \AppBundle\Entity\ProductFieldValue $fieldValue */
+                    foreach ($product->getFieldValues() AS $fieldValue) {
+                        $newFieldValue = clone($fieldValue);
+                        $em->detach($newFieldValue);
+                        $newFieldValue->setInventoryItem($copyItem);
+                        $copyItem->addFieldValue($fieldValue);
+                        $em->persist($newFieldValue);
                     }
 
                     $em->persist($copyItem);

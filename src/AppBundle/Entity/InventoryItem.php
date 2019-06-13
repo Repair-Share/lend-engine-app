@@ -563,7 +563,9 @@ class InventoryItem
      */
     public function addFieldValue(ProductFieldValue $fieldValue)
     {
-        $this->fieldValues[] = $fieldValue;
+        if (!$this->fieldValues->contains($fieldValue)) {
+            $this->fieldValues[] = $fieldValue;
+        }
         return $this;
     }
 
@@ -577,6 +579,9 @@ class InventoryItem
         $this->fieldValues->removeElement($fieldValue);
     }
 
+    /**
+     * @param $fieldValues
+     */
     public function setFieldValues($fieldValues)
     {
         $this->fieldValues = $fieldValues;

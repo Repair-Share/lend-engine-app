@@ -118,6 +118,15 @@ class ItemCopyController extends Controller
             $newProduct->addFileAttachment($newFileAttachment);
         }
 
+        /** @var \AppBundle\Entity\ProductFieldValue $fieldValue */
+        foreach ($oldProduct->getFieldValues() AS $fieldValue) {
+            $newFieldValue = clone($fieldValue);
+            $em->detach($newFieldValue);
+            $newFieldValue->setInventoryItem($newProduct);
+            $newProduct->addFieldValue($fieldValue);
+            $em->persist($newFieldValue);
+        }
+
         $em->persist($newProduct);
 
         try {
