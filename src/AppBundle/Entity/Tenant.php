@@ -14,6 +14,7 @@ class Tenant
 {
 
     const STATUS_PENDING  = 'PENDING';
+    const STATUS_DEPLOYING  = 'DEPLOYING';
     const STATUS_TRIAL    = 'TRIAL';
     const STATUS_LIVE     = 'LIVE';
     const STATUS_CANCEL   = 'CANCELLED';

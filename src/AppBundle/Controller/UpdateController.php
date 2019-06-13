@@ -123,31 +123,34 @@ FROM payment p2 where p2.note REGEXP 'Extend (.*) [0-9]+ days.*'
         // CREATE DATABASE xxx CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
         // Run any migrations that need running
         $this->updateSchema();
-        $this->addAdminUser();
-        $this->addUser();
-        $this->setOrganisationDetails();
 
         /** @var \AppBundle\Services\SettingsService $settingsService */
         $settingsService = $this->get('settings');
         $tenant = $settingsService->getTenant();
 
         // Complete the deployment and activate the trial
-        $em = $this->getDoctrine()->getManager();
+        // We can hit this URL multiple times, so don't re-set the trial
+        if ($tenant->getStatus() == Tenant::STATUS_DEPLOYING) {
+            $em = $this->getDoctrine()->getManager();
 
-        $tenant->setStatus("TRIAL");
-        $trialExpiresAt = new \DateTime();
-        $trialExpiresAt->modify("+30 days");
-        $tenant->setTrialExpiresAt($trialExpiresAt);
+            $this->addAdminUser();
+            $this->addUser();
+            $this->setOrganisationDetails();
 
-        $em->persist($tenant);
-        $em->flush();
+            $tenant->setStatus("TRIAL");
+            $trialExpiresAt = new \DateTime();
+            $trialExpiresAt->modify("+30 days");
+            $tenant->setTrialExpiresAt($trialExpiresAt);
+            $em->persist($tenant);
+            $em->flush();
 
-        $name  = $tenant->getOwnerName();
-        $email = $tenant->getOwnerEmail();
-        $org   = $tenant->getName();
-        $accountCode = $settingsService->getTenant()->getStub();
+            $name  = $tenant->getOwnerName();
+            $email = $tenant->getOwnerEmail();
+            $org   = $tenant->getName();
+            $accountCode = $settingsService->getTenant()->getStub();
 
-        $this->subscribeToMailchimp($name, $email, $org, $accountCode);
+            $this->subscribeToMailchimp($name, $email, $org, $accountCode);
+        }
 
         return $this->redirect($this->generateUrl('homepage'));
     }
@@ -262,7 +265,7 @@ FROM payment p2 where p2.note REGEXP 'Extend (.*) [0-9]+ days.*'
             $this->addFlash('error', 'Failed to send email:' . $generalException->getMessage());
         }
 
-        $message = "Your password is {$pass} - write it down now, we won't show it again. You can change it once you've logged in.";
+        $message = "Your password is {$pass} - record it now, we won't show it again. You can change it once you've logged in.";
         $this->addFlash('success', $message);
 
     }
