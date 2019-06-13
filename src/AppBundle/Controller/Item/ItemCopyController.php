@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Item;
 
+use AppBundle\Entity\FileAttachment;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\InventoryLocation;
@@ -91,24 +92,30 @@ class ItemCopyController extends Controller
         $newProduct->setCareInformation($oldProduct->getCareInformation());
         $newProduct->setDescription($oldProduct->getDescription());
         $newProduct->setComponentInformation($oldProduct->getComponentInformation());
+        $newProduct->setImageName($oldProduct->getImageName());
 
         // Clear the serial number
         $newProduct->setSerial('');
 
-        // Copy all images
+        // Copy all images (referencing the same file on S3)
         foreach($oldProduct->getImages() AS $image) {
             /** @var $image \AppBundle\Entity\Image */
-            $newImageName = $this->copyImage($image->getImageName());
-
             $newImage = new Image();
-            $newImage->setImageName($newImageName);
+            $newImage->setImageName($image->getImageName());
             $newImage->setInventoryItem($newProduct);
-
             // Images are set to cascade persist when we save an item
             $newProduct->addImage($newImage);
+        }
 
-            // Set as primary
-            $newProduct->setImageName($newImageName);
+        // Copy all attachments (referencing the same file on S3)
+        foreach($oldProduct->getFileAttachments() AS $file) {
+            /** @var $image \AppBundle\Entity\FileAttachment */
+            $newFileAttachment = new FileAttachment();
+            $newFileAttachment->setInventoryItem($newProduct);
+            $newFileAttachment->setFileName($file->getFileName());
+            $newFileAttachment->setFileSize($file->getFileSize());
+            $newFileAttachment->setSendToMemberOnCheckout($file->getSendToMemberOnCheckout());
+            $newProduct->addFileAttachment($newFileAttachment);
         }
 
         $em->persist($newProduct);

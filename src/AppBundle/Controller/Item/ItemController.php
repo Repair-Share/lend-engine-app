@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Item;
 
+use AppBundle\Entity\FileAttachment;
+use AppBundle\Entity\Image;
 use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\InventoryLocation;
 use AppBundle\Entity\ItemMovement;
@@ -91,6 +93,7 @@ class ItemController extends Controller
 
             $product->setItemType($itemType);
 
+            // Set the check-in and check-out prompts which are set to "on for all new products"
             /** @var $checkInPromptRepo \AppBundle\Repository\CheckInPromptRepository */
             $checkInPromptRepo = $this->getDoctrine()->getRepository('AppBundle:CheckInPrompt');
             $checkInPrompts = $checkInPromptRepo->findAllOrderedBySort();
@@ -111,6 +114,9 @@ class ItemController extends Controller
                 }
             }
         }
+
+        // Get similarly named items to update them all
+        $items = $itemRepo->findBy(['name' => $product->getName(), 'isActive' => true]);
 
         // Set initial field value if auto-sku is turned on
         if (!$product->getSku() && $skuStub) {
@@ -155,6 +161,16 @@ class ItemController extends Controller
                 $setter = 'set'.$f;
                 $string = $product->$getter();
                 $string = strip_tags($string,"<strong>");
+                $product->$setter($string);
+            }
+
+            // Trim fields
+            $fieldsToTrim = ['name', 'sku', 'serial', 'brand'];
+            foreach ($fieldsToTrim AS $f) {
+                $getter = 'get'.$f;
+                $setter = 'set'.$f;
+                $string = $product->$getter();
+                $string = trim($string);
                 $product->$setter($string);
             }
 
@@ -223,7 +239,6 @@ class ItemController extends Controller
                 }
                 $setting->setSetupValue($form->get('itemType')->getData());
                 $em->persist($setting);
-
             }
 
             // If no main image, use the first
@@ -257,6 +272,74 @@ class ItemController extends Controller
 
             $em->persist($product);
 
+            // update the other items in the group
+            if (count($items) > 1) {
+                /** @var \AppBundle\Entity\InventoryItem $copyItem */
+                foreach($items AS $copyItem) {
+                    if ($copyItem->getId() == $product->getId()) {
+                        continue;
+                    }
+
+                    $copyItem->setName($product->getName());
+                    $copyItem->setSku($product->getSku());
+                    $copyItem->setBrand($product->getBrand());
+                    $copyItem->setImageName($product->getImageName()); // primary thumbnail
+                    $copyItem->setMaxLoanDays($product->getMaxLoanDays());
+                    $copyItem->setLoanFee($product->getLoanFee());
+                    $copyItem->setKeywords($product->getKeywords());
+                    $copyItem->setTags($product->getTags());
+                    $copyItem->setShowOnWebsite($product->getShowOnWebsite());
+                    $copyItem->setCareInformation($product->getCareInformation());
+                    $copyItem->setDescription($product->getDescription());
+                    $copyItem->setComponentInformation($product->getComponentInformation());
+                    $copyItem->setPriceCost($product->getPriceCost());
+                    $copyItem->setPriceSell($product->getPriceSell());
+                    $copyItem->setDepositAmount($product->getDepositAmount());
+                    $copyItem->setNote($product->getNote());
+                    $copyItem->setIsReservable($product->getIsReservable());
+                    $copyItem->setCheckInPrompts($product->getCheckInPrompts());
+                    $copyItem->setCheckOutPrompts($product->getCheckOutPrompts());
+                    $copyItem->setSites($product->getSites());
+
+                    /** @var \AppBundle\Entity\Image $image */
+                    foreach ($product->getImages() AS $image) {
+                        $found = false;
+                        foreach ($copyItem->getImages() AS $i) {
+                            if ($i->getImageName() == $image->getImageName()) {
+                                $found = true;
+                            }
+                        }
+                        if ($found == false) {
+                            $newImage = new Image();
+                            $newImage->setInventoryItem($copyItem);
+                            $newImage->setImageName($image->getImageName());
+                            $copyItem->addImage($newImage);
+                        }
+                    }
+
+                    /** @var \AppBundle\Entity\FileAttachment $file */
+                    foreach ($product->getFileAttachments() AS $file) {
+                        $found = false;
+                        /** @var \AppBundle\Entity\FileAttachment $f */
+                        foreach ($copyItem->getFileAttachments() AS $f) {
+                            if ($f->getFileName() == $file->getFileName()) {
+                                $found = true;
+                            }
+                        }
+                        if ($found == false) {
+                            $newFileAttachment = new FileAttachment();
+                            $newFileAttachment->setInventoryItem($copyItem);
+                            $newFileAttachment->setFileName($file->getFileName());
+                            $newFileAttachment->setFileSize($file->getFileSize());
+                            $newFileAttachment->setSendToMemberOnCheckout($file->getSendToMemberOnCheckout());
+                            $copyItem->addFileAttachment($newFileAttachment);
+                        }
+                    }
+
+                    $em->persist($copyItem);
+                }
+            }
+
             try {
                 $em->flush();
                 if ($request->get('submitForm') == 'saveAndNew') {
@@ -287,6 +370,7 @@ class ItemController extends Controller
         return $this->render('item/item.html.twig', array(
             'form' => $form->createView(),
             'title' => $pageTitle,
+            'countItems' => count($items),
             'customFieldsExist' => $customFieldsExist,
             'item' => $product,
             'isMultiSite' => $this->get('settings')->getSettingValue('multi_site'),

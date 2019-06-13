@@ -24,6 +24,9 @@ class FileNamer implements NamerInterface
     public function name(FileInterface $file)
     {
         $directory = $this->settings->getTenant()->getDbSchema();
-        return $directory.'/files/'.uniqid().'-'.$file->getClientOriginalName();
+        $newFileName = strtolower(trim($file->getClientOriginalName()));
+        $newFileName = str_replace(' ', '-', $newFileName);
+        $newFileName = preg_replace('/[^0-9a-zA-Z\-\.\d\s:]/', '', $newFileName);
+        return $directory.'/files/'.$newFileName;
     }
 }

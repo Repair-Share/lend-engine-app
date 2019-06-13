@@ -11,7 +11,24 @@
 
 {% block body %}
 
+    <style>
+        .item-group {
+            padding: 6px;
+            margin-bottom: 10px;
+            background-color: #d2f3ff;
+            border: 1px solid #b9d9ec;
+            border-radius: 4px;
+            color: #294353;
+            font-size: 12px;
+        }
+    </style>
     {{ form_start(form) }}
+
+    {% if countItems > 1 %}
+        <div class="item-group">
+            There are <a href="{{ path('item_list') }}?search={{ item.name }}">{{ countItems }} items in this group</a>. All fields apart from serial number and condition will also be updated for other items in the group.
+        </div>
+    {% endif %}
 
     <div id="item-inventory-detail">
         {% if item.id %}

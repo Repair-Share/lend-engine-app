@@ -951,13 +951,23 @@ class InventoryItem
     }
 
     /**
-     * Get tags
+     * Get sites
      *
      * @return \Doctrine\Common\Collections\Collection
      */
     public function getSites()
     {
         return $this->sites;
+    }
+
+    /**
+     * @param $sites \Doctrine\Common\Collections\Collection
+     * @return $this
+     */
+    public function setSites($sites)
+    {
+        $this->sites = $sites;
+        return $this;
     }
 
     /***
@@ -994,6 +1004,17 @@ class InventoryItem
         return $this->checkInPrompts;
     }
 
+    /**
+     * @param $prompts \Doctrine\Common\Collections\Collection
+     * @return $this
+     */
+    public function setCheckInPrompts($prompts)
+    {
+        $this->checkInPrompts = $prompts;
+
+        return $this;
+    }
+
     /***
      * @param \AppBundle\Entity\CheckOutPrompt $checkOutPrompt
      *
@@ -1026,6 +1047,17 @@ class InventoryItem
     public function getCheckOutPrompts()
     {
         return $this->checkOutPrompts;
+    }
+
+    /**
+     * @param $prompts \Doctrine\Common\Collections\Collection
+     * @return $this
+     */
+    public function setCheckOutPrompts($prompts)
+    {
+        $this->checkOutPrompts = $prompts;
+
+        return $this;
     }
 
     /**
@@ -1322,6 +1354,17 @@ class InventoryItem
     public function removeFileAttachment(FileAttachment $fileAttachment)
     {
         $this->fileAttachments->remove($fileAttachment);
+
+        return $this;
+    }
+
+    /**
+     * @param $attachments ArrayCollection
+     * @return $this
+     */
+    public function setFileAttachments($attachments)
+    {
+        $this->fileAttachments = $attachments;
 
         return $this;
     }

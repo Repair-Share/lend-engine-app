@@ -64,10 +64,6 @@ class ItemController extends Controller
         $defaultLoanDays = (int)$this->get('settings')->getSettingValue('default_loan_days');
         $minLoanDays = (int)$this->get('settings')->getSettingValue('min_loan_days');
         $maxLoanDays = (int)$this->get('settings')->getSettingValue('max_loan_days');
-//        $endLoanAt = $this->get('settings')->getSettingValue('end_loan_at');
-//        if (!$endLoanAt) {
-//            $endLoanAt = 'end';
-//        }
 
         $loanEndDate = new \DateTime();
         $loanEndDate->modify("+ {$defaultLoanDays} days");

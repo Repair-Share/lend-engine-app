@@ -13,10 +13,10 @@ class FileAttachmentController extends Controller
 
     /**
      * @return Response
-     * @Route("admin/file/{fileId}/remove/", name="file_remove")
+     * @Route("admin/file/{fileName}/remove/", name="file_remove")
      * @Security("has_role('ROLE_SUPER_USER')")
      */
-    public function removeFileAction($fileId)
+    public function removeFileAction($fileName)
     {
 
         $em = $this->getDoctrine()->getManager();
@@ -25,10 +25,15 @@ class FileAttachmentController extends Controller
 
         /** @var \AppBundle\Repository\FileAttachmentRepository $repo */
         $repo = $em->getRepository('AppBundle:FileAttachment');
-        $file = $repo->find($fileId);
+        $files = $repo->findBy(['fileName' => $fileName]);
 
+        $fileName = [];
         try {
-            $em->remove($file);
+            /** @var \AppBundle\Entity\FileAttachment $file */
+            foreach ($files AS $file) {
+                $fileName = $file->getFileName();
+                $em->remove($file);
+            }
             $em->flush();
         } catch (\Exception $e) {
 
@@ -37,7 +42,7 @@ class FileAttachmentController extends Controller
         try {
             // Remove the file from S3
             $filesystem = $this->container->get('oneup_flysystem.product_image_fs_filesystem');
-            $filePath = $schema.'/files/'.$file->getFileName();
+            $filePath = $schema.'/files/'.$fileName;
             $filesystem->delete($filePath);
         } catch (\Exception $e) {
 
@@ -63,14 +68,18 @@ class FileAttachmentController extends Controller
 
         /** @var \AppBundle\Entity\FileAttachment $file */
         $file = $repo->find($fileId);
+        $files = $repo->findBy(['fileName' => $file->getFileName()]);
 
-        if ($file->getSendToMemberOnCheckout()) {
-            $file->setSendToMemberOnCheckout(false);
-        } else {
-            $file->setSendToMemberOnCheckout(true);
+        foreach ($files AS $file) {
+            if ($file->getSendToMemberOnCheckout()) {
+                $file->setSendToMemberOnCheckout(false);
+            } else {
+                $file->setSendToMemberOnCheckout(true);
+            }
+
+            $em->persist($file);
         }
 
-        $em->persist($file);
         $em->flush();
 
         $msg = 'ok';

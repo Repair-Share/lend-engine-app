@@ -5,7 +5,7 @@
  *
  */
 
-$fhandle = fopen("G TAXONOMY 2446.csv", 'rb');
+$fhandle = fopen("type-source-data.csv", 'rb');
 
 $rows = [];
 $file = fgets($fhandle);
@@ -16,6 +16,13 @@ $categories = [];
 foreach ($rows AS $k => $row) {
 
     $rowArray  = str_getcsv($row);
+
+    $level = 0;
+    foreach ($rowArray AS $column) {
+        if ($column != '') {
+            $level++;
+        }
+    }
 
     $id     = array_shift($rowArray);
 
@@ -43,29 +50,32 @@ foreach ($rows AS $k => $row) {
     $categories[$id] = [
         $name,
         $path,
-        $parentPath
+        $parentPath,
+        $level
     ];
 
     // All the paths
     $paths[$path] = $id;
 
-//    echo '<br>'.$path.'&nbsp;&nbsp;&nbsp;<span style="color:blue">'.$parentPath.'</span>&nbsp;&nbsp;&nbsp;<span style="color:red">'.$name.'</span>';
 }
 
 // Now set parent / child
 $nested = [];
+$sqlString = '';
 foreach ($categories AS $id => $data) {
 
     $name   = $data[0];
     $self   = $data[1];
     $parent = $data[2];
+    $level  = $data[3];
 
     $parentId = 0;
     if ( isset($paths[$parent]) ) {
         $parentId = $paths[$parent];
     }
 
-    $result[] = [
+    $k = $level.'.'.$parentId.'.'.$id;
+    $result[$k] = [
         'id' => $id,
         'name' => $name,
         'parent' => $parentId,
@@ -73,9 +83,26 @@ foreach ($categories AS $id => $data) {
 
 }
 
+ksort($result);
+
+foreach ($result AS $i => $category) {
+    echo $i.'<br>';
+    $id        = $category['id'];
+    $name      = $category['name'];
+    $parentId  = $category['parent'];
+    if ($parentId == 0) {
+        $parentId = 'null';
+    }
+    $sqlString .= "REPLACE INTO item_type (id, parent_id, name) VALUES ({$id}, {$parentId}, \"{$name}\");".PHP_EOL;
+}
+
 $txt = 'var folders = '.json_encode($result).'; ';
 $fhandle = fopen("itemTypes.js", 'w');
 fwrite($fhandle, $txt);
+fclose($fhandle);
+
+$fhandle = fopen("itemTypes.sql", 'w');
+fwrite($fhandle, $sqlString);
 fclose($fhandle);
 
 echo 'Generated '.count($result).' item types';

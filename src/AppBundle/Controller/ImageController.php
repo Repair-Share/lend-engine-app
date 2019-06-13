@@ -24,32 +24,42 @@ class ImageController extends Controller
         $schema   = $this->get('service.tenant')->getSchema();
 
         /** @var \AppBundle\Repository\ImageRepository $repo */
-        $repo = $em->getRepository('AppBundle:Image');
-        $images = $repo->getOneByName($name);
+        $repo   = $em->getRepository('AppBundle:Image');
+        $images = $repo->findBy(['imageName' => $name]);
 
         /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
         $itemRepo = $em->getRepository('AppBundle:InventoryItem');
-
-        /** @var \AppBundle\Entity\InventoryItem $item */
-        $item = $itemRepo->find($id);
-        if ($item->getImageName() == $name) {
-            $item->setImageName("");
-            $em->persist($item);
-        }
 
         // Remove the files from S3
         $filesystem = $this->get('oneup_flysystem.product_image_fs_filesystem');
         $thumbPath = $schema.'/thumbs/'.$name;
         $largePath = $schema.'/large/'.$name;
-        $filesystem->delete($thumbPath);
-        $filesystem->delete($largePath);
 
-        $em->remove($images[0]);
+        try {
+            $filesystem->delete($thumbPath);
+            $filesystem->delete($largePath);
+        } catch (\Exception $e) {
+
+        }
+
+        // Update all items that reference this image.
+        // Will leave items without a primary thumbnail name.
+        /** @var \AppBundle\Entity\InventoryItem $item */
+        $items = $itemRepo->findBy(['imageName' => $name]);
+        foreach ($items AS $item) {
+            $item->setImageName("");
+            $em->persist($item);
+        }
+
+        // Remove all references to this image
+        foreach ($images AS $image) {
+            $em->remove($image);
+        }
+
         $em->flush();
-
         $msg = 'ok';
-        return new Response(json_encode($msg));
 
+        return new Response(json_encode($msg));
     }
 
     /**
