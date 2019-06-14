@@ -61,8 +61,8 @@ class AjaxDeleteController extends Controller
                 case 'Page':
                     $msg = $this->deletePage($id);
                     break;
-                case 'OpeningTimeException':
-                    $msg = $this->deleteOpeningTimeException($id);
+                case 'Event':
+                    $msg = $this->deleteEvent($id);
                     break;
             }
         } else {
@@ -345,12 +345,12 @@ class AjaxDeleteController extends Controller
      * @param $id
      * @return string
      */
-    private function deleteOpeningTimeException($id)
+    private function deleteEvent($id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        /** @var \AppBundle\Repository\OpeningTimeExceptionRepository $repo */
-        $repo = $em->getRepository('AppBundle:OpeningTimeException');
+        /** @var \AppBundle\Repository\EventRepository $repo */
+        $repo = $em->getRepository('AppBundle:Event');
         $entity = $repo->find($id);
         $em->remove($entity);
 

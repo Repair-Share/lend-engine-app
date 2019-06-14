@@ -9,7 +9,7 @@ class ItemMoveControllerTest extends AuthenticatedControllerTest
 {
     public function testMoveAction()
     {
-        $crawler = $this->client->request('GET', '/admin/item/1001/move/');
+        $crawler = $this->client->request('GET', '/admin/item/move/1001');
         $this->assertContains('Move / assign', $crawler->html());
 
         $form = $crawler->filter('form[name="item_move"]')->form(array(
@@ -24,7 +24,8 @@ class ItemMoveControllerTest extends AuthenticatedControllerTest
         $this->assertTrue($this->client->getResponse() instanceof RedirectResponse);
         $crawler = $this->client->followRedirect();
 
-        $this->assertContains('Test item name', $crawler->html());
-        $this->assertContains('Item location has been updated', $crawler->html());
+        // We're sent back to the admin item list
+        $this->assertContains('Items', $crawler->html());
+        $this->assertContains('item(s) updated OK', $crawler->html());
     }
 }

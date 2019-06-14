@@ -2,19 +2,19 @@
 
 namespace AppBundle\Controller\Settings;
 
-use AppBundle\Entity\OpeningTimeException;
+use AppBundle\Entity\Event;
 use AppBundle\Entity\Setting;
 use AppBundle\Entity\Site;
-use AppBundle\Form\Type\Settings\OpeningTimeExceptionType;
+use AppBundle\Form\Type\Settings\OpeningHoursType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
-class OpeningTimeExceptionController extends Controller
+class OpeningHoursController extends Controller
 {
     /**
-     * @Route("admin/site/{siteId}/opening-time-exception/list", requirements={"siteId": "\d+"}, name="opening_time_exception_list")
+     * @Route("admin/site/{siteId}/event/list", requirements={"siteId": "\d+"}, name="opening_hours_list")
      * @Security("has_role('ROLE_SUPER_USER')")
      */
     public function listAction($siteId)
@@ -36,8 +36,9 @@ class OpeningTimeExceptionController extends Controller
         }
 
         $filter = ['site' => $site];
-        $openingRepo = $em->getRepository('AppBundle:OpeningTimeException');
-        $opening = $openingRepo->findBy($filter);
+        /** @var \AppBundle\Repository\EventRepository $eventRepo */
+        $eventRepo = $em->getRepository('AppBundle:Event');
+        $event = $eventRepo->findBy($filter);
 
         $tableHeader = array(
             'Date',
@@ -50,7 +51,7 @@ class OpeningTimeExceptionController extends Controller
 
         // Sort by date asc
         $sorted = [];
-        foreach ($opening AS $i) {
+        foreach ($event AS $i) {
             $d = $i->getDate()->format("Y-m-d");
             $sorted[$d] = $i;
         }
@@ -58,7 +59,7 @@ class OpeningTimeExceptionController extends Controller
         ksort($sorted);
 
         foreach ($sorted AS $i) {
-            /** @var $i \AppBundle\Entity\OpeningTimeException */
+            /** @var $i \AppBundle\Entity\Event */
             if ($i->getType() == 'o') {
                 $type = '<span class="label bg-green">Open</span>';
             } else {
@@ -73,12 +74,12 @@ class OpeningTimeExceptionController extends Controller
                     $i->getTimeFrom(),
                     $i->getTimeChangeover(),
                     $i->getTimeTo(),
-                    '<a href="javascript:void(0)" onClick="deleteTableRow(\'OpeningTimeException\', tr'.$i->getId().'); return false;">Delete</a>'
+                    '<a href="javascript:void(0)" onClick="deleteTableRow(\'Event\', tr'.$i->getId().'); return false;">Delete</a>'
                 )
             );
         }
 
-        $modalUrl = $this->generateUrl('opening_time_exception', ['siteId' => $siteId]);
+        $modalUrl = $this->generateUrl('opening_hours_admin', ['siteId' => $siteId]);
 
         $helpText = <<<EOT
 <h4 style="margin-top: 0px;">About custom opening hours</h4>
@@ -97,7 +98,7 @@ EOT;
                 'title'      => 'Custom opening hours : '.$site->getName(),
                 'pageTitle'  => 'Custom opening hours : '.$site->getName(),
                 'addButtonText' => 'Add new',
-                'entityName' => 'OpeningTimeException', // Used in the sort order handler
+                'entityName' => 'Event', // Used in the sort order handler
                 'tableRows'  => $tableRows,
                 'tableHeader' => $tableHeader,
                 'modalUrl' => $modalUrl,
@@ -110,14 +111,14 @@ EOT;
 
     /**
      * Modal content for managing sites
-     * @Route("admin/site/{siteId}/opening-time-exception", requirements={"siteId": "\d+"}, name="opening_time_exception")
+     * @Route("admin/site/{siteId}/event", requirements={"siteId": "\d+"}, name="opening_hours_admin")
      * @Security("has_role('ROLE_SUPER_USER')")
      */
-    public function addOpeningTimeExceptionAction(Request $request, $siteId)
+    public function addEventAction(Request $request, $siteId)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $openingTimeException = new OpeningTimeException();
+        $event = new Event();
 
         /** @var \AppBundle\Repository\SiteRepository $siteRepo */
         $siteRepo = $em->getRepository('AppBundle:Site');
@@ -126,13 +127,13 @@ EOT;
             return $this->redirectToRoute('home');
         }
 
-        $openingTimeException->setSite($site);
+        $event->setSite($site);
 
         $options = [
-            'action' => $this->generateUrl('opening_time_exception', ['siteId' => $siteId])
+            'action' => $this->generateUrl('opening_hours_admin', ['siteId' => $siteId])
         ];
 
-        $form = $this->createForm(OpeningTimeExceptionType::class, $openingTimeException, $options);
+        $form = $this->createForm(OpeningHoursType::class, $event, $options);
 
         $form->handleRequest($request);
 
@@ -140,9 +141,10 @@ EOT;
 
             $d = $form->get('date')->getData();
             $date = new \DateTime($d);
-            $openingTimeException->setDate($date);
+            $event->setDate($date);
+            $event->setCreatedBy($this->getUser());
 
-            $em->persist($openingTimeException);
+            $em->persist($event);
             $em->flush();
             $this->addFlash('success', 'Saved.');
 
@@ -157,12 +159,12 @@ EOT;
             $em->persist($setting);
             $em->flush();
 
-            return $this->redirectToRoute('opening_time_exception_list', ['siteId' => $siteId]);
+            return $this->redirectToRoute('opening_hours_list', ['siteId' => $siteId]);
 
         }
 
         return $this->render(
-            'modals/settings/openingTimeException.html.twig',
+            'modals/settings/event.html.twig',
             array(
                 'title' => 'Add custom hours for '.$site->getName(),
                 'subTitle' => 'Add custom hours, or holidays',

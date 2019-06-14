@@ -65,7 +65,7 @@ class SiteController extends Controller
                 $openingHours .= '</div>';
             }
 
-            $url = $this->generateUrl('opening_time_exception_list', ['siteId' => $i->getId()]);
+            $url = $this->generateUrl('opening_hours_list', ['siteId' => $i->getId()]);
 
             if (!$openingHours) {
                 $openingHours = '<div>Edit site to add regular opening hours each week.</div>';

@@ -35,8 +35,10 @@ class BasketControllerTest extends AuthenticatedControllerTest
             'contactId' => $contactId, // the one set up in ContactControllerTest
             'from_site' => 1,
             'to_site'   => 1,
-            'date_from' => $today->format("Y-m-d 09:00:00"),
-            'date_to'   => $today->format("Y-m-d 17:00:00")
+            'date_from' => $today->format("Y-m-d"),
+            'time_from' => $today->format("09:00:00"),
+            'date_to'   => $today->format("Y-m-d"),
+            'time_to'   => $today->format("17:00:00")
         ];
         $this->client->request('POST', '/basket/add/1000?contactId='.$contactId, $params);
 
@@ -60,8 +62,10 @@ class BasketControllerTest extends AuthenticatedControllerTest
         $this->assertTrue($this->client->getResponse() instanceof RedirectResponse);
         $crawler = $this->client->followRedirect();
 
-        $basketAmount = $crawler->filter('#basketTotalAmount')->text();
-        $this->assertEquals('10.00', $basketAmount);
+        // Basket amounts are now set by JS
+//        $basketAmount = $crawler->filter('#basketTotalAmount')->text();
+//        $this->assertEquals('10.00', $basketAmount);
+        $this->assertContains('Reservation created by', $crawler->html());
 
         // Confirm that the time zone was saved properly
         $this->assertContains($today->format("d F")." 9:00 am", $crawler->html());

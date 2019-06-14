@@ -101,7 +101,7 @@ class Site
     protected $siteOpenings;
 
     /**
-     * @ORM\OneToMany(targetEntity="OpeningTimeException", mappedBy="site", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Event", mappedBy="site", cascade={"persist", "remove"})
      */
     protected $openingTimeExceptions;
 
@@ -397,12 +397,12 @@ class Site
     /**
      * @return mixed
      */
-    public function getOpeningTimeExceptions()
+    public function getEvents()
     {
         // Re-key by date
         $sorted = [];
         foreach ($this->openingTimeExceptions AS $ote) {
-            /** @var $ote \AppBundle\Entity\OpeningTimeException */
+            /** @var $ote \AppBundle\Entity\Event */
             $d = $ote->getDate()->format("Y-m-d");
             $sorted[$d] = $ote;
         }
@@ -413,8 +413,8 @@ class Site
     public function getClosedTimes()
     {
         $closed = [];
-        foreach ($this->getOpeningTimeExceptions() AS $ote) {
-            /** @var $ote \AppBundle\Entity\OpeningTimeException */
+        foreach ($this->getEvents() AS $ote) {
+            /** @var $ote \AppBundle\Entity\Event */
             if ($ote->getType() == 'c') {
                 $closed[] = $ote;
             }
@@ -425,8 +425,8 @@ class Site
     public function getOpenTimes()
     {
         $open = [];
-        foreach ($this->getOpeningTimeExceptions() AS $ote) {
-            /** @var $ote \AppBundle\Entity\OpeningTimeException */
+        foreach ($this->getEvents() AS $ote) {
+            /** @var $ote \AppBundle\Entity\Event */
             if ($ote->getType() == 'o') {
                 $open[] = $ote;
             }

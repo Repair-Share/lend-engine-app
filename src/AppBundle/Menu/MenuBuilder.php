@@ -105,7 +105,7 @@ class MenuBuilder
 
         $this->menu->addChild('General settings', array('route' => 'settings'));
         $this->menu->addChild('Billing', array('route' => 'billing'));
-        $this->menu->addChild('Sites', array('route' => 'site_list'));
+        $this->menu->addChild('Sites & opening hours', array('route' => 'site_list'));
         $this->menu->addChild('Locations', array('route' => 'location_list'));
 
         $this->menu->addChild('Loans & Reservations', array('route' => 'settings_reservations'));

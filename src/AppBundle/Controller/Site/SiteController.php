@@ -30,8 +30,8 @@ class SiteController extends Controller
         /** @var $siteRepo \AppBundle\Repository\SiteRepository */
         $siteRepo = $this->getDoctrine()->getRepository('AppBundle:Site');
 
-        /** @var $extraRepo \AppBundle\Repository\OpeningTimeExceptionRepository */
-        $extraRepo = $this->getDoctrine()->getRepository('AppBundle:OpeningTimeException');
+        /** @var $extraRepo \AppBundle\Repository\EventRepository */
+        $extraRepo = $this->getDoctrine()->getRepository('AppBundle:Event');
 
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
@@ -178,7 +178,7 @@ class SiteController extends Controller
             $openingTimeExceptions = $extraRepo->search($filter);
 
             foreach ($openingTimeExceptions AS $slot) {
-                /** @var $slot \AppBundle\Entity\OpeningTimeException */
+                /** @var $slot \AppBundle\Entity\Event */
 
                 $s_start = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeFrom(), 0, 2).':'.substr($slot->getTimeFrom(), 2, 2).':00';
                 $s_end   = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeTo(), 0, 2).':'.substr($slot->getTimeTo(), 2, 2).':00';

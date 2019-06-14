@@ -8,7 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class OpeningTimeExceptionType extends AbstractType
+class OpeningHoursType extends AbstractType
 {
     protected $em;
 
@@ -61,8 +61,8 @@ class OpeningTimeExceptionType extends AbstractType
         ));
 
         $choices = [
-            'Closed' => 'c',
-            'Open' => 'o'
+            'Open' => 'o',
+            'Closed' => 'c'
         ];
         $builder->add('type', ChoiceType::class, array(
             'label' => 'Open or closed?',

@@ -5,7 +5,7 @@
 
 {% block modalBody %}
 
-    {{ form_start(form, {'attr': {'id': 'opening_time_exception'}}) }}
+    {{ form_start(form, {'attr': {'id': 'event_admin'}}) }}
     {{ form_errors(form) }}
     {% if help is defined %}
         <span class="help">{{ help }}</span>
@@ -50,7 +50,7 @@
 
     <script>
         $(document).ready(function () {
-            var dateExtendField = $("#opening_time_exception_date");
+            var dateExtendField = $("#opening_hours_date");
             dateExtendField.dateRangePicker({
                 format: 'ddd MMM D YYYY',
                 autoClose: true,
@@ -78,17 +78,17 @@
             });
 
             // Validate the form
-            $("#opening_time_exception").delegate("#opening_time_exception_timeFrom", "change", function(event) {
-                if ($("#opening_time_exception_timeFrom").val().length < 4) {
+            $("#opening_hours").delegate("#opening_hours_timeFrom", "change", function(event) {
+                if ($("#opening_hours_timeFrom").val().length < 4) {
                     alert('Please set a valid opening time (4 digit 24-hour time)');
-                    $("#opening_time_exception_timeFrom").val("").focus();
+                    $("#opening_hours_timeFrom").val("").focus();
                 }
             });
 
-            $("#opening_time_exception").delegate("#opening_time_exception_timeTo", "change", function(event) {
-                if ($("#opening_time_exception_timeTo").val().length < 4) {
+            $("#opening_hours").delegate("#opening_hours_timeTo", "change", function(event) {
+                if ($("#opening_hours_timeTo").val().length < 4) {
                     alert('Please set a valid closing time (4 digit 24-hour time)');
-                    $("#opening_time_exception_timeTo").val("").focus();
+                    $("#opening_hours_timeTo").val("").focus();
                 }
             });
 
