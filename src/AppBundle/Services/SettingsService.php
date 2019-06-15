@@ -116,7 +116,7 @@ class SettingsService
         ];
 
         foreach ($this->settings[$this->db] AS $k => $v) {
-            if (!$v && isset($defaultSettings[$k])) {
+            if ($v == null && isset($defaultSettings[$k])) {
                 $this->settings[$this->db][$k] = $defaultSettings[$k];
             }
         }
