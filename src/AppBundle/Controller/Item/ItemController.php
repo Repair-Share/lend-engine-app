@@ -273,7 +273,8 @@ class ItemController extends Controller
             $em->persist($product);
 
             // update the other items in the group
-            if (count($items) > 1) {
+            $groupSimilarItems = $this->get('settings')->getSettingValue('group_similar_items');
+            if (count($items) > 1 && $groupSimilarItems) {
                 /** @var \AppBundle\Entity\InventoryItem $copyItem */
                 foreach($items AS $copyItem) {
 
