@@ -31,14 +31,7 @@ $(document).ready(function(){
 
 });
 
-// Open modal-link URLs in the modal
-$(document).delegate(".modal-link", "click", function(event) {
-    event.preventDefault();
-    //if (pageLoadComplete == false) {
-    //    alert("Please wait for the page to finish loading and then try again.");
-    //    return false;
-    //}
-    var modalUrl = $(this).attr("href");
+function loadModal(modalUrl) {
     var modalWrapper = $('#modal-wrapper');
     $('.modal-content', modalWrapper).load(modalUrl, function() {
         modalWrapper.modal('show');
@@ -47,6 +40,12 @@ $(document).delegate(".modal-link", "click", function(event) {
             setUpSelectMenus();
         });
     });
+}
+
+// Open modal-link URLs in the modal
+$(document).delegate(".modal-link", "click", function(event) {
+    event.preventDefault();
+    loadModal($(this).attr("href"));
     return false;
 });
 

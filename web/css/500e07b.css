@@ -13144,6 +13144,10 @@ table.has-actions thead th:last-of-type {
     border-right: 1px solid #CECACA;
 }
 
+.delete-link {
+    color: #CC0000 !important;
+}
+
 /* TOGGLES */
 .toggle-switch label {
     color: #000;

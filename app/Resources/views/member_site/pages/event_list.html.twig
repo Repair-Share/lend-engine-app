@@ -1,0 +1,144 @@
+{% extends 'member_site/themes/loader.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block body %}
+    <h2>
+        {% trans %}Events{% endtrans %}
+    </h2>
+
+    {% if tenantInformation.setting('page_event_header') %}
+        {{ tenantInformation.setting('page_event_header')|raw }}
+    {% endif %}
+
+    <style>
+        .event-wrapper {
+            margin-bottom: 10px;
+            display: block;
+            clear: left;
+        }
+        .event-title {
+            font-weight: bold;
+        }
+        .event-location {
+            font-size: 11px;
+        }
+
+        .e-cal {
+            float: left;
+            width: 50px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .e-dayname {
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            font-size: 10px;
+            text-align: center;
+            padding: 3px;
+            color: #fff;
+        }
+        .e-day {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            width: 50px;
+            color: #fff;
+            opacity: 0.7;
+        }
+        .e-month {
+            font-size: 10px;
+            text-align: center;
+            padding: 3px;
+            width: 50px;
+            color: #fff;
+            border-bottom: 1px solid #fff;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        .e-live {
+            background-color: #b1ada2;
+        }
+    </style>
+    <div class="row">
+        <div class="col-md-8">
+            <div id="calendar"></div>
+        </div>
+        <div class="col-md-4" id="event-list">
+            {% for event in events %}
+
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagejs %}
+<script>
+    $(document).ready(function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['dayGrid'],
+            locale: "{{ app.request.locale }}",
+            defaultView: 'dayGridMonth',
+            allDaySlot: false,
+            minTime: '07:00:00',
+            maxTime: '22:00:00',
+            header: {
+                left: 'title',
+                center: '',
+                right: 'prev,next'
+            },
+            eventSources: [{
+                url: '{{ path('event_feed') }}',
+                type: 'GET',
+                failure: function () {
+                    alert('There was an error while fetching bookings!');
+                },
+                success: function(events) {
+                    loadEventList(events);
+                },
+                textColor: 'white'
+            }],
+            eventClick: function(info) {
+                loadModal("{{ path('event_preview') }}/"+info.event.extendedProps.eventId);
+            },
+            eventRender: function(e) {
+                var calEvent = e.event;
+                var element  = e.el;
+                var text = '';
+                var eventId = calEvent.extendedProps.eventId;
+                text += '<div>'+calEvent.title+'</div>';
+                $(element).html(text);
+            },
+            viewRender: function() {
+
+            },
+            loading: function(bool) {
+
+            }
+        });
+        calendar.render();
+
+        function loadEventList(events) {
+            $("#event-list").html("");
+            var HTML = '';
+            $(events).each(function() {
+                console.log(this);
+                var date = moment(this.start);
+                HTML += '<div class="event-wrapper">';
+                HTML += '<div class="e-cal">';
+                HTML += '<div class="e-dayname e-live">'+date.format("ddd")+'</div>';
+                HTML += '<div class="e-day e-live">'+date.format("D")+'</div>';
+                HTML += '<div class="e-month e-live">'+date.format("MMM")+'</div>';
+                HTML += '</div>';
+                HTML += '<div class="event-title"><a href="">'+this.title+'</a></div>';
+                HTML += '<div class="event-location">'+this.siteName+'</div>';
+                HTML += '</div>';
+            });
+            if (HTML == '') {
+                HTML = 'There are no events this month.';
+            }
+            $("#event-list").html(HTML);
+        }
+    });
+</script>
+{% endblock %}

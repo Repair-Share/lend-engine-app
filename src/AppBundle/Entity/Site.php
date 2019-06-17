@@ -103,7 +103,7 @@ class Site
     /**
      * @ORM\OneToMany(targetEntity="Event", mappedBy="site", cascade={"persist", "remove"})
      */
-    protected $openingTimeExceptions;
+    protected $events;
 
     /**
      *
@@ -401,7 +401,7 @@ class Site
     {
         // Re-key by date
         $sorted = [];
-        foreach ($this->openingTimeExceptions AS $ote) {
+        foreach ($this->events AS $ote) {
             /** @var $ote \AppBundle\Entity\Event */
             $d = $ote->getDate()->format("Y-m-d");
             $sorted[$d] = $ote;

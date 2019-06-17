@@ -1,8 +1,8 @@
 {% extends 'member_site/themes/loader.html.twig' %}
 {% trans_default_domain 'member_site' %}
 
-{% block search %}
-    {{ include('member_site/partials/search.html.twig') }}
+{% block accountNav %}
+    {{ include('member_site/themes/widgets/account_menu.html.twig') }}
 {% endblock %}
 
 {% block body %}

@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Class SiteController
  * @package AppBundle\Controller\Site
  */
-class SiteController extends Controller
+class SiteDataController extends Controller
 {
     /**
      * This code feeds the calendar for member site bookings

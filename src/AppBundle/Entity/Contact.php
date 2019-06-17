@@ -199,9 +199,14 @@ class Contact extends BaseUser
     private $createdAt;
 
     /**
-     * @ORM\OneToMany(targetEntity="Membership", mappedBy="contact")
+     * @ORM\OneToMany(targetEntity="Membership", mappedBy="contact", cascade={"remove", "persist"})
      */
     private $memberships;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Attendee", mappedBy="contact", cascade={"remove", "persist"})
+     */
+    private $attendees;
 
     /**
      * @ORM\OneToMany(targetEntity="WaitingListItem", mappedBy="contact", cascade={"remove"})
@@ -1412,5 +1417,13 @@ class Contact extends BaseUser
     public function getIsActive()
     {
         return $this->isActive;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAttendees()
+    {
+        return $this->attendees;
     }
 }

@@ -41,7 +41,11 @@
                          (Member#{{ contact.membershipNumber }})
                     {% endif %}
                 </h5>
-                {{ contact.email }}<br>
+                {{ contact.email }}
+                <br><br>
+
+                <a href="{{ path('switch_contact', {contactId: contact.id, itemId: app.request.get('itemId'), go: app.request.get('go')}) }}" class="btn btn-xs btn-success">Browse / borrow as {{ contact.name }}</a>
+                <a href="{{ path('contact', {id: contact.id}) }}" class="btn btn-xs btn-default">Edit contact</a>
 
                 {% if contact.activeMembership %}
                     <div class="membership-info">
@@ -56,7 +60,7 @@
                         New reservation</a>
                     {% endif %}
 
-                    <a href="{{ path('switch_contact', {contactId: contact.id, itemId: app.request.get('itemId'), go: app.request.get('go')}) }}" class="btn btn-xs btn-success">Browse / borrow as {{ contact.name }}</a>
+                    {#<a href="{{ path('switch_contact', {contactId: contact.id, itemId: app.request.get('itemId'), go: app.request.get('go')}) }}" class="btn btn-xs btn-success">Browse / borrow as {{ contact.name }}</a>#}
                     <a href="{{ path('loan_search', {'loan-search': contact.name}) }}" class="btn btn-xs btn-default">View loans / reservations</a>
 
                 {% else %}
@@ -66,7 +70,7 @@
                     </div>
                 {% endif %}
 
-                <a href="{{ path('contact', {id: contact.id}) }}" class="btn btn-xs btn-default">Edit contact</a>
+
 
             </div>
         {% endfor %}

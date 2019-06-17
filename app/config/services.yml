@@ -151,6 +151,11 @@ services:
             - "@doctrine.orm.entity_manager"
             - "@service_container"
 
+    service.event:
+        class: AppBundle\Services\Event\EventService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
     service.loan:
         class: AppBundle\Services\Loan\LoanService
         arguments:

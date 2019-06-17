@@ -53,7 +53,7 @@
                 <div class="col-sm-9" id="page-body">
 
                     {% include('member_site/themes/widgets/alerts.html.twig') %}
-                    {% include('member_site/themes/widgets/account_menu.html.twig') %}
+                    {% block accountNav %}{% endblock %}
 
                     {#--- THIS IS THE SECTION THAT PULLS IN ACTUAL CONTENT ---#}
                     {% block body %}{% endblock %}

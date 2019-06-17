@@ -116,7 +116,7 @@ class SettingsService
         ];
 
         foreach ($this->settings[$this->db] AS $k => $v) {
-            if (!$v && isset($defaultSettings[$k])) {
+            if ($v == null && isset($defaultSettings[$k])) {
                 $this->settings[$this->db][$k] = $defaultSettings[$k];
             }
         }
@@ -251,6 +251,10 @@ class SettingsService
             'setup_opening_hours',
             'drag_to_book',
             'default_calendar_view',
+            'show_events_online',
+
+            // Web page header text
+            'page_event_header',
 
             // Stripe card details
             'stripe_access_token',

@@ -6,6 +6,10 @@
     <a href="{{ path('basket_show') }}" style="padding: 0 10px;"><i class="fa fa-shopping-basket"></i><span class="hidden-xs"> Basket</span> ({{ tenantInformation.basket.loanRows|length }} items)</a>
 {% endif %}
 
+{% if tenantInformation.setting('show_events_online') == 1 %}
+    <a href="{{ path('event_list') }}" style="padding: 0 10px"><i class="fa fa-calendar"></i> Events</a>
+{% endif %}
+
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 
     {% if is_granted('ROLE_ADMIN') %}

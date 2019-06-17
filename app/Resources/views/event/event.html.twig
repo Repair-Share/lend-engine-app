@@ -1,0 +1,199 @@
+{% extends 'base.html.twig' %}
+
+{% block pageCss %}
+    <link rel="stylesheet" href="/plugins/timepicker/timepicker.css">
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block pageTitle %}{{ title }}{% endblock %}
+
+{% block body %}
+
+    <style>
+        .date-picker-wrapper {
+            /*width: 100%;*/
+            padding: 0;
+            border: 0;
+            background-color: #fff;
+        }
+        .drp_top-bar {
+            display: none;
+        }
+        .date-picker-wrapper .month-wrapper table .day.real-today {
+            background-color: #f6f6f6;
+        }
+    </style>
+    {{ form_start(form, {'attr': {'id': 'event_admin'}}) }}
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-5">
+
+            <div class="box box-default box-solid">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Event information</h3>
+                    {{ label|raw }}
+                </div>
+                <div class="box-body">
+                    {{ form_row(form.title) }}
+                    <div class="row">
+                        <div class="col-md-6" style="min-width:200px;">
+                            {{ form_row(form.date) }}
+                            <input type="hidden" name="datePicker" id="datePicker" value="{{ event.date|date('Y-m-d') }}">
+                            <div id="date-container"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form_row(form.timeFrom) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.timeTo) }}
+                                </div>
+                            </div>
+                            {{ form_row(form.site) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            {{ form_row(form.maxAttendees) }}
+                        </div>
+                        <div class="col-md-8">
+                            {{ form_row(form.type) }}
+                        </div>
+                    </div>
+                    {{ form_row(form.description) }}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-7">
+
+            <div class="box box-default box-solid">
+                <div class="box-header with-border"><h3 class="box-title">Attendees / organisers</h3></div>
+                <div class="box-body">
+                    {% if event.attendees|length == 0 %}
+                        <div class="alert alert-info">This event has no attendees.</div>
+                    {% else %}
+                        <div class="" style="margin-bottom: 10px">
+                            With <span class=""></span> selected :
+                            <button type="button" class="btn btn-xs btn-default">Remove</button>
+                            <button type="button" class="btn btn-xs btn-default">Email</button>
+                            <button type="button" class="btn btn-xs btn-default">Make organiser</button>
+                        </div>
+                        <table class="table table-hover table-striped" id="table-attendees">
+                            <thead>
+                            <tr>
+                                <th class="no-sort"><input type="checkbox"></th>
+                                <th style="width:10px"></th>
+                                <th>Name</th>
+                                <th>Added at</th>
+                                <th>Confirmed</th>
+                            </tr>
+                            </thead>
+                            {% for attendee in event.attendees %}
+                                <tr>
+                                    <td><input type="checkbox"></td>
+                                    <td>
+                                        {% if attendee.type == "organiser" %}
+                                            <i class="fa fa-user-secret" data-toggle="tooltip" title="" data-original-title="Organiser"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('contact', {id: attendee.contact.id}) }}">{{ attendee.contact.name }}</a>
+                                        <div class="small">{{ attendee.contact.email }}</div>
+                                        <div class="small">{{ attendee.contact.telephone }}</div>
+                                    </td>
+                                    <td>
+                                        {{ attendee.createdAt|date }}
+                                        <div class="small">
+                                            By {{ attendee.createdBy.name }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{ attendee.isConfirmed }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+
+                    <div class="page-help">
+                        To add attendees, search for the user on your member site, click "browse as" then visit the events list
+                        and subscribe from there. Users do not have to be members to attend events.
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-help">
+                About events
+            </div>
+        </div>
+    </div>
+
+    <div class="page-controls">
+        <button type="submit" id="save-event" name="submitForm" value="save" class="btn bg-green btn-loading pull-right">Save</button>
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block pagejs %}
+    <script src="/plugins/timepicker/timepicker.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            var datePickerField = $("#datePicker");
+            datePickerField.dateRangePicker({
+                format: 'ddd MMM D YYYY',
+                autoClose: true,
+                singleDate: true,
+                singleMonth: true,
+                showShortcuts: false,
+                inline: true,
+                alwaysOpen: true,
+                container: '#date-container',
+                setValue: function (s) {
+                    if (!$(this).attr('readonly') && !$(this).is(':disabled') && s != $(this).val()) {
+                        $(this).val(s)
+                    }
+                }
+            }).bind('datepicker-change', function (event, obj) {
+                var eventDate = moment(obj.date1).format('YYYY-MM-DD');
+                $("#event_date").val(eventDate);
+            });
+
+            datePickerField.data('dateRangePicker').setDateRange('{{ eventDate }}', '{{ eventDate }}', true);
+
+//            http://www.jonthornton.com/jquery-timepicker/
+            $("#event_timeFrom").timepicker({
+                'timeFormat' : 'H:i a',
+                'step' : 30,
+                'minTime': '7:00am',
+                'maxTime': '10:00pm'
+            });
+            $("#event_timeTo").timepicker({
+                'timeFormat' : 'H:i a',
+                'step' : 30,
+                'minTime': '7:00am',
+                'maxTime': '10:00pm'
+            });
+
+            $('#table-attendees').DataTable({
+                pageLength: 100,
+                ordering: true,
+                columnDefs: [{
+                    orderable: false,
+                    targets: "no-sort"
+                }],
+                "order": [[ 1, "desc" ]]
+            });
+        });
+    </script>
+{% endblock %}

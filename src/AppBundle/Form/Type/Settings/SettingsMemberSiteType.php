@@ -94,6 +94,18 @@ then the user will also be shown a button to continue to choose a membership.',
             )
         ));
 
+        $builder->add('page_event_header', TextareaType::class, array(
+            'label' => 'Content to show at the top of the event listing page',
+            'data' => $dbData['page_event_header'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'data-help' => '',
+                'rows' => 6,
+                'class' => 'summernote'
+            )
+        ));
+
         $readOnlyCustomTheme = true;
         $planStarHtml = '<i class="fa fa-star" style="color:#ff9d00"></i> Only available on Plus plan.';
         if ($this->tenantService->getFeature('CustomTheme')) {

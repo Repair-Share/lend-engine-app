@@ -141,7 +141,6 @@ class BillingService
         if (!$plan) {
             $plan = 'free';
         }
-
         switch ($plan) {
             case 'free':
                 return 100;
@@ -159,7 +158,6 @@ class BillingService
                 return 10000;
                 break;
         }
-
         return 0;
     }
 
@@ -169,11 +167,9 @@ class BillingService
      */
     public function getMaxContacts($plan)
     {
-
         if (!$plan) {
             $plan = 'free';
         }
-
         switch ($plan) {
             case 'free':
                 return 100;
@@ -191,7 +187,6 @@ class BillingService
                 return 10000;
                 break;
         }
-
         return 0;
     }
 
@@ -201,12 +196,10 @@ class BillingService
      */
     public function getMaxSites($plan)
     {
-
         // During trial, only one site
         if (!$plan) {
             $plan = 'free';
         }
-
         switch ($plan) {
             case 'free':
                 return 1;
@@ -224,7 +217,35 @@ class BillingService
                 return 30;
                 break;
         }
+        return 0;
+    }
 
+    /**
+     * @param $plan
+     * @return int
+     */
+    public function getMaxEvents($plan)
+    {
+        if (!$plan) {
+            $plan = 'free';
+        }
+        switch ($plan) {
+            case 'free':
+                return 10;
+                break;
+
+            case 'starter':
+                return 50;
+                break;
+
+            case 'plus':
+                return 100;
+                break;
+
+            case 'business':
+                return 500;
+                break;
+        }
         return 0;
     }
 

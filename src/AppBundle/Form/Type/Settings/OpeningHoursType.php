@@ -14,6 +14,7 @@ class OpeningHoursType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $data = $builder->getData();
 
         $builder->add('site', EntityType::class, array(
             'label' => 'Site',
@@ -25,8 +26,10 @@ class OpeningHoursType extends AbstractType
             )
         ));
 
+        $date = $data->getDate()->format("Y-m-d");
         $builder->add('date', HiddenType::class, array(
             'label' => 'Date',
+            'data' => $date,
             'required' => true,
             'attr' => array(
                 'placeholder' => 'yyyy-mm-dd'

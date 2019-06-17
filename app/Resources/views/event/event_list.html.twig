@@ -1,0 +1,153 @@
+{# app/Resources/views/item/item_list.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Events{% endblock %}
+
+{% block pageTitle %}Events{% endblock %}
+
+{% block primaryButton %}
+    <a class="btn bg-green" href="{{ path('event_admin') }}">Add event</a>
+{% endblock %}
+
+{% block body %}
+
+    <style>
+        .e-dayname {
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            font-size: 12px;
+            text-align: center;
+            padding: 3px;
+            color: #fff;
+            font-weight: bold;
+        }
+        .e-day {
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+            width: 70px;
+            color: #fff;
+            opacity: 0.7;
+        }
+        .e-month {
+            font-size: 12px;
+            text-align: center;
+            padding: 3px;
+            width: 70px;
+            color: #fff;
+            border-bottom: 1px solid #fff;
+            font-weight: bold;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        .e-status {
+            font-size: 10px;
+            text-align: center;
+            padding: 3px;
+            color: #fff;
+        }
+        .e-live {
+            background-color: #86c30d;
+        }
+        .e-draft {
+            background-color: #a7a7a7;
+        }
+        .e-past {
+            background-color: #302d2d;
+        }
+
+    </style>
+    <div class="row" id="primary-filter" style="display:block">
+        <div id="primary-filter-inner">
+            <form method="GET" class="">
+                <input type="hidden" name="filtered" value="1">
+                <input type="hidden" name="search" value="{{ app.request.get('search') }}">
+                <div class="col-md-11 filter-fields">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <select name="filterStatus[]" id="filterStatus" class="form-control" multiple>
+                                {% for status, name in eventStatuses %}
+                                    <option {% if status in selectedStatuses %}SELECTED{% endif %} value="{{ status }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn bg-green pull-right form-control">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row" id="event-list-body">
+        <div class="col-md-12 table-responsive">
+            <table cellspacing="0" class="table table-hover table-striped has-actions" id="data-table-events">
+                <thead>
+                <th style="width:70px">Date</th>
+                <th>Title</th>
+                <th>Location</th>
+                <th>Attendees</th>
+                <th>Status</th>
+                <th></th>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        $(document).ready(function() {
+            var eventsTable = $('#data-table-events');
+
+            var dataTable = eventsTable.DataTable({
+                ordering: false,
+                serverSide: true,
+                autoWidth: true,
+                pageLength: 50,
+                ajax: {
+                    "url": "{{ path('dt_event_list') }}",
+                    "data": function (d) {
+                        d.status = $("#filterStatus").val();
+                    }
+                },
+                "oSearch": {
+                    "sSearch": "{{ searchString }}"
+                },
+                "language": {
+                    "infoFiltered": ""
+                },
+                "columns": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ]
+            });
+
+            dataTable.buttons().container().appendTo('#data-table-events_length').css('padding-right', '20px');
+
+            $("#data-table-events_filter label input").css("height", "34px");
+            $("div.dataTables_wrapper div.dataTables_filter input").css("text-align", "left");
+            $("#data-table-events_filter label input").attr("placeholder", "Event title");
+            $("#data-table-events_filter label input").css("width", "200px");
+
+            //http://coderexample.com/datatable-custom-column-search/
+            $('.search-input-text').on( 'keyup click', function () {   // for text boxes
+                var i =$(this).attr('data-column');  // getting column index
+                var v =$(this).val();  // getting search input value
+                dataTable.columns(i).search(v).draw();
+            } );
+
+            $('.search-input-select').on( 'change', function () {
+                var i =$(this).attr('data-column');
+                var v =$(this).val();
+                dataTable.columns(i).search(v).draw();
+            } );
+        });
+    </script>
+{% endblock %}

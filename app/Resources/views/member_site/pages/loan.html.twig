@@ -2,11 +2,7 @@
 {% extends 'member_site/themes/loader.html.twig' %}
 
 {% block accountNav %}
-    {{ include('member_site/partials/account_nav.html.twig') }}
-{% endblock %}
-
-{% block search %}
-    {{ include('member_site/partials/search.html.twig') }}
+    {{ include('member_site/themes/widgets/account_menu.html.twig') }}
 {% endblock %}
 
 {% block body %}

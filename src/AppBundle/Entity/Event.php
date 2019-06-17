@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Event
@@ -15,7 +16,7 @@ class Event
 {
     const STATUS_DRAFT      = 'DRAFT';
     const STATUS_PUBLISHED  = 'PUBLISHED';
-    const STATUS_COMPLETED  = 'COMPLETED';
+    const STATUS_PAST       = 'PAST';
 
     /**
      * @var int
@@ -36,7 +37,7 @@ class Event
     /**
      * @var Site
      *
-     * @ORM\ManyToOne(targetEntity="Site", inversedBy="Events")
+     * @ORM\ManyToOne(targetEntity="Site", inversedBy="events")
      * @ORM\JoinColumn(name="site_id", referencedColumnName="id")
      */
     private $site;
@@ -127,12 +128,23 @@ class Event
     private $createdBy;
 
     /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="Attendee", mappedBy="event", cascade={"remove", "persist"})
+     */
+    private $attendees;
+
+    /**
      * Gets triggered only on insert
      * @ORM\PrePersist
      */
     public function onPrePersist()
     {
         $this->setCreatedAt(new \DateTime("now"));
+    }
+
+    function __construct()
+    {
+        $this->attendees = new ArrayCollection();
     }
 
     /**
@@ -449,6 +461,27 @@ class Event
     public function getFacebookUrl()
     {
         return $this->facebookUrl;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAttendees()
+    {
+        return $this->attendees;
+    }
+
+    /**
+     * @param $attendee
+     * @return $this
+     */
+    public function addAttendee($attendee)
+    {
+        if (!$this->getAttendees()->contains($attendee)) {
+            $this->attendees[] = $attendee;
+        }
+
+        return $this;
     }
 }
 

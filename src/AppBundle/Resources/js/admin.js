@@ -69,6 +69,8 @@ $(document).on('click', '#show-admin-tools', function() {
 
 $(document).ready(function(){
 
+    var content = $('.content');
+
     // Add a div to hold "x characters left" under a form field
     $(".limited").after('<div class="limiter"></div>');
 
@@ -86,10 +88,18 @@ $(document).ready(function(){
 
     setUpSelectMenus();
 
-    $('.content').on('click', '#show-filters', function () {
+    content.on('click', '#show-filters', function () {
         $('#primary-filter').fadeIn(500);
         $('#show-filters').fadeOut(500);
         setUpSelectMenus();
+    });
+
+    content.on('click', ".delete-link", function() {
+        if (window.confirm("Are you sure you want to delete?")) {
+            return true;
+        } else {
+            return false;
+        }
     });
 
     // AJAX tabs

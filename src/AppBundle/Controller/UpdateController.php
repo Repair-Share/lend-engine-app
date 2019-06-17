@@ -69,9 +69,9 @@ class UpdateController extends Controller
         $repository->setLoansOverdue();
 
         // Remove historic opening hours
-        /** @var \AppBundle\Repository\EventRepository $repository */
-        $repository = $em->getRepository('AppBundle:Event');
-        $repository->removeHistoricOpeningHours();
+        /** @var \AppBundle\Services\Event\EventService $eventService */
+        $eventService = $this->get('service.event');
+        $eventService->removePastEvents();
 
         /*   START DATA PATCH TO ADD ITEM ID INTO PAYMENTS FOR EXTENSIONS AND CHECK IN  */
         /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */

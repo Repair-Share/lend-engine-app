@@ -70,7 +70,7 @@ class MenuBuilder
 
         $this->addMenuItem('Contacts / Members', 'contact_list', 'fa-group');
 
-//        $this->addMenuItem('Events <span class="label bg-orange">NEW</span>', 'contact_list', 'fa-calendar');
+        $this->addMenuItem('Events <span class="label bg-orange">NEW</span>', 'admin_event_list', 'fa-calendar');
 
         $this->addMenuItem('Reports', 'null', 'fa-signal');
         $this->addChildItem('Reports', 'Loans by status/member', 'report_loans', '');
@@ -403,10 +403,12 @@ class MenuBuilder
             $this->menu->addChild($profileLabel, array('route' => 'fos_user_profile_show'));
         }
 
-        $loanText = $this->container->get('translator')->trans("Loans", [], 'member_site');
-        $loanLabel = $loanText;
+        $myAccountText = $this->container->get('translator')->trans("My account", [], 'member_site');
+        $this->menu->addChild($myAccountText, array('route' => 'fos_user_profile_show'));
 
-        $this->menu->addChild($loanLabel, array('route' => 'loans'));
+        $loanText = $this->container->get('translator')->trans("Loans", [], 'member_site');
+        $this->menu->addChild($loanText, array('route' => 'loans'));
+
         $this->menu->addChild($this->container->get('translator')->trans("Payments", [], 'member_site'), array('route' => 'payments'));
 
         return $this->menu;

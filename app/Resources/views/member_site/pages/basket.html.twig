@@ -1,6 +1,10 @@
 {% trans_default_domain 'member_site' %}
 {% extends 'member_site/themes/loader.html.twig' %}
 
+{% block accountNav %}
+    {{ include('member_site/themes/widgets/account_menu.html.twig') }}
+{% endblock %}
+
 {% block pageCss %}{% endblock %}
 
 {% block body %}

@@ -1,0 +1,29 @@
+{% extends 'modal.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block modalTitle %}{{ event.title }}{% endblock %}
+
+{% block modalBody %}
+    <style>
+        .modal-mini-header {
+            font-size: 12px;
+            color: #ccc;
+        }
+    </style>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="modal-mini-header">Information</div>
+            {{ event.description|nl2br }}
+            <br><br>
+        </div>
+        <div class="col-md-6">
+            <div class="modal-mini-header">Location</div>
+            {{ event.site.name }}<br>
+            {{ event.site.address }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block modalFooter %}
+<a href="{{ path('event_view', {eventId: event.id} ) }}" class="btn btn-success btn-block">View details / book</a>
+{% endblock %}
