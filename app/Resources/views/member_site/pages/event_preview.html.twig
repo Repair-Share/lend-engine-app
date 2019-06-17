@@ -1,12 +1,12 @@
 {% extends 'modal.html.twig' %}
 {% trans_default_domain 'member_site' %}
 
-{% block modalTitle %}{{ event.title }}{% endblock %}
+{% block modalTitle %}
+    {{ event.title }}
+{% endblock %}
 
 {% block modalBody %}
-
     <script type="text/javascript">
-
         function add_markers() {
             var geocoder = new google.maps.Geocoder();
             var marker;
@@ -48,25 +48,51 @@
         }
     </style>
 
-    {{ event.description|nl2br }}
-    <br><br>
+    <div>
+        {{ event.description|nl2br }}
+        <br><br>
+    </div>
 
-    <div class="modal-mini-header">Location</div>
-    {{ event.site.name }} : {{ event.site.address }}
-
-    <style type="text/css">
-        #map
-        {
-            height:250px;
-            width:100%;
-            display:block;
-            margin-top: 10px;
-        }
-    </style>
-    <div id="map"></div>
+    <div class="row">
+        <div class="col-md-7">
+            <style type="text/css">
+                #map
+                {
+                    height:250px;
+                    width:100%;
+                    display:block;
+                    margin-bottom: 10px;
+                }
+            </style>
+            <div id="map"></div>
+        </div>
+        <div class="col-md-5">
+            <div class="modal-mini-header">Location</div>
+            {{ event.site.name }}<br>
+            {{ event.site.address }}<br>
+            {{ event.site.postcode }}<br>
+            <br>
+            <div class="modal-mini-header">Time</div>
+            {{ event.date|date("l j F") }}<br>
+            {{ event.timeFrom }} - {{ event.timeTo }}<br>
+            <br>
+            <div class="modal-mini-header">Cost</div>
+            {% if event.price > 0 %}
+                {{ tenantInformation.currencySymbol }} {{ event.price|number_format(2) }}
+            {% else %}
+                Free
+            {% endif %}
+        </div>
+    </div>
 
 {% endblock %}
 
 {% block modalFooter %}
-<a href="{{ path('event_view', {eventId: event.id} ) }}" class="btn btn-success btn-block">View details / book</a>
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    <a href="{{ path('event_book', {eventId: event.id} ) }}" class="btn btn-success btn-block">
+    {% if app.user == user %}Book{% else %}Book {{ user.name }} onto event{% endif %}
+    </a>
+{% else %}
+
+{% endif %}
 {% endblock %}

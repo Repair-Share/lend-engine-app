@@ -38,6 +38,15 @@ class ContactService
     }
 
     /**
+     * @param $id
+     * @return null|object
+     */
+    public function get($id)
+    {
+        return $this->em->getRepository('AppBundle:Contact')->find($id);
+    }
+
+    /**
      * This function gets the data required to feed the contact list DataTable via AJAX
      * @param $start
      * @param $length

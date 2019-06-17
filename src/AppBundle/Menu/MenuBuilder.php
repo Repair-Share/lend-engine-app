@@ -70,7 +70,9 @@ class MenuBuilder
 
         $this->addMenuItem('Contacts / Members', 'contact_list', 'fa-group');
 
-        $this->addMenuItem('Events <span class="label bg-orange">NEW</span>', 'admin_event_list', 'fa-calendar');
+        if ($this->container->get('settings')->getSettingValue('ft_events')) {
+            $this->addMenuItem('Events <span class="label bg-orange">NEW</span>', 'admin_event_list', 'fa-calendar');
+        }
 
         $this->addMenuItem('Reports', 'null', 'fa-signal');
         $this->addChildItem('Reports', 'Loans by status/member', 'report_loans', '');
@@ -109,6 +111,9 @@ class MenuBuilder
         $this->menu->addChild('Locations', array('route' => 'location_list'));
 
         $this->menu->addChild('Loans & Reservations', array('route' => 'settings_reservations'));
+        if ($this->container->get('settings')->getSettingValue('ft_events')) {
+            $this->menu->addChild('Events', array('route' => 'settings_events'));
+        }
         $this->menu->addChild('Member site', array('route' => 'settings_member_site'));
         $this->menu->addChild('Site pages & links', array('route' => 'page_list'));
 
@@ -403,11 +408,13 @@ class MenuBuilder
             $this->menu->addChild($profileLabel, array('route' => 'fos_user_profile_show'));
         }
 
-        $myAccountText = $this->container->get('translator')->trans("My account", [], 'member_site');
-        $this->menu->addChild($myAccountText, array('route' => 'fos_user_profile_show'));
-
         $loanText = $this->container->get('translator')->trans("Loans", [], 'member_site');
         $this->menu->addChild($loanText, array('route' => 'loans'));
+
+        if ($this->container->get('settings')->getSettingValue('show_events_online') == 1) {
+            $eventsText = $this->container->get('translator')->trans("Events", [], 'member_site');
+            $this->menu->addChild($eventsText, array('route' => 'my_events'));
+        }
 
         $this->menu->addChild($this->container->get('translator')->trans("Payments", [], 'member_site'), array('route' => 'payments'));
 

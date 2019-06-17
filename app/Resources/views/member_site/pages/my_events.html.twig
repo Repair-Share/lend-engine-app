@@ -1,0 +1,61 @@
+{% extends 'member_site/themes/loader.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block pageCss %}
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>
+{% endblock %}
+
+{% block accountNav %}
+    {{ include('member_site/themes/widgets/account_menu.html.twig') }}
+{% endblock %}
+
+{% block body %}
+    <h2>
+        {% trans %}Events{% endtrans %}
+        {% if user is defined and user.id != app.user.id %}
+            {{ include('member_site/partials/session_user.html.twig') }}
+        {% endif %}
+    </h2>
+
+    {% if user.attendees|length > 0 %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Event</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Location</th>
+            </tr>
+            </thead>
+            {% for attendee in user.attendees %}
+                {% if attendee.event.status == "PUBLISHED" %}
+                <tr>
+                    <td><a href="{{ path('event_preview', {eventId: attendee.event.id}) }}" class="modal-link">{{ attendee.event.title }}</a></td>
+                    <td>{{ attendee.event.date|date("l j F") }}</td>
+                    <td>{{ attendee.event.timeFrom }} - {{ attendee.event.timeTo }}</td>
+                    <td>
+                        {{ attendee.event.site.name }}<br>
+                        {{ attendee.event.site.address }}, {{ attendee.event.site.postcode }}
+                    </td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+
+    {% else %}
+        <div class="alert alert-warning">
+            You're not attending any events.
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-6">
+
+        </div>
+        <div class="col-md-6">
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagejs %}{% endblock %}

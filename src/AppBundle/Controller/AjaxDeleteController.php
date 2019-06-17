@@ -421,7 +421,7 @@ class AjaxDeleteController extends Controller
                 return $generalException->getMessage();
             }
         } else {
-            $msg = 'Transactions have been assigned to this site.';
+            $msg = 'Item movements or events have been assigned to this site.';
         }
 
         return $msg;

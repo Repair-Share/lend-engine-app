@@ -246,6 +246,9 @@ class SettingsService
             'automate_email_membership',
             'automate_email_overdue_days',
 
+            // Feature toggles
+            'ft_events',
+
             // Setup values
             'multi_site',
             'setup_opening_hours',

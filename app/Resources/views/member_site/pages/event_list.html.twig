@@ -22,12 +22,15 @@
         }
         .event-title {
             font-weight: bold;
+            padding-left: 60px;
         }
         .event-time {
             font-size: 11px;
+            padding-left: 60px;
         }
         .event-location {
             font-size: 11px;
+            padding-left: 60px;
         }
 
         .e-cal {
@@ -70,11 +73,7 @@
         <div class="col-md-8">
             <div id="calendar"></div>
         </div>
-        <div class="col-md-4" id="event-list">
-            {% for event in events %}
-
-            {% endfor %}
-        </div>
+        <div class="col-md-4" id="event-list"></div>
     </div>
 {% endblock %}
 

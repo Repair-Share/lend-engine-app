@@ -18,7 +18,9 @@ class SiteRepository extends \Doctrine\ORM\EntityRepository
         if ($this->hasItemMovements($siteId)) {
             return false;
         }
-
+        if ($this->hasEvents($siteId)) {
+            return false;
+        }
         return true;
     }
 
@@ -46,6 +48,26 @@ class SiteRepository extends \Doctrine\ORM\EntityRepository
           FROM item_movement
           WHERE inventory_location_id IN
           (SELECT id FROM inventory_location WHERE site = '{$siteId}')
+          ";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+        if ( $result[0]['cnt'] > 0 ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param $siteId
+     * @return bool
+     */
+    private function hasEvents($siteId)
+    {
+        $sql = "SELECT COUNT(id) AS cnt
+          FROM event
+          WHERE site_id = '{$siteId}'
           ";
         $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
         $stmt->execute();

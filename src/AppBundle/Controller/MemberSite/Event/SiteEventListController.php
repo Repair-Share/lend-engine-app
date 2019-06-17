@@ -16,27 +16,19 @@ class SiteEventListController extends Controller
      */
     public function eventListAction(Request $request)
     {
-        $search = $request->get('search');
-        $searchString = $search['value'];
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->get('service.contact');
 
-        /** @var \AppBundle\Services\Event\EventService $eventService */
-        $eventService = $this->get('service.event');
-
-        $filter = [];
-        if ($searchString) {
-            $filter['search'] = $searchString;
+        if ($userId = $this->get('session')->get('sessionUserId')) {
+            $user = $contactService->get($userId);
+        } else {
+            $user = $this->getUser();
         }
-        $filter['status'] = ['PUBLISHED'];
-
-        /***** THE MAIN QUERY ******/
-        $searchResults = $eventService->eventSearch(0, 100, $filter);
-        $totalRecords  = $searchResults['totalResults'];
-        $events        = $searchResults['data'];
 
         return $this->render(
             'member_site/pages/event_list.html.twig',
             [
-                'events' => $events,
+                'user' => $user,
             ]
         );
     }

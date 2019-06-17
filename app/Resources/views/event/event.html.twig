@@ -59,13 +59,18 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             {{ form_row(form.maxAttendees) }}
                         </div>
-                        <div class="col-md-8">
-                            {{ form_row(form.type) }}
+                        <div class="col-md-6">
+                            <label>Price per attendee</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
+                                {{ form_widget(form.price) }}
+                            </div>
                         </div>
                     </div>
+                    {{ form_row(form.type) }}
                     {{ form_row(form.description) }}
                 </div>
             </div>
@@ -125,14 +130,14 @@
 
                     <div class="page-help">
                         To add attendees, search for the user on your member site, click "browse as" then visit the events list
-                        and subscribe from there. Users do not have to be members to attend events.
+                        and book from there. Users do not have to be members to attend events.
                     </div>
                 </div>
             </div>
 
-            <div class="page-help">
-                About events
-            </div>
+            {#<div class="page-help">#}
+                {#About events#}
+            {#</div>#}
         </div>
     </div>
 

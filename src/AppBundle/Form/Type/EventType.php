@@ -24,7 +24,7 @@ class EventType extends AbstractType
             'choice_label' => 'name',
             'required' => true,
             'attr' => array(
-                'data-help' => "If the event isn't at one of your sites, add a temporary 'inactive' site in the settings area first.",
+                'data-help' => "If the event isn't at one of your existing sites, add a new site in the settings area first. It doesn't have to be active for item bookings.",
             )
         ));
 
@@ -37,7 +37,7 @@ class EventType extends AbstractType
             'required' => true,
             'choices' => $choices,
             'attr' => [
-                'data-help' => 'Choose yes to have this event show on the item booking calendar.',
+                'data-help' => 'Choose yes to have this event show on the item booking calendar, along with regular site opening hours.',
                 'class' => 'input-100'
             ]
         ));
@@ -72,6 +72,15 @@ class EventType extends AbstractType
             'attr' => [
                 'maxlength' => 4,
                 'class' => ''
+            ]
+        ));
+
+        $builder->add('price', NumberType::class, array(
+            'label' => 'Price',
+            'required' => false,
+            'attr' => [
+                'maxlength' => 5,
+                'class' => 'input-100'
             ]
         ));
 

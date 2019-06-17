@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block pageCss %}
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.css">
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/theme/monokai.css">
+    <link href="/plugins/summernote/summernote.css" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Settings : Events{% endblock %}
+
+{% block pageTitle %}Settings : Events{% endblock %}
+
+{% block primaryButton %}{% endblock %}
+
+{% block body %}
+
+    <style>
+        h2 { margin: 20px 0 10px; padding-bottom: 10px; border-bottom: 2px solid #3b3b3b; font-size: 20px; }
+    </style>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row" id="settings-events">
+
+        <div class="col-md-3 col-lg-2">
+            {{ knp_menu_render('settingsMenu') }}
+        </div>
+
+        <div class="col-md-9 col-lg-8">
+            <h2>Event settings</h2>
+
+            <div class="page-help">
+                Use the Lend Engine to manage your workshops, consultancies, repair café and any other community event you like.
+                Events can be free, or given a price to bring in some income.
+            </div>
+
+            {{ form_row(form.show_events_online) }}
+            {{ form_row(form.page_event_header) }}
+        </div>
+
+    </div>
+
+    <div class="page-controls">
+        <button type="submit" class="btn bg-green">Save settings</button>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/mode/xml/xml.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/codemirror/2.36.0/formatting.js"></script>
+    <script src="/plugins/summernote/summernote.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.summernote').summernote({
+                toolbar: [
+                    // [groupName, [list of button]]
+                    ['style', ['style', 'bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['extra', ['codeview']]
+                ],
+                height: 200
+            });
+        });
+    </script>
+{% endblock %}
