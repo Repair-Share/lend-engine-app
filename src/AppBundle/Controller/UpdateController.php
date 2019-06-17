@@ -111,6 +111,28 @@ FROM payment p2 where p2.note REGEXP 'Extend (.*) [0-9]+ days.*'
         }
         /*   END DATA PATCH   */
 
+
+
+        /* START DATA PATCH TO UN-ASSIGN ITEMS WHICH ARE ASSIGNED TO MEMBERS */
+
+        /** @var \AppBundle\Repository\ContactRepository $contactRepository */
+        $contactRepository = $em->getRepository('AppBundle:Contact');
+        $staff = $contactRepository->findAllStaff();
+        $staffIds = [];
+        foreach ($staff AS $s) {
+            $staffIds[] = $s->getId();
+        }
+        $idSet = implode(',', $staffIds);
+        $sql = "UPDATE inventory_item SET assigned_to = NULL WHERE assigned_to NOT IN ({$idSet})";
+        $stmt = $em->getConnection()->prepare($sql);
+        $stmt->execute();
+
+        $sql = "UPDATE item_movement SET assigned_to_contact_id = NULL WHERE assigned_to_contact_id NOT IN ({$idSet})";
+        $stmt = $em->getConnection()->prepare($sql);
+        $stmt->execute();
+
+        /* END DATA PATCH */
+
         return $this->redirect($this->generateUrl('home'));
     }
 
