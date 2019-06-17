@@ -30,8 +30,8 @@ class SiteDataController extends Controller
         /** @var $siteRepo \AppBundle\Repository\SiteRepository */
         $siteRepo = $this->getDoctrine()->getRepository('AppBundle:Site');
 
-        /** @var $extraRepo \AppBundle\Repository\EventRepository */
-        $extraRepo = $this->getDoctrine()->getRepository('AppBundle:Event');
+        /** @var $eventService \AppBundle\Services\Event\EventService */
+        $eventService = $this->get('service.event');
 
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
@@ -175,9 +175,9 @@ class SiteDataController extends Controller
                 'from'    => $dFrom->format("Y-m-d"),
                 'to'      => $dTo->format("Y-m-d"),
             ];
-            $openingTimeExceptions = $extraRepo->search($filter);
+            $results = $eventService->eventSearch(0, 100, $filter);
 
-            foreach ($openingTimeExceptions AS $slot) {
+            foreach ($results['data'] AS $slot) {
                 /** @var $slot \AppBundle\Entity\Event */
 
                 $s_start = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeFrom(), 0, 2).':'.substr($slot->getTimeFrom(), 2, 2).':00';

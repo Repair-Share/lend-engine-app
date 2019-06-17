@@ -108,7 +108,6 @@ class CheckoutService
             $transactionRow->setInventoryLocation($location);
             $transactionRow->setCreatedBy($user);
             $transactionRow->setInventoryItem($inventoryItem);
-            $transactionRow->setAssignedTo($loan->getContact());
             $transactionRow->setLoanRow($row);
             $this->em->persist($transactionRow);
 

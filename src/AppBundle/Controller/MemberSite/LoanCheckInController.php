@@ -108,11 +108,11 @@ class LoanCheckInController extends Controller
                 foreach ($loan->getLoanRows() AS $row) {
                     /** @var $row \AppBundle\Entity\LoanRow */
                     if (!$row->getIsReturned()) {
-                        $this->checkInItem($toLocation, $row, $userNote, $checkInFee);
+                        $this->checkInItem($toLocation, $row, $userNote, $checkInFee, $contact);
                     }
                 }
             } else {
-                $this->checkInItem($toLocation, $loanRow, $userNote, $checkInFee);
+                $this->checkInItem($toLocation, $loanRow, $userNote, $checkInFee, $contact);
             }
 
             $returnedRows = 0;
@@ -154,7 +154,8 @@ class LoanCheckInController extends Controller
     private function checkInItem(InventoryLocation $location,
                                  LoanRow $loanRow,
                                  $userNote = '',
-                                 $checkInFee = 0) {
+                                 $checkInFee = 0,
+                                 $contact = null) {
 
         // Set up
         $em = $this->getDoctrine()->getManager();
@@ -171,7 +172,6 @@ class LoanCheckInController extends Controller
 
         $loan           = $loanRow->getLoan();
         $inventoryItem  = $loanRow->getInventoryItem();
-        $contact        = $loanRow->getLoan()->getContact();
 
         if ( $inventoryService->itemMove($inventoryItem, $location, $loanRow, $contact, $userNote) ) {
 

@@ -75,8 +75,9 @@ class SiteEventListController extends Controller
                     'eventId'  => $event->getId(),
                     'siteId'   => $site->getId(),
                     'siteName' => $site->getName(),
+                    'siteAddress' => $site->getAddress(),
                     'title'    => $event->getTitle(),
-                    'color'    => '#b1ada2',
+                    'color'    => '#808080',
                     'start'    => $s_start,
                     'end'      => $s_end,
                 ];

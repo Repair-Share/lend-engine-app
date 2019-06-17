@@ -19,6 +19,9 @@
         .event-title {
             font-weight: bold;
         }
+        .event-time {
+            font-size: 11px;
+        }
         .event-location {
             font-size: 11px;
         }
@@ -56,7 +59,7 @@
             border-bottom-right-radius: 4px;
         }
         .e-live {
-            background-color: #b1ada2;
+            background-color: #808080;
         }
     </style>
     <div class="row">
@@ -124,14 +127,16 @@
             $(events).each(function() {
                 console.log(this);
                 var date = moment(this.start);
+                var end = moment(this.end);
                 HTML += '<div class="event-wrapper">';
                 HTML += '<div class="e-cal">';
                 HTML += '<div class="e-dayname e-live">'+date.format("ddd")+'</div>';
                 HTML += '<div class="e-day e-live">'+date.format("D")+'</div>';
                 HTML += '<div class="e-month e-live">'+date.format("MMM")+'</div>';
                 HTML += '</div>';
-                HTML += '<div class="event-title"><a href="">'+this.title+'</a></div>';
-                HTML += '<div class="event-location">'+this.siteName+'</div>';
+                HTML += '<div class="event-title"><a href="{{ path('event_preview') }}/'+this.eventId+'" class="modal-link">'+this.title+'</a></div>';
+                HTML += '<div class="event-time">'+date.format("h:mma")+' - '+end.format("h:mma")+'</div>';
+                HTML += '<div class="event-location">'+this.siteName+'<br>'+this.siteAddress+'</div>';
                 HTML += '</div>';
             });
             if (HTML == '') {
