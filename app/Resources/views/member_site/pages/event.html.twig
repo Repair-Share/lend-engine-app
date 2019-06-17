@@ -1,23 +1,62 @@
 {% extends 'member_site/themes/loader.html.twig' %}
 {% trans_default_domain 'member_site' %}
 
+{% block pageCss %}
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>
+{% endblock %}
 {% block body %}
     <h2>{{ event.title }}</h2>
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-6">
 
         </div>
-        <div class="col-md-4">
-
+        <div class="col-md-6">
+            <style type="text/css">
+                #map {
+                    height:350px;
+                    width:100%;
+                    display:block;
+                }
+            </style>
+            <div id="map"></div>
         </div>
     </div>
 {% endblock %}
 
 {% block pagejs %}
-    <script>
-        $(document).ready(function() {
+    <script type="text/javascript">
+        function add_markers() {
+            var geocoder = new google.maps.Geocoder();
+            var marker;
 
+            geocoder.geocode({'address': '{{ event.site.address }}, {{ event.site.postcode }}, {{ tenantInformation.country }}'}, function(results, status)
+            {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
+                    var mapOptions = {
+                        zoom: 12,
+                        center: _position,
+                        controlSize: 32
+                    };
+                    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+                    addMarker(map, _position);
+                } else {
+                    console.log(status);
+                }
+            });
+
+            function addMarker(map, position) {
+                marker = new google.maps.Marker({
+                    position: position,
+                    map: map
+                });
+            }
+        }
+
+        $(document).ready(function() {
+            add_markers();
         });
     </script>
 {% endblock %}

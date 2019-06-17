@@ -4,24 +4,67 @@
 {% block modalTitle %}{{ event.title }}{% endblock %}
 
 {% block modalBody %}
+
+    <script type="text/javascript">
+
+        function add_markers() {
+            var geocoder = new google.maps.Geocoder();
+            var marker;
+
+            geocoder.geocode({'address': '{{ event.site.address }}, {{ event.site.postcode }}, {{ tenantInformation.country }}'}, function(results, status)
+            {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
+                    var mapOptions = {
+                        zoom: 12,
+                        center: _position,
+                        controlSize: 32
+                    };
+                    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+                    addMarker(map, _position);
+                } else {
+                    console.log(status);
+                }
+            });
+
+            function addMarker(map, position) {
+                marker = new google.maps.Marker({
+                    position: position,
+                    map: map
+                });
+            }
+        }
+
+        $(document).ready(function() {
+            add_markers();
+        });
+    </script>
+
     <style>
         .modal-mini-header {
             font-size: 12px;
             color: #ccc;
         }
     </style>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="modal-mini-header">Information</div>
-            {{ event.description|nl2br }}
-            <br><br>
-        </div>
-        <div class="col-md-6">
-            <div class="modal-mini-header">Location</div>
-            {{ event.site.name }}<br>
-            {{ event.site.address }}
-        </div>
-    </div>
+
+    {{ event.description|nl2br }}
+    <br><br>
+
+    <div class="modal-mini-header">Location</div>
+    {{ event.site.name }} : {{ event.site.address }}
+
+    <style type="text/css">
+        #map
+        {
+            height:250px;
+            width:100%;
+            display:block;
+            margin-top: 10px;
+        }
+    </style>
+    <div id="map"></div>
+
 {% endblock %}
 
 {% block modalFooter %}

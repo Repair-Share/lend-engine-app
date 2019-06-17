@@ -7,7 +7,7 @@
 {% endif %}
 
 {% if tenantInformation.setting('show_events_online') == 1 %}
-    <a href="{{ path('event_list') }}" style="padding: 0 10px"><i class="fa fa-calendar"></i> Events</a>
+    <a href="{{ path('event_list') }}" style="padding: 0 10px"><i class="far fa-calendar-alt"></i> Events</a>
 {% endif %}
 
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}

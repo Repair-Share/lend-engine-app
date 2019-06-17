@@ -1,6 +1,10 @@
 {% extends 'member_site/themes/loader.html.twig' %}
 {% trans_default_domain 'member_site' %}
 
+{% block pageCss %}
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>
+{% endblock %}
+
 {% block body %}
     <h2>
         {% trans %}Events{% endtrans %}
