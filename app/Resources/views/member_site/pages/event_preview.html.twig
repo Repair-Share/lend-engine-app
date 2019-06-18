@@ -135,7 +135,10 @@
                     {% endif %}
                 {% else %}
                     {% if event.isBookable %}
-                        Log in to book your place on this event
+                        <div class="alert alert-warning">
+                            <a href="{{ path('fos_user_security_login') }}?event={{ event.id }}">Log in</a> or
+                            <a href="{{ path('fos_user_registration_register') }}?event={{ event.id }}">register</a> to book your place on this event.
+                        </div>
                     {% endif %}
                 {% endif %}
             </div>
@@ -153,7 +156,7 @@
                 <a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">Edit this event</a>
             {% endif %}
         </div>
-        {% if event.price == 0 or is_granted("ROLE_ADMIN") %}
+        {% if (event.price == 0 and is_granted("IS_AUTHENTICATED_REMEMBERED")) or is_granted("ROLE_ADMIN") %}
         <div class="col-md-6">
             <div class="help-block" style="font-size: 12px; text-align: left">
                 Checking in adds you as an attendee without sending a booking confirmation email.
