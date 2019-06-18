@@ -35,13 +35,17 @@ class OpeningHoursController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        $filter = ['site' => $site];
+        $filter = [
+            'site' => $site,
+            'type' => ['o', 'c']
+        ];
         /** @var \AppBundle\Repository\EventRepository $eventRepo */
         $eventRepo = $em->getRepository('AppBundle:Event');
         $event = $eventRepo->findBy($filter);
 
         $tableHeader = array(
             'Date',
+            '',
             '',
             'From',
             'Changeover',
@@ -62,14 +66,22 @@ class OpeningHoursController extends Controller
             /** @var $i \AppBundle\Entity\Event */
             if ($i->getType() == 'o') {
                 $type = '<span class="label bg-green">Open</span>';
+            } else if ($i->getType() == 'e') {
+                $type = '<span class="label bg-brown">N/A</span>';
             } else {
                 $type = '<span class="label bg-red">Closed</span>';
             }
+
+            if (!$title = $i->getTitle()) {
+                $title = '-- upgrade to an event --';
+            }
+            $eventLink = $this->generateUrl('event_admin', ['eventId' => $i->getId()]);
 
             $tableRows[] = array(
                 'id' => $i->getId(),
                 'data' => array(
                     $i->getDate()->format("l j F Y"),
+                    '<a href="'.$eventLink.'">'.$title.'</a>',
                     $type,
                     $i->getTimeFrom(),
                     $i->getTimeChangeover(),
@@ -90,6 +102,9 @@ If you have irregular opening hours, then create custom time slots.
 You can mix the two, to have regular hours each week, and then create a closed time slot for a holiday.
 <br><br>
 Custom opening hours in the past will be deleted automatically on a regular basis.
+<br><br>
+Custom opening hours can be upgraded to full events where you can add attendees, take bookings and more.
+Events which are set to allow item pickup and return are shown on this list and will also appear on the item booking calendar.
 EOT;
 
         return $this->render(
@@ -119,6 +134,8 @@ EOT;
         $em = $this->getDoctrine()->getManager();
 
         $event = new Event();
+        $d = new \DateTime();
+        $event->setDate($d);
 
         /** @var \AppBundle\Repository\SiteRepository $siteRepo */
         $siteRepo = $em->getRepository('AppBundle:Site');
@@ -169,6 +186,7 @@ EOT;
                 'title' => 'Add custom hours for '.$site->getName(),
                 'subTitle' => 'Add custom hours, or holidays',
                 'form' => $form->createView(),
+                'today' => $event->getDate()->format("D M d Y") // to initialise the datepicker
             )
         );
     }

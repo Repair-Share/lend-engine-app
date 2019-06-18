@@ -50,8 +50,8 @@
 
     <script>
         $(document).ready(function () {
-            var dateExtendField = $("#opening_hours_date");
-            dateExtendField.dateRangePicker({
+            var datePickerField = $("#opening_hours_date");
+            datePickerField.dateRangePicker({
                 format: 'ddd MMM D YYYY',
                 autoClose: true,
                 singleDate: true,
@@ -66,16 +66,10 @@
                     }
                 }
             }).bind('datepicker-change', function (event, obj) {
-                {#var newTimeIn = moment(obj.date1).format('YYYY-MM-DD');#}
-                {#var start = moment("{{ loanRow.dueInAt|date('Y-m-d') }}");#}
-                {#var end = moment(newTimeIn);#}
-                {#var duration = moment.duration(end.diff(start));#}
-                {#var days = duration.asDays().toFixed(0);#}
-                {#$(".extend-days").html(days);#}
-                {#$("#modal_display_new_time_in").html(end.format('ddd MMM DD YYYY'));#}
-                {#$("#modal_new_time_in").val(end.format('YYYY-MM-DD'));#}
-                {#calculateExtensionFee(days);#}
+
             });
+
+            datePickerField.data('dateRangePicker').setDateRange('{{ today }}', '{{ today }}', true);
 
             // Validate the form
             $("#opening_hours").delegate("#opening_hours_timeFrom", "change", function(event) {

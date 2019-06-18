@@ -38,6 +38,8 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
 
             ['/admin/site/list'],
             ['/admin/site'],
+            ['/admin/site/1'],
+            ['/admin/site/1/event'],
 
             ['/admin/location/list'],
             ['/admin/location'],

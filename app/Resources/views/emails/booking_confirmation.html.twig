@@ -9,18 +9,20 @@
     <p>{{ tenantInformation.setting('email_booking_confirmation_head')|raw }}</p>
 
     <div>
-        <h4>{{ attendee.event.title }}</h4>
-        <hr size="1" noshade style="margin: 20px 0;">
+        <h3>{{ attendee.event.title }}</h3>
+        <div style="margin:20px 0;border-top:1px solid #EEE;"></div>
+        {{ attendee.contact.name }}, {{ attendee.contact.email }}
+        <div style="margin:20px 0;border-top:1px solid #EEE;"></div>
         {{ attendee.event.date|date("l j F") }}, {{ attendee.event.friendlyTimeFrom }} - {{ attendee.event.friendlyTimeTo }}
         {% if attendee.price > 0 %}
-            <hr size="1" noshade style="margin: 20px 0;">
+            <div style="margin:20px 0;border-top:1px solid #EEE;"></div>
             <span style="font-size: 20px">{{ tenantInformation.currencySymbol }} {{ attendee.price|number_format(2) }}</span>
         {% endif %}
-        <hr size="1" noshade style="margin: 20px 0;">
+        <div style="margin:20px 0;border-top:1px solid #EEE;"></div>
         {{ attendee.event.site.name }}<br>
         {{ attendee.event.site.address }}<br>
         {{ attendee.event.site.postcode }}
-        <hr size="1" noshade style="margin: 20px 0;">
+        <div style="margin:20px 0;border-top:1px solid #EEE;"></div>
         {{ attendee.event.description|nl2br }}<br><br>
         {{ attendee.event.facebookUrl }}
     </div>

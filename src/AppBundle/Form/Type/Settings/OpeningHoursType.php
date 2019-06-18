@@ -26,14 +26,16 @@ class OpeningHoursType extends AbstractType
             )
         ));
 
-        $date = $data->getDate()->format("Y-m-d");
+        if ($data->getDate()) {
+            $date = $data->getDate()->format("Y-m-d");
+        } else {
+            $d = new \DateTime();
+            $date = $d->format("Y-m-d");
+        }
         $builder->add('date', HiddenType::class, array(
             'label' => 'Date',
             'data' => $date,
-            'required' => true,
-            'attr' => array(
-                'placeholder' => 'yyyy-mm-dd'
-            )
+            'required' => true
         ));
 
         $builder->add('timeFrom', TextType::class, array(
