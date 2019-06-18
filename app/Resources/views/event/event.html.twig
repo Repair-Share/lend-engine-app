@@ -71,7 +71,16 @@
                         </div>
                     </div>
                     {{ form_row(form.type) }}
-                    {{ form_row(form.isBookable) }}
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            {{ form_row(form.isBookable) }}
+                        </div>
+                        <div class="col-md-7">
+                            {{ form_row(form.facebookUrl) }}
+                        </div>
+                    </div>
+
                     {{ form_row(form.description) }}
                 </div>
             </div>
@@ -154,8 +163,19 @@
                     {% endif %}
 
                     <div class="page-help">
-                        To add attendees, search for the user on your member site, click "browse as" then visit the events list
-                        and book from there. Users do not have to be members to attend events.
+                        <p>
+                            <strong>To add attendees</strong>, search for the user on your member site, click "browse as" then visit the events list
+                            and book from there. Users do not have to be members to attend events.
+                        </p>
+                        <p>
+                            <strong>Checking in</strong> to an event adds an attendee without sending a booking confirmation email.
+                            Check in just as though you were booking online. Check in is only possible for free events,
+                            or if you are admin browsing on behalf of a user.
+                        </p>
+                        <p>
+                            <strong>Organisers</strong> don't currently have any extra permissions or roles, but in the future
+                            we may give access to organisers to make changes to events.
+                        </p>
                     </div>
                 </div>
             </div>

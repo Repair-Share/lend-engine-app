@@ -137,7 +137,7 @@ class Attendee
     /**
      * Get contact.
      *
-     * @return int
+     * @return Contact
      */
     public function getContact()
     {

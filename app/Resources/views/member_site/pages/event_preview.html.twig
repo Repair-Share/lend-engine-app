@@ -62,10 +62,17 @@
         }
     </style>
 
-    <div>
+    <div style="margin-bottom: 10px">
         {{ event.description|nl2br }}
-        <br><br>
     </div>
+
+    {% if event.facebookUrl %}
+        <div style="margin-bottom: 10px">
+            <a href="{{ event.facebookUrl }}" target="_blank">
+                <img src="/images/fb.png" style="height: 20px; width: 20px; vertical-align: middle"> View this event on Facebook
+            </a>
+        </div>
+    {% endif %}
 
     <form method="POST" action="{{ path('event_book', {eventId: event.id} ) }}" id="bookingForm">
 
@@ -140,8 +147,21 @@
 {% endblock %}
 
 {% block modalFooter %}
-{% if is_granted("ROLE_ADMIN") %}
-<a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-default">Check in</a>
-<a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">Edit this event</a>
-{% endif %}
+    <div class="row">
+        <div class="col-md-3">
+            {% if is_granted("ROLE_ADMIN") %}
+                <a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">Edit this event</a>
+            {% endif %}
+        </div>
+        {% if event.price == 0 or is_granted("ROLE_ADMIN") %}
+        <div class="col-md-6">
+            <div class="help-block" style="font-size: 12px; text-align: left">
+                Checking in adds you as an attendee without sending a booking confirmation email.
+            </div>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-primary">Check in</a>
+        </div>
+        {% endif %}
+    </div>
 {% endblock %}

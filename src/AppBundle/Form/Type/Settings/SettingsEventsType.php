@@ -56,6 +56,40 @@ class SettingsEventsType extends AbstractType
                 'class' => 'summernote'
             )
         ));
+
+        $builder->add('email_booking_confirmation_subject', TextType::class, array(
+            'label' => 'Subject',
+            'data' => $dbData['email_booking_confirmation_subject'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => 'Booking confirmation',
+                'data-help' => ''
+            )
+        ));
+
+        $builder->add('email_booking_confirmation_head', TextareaType::class, array(
+            'label' => 'Header',
+            'data' => $dbData['email_booking_confirmation_head'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'data-help' => '',
+                'rows' => 4,
+                'class' => 'limited'
+            )
+        ));
+
+        $builder->add('email_booking_confirmation_foot', TextareaType::class, array(
+            'label' => 'Footer',
+            'data' => $dbData['email_booking_confirmation_foot'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'data-help' => '',
+                'rows' => 4,
+                'class' => 'limited'
+            )
+        ));
     }
 
     /**

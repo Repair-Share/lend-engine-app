@@ -77,7 +77,7 @@ class EventType extends AbstractType
 
         $builder->add('isBookable', ToggleType::class, array(
             'expanded' => true,
-            'label' => 'Allow people to book online?',
+            'label' => 'Allow online booking?',
             'attr' => [
                 'class' => 'input-100',
             ]
@@ -95,6 +95,14 @@ class EventType extends AbstractType
         $builder->add('title', TextType::class, array(
             'label' => 'Title',
             'required' => true,
+            'attr' => array(
+                'data-help' => ''
+            )
+        ));
+
+        $builder->add('facebookUrl', TextType::class, array(
+            'label' => 'Facebook event URL',
+            'required' => false,
             'attr' => array(
                 'data-help' => ''
             )

@@ -41,6 +41,12 @@
 
             {{ form_row(form.show_events_online) }}
             {{ form_row(form.page_event_header) }}
+
+            <h2>Booking confirmation email</h2>
+            {{ form_row(form.email_booking_confirmation_subject) }}
+            {{ form_row(form.email_booking_confirmation_head) }}
+            {{ form_row(form.email_booking_confirmation_foot) }}
+
         </div>
 
     </div>
@@ -58,6 +64,8 @@
     <script src="/plugins/summernote/summernote.js"></script>
     <script>
         $(document).ready(function() {
+            $(".limited").limiter(2055);
+
             $('.summernote').summernote({
                 toolbar: [
                     // [groupName, [list of button]]

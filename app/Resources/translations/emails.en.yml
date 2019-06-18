@@ -12,6 +12,10 @@ le_email:
   password: Password
   login_to_view_this_loan: Log in to view this loan online
 
+  booking_confirmation:
+    title: Event booking confirmation
+    subject: Event booking confirmation
+
   assign: # When a team member is assigned an item (eg for repair)
     subject:
     title: You've been assigned item(s)
