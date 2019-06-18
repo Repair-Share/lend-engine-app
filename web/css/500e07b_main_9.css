@@ -115,6 +115,11 @@ div#extend-modal .date-picker-wrapper .drp_top-bar {
     display: none;
 }
 
+/* to get it under the nav bar and modal overlay */
+.date-picker-wrapper.no-shortcuts {
+    z-index: 500 !important;
+}
+
 /* bootstrap overrides */
 .form-control {
     padding: 6px 6px;

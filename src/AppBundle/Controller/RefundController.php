@@ -62,6 +62,7 @@ class RefundController extends Controller
             $refund->setCreatedBy($this->getUser());
             $refund->setContact($p->getContact());
             $refund->setPaymentMethod($p->getPaymentMethod());
+            $refund->setEvent($p->getEvent());
 
             if ($deposit = $p->getDeposit()) {
                 $refund->setDeposit($deposit);

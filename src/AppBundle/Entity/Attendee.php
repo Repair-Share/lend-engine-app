@@ -266,8 +266,12 @@ class Attendee
     {
         $paidAmount = 0.00;
         foreach ($this->getEvent()->getPayments() AS $payment) {
-            if ($payment->getContact() == $this->contact && $payment->getType() == Payment::PAYMENT_TYPE_PAYMENT) {
-                $paidAmount += $payment->getAmount();
+            if ($payment->getContact() == $this->contact) {
+                if ($payment->getType() == Payment::PAYMENT_TYPE_PAYMENT) {
+                    $paidAmount += $payment->getAmount();
+                } else if ($payment->getType() == Payment::PAYMENT_TYPE_REFUND) {
+                    $paidAmount -= $payment->getAmount();
+                }
             }
         }
         return $paidAmount;
