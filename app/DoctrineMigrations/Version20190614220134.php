@@ -19,8 +19,8 @@ final class Version20190614220134 extends AbstractMigration
         $this->addSql('ALTER TABLE attendee ADD CONSTRAINT FK_1150D56771F7E88B FOREIGN KEY (event_id) REFERENCES event (id)');
         $this->addSql('ALTER TABLE attendee ADD CONSTRAINT FK_1150D567E7A1254A FOREIGN KEY (contact_id) REFERENCES contact (id)');
         $this->addSql('ALTER TABLE attendee ADD CONSTRAINT FK_1150D567DE12AB56 FOREIGN KEY (created_by) REFERENCES contact (id)');
-        $this->addSql('ALTER TABLE event RENAME INDEX idx_ea741fc3f6bd1646 TO IDX_3BAE0AA7F6BD1646');
-        $this->addSql('ALTER TABLE event RENAME INDEX idx_ea741fc3de12ab56 TO IDX_3BAE0AA7DE12AB56');
+//        $this->addSql('ALTER TABLE event RENAME INDEX idx_ea741fc3f6bd1646 TO IDX_3BAE0AA7F6BD1646');
+//        $this->addSql('ALTER TABLE event RENAME INDEX idx_ea741fc3de12ab56 TO IDX_3BAE0AA7DE12AB56');
     }
 
     public function down(Schema $schema) : void

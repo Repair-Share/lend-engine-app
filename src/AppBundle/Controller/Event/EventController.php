@@ -97,7 +97,7 @@ class EventController extends Controller
                                      * @TODO remove payments before removing attendee
                                      *
                                      *
-                                     * 
+                                     *
                                      *
                                      *
                                      */
