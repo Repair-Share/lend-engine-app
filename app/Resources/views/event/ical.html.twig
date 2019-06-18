@@ -1,6 +1,6 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//ZContent.net//Zap Calendar 1.0//EN
+PRODID:<LENDENGINE>
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 {% for event in events %}
@@ -17,3 +17,4 @@ LOCATION:{{ event.site.name }}
 DESCRIPTION:{{ event.description }}
 END:VEVENT
 {% endfor %}
+END:VCALENDAR
