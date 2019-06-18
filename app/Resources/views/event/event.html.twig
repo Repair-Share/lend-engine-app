@@ -179,12 +179,13 @@
     </div>
 
     <div class="page-controls">
+        <a href="{{ path('event_copy', {eventId: event.id}) }}" class="btn btn-default">Copy</a>
         {% if event.status == "DRAFT" and event.id %}
             <a href="{{ path('event_publish', {eventId: event.id}) }}" class="btn btn-default">Publish</a>
         {% elseif event.status == "PUBLISHED" and event.id %}
             <a href="{{ path('event_unpublish', {eventId: event.id}) }}" class="btn btn-default">Un-publish</a>
         {% endif %}
-        <button type="submit" id="save-event" name="submitForm" value="save" class="btn bg-green btn-loading pull-right">Save</button>
+        <button type="submit" id="save-event" name="submitForm" value="save" class="btn bg-green btn-loading">Save</button>
     </div>
 
     {{ form_end(form) }}

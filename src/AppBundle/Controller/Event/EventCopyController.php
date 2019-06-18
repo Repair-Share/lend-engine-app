@@ -11,7 +11,7 @@ class EventCopyController extends Controller
 {
     /**
      * @Route("admin/event/{eventId}/copy", requirements={"eventId": "\d+"}, name="event_copy")
-     * @Security("has_role('ROLE_SUPER_USER')")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function eventCopy($eventId)
     {
