@@ -4,9 +4,9 @@
             <img style="width: 240px; height: 120px;" src="{{ tenantInformation.logoUrl }}">
         </a>
     {% elseif tenantInformation.logoImageName %}
-        <a class="" href="{{ path('home') }}">
+        <a href="{{ path('home') }}">
             <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/files/{{ tenantInformation.logoImageName }}"
-                 id="site-logo" class="img-responsive" style="height: 80px">
+                 id="site-logo" class="img-responsive hidden-xs" style="height: 80px">
         </a>
     {% else %}
         <a id="site-name" class="" href="{{ path('home') }}">

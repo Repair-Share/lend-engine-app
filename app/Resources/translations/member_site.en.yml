@@ -81,6 +81,7 @@ form:
 
 public_misc:
   link_admin: Admin
+  link_events: Events
   link_home: Home
   link_recent_items: Recently added
   link_all_items: All items

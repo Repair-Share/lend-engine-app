@@ -6,6 +6,9 @@
 
         <header>
             <div class="container" id="theme-header">
+                <div class="hidden-sm hidden-md hidden-lg" style="padding: 10px 0;">
+                    {{ tenantInformation.companyName }}
+                </div>
                 <div class="row">
                     <div id="nav-org-name" class="col-md-3 hidden-xs">
                         {% include('member_site/themes/widgets/org_name.html.twig') %}
