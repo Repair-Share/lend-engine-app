@@ -62,7 +62,7 @@
         }
     </style>
 
-{% if event.attendees|length >= event.maxAttendees %}
+{% if event.attendees|length >= event.maxAttendees and event.maxAttendees > 0 %}
     {% set hasSpaces = false %}
     <div class="alert alert-warning">
         The maximum number of attendees ({{ event.maxAttendees }}) has been reached. This event is now full.
