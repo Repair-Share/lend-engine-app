@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Event;
 
 use AppBundle\Entity\Attendee;
 use AppBundle\Entity\Event;
+use AppBundle\Entity\Payment;
 use AppBundle\Form\Type\EventType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,11 +21,17 @@ class EventController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->get('service.contact');
+
         /** @var \AppBundle\Repository\EventRepository $eventRepo */
         $eventRepo = $em->getRepository('AppBundle:Event');
 
         /** @var \AppBundle\Repository\AttendeeRepository $attendeeRepo */
         $attendeeRepo = $em->getRepository('AppBundle:Attendee');
+
+        /** @var \AppBundle\Repository\PaymentRepository $paymentRepo */
+        $paymentRepo = $em->getRepository('AppBundle:Payment');
 
         /** @var \AppBundle\Entity\Event $event */
         if ($event = $eventRepo->find($eventId)) {
@@ -115,8 +122,36 @@ class EventController extends Controller
                 }
             }
 
+            if ($prices = $request->request->get('prices')) {
+                foreach ($prices AS $attendeeId => $price) {
+                    if ($a = $attendeeRepo->find($attendeeId)) {
+                        $a->setPrice($price);
+                        $em->persist($a);
+                        /** @var \AppBundle\Entity\Payment $p */
+                        if ($payments = $paymentRepo->findBy(['contact' => $a->getContact(), 'event' => $event, 'type' => Payment::PAYMENT_TYPE_FEE])) {
+                            $p = $payments[0];
+                            $p->setAmount($price);
+                            $em->persist($p);
+                        } else if ($price > 0) {
+                            $p = new Payment();
+                            $p->setCreatedBy($this->getUser());
+                            $p->setType(Payment::PAYMENT_TYPE_FEE);
+                            $p->setEvent($event);
+                            $p->setContact($a->getContact());
+                            $p->setAmount($price);
+                            $em->persist($p);
+                        }
+                    }
+                }
+            }
+
             $em->persist($event);
             $em->flush();
+            
+            foreach ($event->getAttendees() AS $a) {
+                $contactService->recalculateBalance($a->getContact());
+            }
+
             $this->addFlash('success', 'Saved.');
 
             return $this->redirectToRoute('event_admin', ['eventId' => $event->getId()]);

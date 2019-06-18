@@ -141,6 +141,7 @@
 
 {% block modalFooter %}
 {% if is_granted("ROLE_ADMIN") %}
+<a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-default">Check in</a>
 <a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">Edit this event</a>
 {% endif %}
 {% endblock %}

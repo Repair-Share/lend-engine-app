@@ -87,7 +87,12 @@ class SiteEventBookingController extends Controller
             $em->persist($attendee);
             try {
                 $em->flush();
-                $this->addFlash("success", "Booked!");
+
+                if ($request->get('check_in')) {
+                    $this->addFlash("success", "Checked in - thank you!");
+                } else {
+                    $this->addFlash("success", "You're booked in. See you soon!");
+                }
 
                 // Update the account if any changes have been made to payments
                 $contactService->recalculateBalance($user);
