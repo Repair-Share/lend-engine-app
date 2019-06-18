@@ -351,15 +351,23 @@ class AjaxDeleteController extends Controller
 
         /** @var \AppBundle\Repository\EventRepository $repo */
         $repo = $em->getRepository('AppBundle:Event');
-        $entity = $repo->find($id);
-        $em->remove($entity);
 
-        try {
-            $em->flush();
-            return 'OK';
-        } catch (\Exception $generalException) {
-            return $generalException->getMessage();
+        if ($repo->validateDelete($id)) {
+            $entity = $repo->find($id);
+            $em->remove($entity);
+
+            try {
+                $em->flush();
+                $msg = 'OK';
+            } catch (\Exception $generalException) {
+                return $generalException->getMessage();
+            }
+        } else {
+            $msg = 'Event has attendees.';
         }
+
+        return $msg;
+
     }
 
     /**

@@ -16,11 +16,16 @@ class SiteEventViewController extends Controller
      */
     public function eventPreviewAction(Request $request, $eventId)
     {
+        $em = $this->getDoctrine()->getManager();
+
         /** @var \AppBundle\Services\Event\EventService $eventService */
         $eventService = $this->get('service.event');
 
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
+
+        /** @var \AppBundle\Repository\PaymentMethodRepository $pmRepo */
+        $pmRepo = $em->getRepository('AppBundle:PaymentMethod');
 
         if ($userId = $this->get('session')->get('sessionUserId')) {
             $user = $contactService->get($userId);
@@ -32,11 +37,14 @@ class SiteEventViewController extends Controller
             return $this->redirectToRoute('event_list');
         }
 
+        $paymentMethods = $pmRepo->findAllOrderedByName();
+
         return $this->render(
             'member_site/pages/event_preview.html.twig',
             [
                 'event' => $event,
-                'user' => $user
+                'user' => $user,
+                'paymentMethods' => $paymentMethods
             ]
         );
     }

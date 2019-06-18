@@ -11,7 +11,7 @@
 
 {% block body %}
     <h2>
-        {% trans %}Events{% endtrans %}
+        {% trans %}Event bookings{% endtrans %}
         {% if user is defined and user.id != app.user.id %}
             {{ include('member_site/partials/session_user.html.twig') }}
         {% endif %}
@@ -23,7 +23,7 @@
             <tr>
                 <th>Event</th>
                 <th>Date</th>
-                <th>Time</th>
+                <th></th>
                 <th>Location</th>
             </tr>
             </thead>
@@ -31,8 +31,11 @@
                 {% if attendee.event.status == "PUBLISHED" %}
                 <tr>
                     <td><a href="{{ path('event_preview', {eventId: attendee.event.id}) }}" class="modal-link">{{ attendee.event.title }}</a></td>
-                    <td>{{ attendee.event.date|date("l j F") }}</td>
-                    <td>{{ attendee.event.timeFrom }} - {{ attendee.event.timeTo }}</td>
+                    <td>
+                        {{ attendee.event.date|date("l j F") }}
+                        <div class="small">{{ attendee.event.friendlyTimeFrom }} - {{ attendee.event.friendlyTimeTo }}</div>
+                    </td>
+                    <td></td>
                     <td>
                         {{ attendee.event.site.name }}<br>
                         {{ attendee.event.site.address }}, {{ attendee.event.site.postcode }}

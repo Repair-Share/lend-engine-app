@@ -92,6 +92,14 @@ class Payment
     private $loan;
 
     /**
+     * @var Event
+     *
+     * @ORM\ManyToOne(targetEntity="Event", inversedBy="payments")
+     * @ORM\JoinColumn(name="event_id", referencedColumnName="id", nullable=true)
+     */
+    private $event;
+
+    /**
      * @var InventoryItem
      *
      * @ORM\ManyToOne(targetEntity="InventoryItem", inversedBy="payments")
@@ -526,5 +534,24 @@ class Payment
     public function getLoanRow()
     {
         return $this->loanRow;
+    }
+
+    /**
+     * @param Event $event
+     * @return $this
+     */
+    public function setEvent(Event $event)
+    {
+        $this->event = $event;
+
+        return $this;
+    }
+
+    /**
+     * @return Event
+     */
+    public function getEvent()
+    {
+        return $this->event;
     }
 }

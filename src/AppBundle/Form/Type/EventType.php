@@ -33,7 +33,7 @@ class EventType extends AbstractType
             'No'  => 'e'
         ];
         $builder->add('type', ChoiceType::class, array(
-            'label' => 'Can users pick up and return items at this event?',
+            'label' => 'Can people pick up and return items at this event?',
             'required' => true,
             'choices' => $choices,
             'attr' => [
@@ -75,6 +75,14 @@ class EventType extends AbstractType
             ]
         ));
 
+        $builder->add('isBookable', ToggleType::class, array(
+            'expanded' => true,
+            'label' => 'Allow people to book online?',
+            'attr' => [
+                'class' => 'input-100',
+            ]
+        ));
+
         $builder->add('price', NumberType::class, array(
             'label' => 'Price',
             'required' => false,
@@ -106,7 +114,7 @@ class EventType extends AbstractType
             'required' => false,
             'attr' => [
                 'class' => 'input-100',
-                'data-help' => "Set to zero or blank for no limit."
+                'data-help' => "Set to zero for no limit."
             ]
         ));
 

@@ -71,6 +71,13 @@ class Attendee
     private $type = Attendee::TYPE_ATTENDEE;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="price", type="decimal", scale=2)
+     */
+    private $price = 0.00;
+
+    /**
      * Gets triggered only on insert
      * @ORM\PrePersist
      */
@@ -106,7 +113,7 @@ class Attendee
     /**
      * Get event.
      *
-     * @return int
+     * @return Event
      */
     public function getEvent()
     {
@@ -231,5 +238,38 @@ class Attendee
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @param $price
+     * @return $this
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPaidAmount()
+    {
+        $paidAmount = 0.00;
+        foreach ($this->getEvent()->getPayments() AS $payment) {
+            if ($payment->getContact() == $this->contact && $payment->getType() == Payment::PAYMENT_TYPE_PAYMENT) {
+                $paidAmount += $payment->getAmount();
+            }
+        }
+        return $paidAmount;
     }
 }

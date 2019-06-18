@@ -23,6 +23,9 @@ class EventController extends Controller
         /** @var \AppBundle\Repository\EventRepository $eventRepo */
         $eventRepo = $em->getRepository('AppBundle:Event');
 
+        /** @var \AppBundle\Repository\AttendeeRepository $attendeeRepo */
+        $attendeeRepo = $em->getRepository('AppBundle:Attendee');
+
         /** @var \AppBundle\Entity\Event $event */
         if ($event = $eventRepo->find($eventId)) {
             $title = $event->getTitle();
@@ -79,6 +82,38 @@ class EventController extends Controller
             $to = str_replace(' am', '', $to);
             $to = str_replace(' pm', '', $to);
             $event->setTimeTo($to);
+
+            if ($task = $request->request->get('batchActionTask')) {
+                if ($attendeeIds = $request->request->get('attendees')) {
+                    foreach ($attendeeIds AS $aID) {
+                        switch ($task) {
+                            case "remove":
+                                if ($a = $attendeeRepo->find($aID)) {
+                                    /*
+                                     *
+                                     *
+                                     *
+                                     *
+                                     * @TODO remove payments before removing attendee
+                                     *
+                                     *
+                                     * 
+                                     *
+                                     *
+                                     */
+                                    $em->remove($a);
+                                }
+                                break;
+                            case "organiser":
+                                if ($a = $attendeeRepo->find($aID)) {
+                                    $a->setType(Attendee::TYPE_ORGANISER);
+                                    $em->persist($a);
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
 
             $em->persist($event);
             $em->flush();

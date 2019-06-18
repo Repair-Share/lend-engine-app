@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//ZContent.net//Zap Calendar 1.0//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+{% for event in events %}
+BEGIN:VEVENT
+SUMMARY:{{ event.title }}
+UID:{{ event.id }}
+DTSTAMP;{{ tenantInformation.setting('org_timezone') }}:{{ date()|date("Ymd") }}T{{ date()|date("His") }}
+SEQUENCE:0
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+DTSTART:{{ event.UTCFrom|date("Ymd") }}T{{ event.UTCFrom|date("His") }}Z
+DTEND:{{ event.UTCTo|date("Ymd") }}T{{ event.UTCTo|date("His") }}Z
+LOCATION:{{ event.site.name }}
+DESCRIPTION:{{ event.description }}
+END:VEVENT
+{% endfor %}

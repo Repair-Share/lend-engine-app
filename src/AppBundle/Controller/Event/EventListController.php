@@ -64,6 +64,12 @@ class EventListController extends Controller
         /** @var \AppBundle\Services\Event\EventService $eventService */
         $eventService = $this->get('service.event');
 
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
+
+        $iso = $settingsService->getSettingValue('org_currency');
+        $currencySymbol = \Symfony\Component\Intl\Intl::getCurrencyBundle()->getCurrencySymbol($iso);
+
         $filter = [];
         if ($searchString) {
             $filter['search'] = $searchString;
@@ -100,26 +106,32 @@ class EventListController extends Controller
                     break;
             }
 
-            $time     = $event->getDate()->format("d F Y");
             $day      = $event->getDate()->format("d");
             $dayName  = $event->getDate()->format("D");
             $month    = $event->getDate()->format("M 'y");
-            $timeFrom = new \DateTime($event->getDate()->format("Y-m-d").' '.$event->getTimeFrom());
-            $timeTo   = new \DateTime($event->getDate()->format("Y-m-d").' '.$event->getTimeTo());
-            $time     = $time.'<div class="small">'.$timeFrom->format("g:i a").' to '.$timeTo->format("g:i a").'</div>';
 
             $columns[] = '<div class="e-dayname '.$css.'">'.$dayName.'</div><div class="e-day '.$css.'">'.$day.'</div><div class="e-month '.$css.'">'.$month.'</div>';
 
-            // Add columns
             if (!$title = $event->getTitle()) {
                 $title = '- not set -';
             }
             $editUrl = $this->generateUrl('event_admin', ['eventId' => $event->getId()]);
-            $columns[] = '<a href="'.$editUrl.'">'.$title.'</a>';
 
-            $location = $event->getSite()->getName();
-            $location = $location.'<div class="small">'.$event->getSite()->getAddress().'</div>';
-            $columns[] = $location;
+            $details = '<div style="font-size: 15px; font-weight: bold;"><a href="'.$editUrl.'">'.$title.'</a></div>';
+            $details .= '<div>'.$event->getFriendlyTimeFrom().' to '.$event->getFriendlyTimeTo().'</div>';
+            $details .= '<div>'.$event->getSite()->getName().'</div>';
+            $details .= '<div class="small">'.$event->getSite()->getAddress().'</div>';
+            $columns[] = $details;
+
+            $columns[] = $currencySymbol.$event->getPrice();
+
+            $columns[] = $currencySymbol.$event->getRevenue();
+
+            if ($event->getIsBookable()) {
+                $columns[] = "Yes";
+            } else {
+                $columns[] = "";
+            }
 
             if ($event->getMaxAttendees() > 0) {
                 $attendees = $event->getAttendees()->count()." / ".$event->getMaxAttendees();

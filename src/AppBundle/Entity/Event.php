@@ -78,6 +78,13 @@ class Event
     private $title;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_bookable", type="boolean")
+     */
+    private $isBookable = true;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="facebook_url", type="string", length=256, nullable=true)
@@ -134,6 +141,15 @@ class Event
     private $attendees;
 
     /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity="Payment", mappedBy="event", cascade={"persist"})
+     */
+    private $payments;
+
+    private $utcFrom;
+    private $utcTo;
+
+    /**
      * Gets triggered only on insert
      * @ORM\PrePersist
      */
@@ -145,6 +161,7 @@ class Event
     function __construct()
     {
         $this->attendees = new ArrayCollection();
+        $this->payments  = new ArrayCollection();
     }
 
     /**
@@ -482,6 +499,82 @@ class Event
         }
 
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getPayments() {
+        return $this->payments;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRevenue()
+    {
+        $amount = 0;
+        foreach ($this->payments AS $payment) {
+            $amount += $payment->getAmount();
+        }
+        return (float)$amount;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsBookable()
+    {
+        return $this->isBookable;
+    }
+
+    /**
+     * @param $isBookable
+     * @return $this
+     */
+    public function setIsBookable($isBookable)
+    {
+        $this->isBookable = $isBookable;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFriendlyTimeFrom()
+    {
+        $timeFrom = new \DateTime($this->getDate()->format("Y-m-d") . ' ' . $this->getTimeFrom());
+        return $timeFrom->format("g:i a");
+    }
+
+    /**
+     * @return string
+     */
+    public function getFriendlyTimeTo()
+    {
+        $timeTo = new \DateTime($this->getDate()->format("Y-m-d") . ' ' . $this->getTimeTo());
+        return $timeTo->format("g:i a");
+    }
+
+    public function setUTCFrom($from)
+    {
+        $this->utcFrom = $from;
+    }
+
+    public function setUTCTo($to)
+    {
+        $this->utcTo = $to;
+    }
+
+    public function getUTCFrom()
+    {
+        return $this->utcFrom;
+    }
+
+    public function getUTCTo()
+    {
+        return $this->utcTo;
     }
 }
 

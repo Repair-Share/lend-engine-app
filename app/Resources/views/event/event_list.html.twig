@@ -57,6 +57,7 @@
         }
 
     </style>
+
     <div class="row" id="primary-filter" style="display:block">
         <div id="primary-filter-inner">
             <form method="GET" class="">
@@ -86,13 +87,22 @@
                 <thead>
                 <th style="width:70px">Date</th>
                 <th>Title</th>
-                <th>Location</th>
+                <th>Price</th>
+                <th>Sales</th>
+                <th><span title="Users can book themselves online" data-toggle="tooltip">Bookable</span></th>
                 <th>Attendees</th>
                 <th>Status</th>
                 <th></th>
                 </thead>
             </table>
         </div>
+    </div>
+
+    <div class="page-help">
+        Manage your workshops, open days, training and consultancy sessions with events.
+        Events can be used as opening hours on item booking calendars, or as separate events which don't permit pickup and return of items.
+        <br>If you want to make events available for people to book online, choose "show events online" at Settings &raquo; Events.
+        <br>Embed a Google calendar into your website and use the <a href="/events/ical">iCal feed</a> to add your events.
     </div>
 
 {% endblock %}
@@ -120,6 +130,8 @@
                     "infoFiltered": ""
                 },
                 "columns": [
+                    null,
+                    null,
                     null,
                     null,
                     null,

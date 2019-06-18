@@ -41,6 +41,9 @@
                     {% if payment.loan %}
                         <div><a href="{{ path('public_loan', {loanId: payment.loan.id}) }}">Loan {{ payment.loan.id }}</a></div>
                     {% endif %}
+                    {% if payment.event %}
+                        <div><a href="{{ path('event_admin', {eventId: payment.event.id}) }}">{{ payment.event.title }}</a></div>
+                    {% endif %}
                     {{ payment.note }}
                 </td>
                 <td>

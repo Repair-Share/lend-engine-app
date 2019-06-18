@@ -71,6 +71,7 @@
                         </div>
                     </div>
                     {{ form_row(form.type) }}
+                    {{ form_row(form.isBookable) }}
                     {{ form_row(form.description) }}
                 </div>
             </div>
@@ -82,28 +83,33 @@
             <div class="box box-default box-solid">
                 <div class="box-header with-border"><h3 class="box-title">Attendees / organisers</h3></div>
                 <div class="box-body">
+                    <input type="hidden" name="batchActionTask" id="batchActionTask">
                     {% if event.attendees|length == 0 %}
                         <div class="alert alert-info">This event has no attendees.</div>
                     {% else %}
-                        <div class="" style="margin-bottom: 10px">
-                            With <span class=""></span> selected :
-                            <button type="button" class="btn btn-xs btn-default">Remove</button>
-                            <button type="button" class="btn btn-xs btn-default">Email</button>
-                            <button type="button" class="btn btn-xs btn-default">Make organiser</button>
+                        <div id="batch-actions" style="margin-bottom: 10px">
+                            With <span id="count-rows"></span> selected :
+                            <button type="button" class="btn btn-xs btn-default batch-button" data-task="remove">Remove</button>
+                            {#<button type="button" class="btn btn-xs btn-default batch-button" data-task="email">Email</button>#}
+                            <button type="button" class="btn btn-xs btn-default batch-button" data-task="organiser">Make organiser</button>
                         </div>
                         <table class="table table-hover table-striped" id="table-attendees">
                             <thead>
                             <tr>
-                                <th class="no-sort"><input type="checkbox"></th>
-                                <th style="width:10px"></th>
+                                <th class="no-sort" style="width:10px"><input type="checkbox" id="select-all"></th>
+                                <th class="no-sort" style="width:10px"></th>
                                 <th>Name</th>
                                 <th>Added at</th>
-                                <th>Confirmed</th>
+                                <th>Price</th>
+                                <th>Paid</th>
                             </tr>
                             </thead>
+                            {% set totalPaidAmount = 0 %}
+                            {% set totalFeeAmount = 0 %}
+
                             {% for attendee in event.attendees %}
                                 <tr>
-                                    <td><input type="checkbox"></td>
+                                    <td><input type="checkbox" name="attendees[]" value="{{ attendee.id }}" class="row-checkbox"></td>
                                     <td>
                                         {% if attendee.type == "organiser" %}
                                             <i class="fa fa-user-secret" data-toggle="tooltip" title="" data-original-title="Organiser"></i>
@@ -121,10 +127,23 @@
                                         </div>
                                     </td>
                                     <td>
-                                        {{ attendee.isConfirmed }}
+                                        {{ tenantInformation.currencySymbol }}{{ attendee.price }}
+                                        {% set totalFeeAmount = totalFeeAmount + attendee.price %}
+                                    </td>
+                                    <td>
+                                        {{ tenantInformation.currencySymbol }}{{ attendee.paidAmount|number_format(2) }}
+                                        {% set totalPaidAmount = totalPaidAmount + attendee.paidAmount %}
                                     </td>
                                 </tr>
                             {% endfor %}
+                            <tfoot>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th>{{ tenantInformation.currencySymbol }}{{ totalFeeAmount|number_format(2) }}</th>
+                                <th>{{ tenantInformation.currencySymbol }}{{ totalPaidAmount|number_format(2) }}</th>
+                            </tfoot>
                         </table>
                     {% endif %}
 
@@ -190,14 +209,54 @@
                 'maxTime': '10:00pm'
             });
 
-            $('#table-attendees').DataTable({
+            var attendees = $("#table-attendees");
+
+            attendees.DataTable({
                 pageLength: 100,
                 ordering: true,
                 columnDefs: [{
                     orderable: false,
                     targets: "no-sort"
                 }],
-                "order": [[ 1, "desc" ]]
+                "order": [[ 2, "asc" ]]
+            });
+
+            /* BATCH PROCESSING */
+
+            attendees.on('click', "#select-all", function() {
+                if ($(this).is(":checked")) {
+                    $(".row-checkbox").prop('checked', true);
+                } else {
+                    $(".row-checkbox").prop('checked', false);
+                }
+                highlightSelectedRows();
+            });
+
+            attendees.on('click', ".row-checkbox", function() {
+                highlightSelectedRows();
+            });
+
+            function highlightSelectedRows() {
+                var selectedRows = 0;
+                $(".row-checkbox").each(function() {
+                    if ($(this).is(":checked")) {
+                        $(this).parents("tr").addClass('selected-row');
+                        selectedRows++;
+                    } else {
+                        $(this).parents("tr").removeClass('selected-row');
+                    }
+                });
+                if (selectedRows > 0) {
+                    $("#count-rows").html(selectedRows);
+                } else {
+                    $("#count-rows").html("");
+                }
+            }
+
+            $("#batch-actions").on('click', ".batch-button", function() {
+                var task = $(this).data('task');
+                $("#batchActionTask").val(task);
+                $("#event_admin").submit();
             });
         });
     </script>

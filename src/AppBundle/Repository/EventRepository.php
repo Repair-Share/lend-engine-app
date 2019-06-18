@@ -10,5 +10,36 @@ namespace AppBundle\Repository;
  */
 class EventRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * @param $eventId
+     * @return bool
+     */
+    public function validateDelete($eventId)
+    {
+        if ($this->hasAttendees($eventId)) {
+            return false;
+        }
 
+        return true;
+    }
+
+    /**
+     * @param $eventId
+     * @return bool
+     */
+    private function hasAttendees($eventId)
+    {
+        $sql = "SELECT COUNT(id) AS cnt
+          FROM attendee
+          WHERE event_id = {$eventId}
+          ";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+        if ( $result[0]['cnt'] > 0 ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

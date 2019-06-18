@@ -3,20 +3,28 @@
 namespace AppBundle\Services\Event;
 
 use AppBundle\Entity\Event;
+use AppBundle\Services\SettingsService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 
 class EventService
 {
 
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager  */
     private $em;
 
-    public function __construct(EntityManager $em)
+    /** @var SettingsService  */
+    private $settingService;
+
+    private $timezone;
+
+    public function __construct(EntityManager $em, SettingsService $settingsService)
     {
         $this->em = $em;
+        $this->settingService = $settingsService;
+
+        $tz = $this->settingService->getSettingValue('org_timezone');
+        $this->timezone = new \DateTimeZone($tz);
     }
 
     /**
@@ -25,7 +33,30 @@ class EventService
      */
     public function get($id)
     {
-        return $this->em->getRepository('AppBundle:Event')->find($id);
+        /** @var \AppBundle\Entity\Event $event */
+        $event = $this->em->getRepository('AppBundle:Event')->find($id);
+        $event = $this->hydrateDates($event);
+        return $event;
+    }
+
+    /**
+     * Get the UTC timestamp for the start and end of the event
+     * @param Event $event
+     * @return Event
+     */
+    private function hydrateDates(Event $event)
+    {
+        $offset = $this->timezone->getOffset(new \DateTime());
+
+        $timeFrom = new \DateTime($event->getDate()->format("Y-m-d") . ' ' . $event->getTimeFrom(), $this->timezone);
+        $timeFrom->modify("- {$offset} seconds");
+        $event->setUTCFrom($timeFrom);
+
+        $timeTo = new \DateTime($event->getDate()->format("Y-m-d") . ' ' . $event->getTimeTo(), $this->timezone);
+        $timeTo->modify("- {$offset} seconds");
+        $event->setUTCTo($timeTo);
+
+        return $event;
     }
 
     /**
@@ -93,9 +124,14 @@ class EventService
 
         $query = $builder->getQuery();
 
+        $results = $query->getResult();
+        foreach ($results AS $k => $event) {
+            $results[$k] = $this->hydrateDates($event);
+        }
+
         return [
             'totalResults' => $totalResults,
-            'data' => $query->getResult()
+            'data' => $results
         ];
     }
 
