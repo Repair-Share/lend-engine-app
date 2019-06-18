@@ -116,21 +116,23 @@
                 Free
             {% endif %}
 
-            <br>
-            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                {% if event.isBookable or is_granted("ROLE_ADMIN") %}
-                    <button type="button" class="btn btn-success btn-block" id="buttonBook">
-                        Book now
-                    </button>
-                    {% if app.user != user %}
-                    <div class="help-block">NOTE : You are booking {{ user.name }} onto this event.</div>
+            <div style="padding-top: 10px">
+                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                    {% if event.isBookable or is_granted("ROLE_ADMIN") %}
+                        <button type="button" class="btn btn-success btn-block" id="buttonBook">
+                            Book now
+                        </button>
+                        {% if app.user != user %}
+                            <div class="help-block">NOTE : You are booking {{ user.name }} onto this event.</div>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    {% if event.isBookable %}
+                        Log in to book your place on this event
                     {% endif %}
                 {% endif %}
-            {% else %}
-                {% if event.isBookable %}
-                    Log in to book your place on this event
-                {% endif %}
-            {% endif %}
+            </div>
+
         </div>
     </div>
     </form>
@@ -138,5 +140,7 @@
 {% endblock %}
 
 {% block modalFooter %}
-
+{% if is_granted("ROLE_ADMIN") %}
+<a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">Edit this event</a>
+{% endif %}
 {% endblock %}
