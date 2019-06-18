@@ -42,8 +42,6 @@
     {% endif %}
     </span>
 
-    {#<a href="{{ path('choose_member') }}" class="btn bg-green modal-link pull-right">New loan</a>#}
-
     {% if is_granted('ROLE_SUPER_USER') %}
         <a class="btn btn-default pull-right" href="{{ path('export_loans') }}" style="margin-right: 10px">Export</a>
     {% endif %}

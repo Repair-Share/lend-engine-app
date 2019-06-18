@@ -34,6 +34,7 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/admin/settings/reservations'],
             ['/admin/settings/member_site'],
             ['/admin/settings/templates'],
+            ['/admin/settings/events'],
 
             ['/admin/site/list'],
             ['/admin/site'],
@@ -95,6 +96,10 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/admin/dt/item/list'],
             ['/admin/dt/contact/list'],
 
+            // Admin events
+            ['/admin/event/list'],
+            ['/admin/event'],
+
             // FOS user bundle pages
             ['/login'],
             ['/profile/'],
@@ -111,6 +116,10 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/member-search?go=&member-search=test'],
             ['/products?search=test'],
             ['/site-data?site=1'],
+
+            // Events
+            ['/events'],
+            ['/events/json'],
         ];
     }
 }

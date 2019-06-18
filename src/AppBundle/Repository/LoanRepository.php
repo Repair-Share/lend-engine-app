@@ -98,8 +98,6 @@ class LoanRepository extends EntityRepository
             'totalResults' => $totalResults,
             'data' => $query->getResult()
         ];
-
-//        return $query->getResult();
     }
 
     /**

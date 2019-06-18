@@ -191,7 +191,6 @@ class LoanListController extends Controller
             $to = $loan->getTimeOut()->modify("{$offSet} hours");
             $loan->setTimeOut($to);
 
-
             $loanFromTime = $loan->getTimeOut();
             $loanInfo = $loan->getContact()->getFirstName().' '.$loan->getContact()->getLastName();
 
@@ -258,7 +257,7 @@ class LoanListController extends Controller
             $date_from = $request->get('date_from');
         } else {
             $dateFrom = new \DateTime();
-            $dateFrom->modify("-1 month");
+            $dateFrom->modify("-12 months");
             $date_from = $dateFrom->format("Y-m-d");
         }
 
