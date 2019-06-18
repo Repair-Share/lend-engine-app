@@ -36,7 +36,6 @@ function loadModal(modalUrl) {
     $('.modal-content', modalWrapper).load(modalUrl, function() {
         modalWrapper.modal('show');
         modalWrapper.on('shown.bs.modal', function() {
-            modalWrapper.find(".modal-body input:first").focus();
             setUpSelectMenus();
         });
     });

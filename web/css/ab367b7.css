@@ -7864,6 +7864,11 @@ div.dt-button-info{position:fixed;top:50%;left:50%;width:400px;margin-top:-100px
     background-color: #fafafa;
 }
 
+.creditCard a:hover {
+    cursor: pointer;
+    background-color: #defafa;
+}
+
 .creditCard.active {
     background-color: #e4f2fe;
     border: 1px solid #afcfe8;

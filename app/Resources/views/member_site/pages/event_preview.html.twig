@@ -62,7 +62,16 @@
         }
     </style>
 
-    <div style="margin-bottom: 10px">
+{% if event.attendees|length >= event.maxAttendees %}
+    {% set hasSpaces = false %}
+    <div class="alert alert-warning">
+        The maximum number of attendees ({{ event.maxAttendees }}) has been reached. This event is now full.
+    </div>
+{% else %}
+    {% set hasSpaces = true %}
+{% endif %}
+
+    <div style="margin-bottom: 20px">
         {{ event.description|nl2br }}
     </div>
 
@@ -130,11 +139,11 @@
                             Book now
                         </button>
                         {% if app.user != user %}
-                            <div class="help-block">NOTE : You are booking {{ user.name }} onto this event.</div>
+                            <div class="small help-block">You are booking <strong>{{ user.name }}</strong> onto this event.</div>
                         {% endif %}
                     {% endif %}
                 {% else %}
-                    {% if event.isBookable %}
+                    {% if event.isBookable and hasSpaces == true %}
                         <div class="alert alert-warning">
                             <a href="{{ path('fos_user_security_login') }}?event={{ event.id }}">Log in</a> or
                             <a href="{{ path('fos_user_registration_register') }}?event={{ event.id }}">register</a> to book your place on this event.
@@ -153,7 +162,7 @@
     <div class="row">
         <div class="col-md-3">
             {% if is_granted("ROLE_ADMIN") %}
-                <a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">Edit this event</a>
+                <a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">Edit event</a>
             {% endif %}
         </div>
         {% if (event.price == 0 and is_granted("IS_AUTHENTICATED_REMEMBERED")) or is_granted("ROLE_ADMIN") %}

@@ -8,6 +8,9 @@
 {% block body %}
     <h2>
         {% trans %}Events{% endtrans %}
+        {% if is_granted("ROLE_ADMIN") %}
+            <span class="pull-right"><a href="{{ path('admin_event_list') }}" class="btn btn-sm btn-default">Go to event admin</a></span>
+        {% endif %}
     </h2>
 
     {% if tenantInformation.setting('page_event_header') %}
@@ -32,7 +35,6 @@
             font-size: 11px;
             padding-left: 60px;
         }
-
         .e-cal {
             float: left;
             width: 50px;
@@ -67,6 +69,9 @@
         }
         .e-live {
             background-color: #808080;
+        }
+        #calendar {
+            margin-bottom: 15px;
         }
     </style>
     <div class="row">
@@ -132,11 +137,11 @@
                 var date = moment(this.start);
                 var end = moment(this.end);
                 HTML += '<div class="event-wrapper">';
-                HTML += '<div class="e-cal">';
+                HTML += '<a href="{{ path('event_preview') }}/'+this.eventId+'" class="modal-link"><div class="e-cal">';
                 HTML += '<div class="e-dayname e-live">'+date.format("ddd")+'</div>';
                 HTML += '<div class="e-day e-live">'+date.format("D")+'</div>';
                 HTML += '<div class="e-month e-live">'+date.format("MMM")+'</div>';
-                HTML += '</div>';
+                HTML += '</div></a>';
                 HTML += '<div class="event-title"><a href="{{ path('event_preview') }}/'+this.eventId+'" class="modal-link">'+this.title+'</a></div>';
                 HTML += '<div class="event-time">'+date.format("h:mma")+' - '+end.format("h:mma")+'</div>';
                 HTML += '<div class="event-location">'+this.siteName+'<br>'+this.siteAddress+'</div>';

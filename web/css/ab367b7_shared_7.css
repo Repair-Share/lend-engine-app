@@ -13,6 +13,11 @@
     background-color: #fafafa;
 }
 
+.creditCard a:hover {
+    cursor: pointer;
+    background-color: #defafa;
+}
+
 .creditCard.active {
     background-color: #e4f2fe;
     border: 1px solid #afcfe8;

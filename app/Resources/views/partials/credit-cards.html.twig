@@ -6,17 +6,16 @@
             {% if contact.creditCards|length > 0 %}
                 <div style="overflow: hidden">
                     {% for card in contact.creditCards %}
-                        <span class="creditCard" id="{{ card.cardId }}">
+                        <a class="" onClick="setCard('{{ card.cardId }}'); return false;">
+                            <span class="creditCard" id="{{ card.cardId }}">
                                 <span class="creditCardText">
                                     {{ card.brand }}<br />
                                     XXXX XXXX XXXX {{ card.last4 }}<br />
                                     {{ card.expMonth }} / {{ card.expYear }}
                                 </span>
-                                <br />
-                                <a class="card-select" onClick="setCard('{{ card.cardId }}'); return false;">
-                                    {% trans %}public_add_credit.use_this_card{% endtrans %}
-                                </a>
+                                <br /><span class="card-select">{% trans %}public_add_credit.use_this_card{% endtrans %}</span>
                             </span>
+                        </a>
                     {% endfor %}
                 </div>
                 <p>

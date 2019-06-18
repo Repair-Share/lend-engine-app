@@ -58,6 +58,9 @@ class LoanController extends Controller
         /** @var \AppBundle\Services\Payment\PaymentService $paymentService */
         $paymentService = $this->get('service.payment');
 
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->get('service.contact');
+
         /** @var \AppBundle\Repository\LoanRepository $repo */
         $repo = $em->getRepository('AppBundle:Loan');
 
@@ -190,7 +193,7 @@ class LoanController extends Controller
                         if (isset($cardDetails['token']) && $cardDetails['token']) {
                             // we still have the token from Stripe Checkout (fee was zero)
                         } else if (!$cardDetails['cardId'] && $stripePaymentMethodId == $paymentMethod->getId()) {
-                            $contact = $this->loadCustomerCards($loan->getContact());
+                            $contact = $contactService->loadCustomerCards($loan->getContact());
                             $cards = $contact->getCreditCards();
                             if (is_array($cards) && count($cards) > 0) {
                                 $cardId = $cards[0]->getCardId();
@@ -251,7 +254,7 @@ class LoanController extends Controller
 
         }
 
-        $contact = $this->loadCustomerCards($loan->getContact());
+        $contact = $contactService->loadCustomerCards($loan->getContact());
         $loan->setContact($contact);
 
         return $this->render('member_site/pages/loan.html.twig', [
@@ -262,38 +265,6 @@ class LoanController extends Controller
                 'payment_due' => $paymentDue
             ]
         );
-    }
-
-    /**
-     * @param Contact $contact
-     * @return Contact
-     */
-    private function loadCustomerCards(Contact $contact) {
-        // Get existing cards for a customer
-        $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
-
-        /** @var \AppBundle\Services\StripeHandler $stripeService */
-        $stripeService = $this->get('service.stripe');
-
-        $customerStripeId = $contact->getStripeCustomerId();
-        if ($customerStripeId && $stripeUseSavedCards) {
-            // Retrieve their cards
-            $stripeCustomer = $stripeService->getCustomerById($customerStripeId);
-
-            if (isset($stripeCustomer['sources']['data'])) {
-                foreach($stripeCustomer['sources']['data'] AS $source) {
-                    $creditCard = new CreditCard();
-                    $creditCard->setLast4($source['last4']);
-                    $creditCard->setExpMonth($source['exp_month']);
-                    $creditCard->setExpYear($source['exp_year']);
-                    $creditCard->setBrand($source['brand']);
-                    $creditCard->setCardId($source['id']);
-                    $contact->addCreditCard($creditCard);
-                }
-            }
-        }
-
-        return $contact;
     }
 
     /**

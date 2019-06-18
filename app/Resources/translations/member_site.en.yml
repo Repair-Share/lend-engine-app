@@ -190,7 +190,7 @@ text_no_membership: We don't have an active membership for you.
 # Member site : Logged in : Add credit page
 public_add_credit:
   title: Add credit
-  choose_card: Choose an existing card above, or just continue adding credit to below to use a new card
+  choose_card: Choose an existing card above, or just continue below to use a new card
   use_this_card: Use this card
   amount_to_add: Amount to add
   payment_method: Payment method

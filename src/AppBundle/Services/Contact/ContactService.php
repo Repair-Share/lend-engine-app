@@ -3,6 +3,7 @@
 namespace AppBundle\Services\Contact;
 
 use AppBundle\Entity\Contact;
+use AppBundle\Entity\CreditCard;
 use AppBundle\Entity\Membership;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
@@ -195,6 +196,38 @@ class ContactService
         }
 
         return true;
+    }
+
+    /**
+     * @param Contact $contact
+     * @return Contact
+     */
+    public function loadCustomerCards(Contact $contact) {
+        // Get existing cards for a customer
+        $stripeUseSavedCards = $this->container->get('settings')->getSettingValue('stripe_use_saved_cards');
+
+        /** @var \AppBundle\Services\StripeHandler $stripeService */
+        $stripeService = $this->container->get('service.stripe');
+
+        $customerStripeId = $contact->getStripeCustomerId();
+        if ($customerStripeId && $stripeUseSavedCards) {
+            // Retrieve their cards
+            $stripeCustomer = $stripeService->getCustomerById($customerStripeId);
+
+            if (isset($stripeCustomer['sources']['data'])) {
+                foreach($stripeCustomer['sources']['data'] AS $source) {
+                    $creditCard = new CreditCard();
+                    $creditCard->setLast4($source['last4']);
+                    $creditCard->setExpMonth($source['exp_month']);
+                    $creditCard->setExpYear($source['exp_year']);
+                    $creditCard->setBrand($source['brand']);
+                    $creditCard->setCardId($source['id']);
+                    $contact->addCreditCard($creditCard);
+                }
+            }
+        }
+
+        return $contact;
     }
 
 }

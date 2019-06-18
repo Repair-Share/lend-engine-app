@@ -68,6 +68,9 @@
                                 <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
                                 {{ form_widget(form.price) }}
                             </div>
+                            <div class="help-block">
+                                Can be overridden by admin.
+                            </div>
                         </div>
                     </div>
                     {{ form_row(form.type) }}
@@ -90,7 +93,7 @@
         <div class="col-md-7">
 
             <div class="box box-default box-solid">
-                <div class="box-header with-border"><h3 class="box-title">Attendees / organisers</h3></div>
+                <div class="box-header with-border"><h3 class="box-title">Attendees</h3></div>
                 <div class="box-body">
                     <input type="hidden" name="batchActionTask" id="batchActionTask">
                     {% if event.attendees|length == 0 %}
@@ -100,15 +103,14 @@
                             With <span id="count-rows"></span> selected :
                             <button type="button" class="btn btn-xs btn-default batch-button" data-task="remove">Remove</button>
                             {#<button type="button" class="btn btn-xs btn-default batch-button" data-task="email">Email</button>#}
-                            <button type="button" class="btn btn-xs btn-default batch-button" data-task="organiser">Make organiser</button>
+                            {#<button type="button" class="btn btn-xs btn-default batch-button" data-task="organiser">Make organiser</button>#}
                         </div>
                         <table class="table table-hover table-striped" id="table-attendees">
                             <thead>
                             <tr>
                                 <th class="no-sort" style="width:10px"><input type="checkbox" id="select-all"></th>
-                                <th class="no-sort" style="width:10px"></th>
                                 <th>Name</th>
-                                <th>Added at</th>
+                                <th class="hidden-xs">Added at</th>
                                 <th style="width:90px">Price</th>
                                 <th>Paid</th>
                             </tr>
@@ -120,33 +122,28 @@
                                 <tr>
                                     <td><input type="checkbox" name="attendees[]" value="{{ attendee.id }}" class="row-checkbox"></td>
                                     <td>
-                                        {% if attendee.type == "organiser" %}
-                                            <i class="fa fa-user-secret" data-toggle="tooltip" title="" data-original-title="Organiser"></i>
-                                        {% endif %}
-                                    </td>
-                                    <td>
+                                        {#{% if attendee.type == "organiser" %}#}
+                                            {#<i class="fa fa-user-secret" data-toggle="tooltip" title="" data-original-title="Organiser"></i>#}
+                                        {#{% endif %}#}
                                         <a href="{{ path('contact', {id: attendee.contact.id}) }}">{{ attendee.contact.name }}</a>
                                         <div class="small">{{ attendee.contact.email }}</div>
                                         <div class="small">{{ attendee.contact.telephone }}</div>
                                     </td>
-                                    <td>
+                                    <td class="hidden-xs">
                                         {{ attendee.createdAt|date }}
                                         <div class="small">
                                             By {{ attendee.createdBy.name }}
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
-                                            <input name="prices[{{ attendee.id }}]" class="form-control" value="{{ attendee.price }}">
-                                        </div>
+                                        <input name="prices[{{ attendee.id }}]" size="6" class="form-control input-sm" value="{{ attendee.price }}">
                                         {% set totalFeeAmount = totalFeeAmount + attendee.price %}
                                     </td>
                                     <td>
                                         {{ tenantInformation.currencySymbol }}{{ attendee.paidAmount|number_format(2) }}
                                         {% set totalPaidAmount = totalPaidAmount + attendee.paidAmount %}
                                         <div style="padding: 4px 0; font-size: 12px">
-                                            <a href="" onClick="alert('feature todo')" class="">Take payment</a>
+                                            <a href="{{ path('event_payment', {attendeeId: attendee.id}) }}" class="modal-link">Take payment</a>
                                         </div>
                                     </td>
                                 </tr>
@@ -154,8 +151,7 @@
                             <tfoot>
                                 <th></th>
                                 <th></th>
-                                <th></th>
-                                <th></th>
+                                <th class="hidden-xs"></th>
                                 <th>{{ tenantInformation.currencySymbol }}{{ totalFeeAmount|number_format(2) }}</th>
                                 <th>{{ tenantInformation.currencySymbol }}{{ totalPaidAmount|number_format(2) }}</th>
                             </tfoot>
@@ -172,17 +168,13 @@
                             Check in just as though you were booking online. Check in is only possible for free events,
                             or if you are admin browsing on behalf of a user.
                         </p>
-                        <p>
-                            <strong>Organisers</strong> don't currently have any extra permissions or roles, but in the future
-                            we may give access to organisers to make changes to events.
-                        </p>
+                        {#<p>#}
+                            {#<strong>Organisers</strong> don't currently have any extra permissions or roles, but in the future#}
+                            {#we may give access to organisers to make changes to events.#}
+                        {#</p>#}
                     </div>
                 </div>
             </div>
-
-            {#<div class="page-help">#}
-                {#About events#}
-            {#</div>#}
         </div>
     </div>
 

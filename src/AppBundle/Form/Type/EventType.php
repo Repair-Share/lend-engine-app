@@ -104,7 +104,7 @@ class EventType extends AbstractType
             'label' => 'Facebook event URL',
             'required' => false,
             'attr' => array(
-                'data-help' => ''
+                'data-help' => 'To provide a link for more info.'
             )
         ));
 
