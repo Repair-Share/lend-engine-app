@@ -25,7 +25,7 @@
                     </div>
                 </td>
                 <td>{{ membership.membershipType.name }}</td>
-                <td>{{ membership.price|number_format(2) }}</td>
+                <td>{{ tenantInformation.currencySymbol }}{{ membership.price|number_format(2) }}</td>
                 <td>{{ membership.startsAt|date("d M Y") }}
                     {% if membership.status == constant('\\AppBundle\\Entity\\Membership::SUBS_STATUS_ACTIVE') %}
                         <a href="{{ path('membership_edit', {id: membership.id}) }}" class="modal-link" title="Change start date"><i class="fa fa-edit"></i></a>

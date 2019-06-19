@@ -73,6 +73,9 @@
             {% if contact.id %}
                 <li><a href="#tab_3" data-toggle="tab" aria-expanded="false">Memberships</a></li>
                 <li><a href="#tab_4" data-toggle="tab" aria-expanded="false">Loans ({{ contact.loans|length }}) / items</a></li>
+                {% if tenantInformation.setting('ft_events') %}
+                <li><a href="#tab_events" data-toggle="tab" aria-expanded="false">Events ({{ contact.attendees|length }})</a></li>
+                {% endif %}
                 <li><a href="#tab_5" data-toggle="tab" aria-expanded="false">Charges and Payments</a></li>
                 <li><a href="#tab_6" data-toggle="tab" aria-expanded="false">Notes</a></li>
                 <li>
@@ -190,6 +193,10 @@
 
             <div class="tab-pane" id="tab_4">
                 {{ include('contact/tabs/loans.html.twig') }}
+            </div>
+
+            <div class="tab-pane" id="tab_events">
+                {{ include('contact/tabs/events.html.twig') }}
             </div>
 
             <div class="tab-pane" id="tab_5">

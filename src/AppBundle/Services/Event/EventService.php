@@ -80,9 +80,11 @@ class EventService
             throw new \Exception("Length parameter must be numeric");
         }
 
+        $builder->join("event.site", "site");
+
         // Add filters:
         if (isset($filter['search']) && $filter['search']) {
-            $builder->andWhere('event.title LIKE :string');
+            $builder->andWhere('(event.title LIKE :string OR site.name LIKE :string)');
             $builder->setParameter('string', '%'.trim($filter['search']).'%');
         }
 

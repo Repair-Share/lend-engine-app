@@ -60,7 +60,6 @@
                         New reservation</a>
                     {% endif %}
 
-                    {#<a href="{{ path('switch_contact', {contactId: contact.id, itemId: app.request.get('itemId'), go: app.request.get('go')}) }}" class="btn btn-xs btn-success">Browse / borrow as {{ contact.name }}</a>#}
                     <a href="{{ path('loan_search', {'loan-search': contact.name}) }}" class="btn btn-xs btn-default">View loans / reservations</a>
 
                 {% else %}

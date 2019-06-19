@@ -14295,6 +14295,10 @@ ul.children select { width: 100%; }
 .note-body {
 }
 
+/* TABLES */
 .selected-row {
     background-color: #d2f2ff !important;
+}
+.cell-currency {
+    text-align: right;
 }

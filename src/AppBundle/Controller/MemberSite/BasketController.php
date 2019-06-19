@@ -84,6 +84,8 @@ class BasketController extends Controller
 
         if ($request->get('go') == 'basket') {
             return $this->redirectToRoute('basket_show');
+        } else if ($request->get('go') == 'events') {
+            return $this->redirectToRoute('event_list');
         } else if ($itemId = $request->get('itemId')) {
             return $this->redirectToRoute('public_product', ['productId' => $itemId]);
         } else if ($request->get('new') == 'loan' || $request->get('new') == 'reservation')  {

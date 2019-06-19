@@ -1,0 +1,27 @@
+{% if contact.attendees|length > 0 %}
+    <table width="100%" class="table table-hover table-striped tab-table">
+        <thead>
+        <tr>
+            <th>Event</th>
+            <th>Date</th>
+            <th class="cell-currency">Event price</th>
+            <th class="cell-currency">Price</th>
+            <th class="cell-currency">Paid</th>
+        </tr>
+        </thead>
+        {% for attendee in contact.attendees %}
+            <tr>
+                <td><a href="{{ path('event_admin', {eventId: attendee.event.id}) }}">{{ attendee.event.title }}</a></td>
+                <td>{{ attendee.event.date|date("d M Y") }}</td>
+                <td class="cell-currency">{{ tenantInformation.currencySymbol }}{{ attendee.event.price|number_format(2) }}</td>
+                <td class="cell-currency">{{ tenantInformation.currencySymbol }}{{ attendee.price|number_format(2) }}</td>
+                <td class="cell-currency">{{ tenantInformation.currencySymbol }}{{ attendee.price|number_format(2) }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <div class="page-help">
+        No event bookings.<br><br>
+        To book {{ contact.name }} onto an event, "<a href="{{ path('switch_contact', {contactId: contact.id}) }}?go=events">browse as {{ contact.name }}"</a> on the member site and book from the events page.
+    </div>
+{% endif %}
