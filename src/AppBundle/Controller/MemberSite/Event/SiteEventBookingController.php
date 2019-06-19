@@ -151,7 +151,7 @@ class SiteEventBookingController extends Controller
                 $client->sendEmail(
                     "{$senderName} <{$fromEmail}>",
                     $toEmail,
-                    $subject.' : '.$attendee->getEvent()->getTitle(),
+                    $subject.' '.$attendee->getEvent()->getTitle(),
                     $message,
                     null,
                     null,
@@ -183,7 +183,7 @@ class SiteEventBookingController extends Controller
                     'emails/booking_confirmation.html.twig',
                     array(
                         'attendee' => $attendee,
-                        'message'  => ''
+                        'message'  => $msg
                     )
                 );
 

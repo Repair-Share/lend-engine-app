@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Settings;
 
+use AppBundle\Entity\Attendee;
+use AppBundle\Entity\Event;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\PaymentMethod;
@@ -65,6 +67,38 @@ class EmailTestController extends Controller
                         'password' => 'password',
                         'user_locale' => $locale,
                         'tenant'       => $tenant
+                    )
+                );
+                break;
+
+            case "event_booking":
+
+                if (!$subject = $this->get('settings')->getSettingValue('email_booking_confirmation_subject')) {
+                    $subject = "Booking confirmation : Test event";
+                }
+
+                $d = new \DateTime();
+                $event = new Event();
+                $event->setTitle("Test event");
+                $event->setDate($d);
+                $event->setTimeFrom("0900");
+                $event->setTimeTo("1100");
+
+                /** @var \AppBundle\Repository\SiteRepository $siteRepo */
+                $siteRepo   = $em->getRepository('AppBundle:Site');
+                $site = $siteRepo->find(1);
+                $event->setSite($site);
+
+                $attendee = new Attendee();
+                $attendee->setContact($user);
+                $attendee->setPrice(20);
+                $attendee->setEvent($event);
+
+                $message = $this->renderView(
+                    'emails/booking_confirmation.html.twig',
+                    array(
+                        'attendee' => $attendee,
+                        'message'  => "This is a test email"
                     )
                 );
                 break;
@@ -326,7 +360,11 @@ class EmailTestController extends Controller
 
         }
 
-        return $this->redirectToRoute('settings_templates');
+        if ($request->get('template') == 'event_booking') {
+            return $this->redirectToRoute('settings_events');
+        } else {
+            return $this->redirectToRoute('settings_templates');
+        }
 
     }
 

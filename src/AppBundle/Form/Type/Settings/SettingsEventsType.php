@@ -57,35 +57,45 @@ class SettingsEventsType extends AbstractType
             )
         ));
 
+        if ($this->tenantService->getFeature('CustomEmail')) {
+            $help = '';
+            $disabled = false;
+        } else {
+            $help = '<i class="fa fa-star" style="color:#ff9d00"></i> Editable templates are not available on your plan. Upgrade at Settings &raquo; Billing.';
+            $disabled = true;
+        }
         $builder->add('email_booking_confirmation_subject', TextType::class, array(
             'label' => 'Subject',
             'data' => $dbData['email_booking_confirmation_subject'],
             'required' => false,
+            'disabled' => $disabled,
             'attr' => array(
                 'placeholder' => 'Booking confirmation',
-                'data-help' => ''
+                'data-help' => $help
             )
         ));
 
         $builder->add('email_booking_confirmation_head', TextareaType::class, array(
-            'label' => 'Header',
+            'label' => 'Additional header content (HTML allowed)',
             'data' => $dbData['email_booking_confirmation_head'],
             'required' => false,
+            'disabled' => $disabled,
             'attr' => array(
                 'placeholder' => '',
-                'data-help' => '',
+                'data-help' => $help,
                 'rows' => 4,
                 'class' => 'limited'
             )
         ));
 
         $builder->add('email_booking_confirmation_foot', TextareaType::class, array(
-            'label' => 'Footer',
+            'label' => 'Additional footer content (HTML allowed)',
             'data' => $dbData['email_booking_confirmation_foot'],
             'required' => false,
+            'disabled' => $disabled,
             'attr' => array(
                 'placeholder' => '',
-                'data-help' => '',
+                'data-help' => $help,
                 'rows' => 4,
                 'class' => 'limited'
             )

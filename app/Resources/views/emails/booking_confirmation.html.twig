@@ -6,10 +6,16 @@
 
 {% block content %}
 
+    {% if message %}
+        <div style="padding: 10px; background-color: #d5f996; border-radius: 4px; margin-bottom: 10px;">
+            {{ message }}
+        </div>
+    {% endif %}
+
     <p>{{ tenantInformation.setting('email_booking_confirmation_head')|raw }}</p>
 
     <div>
-        <h3>{{ attendee.event.title }}</h3>
+        <h2>{{ attendee.event.title }}</h2>
         <div style="margin:20px 0;border-top:1px solid #EEE;"></div>
         {{ attendee.contact.name }}, {{ attendee.contact.email }}
         <div style="margin:20px 0;border-top:1px solid #EEE;"></div>
@@ -27,7 +33,6 @@
         {{ attendee.event.facebookUrl }}
     </div>
 
-    <br>
     <p>{{ tenantInformation.setting('email_booking_confirmation_foot')|raw }}</p>
 
 {% endblock %}

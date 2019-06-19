@@ -14,7 +14,7 @@ le_email:
 
   booking_confirmation:
     title: Event booking confirmation
-    subject: Event booking confirmation
+    subject: Event booking confirmation :
 
   assign: # When a team member is assigned an item (eg for repair)
     subject:

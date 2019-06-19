@@ -263,7 +263,6 @@ class MenuBuilder
         }
 
         $this->menu = $this->factory->createItem('root', [
-
             'childrenAttributes' => [
                 'class' => $class,
                 'id' => 'CustomPagesNav'

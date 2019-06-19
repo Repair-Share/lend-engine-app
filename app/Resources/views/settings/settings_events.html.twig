@@ -35,14 +35,25 @@
             <h2>Event settings</h2>
 
             <div class="page-help">
-                Use the Lend Engine to manage your workshops, consultancies, repair café and any other community event you like.
-                Events can be free, or given a price to bring in some income.
+                <p>
+                    Use the Lend Engine to manage your workshops, consultancies, repair café and any other community event you like.
+                    Events can be free, or given a price to bring in some income.
+                </p>
+                <p>
+                    Published events are shown on a <a href="{{ path('event_list') }}" target="_blank">calendar page on your member site</a>.
+                </p>
             </div>
 
             {{ form_row(form.show_events_online) }}
             {{ form_row(form.page_event_header) }}
 
             <h2>Booking confirmation email</h2>
+            <div class="page-help">
+                <p>This email is sent to the attendee when they book onto an event, or when an admin books them on.<br>
+                All fields are optional. The main content of the email is automatically generated.</p>
+                <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "event_booking"}) }}">Send me a test email</a></p>
+            </div>
+
             {{ form_row(form.email_booking_confirmation_subject) }}
             {{ form_row(form.email_booking_confirmation_head) }}
             {{ form_row(form.email_booking_confirmation_foot) }}
@@ -75,6 +86,18 @@
                 ],
                 height: 200
             });
+        });
+
+        var saveFirst = false;
+        $(".form-control").on("keyup", function() {
+            saveFirst = true;
+        });
+        $(".send-email").on("click", function() {
+            if (saveFirst == true) {
+                alert("Please save changes first");
+                return false;
+            }
+            return true;
         });
     </script>
 {% endblock %}
