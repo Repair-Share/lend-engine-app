@@ -30,6 +30,10 @@ class SiteDataController extends Controller
         /** @var $siteRepo \AppBundle\Repository\SiteRepository */
         $siteRepo = $this->getDoctrine()->getRepository('AppBundle:Site');
 
+        /** @var $itemRepo \AppBundle\Repository\InventoryItemRepository */
+        $itemRepo = $this->getDoctrine()->getRepository('AppBundle:InventoryItem');
+        $item = $itemRepo->find($itemId);
+
         /** @var $eventService \AppBundle\Services\Event\EventService */
         $eventService = $this->get('service.event');
 
@@ -39,9 +43,16 @@ class SiteDataController extends Controller
         /** @var $site \AppBundle\Entity\Site */
         // Use the following from the UI if we get users with loads of sites
 //        $sites = $siteRepo->findBy(['id' => [1]]);
-        $sites = $siteRepo->findBy(['isActive' => true]);
+        $sites = $item->getSites();
+        if (count($sites) == 0) {
+            $sites = $siteRepo->findBy(['isActive' => true]);
+        }
 
         foreach ($sites AS $site) {
+
+            if ($site->getIsActive() == false) {
+                continue;
+            }
 
             // Get the regular opening times
             $openDays = [];

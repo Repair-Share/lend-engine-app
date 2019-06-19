@@ -693,6 +693,7 @@
 
             /** Returns the event that the time was found in */
             function isValidBookingTime(time, siteId) {
+                return true;
                 var eventFound = null;
                 $(calendar.getEvents()).each(function(i, event) {
 //                    Enable this extra validation when we figure out how to click-drag over multiple sites
