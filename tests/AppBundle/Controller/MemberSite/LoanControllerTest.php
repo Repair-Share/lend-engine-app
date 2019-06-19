@@ -11,9 +11,13 @@ class LoanControllerTest extends AuthenticatedControllerTest
         parent::setUp();
     }
 
+    /**
+     * Relies on loan 1000 created at testBasketAddItem() test
+     */
     public function testShowLoanAction()
     {
         $crawler = $this->client->request('GET', '/loan/1000');
         $this->assertEquals(1, $crawler->filter('#page-loan-title')->count());
     }
+
 }

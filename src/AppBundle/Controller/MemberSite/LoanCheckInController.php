@@ -97,8 +97,8 @@ class LoanCheckInController extends Controller
                 $this->redirectToRoute('loan_check_in', ['loanRowId' => $loanRowId]);
             }
 
-            if (!$contact = $form->get('contact')->getData()) {
-                $contact = null;
+            if (!$assignToContact = $form->get('contact')->getData()) {
+                $assignToContact = null;
             }
 
             $loan = $loanRow->getLoan();
@@ -108,11 +108,11 @@ class LoanCheckInController extends Controller
                 foreach ($loan->getLoanRows() AS $row) {
                     /** @var $row \AppBundle\Entity\LoanRow */
                     if (!$row->getIsReturned()) {
-                        $this->checkInItem($toLocation, $row, $userNote, $checkInFee, $contact);
+                        $this->checkInItem($toLocation, $row, $userNote, $checkInFee, $assignToContact);
                     }
                 }
             } else {
-                $this->checkInItem($toLocation, $loanRow, $userNote, $checkInFee, $contact);
+                $this->checkInItem($toLocation, $loanRow, $userNote, $checkInFee, $assignToContact);
             }
 
             $returnedRows = 0;
@@ -151,11 +151,18 @@ class LoanCheckInController extends Controller
 
     }
 
+    /**
+     * @param InventoryLocation $location
+     * @param LoanRow $loanRow
+     * @param string $userNote
+     * @param int $checkInFee
+     * @param null $contact
+     */
     private function checkInItem(InventoryLocation $location,
                                  LoanRow $loanRow,
                                  $userNote = '',
                                  $checkInFee = 0,
-                                 $contact = null) {
+                                 $assignToContact = null) {
 
         // Set up
         $em = $this->getDoctrine()->getManager();
@@ -173,7 +180,7 @@ class LoanCheckInController extends Controller
         $loan           = $loanRow->getLoan();
         $inventoryItem  = $loanRow->getInventoryItem();
 
-        if ( $inventoryService->itemMove($inventoryItem, $location, $loanRow, $contact, $userNote) ) {
+        if ( $inventoryService->itemMove($inventoryItem, $location, $loanRow, $assignToContact, $userNote) ) {
 
             $this->addFlash('success', $inventoryItem->getName().' checked in to "'.$location->getName().'"');
 
@@ -184,10 +191,9 @@ class LoanCheckInController extends Controller
 
             // Add a fee
             if ($checkInFee > 0) {
-
                 $payment = new Payment();
                 $payment->setAmount(-$checkInFee);
-                $payment->setContact($contact);
+                $payment->setContact($loanRow->getLoan()->getContact());
                 $payment->setLoan($loanRow->getLoan());
                 $payment->setNote("Check-in fee for ".$inventoryItem->getName().".");
                 $payment->setCreatedBy($user);
@@ -198,7 +204,7 @@ class LoanCheckInController extends Controller
                     $em->flush();
                     $this->addFlash('success', 'Check-in fee added to member account.');
                     $noteText .= ' (check-in fee '.number_format($checkInFee, 2).")";
-                    $contactService->recalculateBalance($contact);
+                    $contactService->recalculateBalance($loanRow->getLoan()->getContact());
                 } catch (\Exception $generalException) {
 
                 }
@@ -208,7 +214,7 @@ class LoanCheckInController extends Controller
             $note = new Note();
             $note->setCreatedBy($user);
             $note->setLoan($loan);
-            $note->setContact($contact);
+            $note->setContact($loanRow->getLoan()->getContact());
             $note->setText($noteText);
             $em->persist($note);
             try {
