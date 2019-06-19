@@ -67,7 +67,7 @@
                 </div>
             {% endif %}
 
-            {% if not tenantInformation.isEditMode %}
+            {% if not tenantInformation.isEditMode and is_granted("ROLE_SUPER_USER") %}
                 <a href="{{ path('site_edit_begin') }}" class="btn btn-xs btn-primary">Edit website</a>
             {% endif %}
         </div>

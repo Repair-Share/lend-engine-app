@@ -62,11 +62,6 @@ $(document).delegate(".note-delete", "click", function(event) {
     return false;
 });
 
-$(document).on('click', '#show-admin-tools', function() {
-    $('#admin-tools').removeClass('hidden-xs');
-    $("#show-admin-tools").hide();
-});
-
 $(document).ready(function(){
 
     var content = $('.content');

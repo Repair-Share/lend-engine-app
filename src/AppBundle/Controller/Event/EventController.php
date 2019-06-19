@@ -15,7 +15,7 @@ class EventController extends Controller
 {
     /**
      * @Route("admin/event/{eventId}", requirements={"eventId": "\d+"}, defaults={"eventId": 0}, name="event_admin")
-     * @Security("has_role('ROLE_SUPER_USER')")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function eventEdit(Request $request, $eventId)
     {

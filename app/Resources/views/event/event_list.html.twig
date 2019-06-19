@@ -6,7 +6,9 @@
 {% block pageTitle %}Events{% endblock %}
 
 {% block primaryButton %}
-    <a class="btn btn-default" style="margin-right: 20px;" href="{{ path('settings_events') }}">Event settings</a>
+    {% if is_granted("ROLE_SUPER_USER") %}
+        <a class="btn btn-default" style="margin-right: 20px;" href="{{ path('settings_events') }}">Event settings</a>
+    {% endif %}
     <a class="btn bg-green" href="{{ path('event_admin') }}">Add event</a>
 {% endblock %}
 

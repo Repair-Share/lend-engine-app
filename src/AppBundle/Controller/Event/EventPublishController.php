@@ -11,7 +11,7 @@ class EventPublishController extends Controller
 {
     /**
      * @Route("admin/event/{eventId}/publish", requirements={"eventId": "\d+"}, name="event_publish")
-     * @Security("has_role('ROLE_SUPER_USER')")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function eventPublish($eventId)
     {
@@ -62,7 +62,7 @@ class EventPublishController extends Controller
 
     /**
      * @Route("admin/event/{eventId}/unpublish", requirements={"eventId": "\d+"}, name="event_unpublish")
-     * @Security("has_role('ROLE_SUPER_USER')")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function eventUnPublish($eventId)
     {

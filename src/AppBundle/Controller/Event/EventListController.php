@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Event;
 use AppBundle\Entity\Event;
 use Doctrine\DBAL\DBALException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,7 @@ class EventListController extends Controller
     /**
      * Page which holds an empty table (results via AJAX)
      * @Route("admin/event/list", name="admin_event_list")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function listAction(Request $request)
     {
