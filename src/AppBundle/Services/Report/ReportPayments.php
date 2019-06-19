@@ -42,6 +42,7 @@ class ReportPayments
             i.name AS itemName,
             IDENTITY(p.deposit) AS deposit_id,
             IDENTITY(p.loan) AS loan_id,
+            IDENTITY(p.event) AS event_id,
             IDENTITY(p.membership) AS membership_id
             ");
 
@@ -68,6 +69,9 @@ class ReportPayments
                     break;
                 case 'membership':
                     $builder->andWhere('p.membership IS NOT NULL');
+                    break;
+                case 'event':
+                    $builder->andWhere('p.event IS NOT NULL');
                     break;
                 case 'other':
                     $builder->andWhere("p.loan IS NULL");

@@ -85,6 +85,7 @@
 
                 <div style="padding-top: 4px;">
                     <a href="{{ path('loan_search', {'loan-search': user.name|trim }) }}"><i class="fa fa-shopping-bag"></i> Loans</a>&nbsp;&nbsp;
+                    <a href="{{ path('my_events') }}"><i class="far fa-calendar-alt"></i> Bookings</a>&nbsp;&nbsp;
                     <a href="{{ path('payments') }}"><i class="fa fa-credit-card"></i> Payments</a>&nbsp;&nbsp;
                     <a href="{{ path('add_credit') }}?c={{ user.id }}"><i class="fa fa-plus-circle"></i> Add credit</a>
                 </div>

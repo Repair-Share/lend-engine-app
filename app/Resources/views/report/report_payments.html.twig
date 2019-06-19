@@ -32,6 +32,7 @@
                             <select id="payment_type" name="payment_type" class="form-control">
                                 <option value="">All</option>
                                 <option {% if 'loan' == app.request.get('payment_type') %}SELECTED{% endif %} value="loan">Loan</option>
+                                <option {% if 'event' == app.request.get('payment_type') %}SELECTED{% endif %} value="event">Event</option>
                                 <option {% if 'membership' == app.request.get('payment_type') %}SELECTED{% endif %} value="membership">Membership</option>
                                 <option {% if 'other' == app.request.get('payment_type') %}SELECTED{% endif %} value="other">Other</option>
                             </select>

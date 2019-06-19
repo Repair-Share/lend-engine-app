@@ -64,6 +64,8 @@ class ReportPaymentsController extends Controller
                 $type = 'Loan '.$reportRow['loan_id'];
             } else if ($reportRow['membership_id']) {
                 $type = 'Membership';
+            } else if ($reportRow['event_id']) {
+                $type = 'Event';
             } else {
                 $type = '-';
             }
@@ -74,7 +76,7 @@ class ReportPaymentsController extends Controller
 
             $paymentMethodString = $reportRow['payment_method_name'];
             if ($reportRow['pspCode']) {
-                $paymentMethodString .= '<div class="help-block">'.$reportRow['pspCode'].'</div>';
+                $paymentMethodString .= '<div class="help-block" style="font-size: 10px;">'.$reportRow['pspCode'].'</div>';
             }
 
             if ($reportRow['itemName']) {

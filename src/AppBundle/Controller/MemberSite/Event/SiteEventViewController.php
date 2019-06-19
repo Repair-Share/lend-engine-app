@@ -27,23 +27,35 @@ class SiteEventViewController extends Controller
         /** @var \AppBundle\Repository\PaymentMethodRepository $pmRepo */
         $pmRepo = $em->getRepository('AppBundle:PaymentMethod');
 
+        $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
+
         if ($userId = $this->get('session')->get('sessionUserId')) {
             $user = $contactService->get($userId);
         } else {
             $user = $this->getUser();
         }
 
+        /** @var $event \AppBundle\Entity\Event */
         if (!$event = $eventService->get($eventId)) {
             return $this->redirectToRoute('event_list');
         }
 
         $paymentMethods = $pmRepo->findAllOrderedByName();
 
+        $alreadyBooked = false;
+        foreach ($event->getAttendees() AS $attendee) {
+            if ($attendee->getContact() == $user) {
+                $alreadyBooked = true;
+            }
+        }
+
         return $this->render(
             'member_site/pages/event_preview.html.twig',
             [
                 'event' => $event,
                 'user' => $user,
+                'alreadyBooked' => $alreadyBooked,
+                'stripePaymentMethodId' => $stripePaymentMethodId,
                 'paymentMethods' => $paymentMethods
             ]
         );

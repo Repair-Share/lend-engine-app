@@ -38,20 +38,19 @@
 
         $(document).ready(function() {
             add_markers();
-
-            var bookingForm = $("#bookingForm");
-            bookingForm.on('click', "#buttonBook", function(e) {
-                e.preventDefault();
-                if ($("#paymentMethod").val() == "" && $("#paymentAmount").val() > 0) {
-                    if (window.confirm("No payment method has been chosen. Add the cost to account?\nClick cancel to choose a payment method or change the price.")) {
-                        bookingForm.submit();
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-                bookingForm.submit();
-            });
+//            var bookingForm = $("#bookingForm");
+//            bookingForm.on('click', "#buttonBook", function(e) {
+//                e.preventDefault();
+//                if ($("#paymentMethod").val() == "" && $("#paymentAmount").val() > 0) {
+//                    if (window.confirm("No payment method has been chosen. Add the cost to account?\nClick cancel to choose a payment method or change the price.")) {
+//                        bookingForm.submit();
+//                        return true;
+//                    } else {
+//                        return false;
+//                    }
+//                }
+//                bookingForm.submit();
+//            });
         });
     </script>
 
@@ -83,8 +82,6 @@
         </div>
     {% endif %}
 
-    <form method="POST" action="{{ path('event_book', {eventId: event.id} ) }}" id="bookingForm">
-
     <div class="row">
         <div class="col-md-7">
             <style type="text/css">
@@ -107,41 +104,64 @@
             <div class="modal-mini-header">Time</div>
             {{ event.date|date("l j F") }}<br>
             {{ event.friendlyTimeFrom }} - {{ event.friendlyTimeTo }}<br>
-            <br>
-            <div class="modal-mini-header">Cost</div>
-            {% if event.price > 0 %}
-                {% if is_granted("ROLE_ADMIN") %}
-                    <div class="input-group">
-                        <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
-                        <input type="text" id="paymentAmount" name="paymentAmount" value="{{ event.price|number_format(2) }}" class="form-control">
-                    </div>
 
-                    <div class="form-group" style="padding-top: 10px;">
-                        <label>Payment method</label>
-                        <select name="paymentMethod" id="paymentMethod" class="form-control">
-                            <option></option>
-                            {% for paymentMethod in paymentMethods %}
-                            <option value="{{ paymentMethod.id }}">{{ paymentMethod.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+            {#BOOKING FORM#}
+            <form method="POST" action="{{ path('event_book', {eventId: event.id} ) }}" class="payment-form" id="bookingForm">
+                <br>
+                <div class="modal-mini-header">Cost</div>
+                {% if event.price > 0 %}
+                    {% if is_granted("ROLE_ADMIN") %}
+                        <div class="input-group">
+                            <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
+                            <input type="text" id="paymentAmount" name="paymentAmount" value="{{ event.price|number_format(2) }}" class="form-control payment-amount">
+                        </div>
+                        <div class="form-group" style="padding-top: 10px;">
+                            <label>Payment method</label>
+                            <select name="paymentMethod" id="paymentMethod" class="form-control payment-method">
+                                <option></option>
+                                {% for paymentMethod in paymentMethods %}
+                                <option value="{{ paymentMethod.id }}">{{ paymentMethod.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% else %}
+                        {{ tenantInformation.currencySymbol }} {{ event.price|number_format(2) }}
+                        <input type="hidden" id="paymentAmount" name="paymentAmount" class="payment-amount" value="{{ event.price|number_format(2) }}">
+                        <input type="hidden" id="paymentMethod" name="paymentMethod" class="payment-method" value="{{ stripePaymentMethodId }}">
+                    {% endif %}
                 {% else %}
-                    {{ tenantInformation.currencySymbol }} {{ event.price|number_format(2) }}
+                    Free
                 {% endif %}
-            {% else %}
-                Free
-            {% endif %}
+                <input type="hidden" name="stripeToken" id="stripeToken" class="stripe-token">
+                <input type="hidden" name="stripeCardId" id="stripeCardId">
+            </form>
 
+
+            {#BOOKING BUTTON#}
             <div style="padding-top: 10px">
+
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    {% if event.isBookable or is_granted("ROLE_ADMIN") %}
-                        <button type="button" class="btn btn-success btn-block" id="buttonBook">
-                            Book now
-                        </button>
-                        {% if app.user != user %}
-                            <div class="small help-block">You are booking <strong>{{ user.name }}</strong> onto this event.</div>
+
+                    {% if alreadyBooked == true %}
+                        <div class="alert alert-warning">
+                            {% if is_granted("ROLE_ADMIN") %}
+                                {{ user.name }} is already booked on this event.
+                            {% else %}
+                                You're attending.
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <input type="hidden" name="contactEmail" id="contactEmail" class="contact-email" value="{{ user.email }}">
+                        {% if event.isBookable or is_granted("ROLE_ADMIN") %}
+                            <button type="button" class="btn btn-success btn-block btn-loading payment-submit" id="buttonBook">
+                                Book now
+                            </button>
+                            {% if app.user != user %}
+                                <div class="small help-block">You are booking <strong>{{ user.name }}</strong> onto this event.</div>
+                            {% endif %}
                         {% endif %}
                     {% endif %}
+
                 {% else %}
                     {% if event.isBookable and hasSpaces == true %}
                         <div class="alert alert-warning">
@@ -150,11 +170,12 @@
                         </div>
                     {% endif %}
                 {% endif %}
+
             </div>
 
         </div>
     </div>
-    </form>
+
 
 {% endblock %}
 
@@ -167,12 +188,16 @@
         </div>
         {% if (event.price == 0 and is_granted("IS_AUTHENTICATED_REMEMBERED")) or is_granted("ROLE_ADMIN") %}
         <div class="col-md-6">
+            {% if alreadyBooked != true %}
             <div class="help-block" style="font-size: 12px; text-align: left">
                 Checking in adds you as an attendee without sending a booking confirmation email.
             </div>
+            {% endif %}
         </div>
         <div class="col-md-3">
-            <a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-primary">Check in</a>
+            {% if alreadyBooked != true %}
+                <a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-primary">Check in</a>
+            {% endif %}
         </div>
         {% endif %}
     </div>

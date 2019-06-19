@@ -19,16 +19,22 @@ class SiteEventBookingController extends Controller
      */
     public function eventBookAction(Request $request, $eventId)
     {
+        $em = $this->getDoctrine()->getManager();
+
         /** @var \AppBundle\Services\Event\EventService $eventService */
         $eventService = $this->get('service.event');
 
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
+        /** @var \AppBundle\Repository\PaymentMethodRepository $pmRepo */
+        $pmRepo = $em->getRepository('AppBundle:PaymentMethod');
+
         /** @var \AppBundle\Services\Payment\PaymentService $paymentService */
         $paymentService = $this->get('service.payment');
 
-        $em = $this->getDoctrine()->getManager();
+        $feeAmount = (float)$this->get('settings')->getSettingValue('stripe_fee');
+        $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
 
         if ($userId = $this->get('session')->get('sessionUserId')) {
             $user = $contactService->get($userId);
@@ -59,13 +65,17 @@ class SiteEventBookingController extends Controller
             $attendee->setCreatedBy($this->getUser());
             $attendee->setIsConfirmed(true);
 
-            $eventPrice    = $request->request->get("paymentAmount");
-            $paymentMethod = $request->request->get("paymentMethod");
+            $eventPrice      = $request->request->get("paymentAmount");
+            $paymentMethodId = $request->request->get("paymentMethod");
 
+            $token    = $request->request->get("stripeToken");
+            $cardId   = $request->request->get("stripeCardId");
+
+            $paymentOk = true;
             if ($eventPrice > 0) {
                 $attendee->setPrice($eventPrice);
 
-                // Create fee for the financials
+                // Create fee
                 $payment = new Payment();
                 $payment->setContact($user);
                 $payment->setType(Payment::PAYMENT_TYPE_FEE);
@@ -74,34 +84,60 @@ class SiteEventBookingController extends Controller
                 $payment->setCreatedBy($this->getUser());
                 $em->persist($payment);
 
-                if ($paymentMethod) {
+                if ($paymentMethodId) {
+
                     $p = new Payment();
                     $p->setContact($user);
                     $p->setType(Payment::PAYMENT_TYPE_PAYMENT);
                     $p->setEvent($event);
                     $p->setAmount($eventPrice);
                     $p->setCreatedBy($this->getUser());
-                    $paymentService->create($p);
+                    $p->setPaymentMethod($pmRepo->find($paymentMethodId));
+
+                    if ($token || $cardId) {
+                        $cardDetails = [
+                            'token'  => $token,
+                            'cardId' => $cardId,
+                        ];
+                        if ($feeAmount > 0 && $paymentMethodId == $stripePaymentMethodId) {
+                            $eventPrice += $feeAmount;
+                            $payment->setAmount($eventPrice);
+                        }
+                    } else {
+                        $cardDetails = null;
+                    }
+
+                    if ($paymentService->create($p, $cardDetails)) {
+                        $contactService->recalculateBalance($attendee->getContact());
+                    } else {
+                        $this->addFlash("error", "There was an error taking payment.");
+                        foreach ($paymentService->errors AS $error) {
+                            $this->addFlash('error', $error);
+                        }
+                        $paymentOk = false;
+                    }
+
                 }
             }
 
-            $em->persist($attendee);
-            try {
-                $em->flush();
+            if ($paymentOk == true) {
+                $em->persist($attendee);
+                try {
+                    $em->flush();
 
-                if ($request->get('check_in')) {
-                    $this->addFlash("success", "Checked in - thank you!");
-                } else {
-                    $this->addFlash("success", "You're booked in. See you soon!");
-                    $this->sendBookingConfirmationEmail($attendee);
+                    if ($request->get('check_in')) {
+                        $this->addFlash("success", "Checked in - thank you!");
+                    } else {
+                        $this->addFlash("success", "You're booked in. See you soon!");
+                        $this->sendBookingConfirmationEmail($attendee);
+                    }
+                } catch (\Exception $e) {
+                    $this->addFlash("error", $e->getMessage());
                 }
+            } else {
 
-                // Update the account if any changes have been made to payments
-                $contactService->recalculateBalance($user);
-
-            } catch (\Exception $e) {
-                $this->addFlash("error", $e->getMessage());
             }
+
         }
 
         if ($user == $this->getUser()) {
