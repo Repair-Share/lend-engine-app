@@ -89,7 +89,7 @@ class EventService
         }
 
         if (isset($filter['siteId']) && $filter['siteId']) {
-            $builder->andWhere('loc.site = :siteId');
+            $builder->andWhere('event.site = :siteId');
             $builder->setParameter('siteId', $filter['siteId']);
         }
 

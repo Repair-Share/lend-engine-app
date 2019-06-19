@@ -25,6 +25,9 @@ class OpeningHoursController extends Controller
         // admin only
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
 
+        /** @var \AppBundle\Services\SettingsService $settingService */
+        $settingService = $this->get('settings');
+
         // Get from the DB
         $em = $this->getDoctrine()->getManager();
 
@@ -72,16 +75,22 @@ class OpeningHoursController extends Controller
                 $type = '<span class="label bg-red">Closed</span>';
             }
 
-            if (!$title = $i->getTitle()) {
-                $title = '-- upgrade to an event --';
-            }
+            $title = $i->getTitle();
             $eventLink = $this->generateUrl('event_admin', ['eventId' => $i->getId()]);
+            if ($settingService->getSettingValue('ft_events')) {
+                if (!$title) {
+                    $title = '-- upgrade to an event --';
+                }
+                $eventTitle = '<a href="'.$eventLink.'">'.$title.'</a>';
+            } else {
+                $eventTitle = $title;
+            }
 
             $tableRows[] = array(
                 'id' => $i->getId(),
                 'data' => array(
                     $i->getDate()->format("l j F Y"),
-                    '<a href="'.$eventLink.'">'.$title.'</a>',
+                    $eventTitle,
                     $type,
                     $i->getTimeFrom(),
                     $i->getTimeChangeover(),

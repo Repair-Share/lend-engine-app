@@ -38,8 +38,8 @@ class SiteDataController extends Controller
 
         /** @var $site \AppBundle\Entity\Site */
         // Use the following from the UI if we get users with loads of sites
-//        $sites = $siteRepo->findBy(['id' => [1,2,3]]);
-        $sites = $siteRepo->findAll();
+//        $sites = $siteRepo->findBy(['id' => [1]]);
+        $sites = $siteRepo->findBy(['isActive' => true]);
 
         foreach ($sites AS $site) {
 
@@ -68,7 +68,7 @@ class SiteDataController extends Controller
 //            if ($authChecker->isGranted('ROLE_ADMIN')) {
 //                $day = new \DateTime($dateFrom);
 //            } else {
-                $day = new \DateTime();
+            $day = new \DateTime();
             $day->modify("-28 days");
 //            }
 
@@ -171,7 +171,7 @@ class SiteDataController extends Controller
             $dFrom = new \DateTime($dateFrom);
             $dTo   = new \DateTime($dateTo);
             $filter = [
-                'site_id' => $site->getId(),
+                'siteId'  => $site->getId(),
                 'from'    => $dFrom->format("Y-m-d"),
                 'to'      => $dTo->format("Y-m-d"),
             ];
