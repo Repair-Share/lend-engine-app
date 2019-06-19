@@ -219,12 +219,6 @@ class ItemListController extends Controller
             $reserveItemUrl = $this->generateUrl('member_search', array('itemId' => $itemId, 'new' => 'reservation'));
             $links .= '<li><a href="'.$reserveItemUrl.'">Reserve</a></li>';
 
-            // Waiting list
-            if ($this->container->get('settings')->getSettingValue('enable_waiting_list')) {
-                $waitListItemUrl = $this->generateUrl('choose_member', array('waitListItemId' => $itemId));
-                $links .= '<li><a class="modal-link" href="'.$waitListItemUrl.'">Add to waiting list</a></li>';
-            }
-
             if ($item->getInventoryLocation()->getId() > 1) {
                 $moveUrl = $this->generateUrl('item_move', ['idSet' => $itemId,]);
                 $links .= '<li><a class="modal-link" href="'.$moveUrl.'">Move / Assign</a></li>';
