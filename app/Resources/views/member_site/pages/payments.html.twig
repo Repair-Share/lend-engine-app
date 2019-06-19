@@ -17,7 +17,7 @@
     {{ include('member_site/partials/account_balance.html.twig') }}
 
     {% if user.payments|length > 0 %}
-        <table width="100%" class="table table-hover table-striped">
+        <table width="100%" class="table table-hover table-striped data-table">
             <thead>
             <tr>
                 <th></th>
@@ -31,16 +31,19 @@
             {% for payment in user.payments %}
                 <tr>
                     <td>
-                        {% if payment.note %}
-                            <div>{{ payment.note }}</div>
-                        {% endif %}
                         {% if payment.inventoryItem %}
                             <div>{{ payment.inventoryItem.name }}</div>
+                        {% endif %}
+                        {% if payment.event %}
+                            <div>{{ payment.event.title }}</div>
                         {% endif %}
                         {% if payment.loan %}
                             <div>
                                 <a href="{{ path('public_loan', {loanId: payment.loan.id}) }}">{% trans %}Loan{% endtrans %} {{ payment.loan.id }}</a>
                             </div>
+                        {% endif %}
+                        {% if payment.note %}
+                            <div>{{ payment.note }}</div>
                         {% endif %}
                     </td>
                     <td>
@@ -83,4 +86,15 @@
             {% trans %}public_payments.no_payment{% endtrans %}
         </div>
     {% endif %}
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+        $(document).ready(function() {
+            $('.data-table').DataTable({
+                pageLength: 50,
+                ordering: true
+            });
+        });
+    </script>
 {% endblock %}
