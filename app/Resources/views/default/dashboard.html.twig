@@ -387,7 +387,7 @@
         <div class="col-lg-4 col-md-6">
             <div class="box">
                 <div class="box-header with-border">
-                    Revenue (<span style="color:#9dbc6b">Memberships</span> / <span style="color:#ff741e">Other</span>)
+                    Revenue (<span style="color:#9dbc6b">Memberships</span> / <span style="color:#83B9CC">Events</span> / <span style="color:#ff741e">Other</span>)
                 </div>
                 <div class="box-body">
                     <canvas id="income" height="160" style="height: 160px; width: 720px"></canvas>
@@ -598,7 +598,13 @@
                             label: 'Membership',
                             data: [{{ membershipFeesByMonth }}],
                             backgroundColor: "#9dbc6b"
-                        }, {
+                        },
+                        {
+                            label: 'Events',
+                            data: [{{ eventFeesByMonth }}],
+                            backgroundColor: "#83B9CC"
+                        },
+                        {
                             label: 'Other',
                             data: [{{ otherFeesByMonth }}],
                             backgroundColor: "#ff741e"

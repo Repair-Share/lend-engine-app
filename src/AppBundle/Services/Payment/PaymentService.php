@@ -233,8 +233,10 @@ class PaymentService
         $extraFilter = '';
         if ($feeType == 'memberships') {
             $extraFilter = "AND membership_id > 0 ";
+        } else if ($feeType == 'events') {
+            $extraFilter = "AND event_id > 0 ";
         } else if ($feeType == 'other') {
-            $extraFilter = "AND membership_id IS NULL ";
+            $extraFilter = "AND membership_id IS NULL AND event_id IS NULL";
         }
 
         $sql = "SELECT DATE(p.created_at) AS d,

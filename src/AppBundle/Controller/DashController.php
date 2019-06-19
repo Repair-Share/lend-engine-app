@@ -73,6 +73,7 @@ class DashController extends Controller
         /** @var \AppBundle\Services\Payment\PaymentService $paymentService */
         $paymentService = $this->get('service.payment');
         $membershipFees = $paymentService->paymentsByMonth('memberships');
+        $eventFees      = $paymentService->paymentsByMonth('events');
         $otherFees      = $paymentService->paymentsByMonth('other');
 
         $loansAdded = $loanService->loansAddedByMonth();
@@ -88,6 +89,7 @@ class DashController extends Controller
         $itemsGrowth = [];
 
         $membershipFeesByMonth = [];
+        $eventFeesByMonth = [];
         $otherFeesByMonth = [];
 
         $chartMonths = 6;
@@ -145,6 +147,12 @@ class DashController extends Controller
             }
             $membershipFeesByMonth[] = $membershipFees[$key];
 
+            // Event Fees
+            if (!isset($eventFees[$key])) {
+                $eventFees[$key] = 0;
+            }
+            $eventFeesByMonth[] = $eventFees[$key];
+
             // Other fees
             if (!isset($otherFees[$key])) {
                 $otherFees[$key] = 0;
@@ -175,6 +183,7 @@ class DashController extends Controller
             'membershipsAddedByMonth' => implode(',', $membershipsAddedByMonth),
             'membershipsGrowth' => implode(',', $membershipsGrowth),
             'membershipFeesByMonth' => implode(',', $membershipFeesByMonth),
+            'eventFeesByMonth' => implode(',', $eventFeesByMonth),
             'otherFeesByMonth' => implode(',', $otherFeesByMonth),
             'isMultiSite' => $isMultiSite,
             'activeSite' => $activeSite
