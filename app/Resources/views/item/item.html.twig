@@ -26,7 +26,9 @@
 
     {% if countItems > 1 and tenantInformation.setting('group_similar_items') == 1 %}
         <div class="item-group">
-            There are <a href="{{ path('item_list') }}?search={{ item.name }}">{{ countItems }} items in this group</a>. All fields apart from serial number and condition will also be updated for other items in the group.
+            There are <a href="{{ path('item_list') }}?search={{ item.name }}">{{ countItems }} items in this group</a>.
+            All fields apart from <strong>code</strong>, <strong>serial number</strong> and <strong>condition</strong>
+            will also be updated for other items in the group.
         </div>
     {% endif %}
 
@@ -353,6 +355,29 @@
 
         $(document).ready(function () {
 
+            {% if tenantInformation.setting('group_similar_items') == 1 %}
+            $(document).on('blur', "#item_name", function() {
+                if ($(this).val()) {
+                    $.get("{{ path('item_name_check') }}?name="+$(this).val(), function(result) {
+                        if (result == 1) {
+                            var msg = "An item already exists with this name.\n";
+                            msg += "Saving this item will put it into a product group and ";
+                            msg += "overwrite the other item's fields using values from this one.\n";
+                            msg += "You might prefer to copy an existing item with this name instead.\n\n";
+                            msg += "Click OK to continue with the name or Cancel to change it.";
+                            if (window.confirm(msg)) {
+                                // continue
+                            } else {
+                                $("#item_name").val("").focus();
+                            }
+                        } else {
+
+                        }
+                    }, "text");
+                }
+            });
+            {% endif %}
+
             $('#item_tabs a').click(function (e) {
                 e.preventDefault(); $(this).tab('show');
                 setUpSelectMenus();
@@ -552,7 +577,6 @@
             {% endif %}
 
             {% endif %}
-
 
             // LABELS
             {% if tenantInformation.useLabels %}

@@ -284,7 +284,6 @@ class ItemController extends Controller
                     }
 
                     $copyItem->setName($product->getName());
-                    $copyItem->setSku($product->getSku());
                     $copyItem->setBrand($product->getBrand());
                     $copyItem->setImageName($product->getImageName()); // primary thumbnail
                     $copyItem->setMaxLoanDays($product->getMaxLoanDays());

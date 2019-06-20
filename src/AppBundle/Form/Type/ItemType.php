@@ -121,7 +121,6 @@ class ItemType extends AbstractTranslatableType
         }
 
         if (!$product->getId()) {
-
             // Get valid locations for "add" workflow (excludes on-loan and reserved locations)
             /** @var $locationRepo \AppBundle\Repository\InventoryLocationRepository */
             $locationRepo = $this->em->getRepository('AppBundle:InventoryLocation');

@@ -693,6 +693,8 @@
 
             /** Returns the event that the time was found in */
             function isValidBookingTime(time, siteId) {
+                // Currently have an issue where moving the calendar a month forwards replaces the array that we validate start time against
+                // Fix : move the events into a global non-calendar dataset as the calendar view is moved around and validate against that
                 return true;
                 var eventFound = null;
                 $(calendar.getEvents()).each(function(i, event) {
