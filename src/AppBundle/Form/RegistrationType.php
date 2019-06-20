@@ -68,13 +68,15 @@ class RegistrationType extends AbstractType
         ));
 
         $languages = [
+            'Deutsch'    => 'de',
             'English'    => 'en',
             'Espanol'    => 'es',
             'Francais'   => 'fr',
-            'íslensku'  => 'is',
+            'íslensku'   => 'is',
             'Nederlands' => 'nl',
             'Română'     => 'ro',
             'Slovak'     => 'sk',
+            'Svenska'    => 'sv-SE',
             'Welsh'      => 'cy'
         ];
         $builder->add('locale', ChoiceType::class, array(
