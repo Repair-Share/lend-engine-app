@@ -114,10 +114,11 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/member/loans'],
             ['/member/payments'],
             ['/member/add-credit'],
+            ['/member/my-events'],
             ['/loan-search'],
             ['/member-search?go=&member-search=test'],
             ['/products?search=test'],
-            ['/site-data?site=1'],
+            ['/site-data?itemId=1000'],
 
             // Events
             ['/events'],

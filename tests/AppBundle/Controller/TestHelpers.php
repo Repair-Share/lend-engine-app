@@ -73,6 +73,7 @@ class TestHelpers extends AuthenticatedControllerTest
     /**
      * @param Client $client
      * @param $contactId
+     * @return mixed
      */
     public function addCredit(Client $client, $contactId)
     {
@@ -88,11 +89,13 @@ class TestHelpers extends AuthenticatedControllerTest
         $client->submit($form);
 
         $this->assertTrue($client->getResponse() instanceof RedirectResponse);
-        $crawler = $client->followRedirect();
 
+        $crawler = $client->request('GET', '/admin/contact/'.$contactId);
         $this->assertContains('Charges and Payments', $crawler->html());
-        $refundButtons = $crawler->filter('.refund_button');
-        die($refundButtons);
+        $paymentId = $crawler->filter('.refund-button')->attr('id');
+        $paymentId = str_replace('id-', '', $paymentId);
+
+        return $paymentId;
     }
 
     /**

@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 class SiteMyEventsController extends Controller
 {
     /**
-     * @Route("my-events", name="my_events")
+     * @Route("member/my-events", name="my_events")
      */
     public function myEventsAction()
     {
