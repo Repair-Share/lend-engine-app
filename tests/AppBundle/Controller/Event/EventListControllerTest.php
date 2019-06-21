@@ -7,7 +7,7 @@ use Tests\AppBundle\Controller\AuthenticatedControllerTest;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
 
-class EventControllerTest extends AuthenticatedControllerTest
+class EventListControllerTest extends AuthenticatedControllerTest
 {
 
     public function setUp()
@@ -18,13 +18,10 @@ class EventControllerTest extends AuthenticatedControllerTest
     /**
      * Create an event
      */
-    public function testEventEdit()
+    public function testListAction()
     {
-        $session = new Session(new MockFileSessionStorage());
-        $session->set('time_zone', 'Europe/London');
-
-        // Create event
-        $eventId = $this->helpers->createEvent($this->client);
+        $crawler = $this->client->request('GET', '/admin/event/list');
+        $this->assertContains('Event settings', $crawler->html());
     }
 
 }

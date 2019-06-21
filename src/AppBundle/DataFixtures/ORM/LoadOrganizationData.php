@@ -46,6 +46,11 @@ class LoadOrganizationData implements FixtureInterface
 //        $setting->setSetupKey('stripe_fee')->setSetupValue('1');
 //        $manager->persist($setting);
 
+        // Events feature toggle ON
+        $setting = new Setting();
+        $setting->setSetupKey('ft_events')->setSetupValue('1');
+        $manager->persist($setting);
+
         // Create some site openings
         /** @var \AppBundle\Repository\SiteRepository $siteRepo */
         $siteRepo = $manager->getRepository('AppBundle:Site');

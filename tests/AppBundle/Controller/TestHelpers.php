@@ -88,13 +88,38 @@ class TestHelpers extends AuthenticatedControllerTest
         $client->submit($form);
 
         $this->assertTrue($client->getResponse() instanceof RedirectResponse);
-        $client->followRedirect();
+        $crawler = $client->followRedirect();
+
+        $this->assertContains('Charges and Payments', $crawler->html());
+        $refundButtons = $crawler->filter('.refund_button');
+        die($refundButtons);
     }
 
+    /**
+     * @param Client $client
+     */
     public function createEvent(Client $client)
     {
-        $crawler = $client->request('GET', '/member/add-credit?c=');
-        $this->assertContains('Add credit', $crawler->html());
+        $crawler = $client->request('GET', '/admin/event');
+        $this->assertContains('Create a new event', $crawler->html());
+
+        $date = new \DateTime();
+        $form = $crawler->filter('form[name="event"]')->form(array(
+            'event[title]' => "Test event title ".$date->format("Y-m-d H:i:s"),
+            'event[date]' => $date->format("Y-m-d"),
+            'event[timeFrom]' => '09:00 am',
+            'event[timeTo]'   => '11:00 am',
+            'event[maxAttendees]' => '10',
+            'event[price]' => '15',
+            'event[description]' => "This it's an great Stuff.",
+        ),'POST');
+
+        $client->submit($form);
+
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        $crawler = $client->followRedirect();
+
+        $this->assertContains('Test event title', $crawler->html());
     }
 
 }

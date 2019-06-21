@@ -22,6 +22,8 @@
 {% else %}
     <div class="page-help">
         No event bookings.<br><br>
+        {% if contact.id %}
         To book {{ contact.name }} onto an event, "<a href="{{ path('switch_contact', {contactId: contact.id}) }}?go=events">browse as {{ contact.name }}"</a> on the member site and book from the events page.
+        {% endif %}
     </div>
 {% endif %}
