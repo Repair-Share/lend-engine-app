@@ -85,16 +85,16 @@ foreach ($categories AS $id => $data) {
 
 //ksort($result);
 
-//foreach ($result AS $i => $category) {
+foreach ($result AS $i => $category) {
 //    echo $i.'<br>';
-//    $id        = $category['id'];
-//    $name      = $category['name'];
-//    $parentId  = $category['parent'];
-//    if ($parentId == 0) {
-//        $parentId = 'null';
-//    }
-//    $sqlString .= "REPLACE INTO item_type (id, parent_id, name) VALUES ({$id}, {$parentId}, \"{$name}\");".PHP_EOL;
-//}
+    $id        = $category['id'];
+    $name      = $category['name'];
+    $parentId  = $category['parent'];
+    if ($parentId == 0) {
+        $parentId = 'null';
+    }
+    $sqlString .= "REPLACE INTO item_type (id, parent_id, name) VALUES ({$id}, {$parentId}, \"{$name}\");".PHP_EOL;
+}
 
 $txt = 'var folders = '.json_encode($result).'; ';
 $fhandle = fopen("itemTypes.js", 'w');

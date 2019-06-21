@@ -91,4 +91,10 @@ class TestHelpers extends AuthenticatedControllerTest
         $client->followRedirect();
     }
 
+    public function createEvent(Client $client)
+    {
+        $crawler = $client->request('GET', '/member/add-credit?c=');
+        $this->assertContains('Add credit', $crawler->html());
+    }
+
 }

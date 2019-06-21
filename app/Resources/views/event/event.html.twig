@@ -179,7 +179,9 @@
     </div>
 
     <div class="page-controls">
+        {% if event.id %}
         <a href="{{ path('event_copy', {eventId: event.id}) }}" class="btn btn-default">Copy</a>
+        {% endif %}
         {% if event.status == "DRAFT" and event.id %}
             <a href="{{ path('event_publish', {eventId: event.id}) }}" class="btn btn-default">Publish</a>
         {% elseif event.status == "PUBLISHED" and event.id %}
