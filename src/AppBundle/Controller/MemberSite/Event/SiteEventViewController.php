@@ -49,6 +49,11 @@ class SiteEventViewController extends Controller
             }
         }
 
+        // If we can't pay for it online and a price is due, make it not bookable
+        if (!$stripePaymentMethodId && $event->getPrice() && !$user->hasRole("ROLE_ADMIN")) {
+            $event->setIsBookable(false);
+        }
+
         return $this->render(
             'member_site/pages/event_preview.html.twig',
             [

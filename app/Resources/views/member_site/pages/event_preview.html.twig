@@ -38,19 +38,6 @@
 
         $(document).ready(function() {
             add_markers();
-//            var bookingForm = $("#bookingForm");
-//            bookingForm.on('click', "#buttonBook", function(e) {
-//                e.preventDefault();
-//                if ($("#paymentMethod").val() == "" && $("#paymentAmount").val() > 0) {
-//                    if (window.confirm("No payment method has been chosen. Add the cost to account?\nClick cancel to choose a payment method or change the price.")) {
-//                        bookingForm.submit();
-//                        return true;
-//                    } else {
-//                        return false;
-//                    }
-//                }
-//                bookingForm.submit();
-//            });
         });
     </script>
 
@@ -136,7 +123,6 @@
                 <input type="hidden" name="stripeCardId" id="stripeCardId">
             </form>
 
-
             {#BOOKING BUTTON#}
             <div style="padding-top: 10px">
 
@@ -159,16 +145,21 @@
                             {% if app.user != user %}
                                 <div class="small help-block">You are booking <strong>{{ user.name }}</strong> onto this event.</div>
                             {% endif %}
+                        {% else %}
+                            {#Non bookable event#}
+                            <div class="alert alert-warning">Please contact us to book</div>
                         {% endif %}
                     {% endif %}
 
                 {% else %}
+
                     {% if event.isBookable and hasSpaces == true %}
                         <div class="alert alert-warning">
                             <a href="{{ path('fos_user_security_login') }}?event={{ event.id }}">Log in</a> or
                             <a href="{{ path('fos_user_registration_register') }}?event={{ event.id }}">register</a> to book.
                         </div>
                     {% endif %}
+
                 {% endif %}
 
             </div>

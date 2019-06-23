@@ -30,6 +30,13 @@
         <span class="help">{{ help }}</span>
     {% endif %}
 
+    {% if event.price > 0 and not tenantInformation.setting('stripe_payment_method') %}
+        <div class="alert alert-warning">
+            You don't have Stripe set up for online payments, so people won't be able to book onto this course themselves via your member site. <br>
+            Set the price to zero, or connect a Stripe payment account to Lend Engine.
+        </div>
+    {% endif %}
+
     <div class="row">
         <div class="col-md-5">
 
