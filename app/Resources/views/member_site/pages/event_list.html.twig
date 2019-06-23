@@ -116,7 +116,6 @@
                 var calEvent = e.event;
                 var element  = e.el;
                 var text = '';
-                var eventId = calEvent.extendedProps.eventId;
                 text += '<div>'+calEvent.title+'</div>';
                 $(element).html(text);
             },
@@ -133,7 +132,6 @@
             $("#event-list").html("");
             var HTML = '';
             $(events).each(function() {
-                console.log(this);
                 var date = moment(this.start);
                 var end = moment(this.end);
                 HTML += '<div class="event-wrapper">';

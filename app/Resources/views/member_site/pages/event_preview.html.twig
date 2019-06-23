@@ -11,7 +11,7 @@
             var geocoder = new google.maps.Geocoder();
             var marker;
 
-            geocoder.geocode({'address': '{{ event.site.address }}, {{ event.site.postcode }}, {{ tenantInformation.country }}'}, function(results, status)
+            geocoder.geocode({'address': '{{ event.site.address|replace({"\r\n": ", "}) }}, {{ event.site.postcode }}, {{ tenantInformation.country }}'}, function(results, status)
             {
                 if (status == google.maps.GeocoderStatus.OK) {
                     var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
@@ -98,7 +98,7 @@
         <div class="col-md-5">
             <div class="modal-mini-header">Location</div>
             {{ event.site.name }}<br>
-            {{ event.site.address }}<br>
+            {{ event.site.address|nl2br }}<br>
             {{ event.site.postcode }}<br>
             <br>
             <div class="modal-mini-header">Time</div>
@@ -166,7 +166,7 @@
                     {% if event.isBookable and hasSpaces == true %}
                         <div class="alert alert-warning">
                             <a href="{{ path('fos_user_security_login') }}?event={{ event.id }}">Log in</a> or
-                            <a href="{{ path('fos_user_registration_register') }}?event={{ event.id }}">register</a> to book your place on this event.
+                            <a href="{{ path('fos_user_registration_register') }}?event={{ event.id }}">register</a> to book.
                         </div>
                     {% endif %}
                 {% endif %}
