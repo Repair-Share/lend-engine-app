@@ -3,6 +3,7 @@
 namespace AppBundle\Services\Loan;
 
 use AppBundle\Entity\Deposit;
+use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\ItemMovement;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
@@ -188,7 +189,11 @@ class CheckoutService
         }
         foreach ($loan->getLoanRows() AS $loanRow) {
             /** @var $loanRow \AppBundle\Entity\LoanRow */
-            if ($this->isItemReserved($loanRow->getInventoryItem()->getId(), $loanRow)) {
+            $item   = $loanRow->getInventoryItem();
+            $from   = $loanRow->getDueOutAt();
+            $to     = $loanRow->getDueInAt();
+            $loanId = $loan->getId();
+            if ($this->isItemReserved($item, $from, $to, $loanId)) {
                 return false;
             }
             if ($loanRow->getInventoryItem()->getInventoryLocation()->getId() == 1) {
@@ -204,12 +209,16 @@ class CheckoutService
     }
 
     /**
-     * @param $itemId
-     * @param $loanRow LoanRow
+     * @param InventoryItem $item
+     * @param $from
+     * @param $to
+     * @param $loanId
      * @return bool
      */
-    private function isItemReserved($itemId, LoanRow $loanRow)
+    public function isItemReserved(InventoryItem $item, $from, $to, $loanId = null)
     {
+        $itemId = $item->getId();
+
         // Check if this item is reserved on another loan, but not yet collected
         $filter = [
             'item_ids' => [$itemId]
@@ -217,33 +226,33 @@ class CheckoutService
 
         $reservationLoanRows = $this->reservationService->getBookings($filter);
 
+        // Find ALL reservations for this item
         foreach ($reservationLoanRows AS $reservation) {
 
             /** @var $reservation \AppBundle\Entity\LoanRow */
-            if ($loanRow->getLoan()->getId() == $reservation->getLoan()->getId()) {
+            if ($loanId == $reservation->getLoan()->getId()) {
+                // Skip if it's the loan we're adding to / validating against
                 continue;
             }
 
-            $errorMsg = 'Item "'.$reservation->getInventoryItem()->getName().'" is reserved by '.$reservation->getLoan()->getContact()->getName();
+            $reservedItemId = $reservation->getInventoryItem()->getId();
+            $errorMsg = '"'.$reservation->getInventoryItem()->getName().'" (ID '.$reservedItemId.') is reserved by '.$reservation->getLoan()->getContact()->getName();
             $errorMsg .= ' (ref '.$reservation->getLoan()->getId().', '.$reservation->getDueOutAt()->format("d M").'-'.$reservation->getDueInAt()->format("d M").')';
 
             // The loan STARTS during another reservation
-            if ($loanRow->getDueOutAt() > $reservation->getDueOutAt()
-                && $loanRow->getDueOutAt() < $reservation->getDueInAt()) {
+            if ($from > $reservation->getDueOutAt() && $from < $reservation->getDueInAt()) {
                 $this->errors[] = $errorMsg;
                 return true;
             }
 
             // The loan ENDS during another reservation
-            if ($loanRow->getDueInAt() > $reservation->getDueOutAt()
-                && $loanRow->getDueInAt() < $reservation->getDueInAt()) {
+            if ($to > $reservation->getDueOutAt() && $to < $reservation->getDueInAt()) {
                 $this->errors[] = $errorMsg;
                 return true;
             }
 
             // The loan period CONTAINS a reservation
-            if ($loanRow->getDueOutAt() < $reservation->getDueOutAt()
-                && $loanRow->getDueInAt() > $reservation->getDueInAt()) {
+            if ($from < $reservation->getDueOutAt() && $to > $reservation->getDueInAt()) {
                 $this->errors[] = $errorMsg;
                 return true;
             }

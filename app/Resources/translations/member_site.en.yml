@@ -137,7 +137,7 @@ public_item:
   button_choose_pickup: Choose
   button_choose_return: Choose
   cancel: Cancel
-  basket_add: Add item to basket
+  basket_add: Add to basket
   locations: Available locations
   maps_link: Open in Google maps
   similar_items: similar items
@@ -228,7 +228,7 @@ msg_success:
   reservation_create: Reserved! We've just sent an email confirmation.
   reservation_cancel: Your reservation was cancelled.
   basket_item_removed: Item was removed from your basket.
-  basket_item_added: was added to your basket.
+  basket_item_added: added to your basket.
   basket_item_exists: is already in your basket.
 
 msg_fail:

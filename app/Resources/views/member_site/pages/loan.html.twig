@@ -48,6 +48,9 @@
             font-weight: bold;
             text-align: right;
         }
+        .basket-serial {
+            padding: 4px 0;
+        }
         .basket-subtotal {
             font-size: 16px;
             text-align: right;
@@ -111,20 +114,26 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a> <br>
-
-                    <i class="far fa-clock"></i>
-                    {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
-
-                    ( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
-
-                    {% if (row.isCheckedOut and not row.checkedInAt) or (loan.status in ['RESERVED', 'PENDING']) %}
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id, from: row.dueInAt|date("Y-m-d H:i:s") }) }}" class="">Change return date</a>
-                        {% endif %}
+                    <div>
+                        <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a>
+                    </div>
+                    {% if row.inventoryItem.serial %}
+                        <div class="basket-serial">{% trans %}public_item.serial{% endtrans %}: <strong>{{ row.inventoryItem.serial }}</strong></div>
                     {% endif %}
 
-                    <br>
+                    <div>
+                        <i class="far fa-clock"></i>
+                        {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
+
+                        ( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
+
+                        {% if (row.isCheckedOut and not row.checkedInAt) or (loan.status in ['RESERVED', 'PENDING']) %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id, from: row.dueInAt|date("Y-m-d H:i:s") }) }}" class="">Change return date</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+
                     <div class="multi-site">
                         <i class="far fa-hospital"></i> {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
                     </div>

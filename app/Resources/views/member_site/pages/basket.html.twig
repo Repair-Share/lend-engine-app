@@ -28,6 +28,9 @@
                 font-weight: bold;
                 text-align: right;
             }
+            .basket-serial {
+                padding: 4px 0;
+            }
             .table.borderless td, .table.borderless th {
                 border-bottom: 1px solid #eee;
                 border-top: none;
@@ -68,7 +71,13 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a> <br>
+                        <div>
+                            <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a>
+                        </div>
+                        {% if row.inventoryItem.serial %}
+                        <div class="basket-serial">{% trans %}public_item.serial{% endtrans %}: <strong>{{ row.inventoryItem.serial }}</strong></div>
+                        {% endif %}
+
                         <i class="far fa-clock"></i> {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("l j F g:i a") }}</strong>
                         ({{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %})
 

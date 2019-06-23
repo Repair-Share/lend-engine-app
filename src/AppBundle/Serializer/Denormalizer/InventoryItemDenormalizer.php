@@ -23,6 +23,11 @@ class InventoryItemDenormalizer implements DenormalizerInterface
         }
         $item->setDepositAmount($object['depositAmount']);
 
+        if (!isset($object['serial'])) {
+            $object['serial'] = null;
+        }
+        $item->setSerial($object['serial']);
+
         return $item;
     }
 

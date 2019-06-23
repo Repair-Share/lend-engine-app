@@ -59,7 +59,7 @@ class LoanCheckInController extends Controller
         $today = new \DateTime();
         $interval = $today->diff( $loanRow->getDueInAt() );
         if ( $loanRow->getDueInAt() < $today ) {
-            $daysLate = $interval->format("%d");
+            $daysLate = $interval->days;
         }
 
         $dailyOverdueFee = (float)$this->get('settings')->getSettingValue('daily_overdue_fee');

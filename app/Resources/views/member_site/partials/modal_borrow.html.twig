@@ -111,11 +111,28 @@
             </div>
 
             <div class="modal-footer">
-                <a href="" class="btn btn-default borrowModalCancel pull-left">{% trans %}button_cancel{% endtrans %}</a>
-
-                <button type="button" class="btn btn-success pull-right" id="borrowModalConfirm" style="display: none;">
-                    {% trans %}public_item.basket_add{% endtrans %}
-                </button>
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="" class="btn btn-default borrowModalCancel pull-left">{% trans %}button_cancel{% endtrans %}</a>
+                    </div>
+                    <div class="col-md-6">
+                        {% if similarItemCount > 1 %}
+                        <span class="input-group borrow-modal-confirm" style="display: none;">
+                            <span class="input-group-addon">Qty:</span>
+                            <input type="text" class="form-control" name="qty" id="addQty" size="3" value="1">
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-success" id="borrowModalConfirm">
+                                    {% trans %}public_item.basket_add{% endtrans %}
+                                </button>
+                            </span>
+                        </span>
+                        {% else %}
+                            <button type="button" class="btn btn-success borrow-modal-confirm" id="borrowModalConfirm" style="display: none;">
+                                {% trans %}public_item.basket_add{% endtrans %}
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

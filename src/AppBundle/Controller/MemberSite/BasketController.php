@@ -189,7 +189,11 @@ class BasketController extends Controller
         /** @var \AppBundle\Repository\SiteRepository $siteRepo */
         $siteRepo = $em->getRepository('AppBundle:Site');
 
+        /** @var \AppBundle\Services\Loan\CheckoutService $checkoutService */
+        $checkoutService = $this->get("service.checkout");
+
         // FIND THE ITEM
+        /** @var \AppBundle\Entity\InventoryItem $product */
         $product = $itemRepo->find($itemId);
 
         // Validate sites
@@ -219,10 +223,17 @@ class BasketController extends Controller
             return $this->redirectToRoute('home');
         }
 
+        if (!$qtyRequired = $request->get('qty')) {
+            $qtyRequired = 1;
+        }
+
         foreach ($basket->getLoanRows() AS $row) {
             if ($row->getInventoryItem()->getId() == $itemId) {
                 $msg = $this->get('translator')->trans('msg_success.basket_item_exists', [], 'member_site');
                 $this->addFlash('success', $product->getName().' '.$msg);
+                if ($qtyRequired > 1) {
+                    $this->addFlash("error", "Please remove this item from basket before adding multiple quantities.");
+                }
                 return $this->redirectToRoute('basket_show');
             }
         }
@@ -251,10 +262,54 @@ class BasketController extends Controller
         $row->setDueOutAt($dFrom);
         $row->setDueInAt($dTo);
         $row->setFee($fee);
-
         $basket->addLoanRow($row);
+
+        $qtyFulfilled = 1;
+
+        if ($qtyRequired > 1) {
+
+            // get other items with the same name, and find others which are available
+            /** @var \AppBundle\Entity\InventoryItem $item */
+            foreach ($itemRepo->findBy(['name' => $product->getName()]) AS $item) {
+
+                if ($item->getId() == $product->getId()) {
+                    continue;
+                }
+
+                if ($qtyFulfilled == $qtyRequired) {
+                    continue;
+                }
+
+                if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null)) {
+
+                    $row = new LoanRow();
+                    $row->setLoan($basket);
+                    $row->setInventoryItem($item);
+                    $row->setSiteFrom($siteFrom);
+                    $row->setSiteTo($siteTo);
+                    $row->setDueOutAt($dFrom);
+                    $row->setDueInAt($dTo);
+                    $row->setFee($fee);
+                    $basket->addLoanRow($row);
+
+                    $qtyFulfilled++;
+
+                }
+
+            }
+
+        }
+
+        if ($qtyFulfilled < $qtyRequired) {
+            $deficit = $qtyRequired - $qtyFulfilled;
+            $this->addFlash("error", "{$deficit} not added :");
+            foreach ($checkoutService->errors AS $e) {
+                $this->addFlash("error", $e);
+            }
+        }
+
         $msg = $this->get('translator')->trans('msg_success.basket_item_added', [], 'member_site');
-        $this->addFlash('success', $product->getName().' '.$msg);
+        $this->addFlash('success', $qtyFulfilled. ' x ' .$product->getName().' '.$msg);
 
         $this->setBasket($basket);
 

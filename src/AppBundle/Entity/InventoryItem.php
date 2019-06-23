@@ -214,6 +214,7 @@ class InventoryItem
      * @var string
      *
      * @ORM\Column(name="serial", type="string", length=64, nullable=true)
+     * @Groups({"basket"})
      */
     private $serial;
 
