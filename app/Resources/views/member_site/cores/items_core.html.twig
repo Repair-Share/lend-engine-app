@@ -40,9 +40,9 @@
         <div class="row item-filter-dates">
             <div class="col-md-10">
                 Items only available between
-                <a href="javascript:void(0);" id="from-date-picker">{% if dateFrom %}{{ dateFrom|date("l F j") }}{% else %}[ choose ]{% endif %}</a>
+                <a href="javascript:void(0);" id="from-date-picker">{% if dateFrom %}{{ dateFrom|date("l j F") }}{% else %}[ choose ]{% endif %}</a>
                 and
-                <a href="javascript:void(0);" id="to-date-picker">{% if dateTo %}{{ dateTo|date("l F j") }}{% else %}[ choose ]{% endif %}</a>
+                <a href="javascript:void(0);" id="to-date-picker">{% if dateTo %}{{ dateTo|date("l j F") }}{% else %}[ choose ]{% endif %}</a>
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-default btn-sm pull-right">{% trans %}public_misc.filter_items{% endtrans %}</button>
@@ -277,7 +277,7 @@
             showShortcuts: true
         }).bind('datepicker-change', function (event, obj) {
             $("#from-date").val(moment(obj.date1).format('YYYY-MM-DD'));
-            $("#from-date-picker").text(moment(obj.date1).format('dddd MMMM D'));
+            $("#from-date-picker").text(moment(obj.date1).format('dddd D MMMM'));
         });
 
         var toDate = $("#to-date-picker");
@@ -289,7 +289,7 @@
             showShortcuts: true
         }).bind('datepicker-change', function (event, obj) {
             $("#to-date").val(moment(obj.date1).format('YYYY-MM-DD'));
-            $("#to-date-picker").text(moment(obj.date1).format('dddd MMMM D'));
+            $("#to-date-picker").text(moment(obj.date1).format('dddd D MMMM'));
         });
 
         {#dateExtendField.data('dateRangePicker').setDateRange('{{ membership.expiresAt|date('D M d Y') }}', '{{ membership.expiresAt|date('D M d Y') }}', true);#}

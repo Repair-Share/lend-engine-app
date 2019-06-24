@@ -202,18 +202,22 @@ class ItemListController extends Controller
         }
 
         $filterSites = [];
-        $filterSites[] = [
-            'id' => null,
-            'name' => $this->get('translator')->trans("public_misc.any_site", [], 'member_site')
-        ];
+
         $sites = $siteRepo->findBy(['isActive' => true]);
-        foreach ($sites AS $site) {
-            /** @var \AppBundle\Entity\Site $site */
+        if (count($sites) > 1) {
             $filterSites[] = [
-                'id' => $site->getId(),
-                'name' => $site->getName()
+                'id' => null,
+                'name' => $this->get('translator')->trans("public_misc.any_site", [], 'member_site')
             ];
+            foreach ($sites AS $site) {
+                /** @var \AppBundle\Entity\Site $site */
+                $filterSites[] = [
+                    'id' => $site->getId(),
+                    'name' => $site->getName()
+                ];
+            }
         }
+
         $itemFilter = [
             'sites' => $filterSites
         ];
