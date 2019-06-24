@@ -126,6 +126,18 @@ class InventoryService
             $builder->setParameter('itemCondition', $filter['itemCondition']);
         }
 
+        // Only find items which can be loaned between these dates
+        if (isset($filter['from']) && isset($filter['to'])) {
+            $from = $filter['from'];
+            $to   = $filter['to'];
+            $condition1 = "lr.inventoryItem = item";
+            $condition2 = "lr.dueOutAt BETWEEN '{$from} 00:00:00' AND '{$to} 23:59:59'"; // loan starts during period
+            $condition3 = "lr.dueInAt BETWEEN '{$from} 00:00:00' AND '{$to} 23:59:59'"; // loan ends during period
+            $condition4 = "lr.dueOutAt < '{$from} 00:00:00' AND lr.dueInAt > '{$from}'"; // loan starts before period and ends after
+            $builder->leftJoin('AppBundle:LoanRow', 'lr', 'WITH', "{$condition1} AND ({$condition2} OR {$condition3} OR {$condition4}) ");
+            $builder->andWhere('lr.inventoryItem IS NULL');
+        }
+
         if (isset($filter['filter']) && $filter['filter'] == 'available') {
             $builder->andWhere('loc.isAvailable = 1');
         }

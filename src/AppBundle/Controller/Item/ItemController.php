@@ -449,8 +449,8 @@ class ItemController extends Controller
                         'loanId' => $loanRow->getLoan()->getId(),
                         'status' => $loanRow->getLoan()->getStatus(),
                         'contactName' => $loanRow->getLoan()->getContact()->getName(),
-                        'dateFrom' => $loanRow->getLoan()->getTimeOut(),
-                        'dateTo' => $loanRow->getLoan()->getTimeIn()
+                        'dateFrom' => $loanRow->getDueOutAt(),
+                        'dateTo' => $loanRow->getDueInAt()
                     ];
                 }
             }

@@ -74,6 +74,11 @@ class ItemListController extends Controller
             $filter['tagIds'] = [ $tagId ];
         }
 
+        if ($from = $request->get('from')) {
+            $filter['from'] = $request->get('from');
+            $filter['to']   = $request->get('to');
+        }
+
         $newSortDir = '';
         if ($request->get('sortBy')) {
             $newSortDir = 'DESC';
@@ -237,11 +242,20 @@ class ItemListController extends Controller
             $template = 'member_site/items.html.twig';
         }
 
+        $dateFrom = null;
+        $dateTo = null;
+        if ($request->get('from') && $request->get('to')) {
+            $dateFrom = new \DateTime($request->get('from'));
+            $dateTo   = new \DateTime($request->get('to'));
+        }
+
         return $this->render($template, array(
             'products' => $items,
             'totalRecords' => $totalRecords,
             'from'     => $resultsFrom + 1,
             'to'       => $resultsTo,
+            'dateFrom' => $dateFrom,
+            'dateTo'   => $dateTo,
             'pages'    => $pages,
             'filter'   => $itemFilter,
             'user'     => $contact,

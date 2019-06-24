@@ -4,27 +4,53 @@
 <script src="/plugins/dymo/DYMO.Label.Framework.3.0.js" type="text/javascript" charset="UTF-8"></script>
 {% endif %}
 
-{% if filter.sites|length > 1 %}
-<div id="item-list-filter" class="multi-site">
-    {% trans %}public_misc.filter_items{% endtrans %}:
-    <ul>
-        {% for site in filter.sites %}
-        <li class="{% if app.request.get('siteId') == site.id %}active{% endif %}" id="site-{{ site.id }}">
-            <a href="{{ path('public_products',
-            {
-                tagId: app.request.get('tagId'),
-                e: app.request.get('e'),
-                siteId: site.id,
-                show: app.request.get('show'),
-                search: app.request.get('search')
-            }) }}">
-                {{ site.name }}
-            </a>
-        </li>
-        {% endfor %}
-    </ul>
+<div id="item-list-filter">
+    {% if filter.sites|length > 1 %}
+        <div class="multi-site">
+            <ul>
+                {% for site in filter.sites %}
+                    <li class="{% if app.request.get('siteId') == site.id %}active{% endif %}" id="site-{{ site.id }}">
+                        <a href="{{ path('public_products',
+                        {
+                            tagId: app.request.get('tagId'),
+                            e: app.request.get('e'),
+                            siteId: site.id,
+                            see_variations: app.request.get('see_variations'),
+                            from: app.request.get('from'),
+                            to: app.request.get('to'),
+                            show: app.request.get('show'),
+                            search: app.request.get('search')
+                        }) }}">
+                            {{ site.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <form method="GET">
+        <input type="hidden" name="tagId" value="{{ app.request.get('tagId') }}">
+        <input type="hidden" name="search" value="{{ app.request.get('search') }}">
+        <input type="hidden" name="siteId" value="{{ app.request.get('siteId') }}">
+        <input type="hidden" name="see_variations" value="{{ app.request.get('see_variations') }}">
+        <input type="hidden" name="from" id="from-date" value="{{ app.request.get('from') }}">
+        <input type="hidden" name="to" id="to-date" value="{{ app.request.get('to') }}">
+
+        <div class="row item-filter-dates">
+            <div class="col-md-10">
+                Items only available between
+                <a href="javascript:void(0);" id="from-date-picker">{% if dateFrom %}{{ dateFrom|date("l F j") }}{% else %}[ choose ]{% endif %}</a>
+                and
+                <a href="javascript:void(0);" id="to-date-picker">{% if dateTo %}{{ dateTo|date("l F j") }}{% else %}[ choose ]{% endif %}</a>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-default btn-sm pull-right">{% trans %}public_misc.filter_items{% endtrans %}</button>
+            </div>
+        </div>
+    </form>
+
 </div>
-{% endif %}
 
 <div class="clearfix"></div>
 
@@ -238,4 +264,34 @@
         });
     });
     {% endif %}
+</script>
+<script>
+    $(document).ready(function () {
+
+        var fromDate = $("#from-date-picker");
+        fromDate.dateRangePicker({
+            format: 'YYYY-MM-DD',
+            autoClose: true,
+            singleDate: true,
+            singleMonth: true,
+            showShortcuts: true
+        }).bind('datepicker-change', function (event, obj) {
+            $("#from-date").val(moment(obj.date1).format('YYYY-MM-DD'));
+            $("#from-date-picker").text(moment(obj.date1).format('dddd MMMM D'));
+        });
+
+        var toDate = $("#to-date-picker");
+        toDate.dateRangePicker({
+            format: 'YYYY-MM-DD',
+            autoClose: true,
+            singleDate: true,
+            singleMonth: true,
+            showShortcuts: true
+        }).bind('datepicker-change', function (event, obj) {
+            $("#to-date").val(moment(obj.date1).format('YYYY-MM-DD'));
+            $("#to-date-picker").text(moment(obj.date1).format('dddd MMMM D'));
+        });
+
+        {#dateExtendField.data('dateRangePicker').setDateRange('{{ membership.expiresAt|date('D M d Y') }}', '{{ membership.expiresAt|date('D M d Y') }}', true);#}
+    });
 </script>
