@@ -38,7 +38,6 @@
         "php-amqplib/rabbitmq-bundle": "^1.12",
         "symfony/serializer": "^3.2",
         "symfony/property-info": "^3.2",
-        "stof/doctrine-extensions-bundle": "^1.2",
         "guzzlehttp/guzzle": "^6.3",
         "constantcontact/constantcontact": "3.0.0-alpha"
     },

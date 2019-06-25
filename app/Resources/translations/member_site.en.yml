@@ -90,6 +90,7 @@ public_misc:
   filter_items: Filter items
   any_site: Any site
   log_in_first: Please log in to view items
+  show_items_from: Show items only available from
 
 public_footer:
   find_us: Find us / opening hours

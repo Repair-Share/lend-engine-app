@@ -34,7 +34,7 @@ class LocaleListener implements EventSubscriberInterface
         }
 
         if ($this->defaultLocale == 'se') {
-            $this->defaultLocale = 'se-SE';
+            $this->defaultLocale = 'sv-SE';
         }
     }
 

@@ -133,10 +133,10 @@ class ItemController extends Controller
             $customFieldValues = [];
         }
 
-        $locales = explode(',', $this->get('settings')->getSettingValue('org_languages'));
+//        $locales = explode(',', $this->get('settings')->getSettingValue('org_languages'));
         $formOptions = [
             'em' => $em,
-            'locales' => $locales,
+//            'locales' => $locales,
             'customFields' => $customFields,
             'customFieldValues' => $customFieldValues,
             'itemTypeId' => $itemTypeId // manually set as it's unmapped

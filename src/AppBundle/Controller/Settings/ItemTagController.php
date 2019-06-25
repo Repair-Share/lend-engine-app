@@ -59,9 +59,9 @@ class ItemTagController extends Controller
             $productTag = new ProductTag();
         }
 
-        $locales = explode(',', $this->get('settings')->getSettingValue('org_languages'));
+//        $locales = explode(',', $this->get('settings')->getSettingValue('org_languages'));
         $formOptions = [
-            'locales' => $locales,
+//            'locales' => $locales,
             'action' => $this->generateUrl('product_tag', array('id' => $id))
         ];
         $form = $this->createForm(ProductTagType::class, $productTag, $formOptions);

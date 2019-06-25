@@ -4,8 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Gedmo\Mapping\Annotation as Gedmo;
-use Gedmo\Translatable\Translatable;
+//use Gedmo\Mapping\Annotation as Gedmo;
+//use Gedmo\Translatable\Translatable;
 
 /**
  * ProductTag
@@ -26,7 +26,6 @@ class ProductTag
 
     /**
      * @var string
-     * @Gedmo\Translatable
      * @ORM\Column(name="name", type="string", length=32)
      */
     private $name;

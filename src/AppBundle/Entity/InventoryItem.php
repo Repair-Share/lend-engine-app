@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Gedmo\Mapping\Annotation as Gedmo;
-use Gedmo\Translatable\Translatable;
+//use Gedmo\Mapping\Annotation as Gedmo;
+//use Gedmo\Translatable\Translatable;
 
 /**
  * InventoryItem
@@ -70,7 +70,6 @@ class InventoryItem
 
     /**
      * @var string
-     * @Gedmo\Translatable
      * @ORM\Column(type="string", length=255)
      * @Groups({"basket"})
      */
@@ -78,7 +77,6 @@ class InventoryItem
 
     /**
      * @var string
-     * @Gedmo\Translatable
      * @ORM\Column(name="description", type="string", length=1024, nullable=true)
      */
     private $description;
@@ -99,14 +97,12 @@ class InventoryItem
 
     /**
      * @var string
-     * @Gedmo\Translatable
      * @ORM\Column(name="care_information", type="string", length=1024, nullable=true)
      */
     private $careInformation;
 
     /**
      * @var string
-     * @Gedmo\Translatable
      * @ORM\Column(name="component_information", type="string", length=1024, nullable=true)
      */
     private $componentInformation;

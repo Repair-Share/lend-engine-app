@@ -130,11 +130,10 @@ h2 {
 
 /* ITEM LIST */
 div#item-list-filter {
-    border: 1px solid #cccccc;
+    border-bottom: 1px solid #cccccc;
     background-color: #fafafa;
     padding: 10px;
     margin-bottom:10px;
-    border-radius: 4px;
 }
 div#item-list-filter ul {
     list-style-type: none;

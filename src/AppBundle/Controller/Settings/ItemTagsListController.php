@@ -23,8 +23,8 @@ class ItemTagsListController extends Controller
         $tagRepo = $em->getRepository('AppBundle:ProductTag');
         $tags = $tagRepo->findAllOrderedByName();
 
-        $repository = $em->getRepository('Gedmo\Translatable\Entity\Translation');
-        $defaultLanguage = $this->get('settings')->getSettingValue('org_locale');
+//        $repository = $em->getRepository('Gedmo\Translatable\Entity\Translation');
+//        $defaultLanguage = $this->get('settings')->getSettingValue('org_locale');
 
         $tableHeader = array(
             'Category',
@@ -39,14 +39,14 @@ class ItemTagsListController extends Controller
             $countItems = $tagRepo->countProducts($i->getId());
             $name = $i->getName();
 
-            $translations = $repository->findTranslations($i);
-            if (count($translations) > 1) {
-                foreach ($translations AS $lang => $d) {
-                    if ($lang != $defaultLanguage) {
-                        $name .= "<div style=\"font-size: 12px; color: #aaa\">{$lang} : ".$d['name'].'</div>';
-                    }
-                }
-            }
+//            $translations = $repository->findTranslations($i);
+//            if (count($translations) > 1) {
+//                foreach ($translations AS $lang => $d) {
+//                    if ($lang != $defaultLanguage) {
+//                        $name .= "<div style=\"font-size: 12px; color: #aaa\">{$lang} : ".$d['name'].'</div>';
+//                    }
+//                }
+//            }
 
             $tableRows[] = array(
                 'id' => $i->getId(),

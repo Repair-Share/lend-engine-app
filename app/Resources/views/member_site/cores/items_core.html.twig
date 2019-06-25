@@ -39,9 +39,9 @@
 
         <div class="row item-filter-dates">
             <div class="col-md-10">
-                Items only available between
+                {% trans %}public_misc.show_items_from{% endtrans %}
                 <a href="javascript:void(0);" id="from-date-picker">{% if dateFrom %}{{ dateFrom|date("l j F") }}{% else %}[ choose ]{% endif %}</a>
-                and
+                -
                 <a href="javascript:void(0);" id="to-date-picker">{% if dateTo %}{{ dateTo|date("l j F") }}{% else %}[ choose ]{% endif %}</a>
             </div>
             <div class="col-md-2">
