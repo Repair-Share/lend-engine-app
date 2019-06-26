@@ -7,6 +7,7 @@ use Tests\AppBundle\Controller\AuthenticatedControllerTest;
 
 class ItemCopyControllerTest extends AuthenticatedControllerTest
 {
+
     public function testCopyProduct()
     {
         $itemId = $this->helpers->createItem($this->client, "CopyItem");
@@ -17,4 +18,5 @@ class ItemCopyControllerTest extends AuthenticatedControllerTest
 
         $this->assertContains('CopyItem', $crawler->html());
     }
+
 }

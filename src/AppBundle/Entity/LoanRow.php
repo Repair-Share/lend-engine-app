@@ -240,7 +240,7 @@ class LoanRow
     /**
      * Get fee
      *
-     * @return string
+     * @return float
      */
     public function getFee()
     {

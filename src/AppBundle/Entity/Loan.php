@@ -585,6 +585,17 @@ class Loan
         return $charges;
     }
 
+    public function getItemsTotal()
+    {
+        $total = 0.00;
+        /** @var \AppBundle\Entity\LoanRow $loanRow */
+        foreach ($this->getLoanRows() AS $loanRow) {
+            $total += $loanRow->getFee();
+        }
+
+        return $total;
+    }
+
     /**
      * @return float
      */

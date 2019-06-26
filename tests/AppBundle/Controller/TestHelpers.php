@@ -163,5 +163,52 @@ class TestHelpers extends AuthenticatedControllerTest
 
         $this->assertContains('Test event title', $crawler->html());
     }
+    
+    public function createLoan(Client $client)
+    {
+        // Create a contact
+        $contactId = $this->createContact($client);
+
+        // Subscribe them
+        $this->subscribeContact($client, $contactId);
+
+        // Add credit
+        $this->addCredit($client, $contactId);
+
+        // Add an item to the basket
+        $today = new \DateTime();
+        $params = [
+            'contactId' => $contactId,
+            'from_site' => 1,
+            'to_site'   => 1,
+            'date_from' => $today->format("Y-m-d"),
+            'time_from' => $today->format("09:00:00"),
+            'date_to'   => $today->format("Y-m-d"),
+            'time_to'   => $today->format("17:00:00")
+        ];
+        $client->request('POST', '/basket/add/1000?contactId='.$contactId, $params);
+
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        $crawler = $client->followRedirect();
+
+        $this->assertContains('basketDetails', $crawler->html());
+
+        // Confirm the loan (will be set to pending)
+        $params = [
+            'action' => 'checkout',
+            'row_fee' => [
+                1000 => 10.00
+            ]
+        ];
+        $client->request('POST', '/basket/confirm', $params);
+
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        $crawler = $client->followRedirect();
+
+        $loanId = (int)$crawler->filter('#loanIdForTest')->attr('value');
+        $this->assertGreaterThan(0, $loanId);
+
+        return $loanId;
+    }
 
 }

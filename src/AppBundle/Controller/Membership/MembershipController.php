@@ -128,7 +128,10 @@ class MembershipController extends Controller
         $membership->setCreatedBy($user);
 
         /** @var \AppBundle\Entity\Contact $contact */
-        $contact = $contactRepo->find($contactId);
+        if (!$contact = $contactRepo->find($contactId)) {
+            $this->addFlash('error', "A contact was not found with ID {$contactId}.");
+            return $this->redirectToRoute('homepage');
+        }
 
         $membership->setContact($contact);
 

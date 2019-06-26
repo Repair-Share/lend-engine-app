@@ -90,6 +90,7 @@
         <span class="help">{{ help }}</span>
     {% endif %}
 
+    <input type="hidden" name="loanIdForTest" id="loanIdForTest" value="{{ loan.id }}">
     <input type="hidden" name="contactId" id="contactId" value="{{ loan.contact.id }}">
     <input type="hidden" name="contactEmail" id="contactEmail" class="contact-email" value="{{ loan.contact.email }}">
 
@@ -418,7 +419,7 @@
 
             {% if is_granted('ROLE_ADMIN') %}
 
-                <form method="POST" action="{{ path('loan_add_fee', {loanId: loan.id}) }}">
+                <form method="POST" name="add_fee" action="{{ path('loan_add_fee', {loanId: loan.id}) }}">
                     <label class="control-label">Add a fee</label>
                     <div class="help-block">
                         For damages, delays, additional time etc. Fees are charged to the member account immediately.
@@ -443,7 +444,7 @@
 
             <br>
 
-            <form method="POST" action="{{ path('loan_add_note', {loanId: loan.id}) }}">
+            <form method="POST" name="add_note" action="{{ path('loan_add_note', {loanId: loan.id}) }}">
 
                 <label class="control-label">Add notes</label>
                 {% if is_granted('ROLE_ADMIN') %}
