@@ -207,6 +207,11 @@ class BasketController extends Controller
             return $this->redirectToRoute('home');
         }
 
+        if (!$this->getUser()) {
+            $this->addFlash('error', "You're not logged in. Please log in and try again.");
+            return $this->redirectToRoute('home');
+        }
+
         if (!$basket = $this->getBasket()) {
             if ($request->get('contactId')) {
                 $basketContactId = $request->get('contactId');
@@ -333,6 +338,11 @@ class BasketController extends Controller
      */
     public function basketItemRemove($itemId)
     {
+        if (!$this->getUser()) {
+            $this->addFlash('error', "You're not logged in. Please log in and try again.");
+            return $this->redirectToRoute('home');
+        }
+
         if (!$basket = $this->getBasket()) {
             $this->addFlash('error', "No basket found.");
             return $this->redirectToRoute('home');
@@ -375,7 +385,10 @@ class BasketController extends Controller
         /** @var \AppBundle\Repository\SiteRepository $siteRepo */
         $siteRepo = $em->getRepository('AppBundle:Site');
 
-        $user = $this->getUser();
+        if (!$user = $this->getUser()) {
+            $this->addFlash('error', "You're not logged in. Please log in and try again.");
+            return $this->redirectToRoute('home');
+        }
 
         // GET THE BASKET
         /** @var $loan \AppBundle\Entity\Loan */
