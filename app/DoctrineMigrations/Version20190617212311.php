@@ -20,7 +20,7 @@ final class Version20190617212311 extends AbstractMigration
         foreach ($locales AS $l) {
 
             $this->addSql("UPDATE inventory_item i
-        LEFT JOIN ext_translations tr ON tr.foreign_key = i.id AND tr.field = 'name' AND tr.object_class = 'AppBundle\Entity\InventoryItem'
+        LEFT JOIN ext_translations tr ON tr.foreign_key = i.id AND tr.field = 'name'
         SET i.name = tr.content
         WHERE tr.content IS NOT NULL
         AND tr.locale = '{$l}';");

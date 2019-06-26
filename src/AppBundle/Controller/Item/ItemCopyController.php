@@ -4,22 +4,13 @@ namespace AppBundle\Controller\Item;
 
 use AppBundle\Entity\FileAttachment;
 use AppBundle\Entity\Image;
-use AppBundle\Entity\InventoryItem;
-use AppBundle\Entity\InventoryLocation;
 use AppBundle\Entity\ItemMovement;
-use AppBundle\Entity\Loan;
 use AppBundle\Entity\Note;
-use AppBundle\Entity\ProductField;
-use AppBundle\Entity\ProductFieldValue;
-use AppBundle\Entity\ProductTag;
-use AppBundle\Entity\Setting;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Helpers\InputHelper;
 use Doctrine\ORM\EntityRepository;
-use AppBundle\Form\Type\ItemType;
 
 class ItemCopyController extends Controller
 {
@@ -68,23 +59,6 @@ class ItemCopyController extends Controller
         if ($skuStub) {
             $sku = $this->generateAutoSku($skuStub);
             $newProduct->setSku($sku);
-        }
-
-        // Update the ID of the translations
-        $locales = explode(',', $this->get('settings')->getSettingValue('org_languages'));
-
-        $repository = $em->getRepository('Gedmo\\Translatable\\Entity\\Translation');
-        $translatableFields = ['name', 'description', 'componentInformation', 'careInformation'];
-        $translations = $repository->findTranslations($oldProduct);
-        foreach ($translatableFields AS $fieldKey) {
-            foreach ($locales AS $lang) {
-                if (isset($translations[$lang][$fieldKey])) {
-                    $val = $translations[$lang][$fieldKey];
-                } else {
-                    $val = '';
-                }
-                $repository->translate($newProduct, $fieldKey, $lang, $val);
-            }
         }
 
         // if we don't have translated data we store in the product record:

@@ -34,6 +34,7 @@
 
     <div id="item-inventory-detail">
         {% if item.id %}
+            <input type="hidden" id="itemIdForTest" value="{{ item.id }}">
             {% if item.inventoryLocation.id == 1 %}
                 <div class="label bg-teal pull-left">On loan</div>
                 <span class="item-inventory-detail-span">

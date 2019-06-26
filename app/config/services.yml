@@ -308,25 +308,3 @@ services:
         arguments: ['@session']
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
-
-#    app.translatable.mapper:
-#        class:     AppBundle\Form\TranslatableDataMapper
-#        arguments: ["@doctrine.orm.entity_manager"]
-#
-#    app.form.item_type:
-#        class: AppBundle\Form\Type\ItemType
-#        arguments:
-#            - "@app.translatable.mapper"
-#        calls:
-#            - [ setLocales, ["%locales%"] ]
-#        tags:
-#            - { name: form.type }
-#
-#    app.form.product_tag_type:
-#        class: AppBundle\Form\Type\ProductTagType
-#        arguments:
-#            - "@app.translatable.mapper"
-#        calls:
-#            - [ setLocales, ["%locales%"] ]
-#        tags:
-#            - { name: form.type }

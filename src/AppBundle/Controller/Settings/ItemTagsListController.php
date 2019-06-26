@@ -2,12 +2,10 @@
 
 namespace AppBundle\Controller\Settings;
 
-use AppBundle\Entity\ProductTag;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Form\Type\ProductTagType;
 
 class ItemTagsListController extends Controller
 {
@@ -23,9 +21,6 @@ class ItemTagsListController extends Controller
         $tagRepo = $em->getRepository('AppBundle:ProductTag');
         $tags = $tagRepo->findAllOrderedByName();
 
-//        $repository = $em->getRepository('Gedmo\Translatable\Entity\Translation');
-//        $defaultLanguage = $this->get('settings')->getSettingValue('org_locale');
-
         $tableHeader = array(
             'Category',
             'Show on website',
@@ -38,15 +33,6 @@ class ItemTagsListController extends Controller
             /** @var \AppBundle\Entity\ProductTag $i */
             $countItems = $tagRepo->countProducts($i->getId());
             $name = $i->getName();
-
-//            $translations = $repository->findTranslations($i);
-//            if (count($translations) > 1) {
-//                foreach ($translations AS $lang => $d) {
-//                    if ($lang != $defaultLanguage) {
-//                        $name .= "<div style=\"font-size: 12px; color: #aaa\">{$lang} : ".$d['name'].'</div>';
-//                    }
-//                }
-//            }
 
             $tableRows[] = array(
                 'id' => $i->getId(),
@@ -95,29 +81,7 @@ EOT;
         $data = array();
         $em   = $this->getDoctrine()->getManager();
         $tags = $em->getRepository('AppBundle:ProductTag')->searchByName($term);
-        foreach ($tags AS $tag) {
-            $data[] = array(
-                'id'        => $tag->getId(),
-                'text'      => $tag->getName(),
-                'products'  => $tag->getInventoryItems(),
-            );
-        }
-        return new Response(
-            json_encode($data),
-            200,
-            array('Content-Type' => 'application/json')
-        );
-    }
-
-    /**
-     * @Route("admin/api/tags/list", name="api_tags_list")
-     *
-     */
-    public function apiListAction()
-    {
-        $data = array();
-        $em = $this->getDoctrine()->getManager();
-        $tags = $em->getRepository('AppBundle:ProductTag')->findAllOrderedByName();
+        /** @var \AppBundle\Entity\ProductTag $tag */
         foreach ($tags AS $tag) {
             $data[] = array(
                 'id'        => $tag->getId(),

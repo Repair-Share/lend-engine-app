@@ -16,17 +16,10 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-//use AppBundle\Form\AbstractTranslatableType;
-//use AppBundle\Form\TranslatableTextType;
-//use AppBundle\Form\TranslatableTextareaType;
-
 class ItemType extends AbstractType
 {
     /** @var \Doctrine\ORM\EntityManager */
     private $em;
-
-    /** @var  array */
-//    private $locales;
 
     /** @var  array */
     private $customFields;
@@ -38,7 +31,6 @@ class ItemType extends AbstractType
     {
 
         $this->em = $options['em'];
-//        $this->locales = $options['locales'];
         $this->customFields = $options['customFields'];
         $this->customFieldValues = $options['customFieldValues'];
 
@@ -49,76 +41,37 @@ class ItemType extends AbstractType
         $siteRepo = $this->em->getRepository('AppBundle:Site');
         $sites = $siteRepo->findAll();
 
-//        if (count($this->locales) > 1) {
+        $builder->add("name", TextType::class);
 
-//            $this->createTranslatableMapper($builder, $options)->add("name", TranslatableTextType::class);
-//
-//            $options['required_locale'] = null;
-//            $this->createTranslatableMapper($builder, $options)->add('description', TranslatableTextareaType::class, array(
-//                'label' => 'Full description (shown online)',
-//                'required' => false,
-//                'attr' => array(
-//                    'placeholder' => 'Detailed information about this item. Shown on the public website.',
-//                    'rows' => 6,
-//                    'data-help' => 'www links are made clickable on member site'
-//                )
-//            ));
-//
-//            $this->createTranslatableMapper($builder, $options)->add('careInformation', TranslatableTextareaType::class, array(
-//                'label' => 'Care information (admin only)',
-//                'required' => false,
-//                'attr' => array(
-//                    'placeholder' => "Use this field to tell your team how to clean / prepare an item for the next loan. It's not shown to members.",
-//                    'rows' => 6,
-//                    'data-help' => ''
-//                )
-//            ));
-//
-//            $this->createTranslatableMapper($builder, $options)->add('componentInformation', TranslatableTextareaType::class, array(
-//                'label' => 'Components / contents (shown online)',
-//                'required' => false,
-//                'attr' => array(
-//                    'placeholder' => "Use this field to store information that is sent to members in the loan confirmation and loan reminder emails. Shown on the public website.",
-//                    'rows' => 6,
-//                    'data-help' => 'www links are made clickable on member site'
-//                )
-//            ));
+        $builder->add('description', TextAreaType::class, array(
+            'label' => 'Full description (shown online)',
+            'required' => false,
+            'attr' => array(
+                'placeholder' => 'Detailed information about this item. Shown on the public website.',
+                'rows' => 6,
+                'data-help' => 'www links are made clickable on member site'
+            )
+        ));
 
-//        } else {
+        $builder->add('careInformation', TextAreaType::class, array(
+            'label' => 'Care information (admin only)',
+            'required' => false,
+            'attr' => array(
+                'placeholder' => "Use this field to tell your team how to clean / prepare an item for the next loan. It's not shown to members.",
+                'rows' => 6,
+                'data-help' => ''
+            )
+        ));
 
-            $builder->add("name", TextType::class);
-
-            $builder->add('description', TextAreaType::class, array(
-                'label' => 'Full description (shown online)',
-                'required' => false,
-                'attr' => array(
-                    'placeholder' => 'Detailed information about this item. Shown on the public website.',
-                    'rows' => 6,
-                    'data-help' => 'www links are made clickable on member site'
-                )
-            ));
-
-            $builder->add('careInformation', TextAreaType::class, array(
-                'label' => 'Care information (admin only)',
-                'required' => false,
-                'attr' => array(
-                    'placeholder' => "Use this field to tell your team how to clean / prepare an item for the next loan. It's not shown to members.",
-                    'rows' => 6,
-                    'data-help' => ''
-                )
-            ));
-
-            $builder->add('componentInformation', TextAreaType::class, array(
-                'label' => 'Components / contents (shown online)',
-                'required' => false,
-                'attr' => array(
-                    'placeholder' => "Use this field to store information that is sent to members in the loan confirmation and loan reminder emails. Shown on the public website.",
-                    'rows' => 6,
-                    'data-help' => 'www links are made clickable on member site'
-                )
-            ));
-
-//        }
+        $builder->add('componentInformation', TextAreaType::class, array(
+            'label' => 'Components / contents (shown online)',
+            'required' => false,
+            'attr' => array(
+                'placeholder' => "Use this field to store information that is sent to members in the loan confirmation and loan reminder emails. Shown on the public website.",
+                'rows' => 6,
+                'data-help' => 'www links are made clickable on member site'
+            )
+        ));
 
         if (!$product->getId()) {
             // Get valid locations for "add" workflow (excludes on-loan and reserved locations)
@@ -442,12 +395,9 @@ class ItemType extends AbstractType
             'data_class' => 'AppBundle\Entity\InventoryItem',
             'em' => null,
             'itemTypeId' => null,
-//            'locales' => null,
             'customFields' => null,
             'customFieldValues' => null
         ));
-
-//        $this->configureTranslationOptions($resolver);
     }
 
 }

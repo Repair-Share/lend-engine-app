@@ -16,6 +16,45 @@ class TestHelpers extends AuthenticatedControllerTest
 
     /**
      * @param Client $client
+     * @param null $itemName
+     * @return int
+     */
+    public function createItem(Client $client, $itemName = null)
+    {
+        if (!$itemName) {
+            $itemName = "Item ".rand();
+        }
+
+        $crawler = $client->request('GET', '/admin/item?typeId=33');
+        $this->assertContains('Add a new item', $crawler->html());
+
+        $form = $crawler->filter('form[name="item"]')->form(array(
+            'item[inventoryLocation]' => "2",
+            'item[name]'     => $itemName,
+            'item[sku]'      => "SKU-".rand(),
+            'item[loanFee]'  => 1.50,
+            'item[maxLoanDays]' => 4,
+            'item[condition]'   => 1,
+            'item[keywords]'    => 'Comma, separated, keywords',
+            'item[priceCost]'   => 1.99,
+            'item[priceSell]'   => 2.99,
+            'item[brand]'       => "DEWALT",
+        ),'POST');
+
+        $client->submit($form);
+
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+
+        $crawler = $client->followRedirect();
+
+        $itemId = (int)$crawler->filter('#itemIdForTest')->attr('value');
+        $this->assertGreaterThan(0, $itemId);
+
+        return $itemId;
+    }
+
+    /**
+     * @param Client $client
      * @return int
      */
     public function createContact(Client $client)

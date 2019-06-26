@@ -5,19 +5,14 @@ namespace AppBundle\Controller\Item;
 use AppBundle\Entity\FileAttachment;
 use AppBundle\Entity\Image;
 use AppBundle\Entity\InventoryItem;
-use AppBundle\Entity\InventoryLocation;
 use AppBundle\Entity\ItemMovement;
-use AppBundle\Entity\Loan;
 use AppBundle\Entity\Note;
-use AppBundle\Entity\ProductField;
 use AppBundle\Entity\ProductFieldValue;
-use AppBundle\Entity\ProductTag;
 use AppBundle\Entity\Setting;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use AppBundle\Helpers\InputHelper;
 use Doctrine\ORM\EntityRepository;
 use AppBundle\Form\Type\ItemType;
 
@@ -133,10 +128,8 @@ class ItemController extends Controller
             $customFieldValues = [];
         }
 
-//        $locales = explode(',', $this->get('settings')->getSettingValue('org_languages'));
         $formOptions = [
             'em' => $em,
-//            'locales' => $locales,
             'customFields' => $customFields,
             'customFieldValues' => $customFieldValues,
             'itemTypeId' => $itemTypeId // manually set as it's unmapped
@@ -252,23 +245,6 @@ class ItemController extends Controller
             if (count($product->getImages()) == 0 && $product->getImageName()) {
                 $product->setImageName("");
             }
-
-            // Translations
-            // (empty fields post no values so we have to null them if we're trying to empty values)
-            // @TODO causes fail in saving items since symfony upgrade
-//            if ($product->getId()) {
-//                $repository = $em->getRepository('Gedmo\\Translatable\\Entity\\Translation');
-//                $translatableFields = ['name', 'description', 'componentInformation', 'careInformation'];
-//                foreach ($translatableFields AS $fieldKey) {
-//                    $fieldData = $form->get($fieldKey)->getData();
-//                    if (is_array($fieldData)) {
-//                        // This account has multiple languages defined
-//                        foreach ($fieldData AS $lang => $value) {
-//                            $repository->translate($product, $fieldKey, $lang, $value);
-//                        }
-//                    }
-//                }
-//            }
 
             $em->persist($product);
 
