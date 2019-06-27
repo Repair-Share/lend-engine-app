@@ -9,14 +9,18 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EventType extends AbstractType
 {
-    protected $em;
+
+    /** @var \AppBundle\Services\TenantService */
+    public $tenantService;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $data = $builder->getData();
+        $this->tenantService = $options['tenantService'];
 
         $builder->add('site', EntityType::class, array(
             'label' => 'Site',
@@ -75,23 +79,6 @@ class EventType extends AbstractType
             ]
         ));
 
-        $builder->add('isBookable', ToggleType::class, array(
-            'expanded' => true,
-            'label' => 'Allow online booking?',
-            'attr' => [
-                'class' => 'input-100',
-            ]
-        ));
-
-        $builder->add('price', NumberType::class, array(
-            'label' => 'Price',
-            'required' => false,
-            'attr' => [
-                'maxlength' => 5,
-                'class' => 'input-100'
-            ]
-        ));
-
         $builder->add('title', TextType::class, array(
             'label' => 'Title',
             'required' => true,
@@ -113,19 +100,50 @@ class EventType extends AbstractType
             'required' => false,
             'attr' => [
                 'rows' => 10,
-                'placeholder' => "A short note describing the event."
+                'placeholder' => "Tell people what the event is about, who is it for, etc."
             ]
         ));
 
-        $builder->add('maxAttendees', NumberType::class, array(
-            'label' => 'Maximum attendees',
-            'required' => false,
-            'attr' => [
-                'class' => 'input-100',
-                'data-help' => "Set to zero for no limit."
-            ]
-        ));
+        // FIELDS BELOW HERE ONLY AVAILABLE ON SOME PLANS
 
+        if ($this->tenantService->getFeature('EventBooking')) {
+            $builder->add('isBookable', ToggleType::class, array(
+                'expanded' => true,
+                'label' => 'Allow self serve booking?',
+                'attr' => [
+                    'class' => 'input-100',
+                    'data-help' => 'Admins can always book.'
+                ]
+            ));
+
+            $builder->add('price', NumberType::class, array(
+                'label' => 'Price',
+                'required' => false,
+                'attr' => [
+                    'maxlength' => 5,
+                    'class' => 'input-100'
+                ]
+            ));
+
+            $builder->add('maxAttendees', NumberType::class, array(
+                'label' => 'Maximum attendees',
+                'required' => false,
+                'attr' => [
+                    'class' => 'input-100',
+                    'data-help' => "Set to zero for no limit."
+                ]
+            ));
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'tenantService' => null,
+        ));
     }
 
 }

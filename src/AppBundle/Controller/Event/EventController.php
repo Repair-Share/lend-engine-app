@@ -24,6 +24,9 @@ class EventController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->get('service.tenant');
+
         /** @var \AppBundle\Repository\EventRepository $eventRepo */
         $eventRepo = $em->getRepository('AppBundle:Event');
 
@@ -59,13 +62,15 @@ class EventController extends Controller
                 break;
         }
 
-        $options = [];
+        $options = [
+            'tenantService' => $tenantService
+        ];
         $form = $this->createForm(EventType::class, $event, $options);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            if (!$eventId) {
+            if (!$eventId && $tenantService->getFeature('EventBooking')) {
                 $attendee = new Attendee();
                 $attendee->setCreatedBy($this->getUser());
                 $attendee->setContact($this->getUser());

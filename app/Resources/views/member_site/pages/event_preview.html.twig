@@ -92,6 +92,8 @@
             {{ event.date|date("l j F") }}<br>
             {{ event.friendlyTimeFrom }} - {{ event.friendlyTimeTo }}<br>
 
+
+            {% if tenantInformation.feature('EventBooking') %}
             {#BOOKING FORM#}
             <form method="POST" action="{{ path('event_book', {eventId: event.id} ) }}" class="payment-form" id="bookingForm">
                 <br>
@@ -163,6 +165,7 @@
                 {% endif %}
 
             </div>
+            {% endif %}
 
         </div>
     </div>
@@ -177,19 +180,23 @@
                 <a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">Edit event</a>
             {% endif %}
         </div>
-        {% if (event.price == 0 and is_granted("IS_AUTHENTICATED_REMEMBERED")) or is_granted("ROLE_ADMIN") %}
-        <div class="col-md-6">
-            {% if alreadyBooked != true %}
-            <div class="help-block" style="font-size: 12px; text-align: left">
-                Checking in adds you as an attendee without sending a booking confirmation email.
+
+        {% if tenantInformation.feature('EventBooking') %}
+            {% if (event.price == 0 and is_granted("IS_AUTHENTICATED_REMEMBERED")) or is_granted("ROLE_ADMIN") %}
+            <div class="col-md-6">
+                {% if alreadyBooked != true %}
+                <div class="help-block" style="font-size: 12px; text-align: left">
+                    Checking in adds you as an attendee without sending a booking confirmation email.
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-3">
+                {% if alreadyBooked != true %}
+                    <a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-primary">Check in</a>
+                {% endif %}
             </div>
             {% endif %}
-        </div>
-        <div class="col-md-3">
-            {% if alreadyBooked != true %}
-                <a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-primary">Check in</a>
-            {% endif %}
-        </div>
         {% endif %}
+
     </div>
 {% endblock %}

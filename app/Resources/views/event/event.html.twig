@@ -37,6 +37,12 @@
         </div>
     {% endif %}
 
+    {% if event.id and event.status == 'DRAFT' %}
+        <div class="alert alert-warning">
+            This event is not published yet. Click "publish" at the top to show it on your member site events page.
+        </div>
+    {% endif %}
+
     <div class="row">
         <div class="col-md-5">
 
@@ -65,33 +71,9 @@
                             {{ form_row(form.site) }}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            {{ form_row(form.maxAttendees) }}
-                        </div>
-                        <div class="col-md-6">
-                            <label>Price per attendee</label>
-                            <div class="input-group">
-                                <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
-                                {{ form_widget(form.price) }}
-                            </div>
-                            <div class="help-block">
-                                Can be overridden by admin.
-                            </div>
-                        </div>
-                    </div>
-                    {{ form_row(form.type) }}
-
-                    <div class="row">
-                        <div class="col-md-5">
-                            {{ form_row(form.isBookable) }}
-                        </div>
-                        <div class="col-md-7">
-                            {{ form_row(form.facebookUrl) }}
-                        </div>
-                    </div>
-
                     {{ form_row(form.description) }}
+                    {{ form_row(form.type) }}
+                    {{ form_row(form.facebookUrl) }}
                 </div>
             </div>
 
@@ -102,9 +84,45 @@
             <div class="box box-default box-solid">
                 <div class="box-header with-border"><h3 class="box-title">Attendees</h3></div>
                 <div class="box-body">
+
+                    {% if tenantInformation.feature('EventBooking') %}
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ form_row(form.maxAttendees) }}
+                            </div>
+                            <div class="col-md-4">
+                                <label>Price per attendee</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
+                                    {{ form_widget(form.price) }}
+                                </div>
+                                <div class="help-block">
+                                    Can be overridden by admin.
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                {{ form_row(form.isBookable) }}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="upgrade">
+                            <p>Upgrade your Lend Engine account to get:</p>
+                            <ul>
+                                <li>Event attendees &amp; bookings</li>
+                                <li>Charge for event bookings</li>
+                                <li>Event check-in for reporting on attendance</li>
+                                <li>Self serve booking online</li>
+                                <li>Email booking confirmations</li>
+                            </ul>
+                            <p>
+                                View plans on the <a href="{{ path('billing') }}">billing screen</a>.
+                            </p>
+                        </div>
+                    {% endif %}
+
                     <input type="hidden" name="batchActionTask" id="batchActionTask">
                     {% if event.attendees|length == 0 %}
-                        <div class="alert alert-info">This event has no attendees.</div>
+                        <div style="padding: 20px">This event has no attendees.</div>
                     {% else %}
                         <div id="batch-actions" style="margin-bottom: 10px">
                             With <span id="count-rows"></span> selected :

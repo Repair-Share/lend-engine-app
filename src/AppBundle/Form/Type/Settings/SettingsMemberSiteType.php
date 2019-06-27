@@ -22,11 +22,6 @@ class SettingsMemberSiteType extends AbstractType
     /** @var \AppBundle\Services\SettingsService */
     public $settingsService;
 
-    function __construct()
-    {
-
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->em = $options['em'];

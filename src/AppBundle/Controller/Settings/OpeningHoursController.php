@@ -79,7 +79,7 @@ class OpeningHoursController extends Controller
             $eventLink = $this->generateUrl('event_admin', ['eventId' => $i->getId()]);
             if ($settingService->getSettingValue('ft_events')) {
                 if (!$title) {
-                    $title = '-- upgrade to an event --';
+                    $title = '-- convert to an event --';
                 }
                 $eventTitle = '<a href="'.$eventLink.'">'.$title.'</a>';
             } else {

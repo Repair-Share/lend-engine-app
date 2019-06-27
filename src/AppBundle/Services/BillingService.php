@@ -48,6 +48,7 @@ class BillingService
             'EmailAutomation'   => false,
             'Labels'            => false,
             'WhiteLabel'        => false,
+            'EventBooking'      => false,
         ];
 
         switch ($plan) {
@@ -75,6 +76,7 @@ class BillingService
                     'EmailAutomation'   => true,
                     'Labels'            => false,
                     'WhiteLabel'        => false,
+                    'EventBooking'      => true,
                 ];
                 break;
 
@@ -97,6 +99,7 @@ class BillingService
                     'EmailAutomation'   => true,
                     'Labels'            => true,
                     'WhiteLabel'        => false,
+                    'EventBooking'      => true,
                 ];
                 break;
 
@@ -119,6 +122,7 @@ class BillingService
                     'EmailAutomation'   => true,
                     'Labels'            => true,
                     'WhiteLabel'        => true,
+                    'EventBooking'      => true,
                 ];
                 break;
 

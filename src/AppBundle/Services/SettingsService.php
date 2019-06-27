@@ -130,6 +130,11 @@ class SettingsService
      */
     public function getSettingValue($key)
     {
+        // Feature toggles
+        if ($key == 'ft_events') {
+            return 1; // on for everyone from June 27th 2019
+        }
+
         // If we have an account code we use the cache, else we have to go to DB each time
         // eg when running loan reminders from console for multiple tenants
         if ($this->db && $key && isset($this->settings[$this->db][$key])) {

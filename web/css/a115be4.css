@@ -9221,7 +9221,9 @@ a:focus {
     border-color: #d73925;
 }
 .alert-warning {
-    border-color: #e08e0b;
+    background-color: #fff8d5 !important;
+    color: #ec9409 !important;
+    border-color: #fbcd85;
 }
 .alert-info {
     border-color: #00acd6;
@@ -11222,7 +11224,9 @@ table.text-center th {
 .alert-warning,
 .label-warning,
 .modal-warning .modal-body {
-    background-color: #f39c12 !important;
+    background-color: #fff8d5 !important;
+    color: #ec9409 !important;
+    border-color: #fbcd85;
 }
 .bg-aqua,
 .callout.callout-info,
@@ -12486,7 +12490,7 @@ ul.nav-language > li > a {
     padding: 10px;
     border: 1px solid #ffeece;
     background-color: #fffeed;
-    color: #000000;
+    color: #b58436;
     border-radius: 4px;
 }
 
