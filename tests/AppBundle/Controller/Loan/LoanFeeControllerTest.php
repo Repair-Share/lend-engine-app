@@ -10,17 +10,25 @@ class LoanFeeControllerTest extends AuthenticatedControllerTest
 
     public function testAddFee()
     {
+        // Create a contact
+        $contactId = $this->helpers->createContact($this->client);
+
+        // Subscribe them
+        $this->helpers->subscribeContact($this->client, $contactId);
+
+        // Add credit
+        $this->helpers->addCredit($this->client, $contactId, 2);
+
         // Create a new loan
-        $loanId = $this->helpers->createLoan($this->client);
+        $loanId = $this->helpers->createLoan($this->client, $contactId);
         $crawler = $this->client->request('GET', '/loan/'.$loanId);
 
-        // Add a note
+        // Add a fee
         $feeNote = "Test fee ".rand();
         $form = $crawler->filter('form[name="add_fee"]')->form(array(
             'feeAmount' => 1.50,
             'feeReason' => $feeNote,
         ),'POST');
-
         $this->client->submit($form);
 
         $this->assertTrue($this->client->getResponse() instanceof RedirectResponse);

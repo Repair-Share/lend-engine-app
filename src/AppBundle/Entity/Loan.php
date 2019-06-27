@@ -407,39 +407,6 @@ class Loan
     }
 
     /**
-     * @param $totalFee
-     * @return $this
-     */
-    public function setTotalFee($totalFee = 0)
-    {
-        if ($totalFee) {
-            $this->totalFee = $totalFee;
-        } else {
-            // Automatically calculate on persist
-            $this->totalFee = $this->getTotalFee();
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTotalFee()
-    {
-        $totalFee = 0.00;
-        if (count($this->getPayments()) > 0) {
-            foreach ($this->getPayments() AS $payment) {
-                if ($payment->getType() == Payment::PAYMENT_TYPE_FEE) {
-                    $totalFee += $payment->getAmount();
-                }
-            }
-        }
-        $this->totalFee = $totalFee;
-        return $this->totalFee;
-    }
-
-    /**
      * Set the loan return date as the date of the last item due back
      */
     public function setReturnDate()
@@ -556,6 +523,43 @@ class Loan
      */
     public function getReservationFee() {
         return $this->reservationFee;
+    }
+
+    /**
+     * @param $totalFee
+     * @return $this
+     */
+    public function setTotalFee($totalFee = 0)
+    {
+        if ($totalFee) {
+            $this->totalFee = $totalFee;
+        } else {
+            // Automatically calculate on persist
+            $this->totalFee = $this->getTotalFee();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTotalFee()
+    {
+        $totalFee = 0.00;
+        if (count($this->getPayments()) > 0) {
+            /** @var \AppBundle\Entity\Payment $payment */
+            foreach ($this->getPayments() AS $payment) {
+                if ($payment->getType() == Payment::PAYMENT_TYPE_FEE && !$payment->getInventoryItem()) {
+                    $totalFee += $payment->getAmount();
+                }
+            }
+        }
+        foreach ($this->getLoanRows() AS $loanRow) {
+            $totalFee += $loanRow->getFee();
+        }
+        $this->totalFee = $totalFee;
+        return $this->totalFee;
     }
 
     /**

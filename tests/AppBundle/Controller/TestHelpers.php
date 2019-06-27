@@ -17,9 +17,10 @@ class TestHelpers extends AuthenticatedControllerTest
     /**
      * @param Client $client
      * @param null $itemName
+     * @param float $depositAmount
      * @return int
      */
-    public function createItem(Client $client, $itemName = null)
+    public function createItem(Client $client, $itemName = null, $depositAmount = 0.00)
     {
         if (!$itemName) {
             $itemName = "Item ".rand();
@@ -38,6 +39,7 @@ class TestHelpers extends AuthenticatedControllerTest
             'item[keywords]'    => 'Comma, separated, keywords',
             'item[priceCost]'   => 1.99,
             'item[priceSell]'   => 2.99,
+            'item[depositAmount]' => $depositAmount,
             'item[brand]'       => "DEWALT",
         ),'POST');
 
@@ -112,16 +114,17 @@ class TestHelpers extends AuthenticatedControllerTest
     /**
      * @param Client $client
      * @param $contactId
-     * @return mixed
+     * @param float $amount
+     * @return mixed|null|string
      */
-    public function addCredit(Client $client, $contactId)
+    public function addCredit(Client $client, $contactId, $amount = 100.00)
     {
         $crawler = $client->request('GET', '/member/add-credit?c='.$contactId);
         $this->assertContains('Add credit', $crawler->html());
 
         $form = $crawler->filter('form[name="payment"]')->form(array(
             'paymentMethod' => 1,
-            'paymentAmount' => 100,
+            'paymentAmount' => $amount,
             'paymentNote'   => 'Payment note',
         ),'POST');
 
@@ -163,18 +166,15 @@ class TestHelpers extends AuthenticatedControllerTest
 
         $this->assertContains('Test event title', $crawler->html());
     }
-    
-    public function createLoan(Client $client)
+
+    /**
+     * @param Client $client
+     * @param $contactId
+     * @param int $itemId
+     * @return int
+     */
+    public function createLoan(Client $client, $contactId, $itemId = 1000)
     {
-        // Create a contact
-        $contactId = $this->createContact($client);
-
-        // Subscribe them
-        $this->subscribeContact($client, $contactId);
-
-        // Add credit
-        $this->addCredit($client, $contactId);
-
         // Add an item to the basket
         $today = new \DateTime();
         $params = [
@@ -186,7 +186,7 @@ class TestHelpers extends AuthenticatedControllerTest
             'date_to'   => $today->format("Y-m-d"),
             'time_to'   => $today->format("17:00:00")
         ];
-        $client->request('POST', '/basket/add/1000?contactId='.$contactId, $params);
+        $client->request('POST', '/basket/add/'.$itemId.'?contactId='.$contactId, $params);
 
         $this->assertTrue($client->getResponse() instanceof RedirectResponse);
         $crawler = $client->followRedirect();
@@ -197,7 +197,7 @@ class TestHelpers extends AuthenticatedControllerTest
         $params = [
             'action' => 'checkout',
             'row_fee' => [
-                1000 => 10.00
+                $itemId => 10.00
             ]
         ];
         $client->request('POST', '/basket/confirm', $params);

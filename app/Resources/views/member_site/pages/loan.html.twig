@@ -274,6 +274,7 @@
             <tr class="checkout">
                 <td></td>
                 <td class="basket-subtotal">
+                    {#DUE TO CHARGE#}
                     {% trans %}public_basket.balance{% endtrans %}
                 </td>
                 <td class="basket-subtotal">
@@ -474,8 +475,8 @@
         var depositsTotal = 0.00;
         var subTotal      = 0.00;
         var toPay         = 0.00;
-        var contactBalance = $("#contactBalanceAmount").html() * 1;
-        var dueToCharge   = $("#basketBalanceAmount").html() * 1;
+        var contactBalance = {{ loan.contact.balance|number_format(2) }};
+        var dueToCharge    = {{ loan.balance|number_format(2) }};
 
         $(document).ready(function() {
             calculateLoanTotal();
@@ -558,17 +559,20 @@
 
             basketTotal   = 0.00;
             depositsTotal = 0.00;
-            contactBalance = $("#contactBalanceAmount").html() * 1;
-            dueToCharge   = $("#basketBalanceAmount").html() * 1;
 
             $(".row-calc").each(function() {
                 basketTotal += $(this).val() * 1;
             });
 
-            console.log('basketTotal : '+basketTotal);
-            console.log('dueToCharge : '+dueToCharge);
+            console.log('basketTotal: '+basketTotal);
+            console.log('dueToCharge: '+dueToCharge);
+            console.log("Contact balance: "+contactBalance);
 
-            subTotal = dueToCharge;
+            if (contactBalance > 0) {
+                subTotal = dueToCharge - contactBalance;
+            } else {
+                subTotal = dueToCharge;
+            }
 
             console.log('dueToCharge - contactBalance = subTotal : '+subTotal);
 
@@ -617,6 +621,8 @@
                 $(".action-save").show();
                 $(".checkout").hide();
             }
+
+            validateCheckout();
         }
 
     </script>
