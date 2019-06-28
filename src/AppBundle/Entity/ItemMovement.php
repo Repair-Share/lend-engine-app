@@ -189,7 +189,7 @@ class ItemMovement
      *
      * @return ItemMovement
      */
-    public function setLoanRow(\AppBundle\Entity\LoanRow $loanRow = null)
+    public function setLoanRow(LoanRow $loanRow = null)
     {
         $this->loanRow = $loanRow;
 
@@ -213,7 +213,7 @@ class ItemMovement
      *
      * @return ItemMovement
      */
-    public function setAssignedTo(\AppBundle\Entity\Contact $assignedTo = null)
+    public function setAssignedTo(Contact $assignedTo = null)
     {
         $this->assignedTo = $assignedTo;
 

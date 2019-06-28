@@ -66,7 +66,7 @@ class Deposit
     /**
      * @var LoanRow
      *
-     * @ORM\ManyToOne(targetEntity="LoanRow")
+     * @ORM\OneToOne(targetEntity="LoanRow", mappedBy="deposit", )
      * @ORM\JoinColumn(name="loan_row_id", referencedColumnName="id")
      */
     private $loanRow;

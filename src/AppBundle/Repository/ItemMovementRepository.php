@@ -2,10 +2,12 @@
 
 namespace AppBundle\Repository;
 
+use Doctrine\ORM\EntityRepository;
+
 /**
  * ItemMovementRepository
  *
  */
-class ItemMovementRepository extends \Doctrine\ORM\EntityRepository
+class ItemMovementRepository extends EntityRepository
 {
 }

@@ -1,23 +1,11 @@
 <?php
 
-namespace AppBundle\Controller\MemberSite;
+namespace AppBundle\Controller\Loan;
 
-use AppBundle\Entity\Contact;
-use AppBundle\Entity\InventoryItem;
-use AppBundle\Entity\InventoryLocation;
-use AppBundle\Entity\ItemMovement;
 use AppBundle\Entity\Loan;
-use AppBundle\Entity\LoanRow;
-use AppBundle\Entity\Note;
-use AppBundle\Entity\Payment;
-use AppBundle\Helpers\InputHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Postmark\PostmarkClient;
-use Postmark\Models\PostmarkException;
-use Postmark\Models\PostmarkAttachment;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class LoanDeleteController extends Controller
@@ -47,9 +35,32 @@ class LoanDeleteController extends Controller
             return $this->redirectToRoute('loan_list');
         }
 
-        if ($loan->getStatus() == Loan::STATUS_CLOSED) {
-            $this->addFlash('error', "You can't delete closed loans.");
-            return $this->redirectToRoute('loan_list');
+        // Get all item movements associated with the loan (for closed loans)
+        /** @var \AppBundle\Repository\ItemMovementRepository $itemMovementRepo */
+        $itemMovementRepo = $em->getRepository('AppBundle:ItemMovement');
+
+        /** @var \AppBundle\Repository\DepositRepository $depositRepo */
+        $depositRepo = $em->getRepository('AppBundle:Deposit');
+
+        foreach ($loan->getLoanRows() AS $row) {
+
+            $itemMovements = $itemMovementRepo->findBy(['loanRow' => $row->getId()]);
+            foreach ($itemMovements AS $movement) {
+                $em->remove($movement);
+            }
+
+            $deposits = $depositRepo->findBy(['loanRow' => $row->getId()]);
+            foreach ($deposits AS $deposit) {
+                if ($deposit->getBalance() == 0) {
+//                    $em->remove($deposit);
+                    // @TODO foreign key dependencies need fixing for deleting deposits
+                } else {
+                    
+                }
+                $this->addFlash("error", "You can't currently delete loans with deposits.");
+                return $this->redirectToRoute('loan_list');
+            }
+
         }
 
         $em->remove($loan);
@@ -62,7 +73,7 @@ class LoanDeleteController extends Controller
             $this->addFlash('debug', $generalException->getMessage());
         }
 
-        return $this->redirectToRoute('home');
+        return $this->redirectToRoute('loan_list');
 
     }
 }

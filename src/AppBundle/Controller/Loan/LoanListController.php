@@ -213,9 +213,11 @@ class LoanListController extends Controller
 
             $links = '<li><a href="'.$editUrl.'">Open</a></li>';
 
-            if ($loan->getStatus() == Loan::STATUS_PENDING && $authChecker->isGranted('ROLE_ADMIN')) {
+
+            if (!in_array($loan->getStatus(), [Loan::STATUS_ACTIVE, Loan::STATUS_OVERDUE])) {
                 $deleteUrl = $this->generateUrl('loan_delete', array('id' => $loan->getId()));
-                $links .= '<li><a href="'.$deleteUrl.'">Delete</a></li>';
+                $links .= '<li role="separator" class="divider"></li>';
+                $links .= '<li><a href="'.$deleteUrl.'" class="delete-link">Delete</a></li>';
             }
 
             $linkHtml = '

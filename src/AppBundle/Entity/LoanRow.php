@@ -42,7 +42,7 @@ class LoanRow
     /**
      * @var Deposit
      *
-     * @ORM\OneToOne(targetEntity="Deposit")
+     * @ORM\OneToOne(targetEntity="Deposit", inversedBy="loanRow", cascade={"remove"})
      * @ORM\JoinColumn(name="deposit_id", referencedColumnName="id", nullable=true)
      */
     private $deposit;
@@ -448,7 +448,7 @@ class LoanRow
      * @param Deposit $deposit
      * @return $this
      */
-    public function setDeposit(Deposit $deposit)
+    public function setDeposit(Deposit $deposit = null)
     {
         $this->deposit = $deposit;
         return $this;
