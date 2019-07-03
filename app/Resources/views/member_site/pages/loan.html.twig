@@ -148,7 +148,7 @@
                     {% endif %}
 
                     {#CHECK IN #}
-                    {% if row.isCheckedOut and row.isReturned != true and is_granted('ROLE_ADMIN') %}
+                    {% if row.isCheckedOut and row.isReturned != true and tenantInformation.selfCheckout %}
                         <div class="help-block">
                             <a href="{{ path('loan_check_in', {loanRowId: row.id}) }}" data-loan-row-id="{{ row.id }}" id="check-in-{{ row.inventoryItem.id }}" class="btn btn-xs btn-success">Check in</a>
                             <!-- For functional testing: /-->
@@ -192,7 +192,6 @@
                             {% endfor %}
                         {% endif %}
                     {% endif %}
-
 
                 </td>
                 <td style="text-align: right">
@@ -343,9 +342,9 @@
     </table>
 
     <div class="row checkout payment-details">
-
         <div class="col-md-6"></div>
         <div class="col-md-6">
+
             {% set contact = loan.contact %}
             {{ include('partials/credit-cards.html.twig') }}
 
@@ -372,18 +371,14 @@
                     {{ tenantInformation.currencySymbol }} {{ tenantInformation.stripeFee|number_format(2, '.') }} {% trans %}public_add_credit.processing_fee{% endtrans %}.
                 </div>
             {% endif %}
-        </div>
 
+        </div>
     </div>
 
-    <div class="row">
+    <div class="row" id="checkoutButtonRow">
 
         <div class="col-md-12">
-            {% if loan.status == 'RESERVED' %}
-                <a href="{{ path('reservation_cancel', {id: loan.id}) }}" class="btn btn-danger">{% trans %}button_cancel_reservation{% endtrans %}</a>
-            {% endif %}
-
-            {% if is_granted('ROLE_ADMIN') %}
+            {% if tenantInformation.selfCheckout %}
                 {% if loan.status in ['RESERVED', 'PENDING'] %}
                     <button type="button" id="form-checkout" class="btn btn-success pull-right checkout submit-action payment-submit" {% if promptsExist == 1 %}disabled{% endif %}>
                         {% if promptsExist == 1 %}
@@ -414,6 +409,12 @@
                 {% endfor %}
             {% else %}
                 No notes added yet.
+            {% endif %}
+
+            {% if loan.status == 'RESERVED' or loan.status == 'PENDING' %}
+                <div style="margin-top: 10px;">
+                    <a href="{{ path('reservation_cancel', {id: loan.id}) }}" class="btn btn-danger">{% trans %}button_cancel_reservation{% endtrans %}</a>
+                </div>
             {% endif %}
         </div>
         <div class="col-md-6">
@@ -510,6 +511,11 @@
                 waitButton($(this));
             });
 
+            // When user clicks a card it sets the Stripe payment method
+            form.on('click', '.card-select', function(e) {
+                window.setTimeout(validateCheckout, 300);
+            });
+
             $(document).on('click', '.buttonDelete', function() {
                 if (!window.confirm("Are you sure you want to delete this loan?")) {
                     return false;
@@ -551,7 +557,7 @@
 
             // All tests pass, ensure user can check out now
             if (allowCheckOut == true) {
-                checkoutButton.attr("disabled", false).html("Complete check out");
+                checkoutButton.attr("disabled", false).html("Check out");
             }
         }
 
@@ -599,21 +605,44 @@
             $("#loanSubtotalAmount").html(subTotal.toFixed(2));
             $("#loanToPayAmount").html(toPay.toFixed(2));
 
-            // Add any overdue balance in here
-            if (contactBalance < 0) {
-                toPay += -contactBalance;
-            }
-            $("#loan_check_out_paymentAmount").val(toPay.toFixed(2));
-
             {% if loan.status in ['PENDING', 'RESERVED'] and is_granted("ROLE_ADMIN") %}
-            if (toPay == 0) {
-                $(".payment-details").hide();
-            } else {
-                $(".payment-details").show();
-            }
+                // Add any overdue balance due to pay
+                if (contactBalance < 0) {
+                    toPay += -contactBalance;
+                }
+                $("#loan_check_out_paymentAmount").val(toPay.toFixed(2));
+                if (toPay == 0) {
+                    $(".payment-details").hide();
+                } else {
+                    $(".payment-details").show();
+                }
             {% else %}
-            // We can't take payment now that we are past checkout so hide the payment form
-            $(".payment-details").hide();
+                $("#loan_check_out_paymentAmount").val(toPay.toFixed(2));
+                // Hide the payment form, but set values based on member's credit limit
+                $(".payment-details").hide();
+                if (toPay > 0) {
+                    {% if tenantInformation.selfCheckout %}
+                    var availableCredit = creditLimit*1 + accountBalance*1;
+                    console.log("Credit limit "+creditLimit);
+                    console.log("Account balance "+accountBalance);
+                    console.log("Available credit "+availableCredit);
+                    if (stripePaymentMethodId > 0) {
+                        $("#loan_check_out_paymentMethod").val(stripePaymentMethodId);
+                        $("#form-checkout").html("Check out (take payment)");
+                        $("#checkoutButtonRow").after('<div class="help-block" style="text-align: right">Payment will be taken by card</div>');
+                    } else if (availableCredit > toPay) {
+                        $("#loan_check_out_paymentAmount").val(0);
+                    } else if (creditLimit == null) {
+                        // No credit limit, carry on regardless of account balance
+                        $("#loan_check_out_paymentAmount").val(0);
+                    } else if (availableCredit < toPay && creditLimit != null) {
+                        $("#form-checkout").after('<div class="alert alert-warning">Insufficient credit on account to check out.</div>').remove();
+                    } else {
+                        $("#form-checkout").after('<div class="alert alert-warning">No payment methods are available to check out.</div>').remove();
+                    }
+                    {% endif %}
+                }
+
             {% endif %}
 
             if (hideButton == true) {

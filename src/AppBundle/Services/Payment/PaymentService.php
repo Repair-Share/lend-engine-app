@@ -190,10 +190,15 @@ class PaymentService
             throw new \Exception("System error : not a refund via the refund service");
         }
 
+        if (!$p->getAmount()) {
+            $this->errors[] = "No amount set to refund";
+            return false;
+        }
+
         $stripePaymentMethodId = $this->settings->getSettingValue('stripe_payment_method');
         if ($stripePaymentMethodId == $p->getPaymentMethod()->getId()) {
             if (!$chargeId) {
-                $this->errors[] = "You can't refund this transaction via Stripe as it was processed before we captured payment IDs";
+                $this->errors[] = "You can't refund this transaction via Stripe : no payment ID found";
             }
             // Perform the Stripe refund
             if ($charge = $this->stripeService->refundPayment($chargeId, $p->getAmount())) {

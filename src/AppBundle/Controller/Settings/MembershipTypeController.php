@@ -17,11 +17,12 @@ class MembershipTypeController extends Controller
      */
     public function listAction(Request $request)
     {
-
         $tableRows = array();
 
         // admin only
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+
+        $currencySymbol = $this->get('service.tenant')->getCurrencySymbol();
 
         // Get from the DB
         $em = $this->getDoctrine()->getManager();
@@ -31,6 +32,8 @@ class MembershipTypeController extends Controller
             'Name',
             'Self-serve',
             'Cost',
+            'Credit limit',
+            'Max items on loan',
             'Duration',
             'Discount',
             ''
@@ -39,18 +42,16 @@ class MembershipTypeController extends Controller
         foreach ($subscriptions AS $i) {
             /** @var $i \AppBundle\Entity\MembershipType */
 
-            $discount = '';
-            if ($i->getDiscount() > 0) {
-                $discount = $i->getDiscount().'%';
-            }
             $tableRows[] = array(
                 'id' => $i->getId(),
                 'data' => array(
                     $i->getName(),
                     $i->getIsSelfServe() ? 'Yes' : '',
-                    $i->getPrice(),
+                    $currencySymbol.$i->getPrice(),
+                    $i->getCreditLimit() ? $currencySymbol.$i->getCreditLimit() : 'Unlimited',
+                    $i->getMaxItems() ? $i->getMaxItems() : 'Unlimited',
                     $i->getDuration().' days',
-                    $discount,
+                    $i->getDiscount() ? $i->getDiscount().'%' : '',
                     ''
                 )
             );

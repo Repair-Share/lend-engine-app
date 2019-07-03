@@ -113,28 +113,35 @@
 
     <div class="row">
         <div class="col-md-6">
+
             {{ form_row(form.location) }}
             {{ form_row(form.notes) }}
-            {{ form_row(form.contact) }}
 
-            <div class="form-group">
-                <label>Charge a fee</label>
-                <div class="input-group">
-                <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
-                {{ form_widget(form.feeAmount) }}
+            <div style="display:{% if tenantInformation.selfCheckout %}none{% else %}block{% endif %}">
+                {{ form_row(form.contact) }}
+                <div class="form-group">
+                    <label>Charge a fee</label>
+                    <div class="input-group">
+                    <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
+                    {{ form_widget(form.feeAmount) }}
+                    </div>
+                    <div class="help-block">For damages, delays etc. The fee will be added to the member account balance.
+                    If you need to take further payment, do it using the 'add credit' process.</div>
                 </div>
-                <div class="help-block">For damages, delays etc. The fee will be added to the member account balance.
-                If you need to take further payment, do it using the 'add credit' process.</div>
             </div>
 
             {% if daysLate > 0 %}
                 <div class="alert alert-warning">
                     This item is {{ daysLate }} days late.
                     {% if tenantInformation.lateFee > 0 %}
-                        ({{ tenantInformation.lateFee|number_format(2) }} per day)
-                    {% endif %}
-                    {% if loanRow.loan.contact.activeMembership and loanRow.loan.contact.activeMembership.MembershipType.discount > 0 %}
-                        <br>Member discount of <strong>{{ loanRow.loan.contact.activeMembership.MembershipType.discount|number_format(0) }}%</strong> applied.
+                        {% set lateFee = tenantInformation.lateFee %}
+                        {% if loanRow.loan.contact.activeMembership and loanRow.loan.contact.activeMembership.MembershipType.discount > 0 %}
+                            {% set lateFee = lateFee * loanRow.loan.contact.activeMembership.MembershipType.discount/100 %}
+                        {% endif %}
+                        ({{ tenantInformation.currencySymbol }}{{ lateFee|number_format(2) }} per day)
+                        {% if loanRow.loan.contact.activeMembership and loanRow.loan.contact.activeMembership.MembershipType.discount > 0 %}
+                            <br>Member discount of <strong>{{ loanRow.loan.contact.activeMembership.MembershipType.discount|number_format(0) }}%</strong> applied.
+                        {% endif %}
                     {% endif %}
                 </div>
             {% endif %}

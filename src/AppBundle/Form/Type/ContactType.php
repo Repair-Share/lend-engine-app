@@ -262,10 +262,13 @@ class ContactType extends AbstractType
                     'Staff (log in to admin)' => 'ROLE_ADMIN',
                     'Administrator (manage account settings)' => 'ROLE_SUPER_USER'
                 ),
-                'label' => 'Access to Lend Engine admin',
+                'label' => 'Access permissions',
                 'expanded' => true,
                 'multiple' => true,
-                'mapped' => true
+                'mapped' => true,
+                'attr' => [
+                    'data-help' => 'All users can log in and create reservations, if you allow online reservations.'
+                ]
             ));
         }
 

@@ -57,6 +57,13 @@
                         {{ membershipType.duration }} {% transchoice membershipType.duration %}days{% endtranschoice %}
                     </div>
                     <div>
+                        {% if membershipType.creditLimit > 0 %}
+                            {{ tenantInformation.currencySymbol }} {{ membershipType.creditLimit|number_format() }} {{ 'public_misc.credit_limit'|trans({}) }}
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </div>
+                    <div>
                         {% if membershipType.discount > 0 %}
                             {{ membershipType.discount|number_format() }}% {{ 'public_registration.discount_on_fees'|trans({}) }}
                         {% else %}

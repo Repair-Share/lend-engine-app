@@ -49,7 +49,7 @@
             </div>
         {% endif %}
 
-        <form method="POST" id="form-basket" action="{{ path('basket_confirm') }}">
+        <form method="POST" id="form-basket" class="payment-form" action="{{ path('basket_confirm') }}">
 
         <table class="table borderless" id="basketDetails">
 
@@ -95,6 +95,7 @@
                             <div class="alert alert-warning">
                                 A deposit of {{ tenantInformation.currencySymbol }} {{ row.inventoryItem.depositAmount }} is required for this item.
                                 <br>Payment is taken when items are checked out.
+                                <input type="hidden" name="deposit[]" class="deposit-amount" value="{{ row.inventoryItem.depositAmount }}">
                             </div>
                         {% endif %}
 
@@ -113,21 +114,6 @@
                 </tr>
             {% endfor %}
 
-            {% if tenantInformation.basket.reservationFee > 0 %}
-                <tr>
-                    <td></td>
-                    <td>{% trans %}note_reservation_fee{% endtrans %}</td>
-                    <td style="text-align: right">
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <input type="text" class="basket-amount row-total fee-amount" name="booking_fee" value="{{ tenantInformation.basket.reservationFee|number_format(2) }}">
-                        {% else %}
-                            {{ tenantInformation.basket.reservationFee|number_format(2) }}
-                            <input type="hidden" class="row-total fee-amount" value="{{ tenantInformation.basket.reservationFee|number_format(2) }}">
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endif %}
-
             <tr>
                 <td></td>
                 <td class="basket-total">
@@ -140,42 +126,61 @@
 
         </table>
 
-        <div id="basket-account-balance" class="alert credit-warning" style="display:none; margin-top: 6px; text-align: right">
-            {% trans %}public_item.account_balance_is{% endtrans %} {{ tenantInformation.currencySymbol }} {{ contactBalance|number_format(2) }}
-            <span class="actionCredit" style="display:none">
-                {% trans %}public_basket.add_credit_message{% endtrans %}
-            </span>
-        </div>
-
             {% if tenantInformation.basket.loanRows|length > 0 %}
-                <div style="overflow: hidden" id="formControls">
-                    <a href="{{ path('basket_cancel') }}" class="btn btn-default">{% trans %}public_basket.empty{% endtrans %}</a>
-                    <span class="pull-right">
+                <div id="formControls">
+
+                    <div style="text-align: right">
 
                         {% if tenantInformation.stripePaymentMethodId %}
                             <button type="button" class="btn btn-success actionCredit" style="display:none" id="buttonCredit">{% trans %}button_add_credit{% endtrans %}</button>
                         {% endif %}
 
                         {% if is_granted('ROLE_ADMIN') %}
-                            <button type="button" class="btn btn-success" id="buttonSave" title="Save changes" data-toggle="tooltip" style="display:none">Save changes</button>
-                            <button type="button" class="btn btn-success hideOnFormChange" id="buttonCheckOut" title="Create loan and go to check out" data-toggle="tooltip">Check out ...</button>
+                            <button type="button" class="btn btn-success" id="buttonSave" style="display:none">Save changes</button>
                         {% endif %}
 
-                        <button type="button" class="btn btn-success confirm-ok hideOnFormChange" id="buttonConfirm" title="Confirm reservation" data-toggle="tooltip">{% trans %}public_basket.confirm_reservation{% endtrans %}</button>
+                        {% if tenantInformation.selfCheckout %}
+                            <button type="button" class="btn btn-success hideOnFormChange" id="buttonCheckOut">Check out now</button>
+                        {% endif %}
 
-                    </span>
 
-                    {% if tenantInformation.chargeDailyFee %}
-                        <div id="payment-message" class="confirm-ok pull-right" style="text-align:right; padding: 10px 0; clear: both">
-                            The full fee of {{ tenantInformation.currencySymbol }} <span class="basketTotalAmount"></span> {% trans %}public_basket.full_charge{% endtrans %}.
+                        <div style="margin-top: 40px; border-top:1px solid #efefef; padding-top: 10px;">
+                        {% if tenantInformation.basket.reservationFee > 0 %}
+
+                            {% trans %}note_reservation_fee{% endtrans %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <input type="text" class="basket-amount fee-amount" name="booking_fee" value="{{ tenantInformation.basket.reservationFee|number_format(2) }}">
+                            {% else %}
+                                {{ tenantInformation.currencySymbol }} {{ tenantInformation.basket.reservationFee|number_format(2) }}
+                                <input type="hidden" class="fee-amount" value="{{ tenantInformation.basket.reservationFee|number_format(2) }}">
+                            {% endif %}
+
+
+                        {% endif %}
+                        <button type="button" class="btn btn-success hideOnFormChange" style="margin-left: 20px;" id="buttonConfirm">{% trans %}public_basket.confirm_reservation{% endtrans %}</button>
                         </div>
-                    {% else %}
-                        <div id="payment-message" class="confirm-ok pull-right" style="text-align:right; padding: 10px 0; clear: both">
-                            {{ tenantInformation.currencySymbol }} <span class="feeTotalAmount">0</span> {% trans %}public_basket.delay_charge{% endtrans %}.
-                        </div>
-                    {% endif %}
+
+                    </div>
 
                 </div>
+
+                <div id="basket-account-balance" style="margin-top: 10px; padding-top: 10px; border-top:1px solid #efefef; text-align: right">
+                    {% trans %}public_item.account_balance_is{% endtrans %} {{ tenantInformation.currencySymbol }} {{ contactBalance|number_format(2) }}
+
+                    {% if user.activeMembership.membershipType.creditLimit is not null %}
+                        <div>
+                        {% trans %}public_misc.credit_limit{% endtrans %}
+                        {{ tenantInformation.currencySymbol }} {{ user.activeMembership.membershipType.creditLimit|number_format(2) }}
+                    {% endif %}
+                        </div>
+
+                    <span class="actionCredit" style="display:none">
+                        {% trans %}public_basket.add_credit_message{% endtrans %}
+                    </span>
+                </div>
+
+                <a href="{{ path('basket_cancel') }}" class="btn btn-default">{% trans %}public_basket.empty{% endtrans %}</a>
+
             {% endif %}
 
             <input type="hidden" name="action" id="action" value="">
@@ -196,8 +201,12 @@
     <script>
 
         var basketTotal = 0.00;
+        var feeTotal    = 0.00;
+        var grandTotal  = 0.00;
 
         $(document).ready(function() {
+
+            var confirmMessage = '';
 
             $("#search-text").focus();
 
@@ -209,8 +218,8 @@
                 document.location.href = "{{ path('add_credit') }}?amount="+basketTotal+"&c={{ tenantInformation.basket.contact.id }}&return=basket";
             });
 
+            // Create reservation
             formControls.on('click', '#buttonConfirm', function(e) {
-                e.preventDefault();
                 {% if tenantInformation.basket.loanRows %}
                     {% if tenantInformation.basket.loanRows|first.dueOutAt|date("Y-m-d") < date()|date("Y-m-d") %}
                     if (!window.confirm("Pickup date is in the past.\nAre you sure you want to create a reservation?")) {
@@ -218,8 +227,17 @@
                     }
                     {% endif %}
                 {% endif %}
-                $("#form-basket").submit();
-                waitButton($('#buttonConfirm'));
+
+                {% if tenantInformation.chargeDailyFee %}
+                    confirmMessage = "The full fee of {{ tenantInformation.currencySymbol }} "+grandTotal+" {% trans %}public_basket.full_charge{% endtrans %}.";
+                {% else %}
+                    confirmMessage = "{{ tenantInformation.currencySymbol }} "+feeTotal+" {% trans %}public_basket.delay_charge{% endtrans %}.";
+                {% endif %}
+
+                if (window.confirm(confirmMessage)) {
+                    $("#form-basket").submit();
+                    waitButton($('#buttonConfirm'));
+                }
             });
 
             formControls.on('click', '#buttonSave', function(e) {
@@ -258,10 +276,11 @@
 
         function calculateBasketTotal() {
             basketTotal = 0;
-            var feeTotal = 0;
-            var chargeNow;
-            var contactBalance = {{ contactBalance|number_format(2) }};
-            var chargeFullFeeOnConfirmation = '{{ tenantInformation.chargeDailyFee }}';
+            var depositTotal = 0;
+            var reservationTotal = 0;
+            var dueToPay;
+            var availableCredit;
+            var chargeFullFeeOnReservation = '{{ tenantInformation.chargeDailyFee }}';
 
             $(".row-total").each(function() {
                 basketTotal = basketTotal + $(this).val()*1;
@@ -273,36 +292,69 @@
                 feeTotal = feeTotal + $(this).val()*1;
             });
 
+            $(".deposit-amount").each(function() {
+                depositTotal = depositTotal + $(this).val()*1;
+            });
+
             $(".feeTotalAmount").html(feeTotal.toFixed(2));
 
-            if (chargeFullFeeOnConfirmation == '1') {
-                chargeNow = basketTotal;
+            if (chargeFullFeeOnReservation == '1') {
+                reservationTotal = basketTotal + feeTotal;
             } else {
-                chargeNow = feeTotal;
+                reservationTotal = feeTotal;
             }
 
-            if (basketTotal > 0) {
-                $("#basket-account-balance").show();
-                $("#payment-message").show();
-            } else {
-                $("#basket-account-balance").hide();
-                $("#payment-message").hide();
+            grandTotal = feeTotal + basketTotal;
+            dueToPay = grandTotal;
+            if (accountBalance > 0) {
+                dueToPay   = grandTotal - accountBalance;
             }
 
-            if (chargeNow > contactBalance && chargeNow > 0) {
-                if (!isAdmin) {
-                    $(".confirm-ok").attr('disabled', true);
+            availableCredit = creditLimit*1 + accountBalance*1;
+
+            console.log("Fee total : "+feeTotal);
+            console.log("Deposit total : "+depositTotal);
+            console.log("Basket total : "+basketTotal);
+            console.log("Grand total : "+grandTotal);
+            console.log("Balance : "+accountBalance);
+            console.log("Due to pay : "+dueToPay);
+            console.log("Credit limit : "+creditLimit);
+            console.log("Available credit : "+availableCredit);
+
+            // Format for the alert message
+            feeTotal   = feeTotal.toFixed(2);
+            grandTotal = grandTotal.toFixed(2);
+
+            if (selfCheckout) {
+                // Check for ability to checkout
+                if (dueToPay > 0) {
+                    // some payment is due, work out if user can pay
+                    if (depositTotal > 0 && !isAdmin) {
+                        $("#buttonCheckOut").attr('disabled', true).html("Self serve checkout is not available where items require a deposit").removeClass("btn-success").addClass("btn-default");
+                    } else if (creditLimit == "") {
+                        // carry on
+                    } else if (dueToPay < availableCredit || stripePaymentMethodId > 0) {
+                        // carry on
+                    } else {
+                        // Can't check out
+                        $("#buttonCheckOut").attr('disabled', true).html("Insufficient credit to check out");
+                    }
                 }
-                $(".actionCredit").show();
-                $(".credit-warning").addClass('alert-danger');
-            } else {
-                if (!isAdmin) {
-                    $(".confirm-ok").attr('disabled', false);
-                }
-                $(".actionCredit").hide();
-                $(".credit-warning").removeClass('alert-danger');
             }
 
+            if (reservationTotal > 0) {
+                // Check if we can reserve
+                // Reservation fee is due
+                if (creditLimit == "") {
+                    // carry on
+                } else if (reservationTotal < availableCredit) {
+                    // carry on and charge all to account
+                } else {
+                    // Can't reserve
+                    $("#buttonConfirm").attr('disabled', true).html("Insufficient credit to create reservation");
+                }
+            }
+            
         }
 
     </script>

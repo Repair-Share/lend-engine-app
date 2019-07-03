@@ -397,10 +397,12 @@ class BasketController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        if ($request->request->get('action') == 'checkout') {
+        $formAction = $request->request->get('action');
+        if ($formAction == 'checkout') {
             $loan->setStatus(Loan::STATUS_PENDING);
         } else {
             $loan->setStatus(Loan::STATUS_RESERVED);
+            $formAction = 'reserve';
         }
 
         // Connect the entities with the DB IDs
@@ -413,10 +415,9 @@ class BasketController extends Controller
         }
 
         $loan->setContact($contact);
-
         $loan->setCreatedBy($this->getUser());
 
-        $rowFees = $request->request->get('row_fee');
+        $rowFees    = $request->request->get('row_fee');
 
         // ----- Change times from local to UTC ----- //
         if (!$tz = $this->get('settings')->getSettingValue('org_timezone')) {
@@ -467,7 +468,10 @@ class BasketController extends Controller
             $loan->setTimeOut($row->getDueOutAt());
 
             // Also add the item fees if settings require it
-            if ($this->get('settings')->getSettingValue('charge_daily_fee') == 1 && $row->getFee() > 0) {
+            // Only when reserving items, not when checking out
+            if ($this->get('settings')->getSettingValue('charge_daily_fee') == 1
+                && $row->getFee() > 0
+                && $formAction == 'reserve') {
                 $fee = new Payment();
                 $fee->setCreatedBy($user);
                 $fee->setAmount(-$row->getFee());
@@ -481,25 +485,21 @@ class BasketController extends Controller
 
         $bookingFee = $loan->getReservationFee();
 
-        if ($request->request->get('action') == 'checkout') {
-            $word = 'Pending loan';
+        if ($formAction == 'checkout') {
+            $noteText = 'Loan created by '.$loan->getCreatedBy()->getName();
         } else {
-            $word = 'Reservation';
+            $noteText = 'Reservation created by '.$loan->getCreatedBy()->getName();
         }
-        $noteText = $word.' created by '.$loan->getCreatedBy()->getName();
 
-        if ($bookingFee > 0) {
+        if ($bookingFee > 0 && $formAction == 'reserve') {
             $noteText .= "<br>Charged reservation fee of ".number_format($bookingFee, 2).".";
-
             $fee = new Payment();
             $fee->setCreatedBy($user);
             $fee->setAmount(-$bookingFee);
             $fee->setContact($loan->getContact());
             $fee->setLoan($loan);
-
             $feeNote = $this->get('translator')->trans('note_reservation_fee', [], 'member_site');
             $fee->setNote($feeNote);
-
             $em->persist($fee);
         }
 
@@ -519,8 +519,7 @@ class BasketController extends Controller
             $em->flush();
             $this->get('session')->set('basket', null);
 
-            if ($request->request->get('action') == 'checkout') {
-                // Admin only
+            if ($formAction == 'checkout') {
                 $this->addFlash('success', "Loan created OK. Now time to check out ...");
             } else {
                 $msg = $this->get('translator')->trans('msg_success.reservation_create', [], 'member_site');

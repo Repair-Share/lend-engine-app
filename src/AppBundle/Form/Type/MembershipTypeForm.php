@@ -38,7 +38,7 @@ class MembershipTypeForm extends AbstractType
             )
         ));
 
-        $builder->add('price', TextType::class, array(
+        $builder->add('price', CurrencyamountType::class, array(
             'label' => 'Cost',
             'required' => true,
             'attr' => array(
@@ -51,6 +51,22 @@ class MembershipTypeForm extends AbstractType
             'required' => true,
             'attr' => array(
                 'placeholder' => ''
+            )
+        ));
+
+        $builder->add('creditLimit', CurrencyamountType::class, array(
+            'label' => 'Credit limit',
+            'required' => false,
+            'attr' => array(
+                'data-help' => 'Maximum negative account balance. Leave blank for no limit.'
+            )
+        ));
+
+        $builder->add('maxItems', TextType::class, array(
+            'label' => 'Maximum items on loan',
+            'required' => false,
+            'attr' => array(
+                'data-help' => 'Leave blank for no limit.'
             )
         ));
 

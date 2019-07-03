@@ -186,6 +186,10 @@ class ContactController extends Controller
                 $contact->setPlainPassword($plainPassword);
             }
 
+            if (in_array("ROLE_SUPER_USER", $form->get('roles')->getData())) {
+                $contact->addRole("ROLE_ADMIN");
+            }
+
             $em->persist($contact);
 
             try {

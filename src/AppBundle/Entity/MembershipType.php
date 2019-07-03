@@ -37,7 +37,7 @@ class MembershipType
     private $description;
 
     /**
-     * @var string
+     * @var float
      *
      * @ORM\Column(name="price", type="decimal", scale=2)
      */
@@ -51,11 +51,25 @@ class MembershipType
     private $duration = 0;
 
     /**
-     * @var integer
+     * @var float
      *
      * @ORM\Column(name="discount", type="decimal", scale=2, nullable=true)
      */
     private $discount = 0.00;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="credit_limit", type="decimal", scale=2, nullable=true)
+     */
+    private $creditLimit = 0.00;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="max_items", type="integer", nullable=true)
+     */
+    private $maxItems = 0;
 
     /**
      * @var \DateTime
@@ -287,5 +301,43 @@ class MembershipType
         $this->isSelfServe = $selfServe;
 
         return $this;
+    }
+
+    /**
+     * @param $creditLimit
+     * @return $this
+     */
+    public function setCreditLimit($creditLimit)
+    {
+        $this->creditLimit = $creditLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCreditLimit()
+    {
+        return $this->creditLimit;
+    }
+
+    /**
+     * @param $maxItems
+     * @return $this
+     */
+    public function setMaxItems($maxItems)
+    {
+        $this->maxItems = $maxItems;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItems()
+    {
+        return $this->maxItems;
     }
 }

@@ -75,8 +75,18 @@
         var minimumPaymentAmount = {{ tenantInformation.minimumPaymentAmount|number_format(2) }};
         var orgName = "{{ tenantInformation.companyName }}";
         var isAdmin = {% if is_granted('ROLE_ADMIN') %}true{% else %}false{% endif %};
-        var currentUserId = {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}{{ app.user.id }}{% else %}0{% endif %};
         var userType = '{% if is_granted('ROLE_ADMIN') %}admin{% else %}member{% endif %}';
+        var selfCheckout = "{{ tenantInformation.selfCheckout }}";
+
+        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+        var currentUserId  = {{ app.user.id }};
+        var accountBalance = {{ app.user.balance|number_format(2) }};
+        var creditLimit    = "{% if app.user.activeMembership %}{{ app.user.activeMembership.membershipType.creditLimit }}{% else %}{% endif %}";
+        {% else %}
+        var currentUserId  = 0;
+        var accountBalance = 0;
+        var creditLimit    = 0;
+        {% endif %}
     </script>
 
     {% if tenantInformation.stripeAccessToken|length > 0 %}

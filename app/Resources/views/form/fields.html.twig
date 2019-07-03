@@ -60,5 +60,10 @@
             <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
             {{ form_widget(form) }}
         </div>
+        {% for attrname, attrvalue in attr %}
+            {% if attrname == 'data-help' %}
+                {% autoescape false %}<div class="help-block">{{ attrvalue|raw }}</div>{% endautoescape %}
+            {% endif %}
+        {% endfor %}
     </div>
 {%- endblock currencyamount_row -%}

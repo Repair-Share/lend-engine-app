@@ -1,12 +1,9 @@
 <?php
 
-namespace AppBundle\Controller\MemberSite;
+namespace AppBundle\Controller\Loan;
 
-use AppBundle\Entity\Contact;
 use AppBundle\Entity\CoreLoan;
-use AppBundle\Entity\CreditCard;
 use AppBundle\Entity\Loan;
-use AppBundle\Entity\Note;
 use AppBundle\Entity\Payment;
 use AppBundle\Form\Type\LoanCheckOutType;
 use Postmark\Models\PostmarkAttachment;
@@ -23,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  * With and without deposits
  * Multiple items
  * Regular payment methods, and Stripe payments
- * Stripe success and Stripe failuer
+ * Stripe success and Stripe failure
  * Stripe re-use of previous cards
  * Email confirmation
  */
@@ -64,6 +61,8 @@ class LoanController extends Controller
         /** @var \AppBundle\Repository\LoanRepository $repo */
         $repo = $em->getRepository('AppBundle:Loan');
 
+        $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
+
         /** @var \AppBundle\Entity\Loan $loan */
         if (!$loan = $repo->find($loanId)) {
             $this->addFlash('error', "We couldn't find a loan with ID {$loanId}. ");
@@ -101,6 +100,8 @@ class LoanController extends Controller
 
         $form = $this->createForm(LoanCheckOutType::class, null, array(
             'em' => $em,
+            'stripePaymentMethodId' => $stripePaymentMethodId,
+            'user' => $this->getUser(),
             'attr' => [
                 'id' => 'form-loan'
             ],
@@ -146,8 +147,6 @@ class LoanController extends Controller
             }
 
             if ($paymentAmount > 0) {
-
-                $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
 
                 if ($stripePaymentMethodId == $paymentMethod->getId()) {
                     $cardDetails = [

@@ -1,16 +1,13 @@
 <?php
 
-namespace AppBundle\Controller\MemberSite;
+namespace AppBundle\Controller\Loan;
 
-use AppBundle\Entity\Contact;
-use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\InventoryLocation;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\Payment;
 use AppBundle\Entity\Note;
 use AppBundle\Form\Type\ItemCheckInType;
-use Postmark\PostmarkClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;

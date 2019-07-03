@@ -260,6 +260,7 @@ class SettingsService
             'drag_to_book',
             'default_calendar_view',
             'show_events_online',
+            'self_checkout',
 
             // Web page header text
             'page_event_header',

@@ -43,6 +43,9 @@ class TenantService
     /** @var \AppBundle\Entity\Tenant */
     private $tenant;
 
+    /** @var \AppBundle\Entity\Contact */
+    private $user;
+
     private $postmarkApiKey;
 
     function __construct(Container $container,
@@ -62,6 +65,7 @@ class TenantService
         
         // Tenant is set in settings when first constructed
         $this->tenant = $this->settings->getTenant();
+
     }
 
     /**
@@ -496,6 +500,21 @@ class TenantService
     public function getFeature($feature)
     {
         return $this->billingService->isEnabled($this->getPlan(), $feature);
+    }
+
+    /**
+     * @return bool|string
+     */
+    public function getSelfCheckout()
+    {
+        if ($user = $this->container->get('security.token_storage')->getToken()->getUser()) {
+            if ($user != "anon.") {
+                if ($user->hasRole('ROLE_ADMIN')) {
+                    return true;
+                }
+            }
+        }
+        return (int)$this->getSetting('self_checkout');
     }
 
     /**

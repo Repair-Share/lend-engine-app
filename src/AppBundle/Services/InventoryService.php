@@ -152,7 +152,10 @@ class InventoryService
 
         // Add order by:
         if (isset($filter['sortBy']) && isset($filter['sortDir'])) {
-            $builder->addOrderBy($filter['sortBy'], $filter['sortDir']);
+            if (in_array($filter['sortBy'], ['item.name', 'item.sku', 'item.createdAt'])
+                && in_array($filter['sortDir'], ['ASC', 'DESC'])) {
+                $builder->addOrderBy($filter['sortBy'], $filter['sortDir']);
+            }
         } else {
             $builder->addOrderBy("item.name");
         }

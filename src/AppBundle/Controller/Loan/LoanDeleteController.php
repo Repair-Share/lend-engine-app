@@ -55,7 +55,7 @@ class LoanDeleteController extends Controller
 //                    $em->remove($deposit);
                     // @TODO foreign key dependencies need fixing for deleting deposits
                 } else {
-                    
+
                 }
                 $this->addFlash("error", "You can't currently delete loans with deposits.");
                 return $this->redirectToRoute('loan_list');

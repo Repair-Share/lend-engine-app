@@ -14,21 +14,25 @@ class LoanCheckOutType extends AbstractType
 {
     protected $em;
     protected $paymentDue;
+    protected $user;
+    protected $stripePaymentMethodId;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
         $this->em = $options['em'];
         $this->paymentDue = $options['paymentDue'];
+        $this->user = $options['user'];
 
-        $activePaymentMethods = $this->em->getRepository("AppBundle:PaymentMethod")->findAllOrderedByName();
+        $paymentMethodRepo = $this->em->getRepository("AppBundle:PaymentMethod");
+        $activePaymentMethods = $paymentMethodRepo->findAllOrderedByName();
 
         $builder->add('paymentMethod', EntityType::class, array(
             'label' => 'Payment method',
             'class' => 'AppBundle:PaymentMethod',
             'choice_label' => 'name',
             'choices' => $activePaymentMethods,
-            'required' => true,
+            'required' => false,
             'mapped' => true,
             'placeholder' => 'Choose an option',
             'attr' => [
@@ -81,6 +85,8 @@ class LoanCheckOutType extends AbstractType
     {
         $resolver->setDefaults(array(
             'em' => null,
+            'user' => null,
+            'stripePaymentMethodId' => null,
             'paymentDue' => null
         ));
     }
