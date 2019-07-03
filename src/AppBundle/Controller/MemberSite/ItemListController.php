@@ -77,6 +77,7 @@ class ItemListController extends Controller
         if ($from = $request->get('from')) {
             $filter['from'] = $request->get('from');
             $filter['to']   = $request->get('to');
+            $filter['filter'] = 'available';
         }
 
         $newSortDir = '';

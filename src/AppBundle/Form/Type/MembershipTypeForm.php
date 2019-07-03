@@ -58,7 +58,7 @@ class MembershipTypeForm extends AbstractType
             'label' => 'Credit limit',
             'required' => false,
             'attr' => array(
-                'data-help' => 'Maximum negative account balance. Leave blank for no limit.'
+                'data-help' => 'Allow user balance to go negative up to this amount.<br>Leave blank for no limit.<br>Set to zero for no credit.'
             )
         ));
 

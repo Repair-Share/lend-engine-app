@@ -116,6 +116,9 @@ EOT;
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($membership->getCreditLimit() < 0) {
+                $membership->setCreditLimit(-$membership->getCreditLimit());
+            }
             $em->persist($membership);
             $em->flush();
             $this->addFlash('success', 'Membership type saved.');

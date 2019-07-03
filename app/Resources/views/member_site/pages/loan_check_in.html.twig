@@ -117,7 +117,7 @@
             {{ form_row(form.location) }}
             {{ form_row(form.notes) }}
 
-            <div style="display:{% if tenantInformation.selfCheckout %}none{% else %}block{% endif %}">
+            <div style="display:{% if is_granted("ROLE_ADMIN") %}block{% else %}none{% endif %}">
                 {{ form_row(form.contact) }}
                 <div class="form-group">
                     <label>Charge a fee</label>
