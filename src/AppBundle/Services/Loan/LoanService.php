@@ -57,6 +57,34 @@ class LoanService
     }
 
     /**
+     * @param $filter
+     * @return int
+     */
+    public function countLoanRows($filter)
+    {
+        $repository = $this->em->getRepository('AppBundle:LoanRow');
+        $builder = $repository->createQueryBuilder('lr');
+        $builder->join('lr.loan', 'l');
+        $builder->add('select', 'COUNT(lr) AS qty');
+        if (isset($filter['status']) && $filter['status']) {
+            $builder->andWhere('l.status LIKE :status');
+            $builder->setParameter('status', '%'.$filter['status'].'%');
+        }
+        if (isset($filter['contact']) && $filter['contact']) {
+            $builder->andWhere('l.contact = :contact');
+            $builder->setParameter('contact', $filter['contact']);
+        }
+        $query = $builder->getQuery();
+        if ( $results = $query->getResult() ) {
+            $total = $results[0]['qty'];
+        } else {
+            $total = 0;
+        }
+
+        return $total;
+    }
+
+    /**
      * @return array
      * @throws \Doctrine\DBAL\DBALException
      */

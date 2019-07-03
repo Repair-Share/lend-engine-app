@@ -192,6 +192,12 @@ class BasketController extends Controller
         /** @var \AppBundle\Services\Loan\CheckoutService $checkoutService */
         $checkoutService = $this->get("service.checkout");
 
+        /** @var \AppBundle\Services\Loan\LoanService $loanService */
+        $loanService = $this->get("service.loan");
+
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->get("service.contact");
+
         // FIND THE ITEM
         /** @var \AppBundle\Entity\InventoryItem $product */
         $product = $itemRepo->find($itemId);
@@ -221,6 +227,28 @@ class BasketController extends Controller
                 $basketContactId = $this->getUser()->getId();
             }
             $basket = $this->createBasket($basketContactId);
+        }
+
+        // The basket only stores partial [serialized] contact info so get the full contact
+        $contact = $contactService->get($basket->getContact()->getId());
+        if (!$contact->getActiveMembership()) {
+            $this->addFlash('error', "You don't have an active membership. Please check your account.");
+            return $this->redirectToRoute('home');
+        }
+
+        // Verify user can borrow more items, if there's a limit on their membership type
+        $maxItems = $contact->getActiveMembership()->getMembershipType()->getMaxItems();
+        if ($maxItems > 0) {
+            $filter = [
+                'status' => Loan::STATUS_ACTIVE,
+                'contact' => $basket->getContact()
+            ];
+            $itemsOnLoan = $loanService->countLoanRows($filter);
+            $totalQty    = $itemsOnLoan + $basket->getLoanRows()->count();
+            if ($totalQty >= $maxItems) {
+                $this->addFlash('error', "You've already got {$totalQty} items on loan and in basket. The maximum for your membership is {$maxItems}.");
+                return $this->redirectToRoute('home');
+            }
         }
 
         if (!$basket) {
