@@ -63,7 +63,7 @@
             {#The basket items come from a deserialized session var#}
             {% for row in tenantInformation.basket.loanRows %}
                 <tr>
-                    <td style="width:100px">
+                    <td style="width:100px" class="hidden-xs">
                         {% if row.inventoryItem.imageName %}
                             <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}" class="img-thumbnail img-responsive">
                         {% else %}
@@ -115,7 +115,7 @@
             {% endfor %}
 
             <tr>
-                <td></td>
+                <td class="hidden-xs"></td>
                 <td class="basket-total">
                     {% trans %}public_basket.total{% endtrans %}
                 </td>
@@ -171,8 +171,8 @@
                         <div>
                         {% trans %}public_misc.credit_limit{% endtrans %}
                         {{ tenantInformation.currencySymbol }} {{ user.activeMembership.membershipType.creditLimit|number_format(2) }}
-                    {% endif %}
                         </div>
+                    {% endif %}
 
                     <span class="actionCredit" style="display:none">
                         {% trans %}public_basket.add_credit_message{% endtrans %}

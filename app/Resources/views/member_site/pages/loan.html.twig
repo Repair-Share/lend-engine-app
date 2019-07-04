@@ -101,7 +101,7 @@
 
         {% for row in loan.loanRows %}
             <tr>
-                <td style="width:100px">
+                <td style="width:100px" class="hidden-xs">
                     {% if row.inventoryItem.imageName %}
                         <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}" class="img-thumbnail img-responsive">
                     {% else %}
@@ -224,7 +224,7 @@
                 {#Fee included in items rows, or is a payment received#}
             {% else %}
                 <tr>
-                    <td></td>
+                    <td class="hidden-xs"></td>
                     <td>
                         {{ fee.note }}
                         {% if is_granted('ROLE_ADMIN') %}
@@ -246,8 +246,7 @@
         {% endfor %}
 
         <tr>
-            <td>
-            </td>
+            <td class="hidden-xs"></td>
             <td class="basket-total">
                 {% trans %}public_basket.total{% endtrans %}
             </td>
@@ -259,7 +258,7 @@
 
         {#Charged to date (all payments with a loan ID)#}
         <tr class="checkout">
-            <td></td>
+            <td class="hidden-xs"></td>
             <td style="text-align:right; color: #10a422">
                 {% trans %}public_loan.charged{% endtrans %}
             </td>
@@ -271,7 +270,7 @@
 
         {% if loan.balance != loan.totalFee and loan.balance > 0 %}
             <tr class="checkout">
-                <td></td>
+                <td class="hidden-xs"></td>
                 <td class="basket-subtotal">
                     {#DUE TO CHARGE#}
                     {% trans %}public_basket.balance{% endtrans %}
@@ -287,7 +286,7 @@
 
         {% if loan.contact.balance > 0 and loan.status in ['RESERVED', 'PENDING'] %}
             <tr class="checkout">
-                <td></td>
+                <td class="hidden-xs"></td>
                 <td class="basket-subtotal">
                     {% trans %}- balance on account{% endtrans %}
                 </td>
@@ -298,7 +297,7 @@
             </tr>
 
             <tr class="checkout">
-                <td></td>
+                <td class="hidden-xs"></td>
                 <td class="basket-subtotal">
                     {% trans %}Subtotal{% endtrans %}
                 </td>
@@ -314,7 +313,7 @@
 
         {% if deposits > 0 and loan.status in ['RESERVED', 'PENDING'] %}
             <tr class="checkout">
-                <td></td>
+                <td class="hidden-xs"></td>
                 <td class="basket-subtotal">
                     {% trans %}+ refundable deposits {% endtrans %}
                 </td>
@@ -328,7 +327,7 @@
         {#Only show the to-pay amount if we are before checkout, since we can no longer take payment via this screen#}
         {% if loan.status in ['PENDING', 'RESERVED'] %}
         <tr class="checkout">
-            <td></td>
+            <td class="hidden-xs"></td>
             <td class="basket-subtotal">
                 {% trans %}To pay{% endtrans %}
             </td>
@@ -397,9 +396,8 @@
     {{ form_end(form) }}
 
     <hr>
-
     <div class="row" style="padding: 10px 10px;">
-        <br>
+
         <div class="col-md-6">
             {% if loan.notes|length > 0 %}
                 {% for note in loan.notes %}
@@ -410,12 +408,7 @@
             {% else %}
                 No notes added yet.
             {% endif %}
-
-            {% if loan.status == 'RESERVED' or loan.status == 'PENDING' %}
-                <div style="margin-top: 10px;">
-                    <a href="{{ path('reservation_cancel', {id: loan.id}) }}" class="btn btn-danger">{% trans %}button_cancel_reservation{% endtrans %}</a>
-                </div>
-            {% endif %}
+            <br><br>
         </div>
         <div class="col-md-6">
 
@@ -427,7 +420,7 @@
                         For damages, delays, additional time etc. Fees are charged to the member account immediately.
                     </div>
                     <div class="row" id="add-fee">
-                        <div class="col-md-4">
+                        <div class="col-md-4" style="margin-bottom: 10px;">
                         <span class="input-group">
                             <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
                             <input type="text" name="feeAmount" id="feeAmount" class="form-control input-sm" placeholder="0.00">
@@ -467,6 +460,11 @@
         </div>
     </div>
 
+    {% if loan.status == 'RESERVED' or loan.status == 'PENDING' %}
+        <div style="margin-top: 10px;">
+            <a href="{{ path('reservation_cancel', {id: loan.id}) }}" class="btn btn-danger">{% trans %}button_cancel_reservation{% endtrans %}</a>
+        </div>
+    {% endif %}
 
 {% endblock %}
 
@@ -550,7 +548,7 @@
             // Confirm user has chosen a payment method
             if (allowCheckOut == true) {
                 if (paymentValue > 0 && !$("#loan_check_out_paymentMethod").val()) {
-                    checkoutButton.attr("disabled", true).html("Please select a payment method to take payment.");
+                    checkoutButton.attr("disabled", true).html("Select a payment method to take payment.");
                     allowCheckOut = false;
                 }
             }

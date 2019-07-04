@@ -34,11 +34,11 @@
             </div>
         </header>
 
-        <div class="container" id="theme-admin">
-            {% if is_granted('ROLE_ADMIN') %}
-                {% include('member_site/themes/widgets/admin_tools.html.twig') %}
-            {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
+        <div class="container" id="theme-admin" style="margin-top:10px;clear: both">
+            {% include('member_site/themes/widgets/admin_tools.html.twig') %}
         </div>
+        {% endif %}
 
         <div class="container" id="theme-content">
 
