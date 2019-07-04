@@ -13,13 +13,19 @@
         <thead>
         <tr>
             <th align="left" style="padding-right: 15px">&nbsp;</th>
+            <th align="left" style="padding-right: 15px">&nbsp;</th>
             <th align="right">{{ 'le_email.th_fee'|trans() }}</th>
         </tr>
         </thead>
         {% for row in loanRows %}
-            <tr>
+            <tr style="margin-bottom:20px;">
+                <td valign="top" style="padding-right: 15px; width: 60px;">
+                    {% if row.inventoryItem.imageName %}
+                        <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}">
+                    {% endif %}
+                </td>
                 <td valign="top" style="padding-right: 15px">
-                    {{ row.inventoryItem.name }}
+                    <strong>{{ row.inventoryItem.name }}</strong>
 
                     <div>
                         {{ row.dueOutAt|date('d F g:i a') }} - {{ row.dueInAt|date('d F g:i a') }}

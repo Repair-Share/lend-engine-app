@@ -14,20 +14,19 @@
         <thead>
             <tr>
                 <th align="left" style="padding-right: 15px">&nbsp;</th>
+                <th align="left" style="padding-right: 15px">&nbsp;</th>
                 <th align="left" style="padding-right: 15px">{{ 'le_email.th_due_back'|trans() }}</th>
             </tr>
         </thead>
 
         {% for item in items %}
             <tr>
-                <td valign="top" style="padding-right: 15px">
-
+                <td valign="top" style="padding-right: 15px; width: 60px;">
                     {% if item.imageName %}
-                        <div style="">
-                            <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ schema }}/thumbs/{{ item.imageName }}">
-                        </div>
+                        <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ item.imageName }}">
                     {% endif %}
-
+                </td>
+                <td valign="top" style="padding-right: 15px">
                     <strong>{{ item.name }}</strong>
 
                     {% if item.componentInformation|length > 0 %}
