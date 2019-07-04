@@ -45,6 +45,26 @@ class ResetController extends Controller
                 }
             }
             $this->addFlash("success", "Reset items.");
+        } else if ($request->get('a') == 'payments') {
+            /** @var \AppBundle\Services\Payment\PaymentService $service */
+            $service = $this->get('service.payment');
+            $repo = $em->getRepository('AppBundle:Payment');
+            foreach ($repo->findAll() AS $payment) {
+                if (!$service->deletePayment($payment->getId())) {
+                    foreach ($service->errors AS $error) {
+                        $this->addFlash("error", $error);
+                    }
+                }
+            }
+
+            $repo = $em->getRepository('AppBundle:Contact');
+            foreach ($repo->findAll() AS $contact) {
+                $contact->setBalance(0);
+                $em->persist($contact);
+            }
+            $em->flush();
+
+            $this->addFlash("success", "Reset payments.");
         }
 
         return $this->redirectToRoute('homepage');

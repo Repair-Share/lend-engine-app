@@ -179,6 +179,39 @@ class PaymentService
     }
 
     /**
+     * @param $id
+     * @return bool
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function deletePayment($id)
+    {
+        if (!$this->em->isOpen()) {
+            $this->em = $this->em->create(
+                $this->em->getConnection(),
+                $this->em->getConfiguration()
+            );
+        }
+
+        /** @var \AppBundle\Entity\Payment $payment */
+        if (!$payment = $this->repo->find($id)) {
+            $this->errors[] = "Could not find payment with ID ".$id;
+            return false;
+        }
+
+        $this->em->remove($payment);
+
+        try {
+            $this->em->flush();
+        } catch(\Exception $generalException) {
+            $this->errors[] = 'Payment failed to delete.';
+            $this->errors[] = $generalException->getMessage();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @param $chargeId string
      * @param Payment $p
      * @return Payment|bool
