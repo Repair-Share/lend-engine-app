@@ -31,6 +31,45 @@ class ItemService
     }
 
     /**
+     * @param $id
+     * @return bool
+     */
+    public function deleteItem($id)
+    {
+        if (!$this->em->isOpen()) {
+            $this->em = $this->em->create(
+                $this->em->getConnection(),
+                $this->em->getConfiguration()
+            );
+        }
+
+        $repo = $this->em->getRepository('AppBundle:InventoryItem');
+
+        /** @var \AppBundle\Entity\InventoryItem $item */
+        if (!$item = $repo->find($id)) {
+            $this->errors[] = "Could not find item with ID ".$id;
+            return false;
+        }
+
+        if ($item->getInventoryLocation()->getId() == 1) {
+            $this->errors[] = "You can't delete items on loan : {$id}.";
+            return false;
+        }
+
+        $this->em->remove($item);
+
+        try {
+            $this->em->flush();
+        } catch(\Exception $generalException) {
+            $this->errors[] = 'Item failed to delete.';
+            $this->errors[] = $generalException->getMessage();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @param InventoryItem $inventoryItem
      * @param Contact $contact
      * @return float

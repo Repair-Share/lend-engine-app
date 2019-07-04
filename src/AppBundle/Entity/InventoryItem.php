@@ -186,17 +186,17 @@ class InventoryItem
     private $inventoryLocation;
 
     /**
-     * @ORM\OneToMany(targetEntity="ItemMovement", mappedBy="inventoryItem")
+     * @ORM\OneToMany(targetEntity="ItemMovement", mappedBy="inventoryItem", cascade={"remove"})
      */
     private $itemMovements;
 
     /**
-     * @ORM\OneToMany(targetEntity="Note", mappedBy="inventoryItem")
+     * @ORM\OneToMany(targetEntity="Note", mappedBy="inventoryItem", cascade={"remove"})
      */
     private $notes;
 
     /**
-     * @ORM\OneToMany(targetEntity="Payment", mappedBy="inventoryItem")
+     * @ORM\OneToMany(targetEntity="Payment", mappedBy="inventoryItem", cascade={"remove"})
      */
     private $payments;
 

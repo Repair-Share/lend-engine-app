@@ -209,10 +209,8 @@ class LoanListController extends Controller
             $row[] = $loanFromTime->format("d M Y").'<div style="font-size: 12px">'.$loanFromTime->format("g:i a").'</div>';
             $row[] = $loan->getTimeIn()->format("d M Y").'<div style="font-size: 12px">'.$loan->getTimeIn()->format("g:i a").'</div>';
             $row[] = number_format($loan->getItemsTotal(), 2);
-            $row[] = $loan->getReference();
 
             $links = '<li><a href="'.$editUrl.'">Open</a></li>';
-
 
             if (!in_array($loan->getStatus(), [Loan::STATUS_ACTIVE, Loan::STATUS_OVERDUE])) {
                 $deleteUrl = $this->generateUrl('loan_delete', array('id' => $loan->getId()));

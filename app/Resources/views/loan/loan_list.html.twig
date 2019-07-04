@@ -98,7 +98,6 @@
                 <th>From</th>
                 <th>To</th>
                 <th>Fee</th>
-                <th>Ref</th>
                 <th></th>
                 </thead>
             </table>
@@ -171,10 +170,9 @@
                     null,
                     { "orderable": false },
                     { "orderable": false },
-                    null,
-                    null,
-                    null,
                     { "orderable": false },
+                    { "orderable": false },
+                    null,
                     { "orderable": false }
                 ],
                 "order": [[ 0, "desc" ]]
@@ -187,7 +185,7 @@
             {% endif %}
 
             $("#data-table-loans_filter label input").css("height", "34px");
-            $("#data-table-loans_filter label input").attr("placeholder", "Contact, Loan ID, reference");
+            $("#data-table-loans_filter label input").attr("placeholder", "Contact, item or loan ID");
             $("#data-table-loans_filter label input").css("width", "200px");
 
         });

@@ -30,6 +30,81 @@ class LoanService
     }
 
     /**
+     * @param $id int
+     * @return bool
+     */
+    public function deleteLoan($id)
+    {
+        $repo = $this->em->getRepository('AppBundle:Loan');
+
+        /** @var \AppBundle\Entity\Loan $loan */
+        if (!$loan = $repo->find($id)) {
+            $this->errors[] = "Could not find loan with ID ".$id;
+            return false;
+        }
+
+        if ($loan->getStatus() == Loan::STATUS_ACTIVE) {
+            $this->errors[] = "You can't delete active loans : {$id}.";
+            return false;
+        }
+
+        if ($loan->getStatus() == Loan::STATUS_OVERDUE) {
+            $this->errors[] = "You can't delete overdue loans : {$id}.";
+            return false;
+        }
+
+        // Get all item movements associated with the loan (for closed loans)
+        /** @var \AppBundle\Repository\ItemMovementRepository $itemMovementRepo */
+        $itemMovementRepo = $this->em->getRepository('AppBundle:ItemMovement');
+
+        /** @var \AppBundle\Repository\DepositRepository $depositRepo */
+        $depositRepo = $this->em->getRepository('AppBundle:Deposit');
+
+        /** @var \AppBundle\Entity\LoanRow $row */
+        foreach ($loan->getLoanRows() AS $row) {
+
+            $itemMovements = $itemMovementRepo->findBy(['loanRow' => $row->getId()]);
+            foreach ($itemMovements AS $movement) {
+                $this->em->remove($movement);
+            }
+
+            $deposits = $depositRepo->findBy(['loanRow' => $row->getId()]);
+
+            /** @var \AppBundle\Entity\Deposit $deposit */
+            foreach ($deposits AS $deposit) {
+                if ($deposit->getBalance() == 0) {
+
+//                    $row->setDeposit(null);
+//                    $this->em->persist($row);
+//                    $deposit->setLoanRow(null);
+//                    $this->em->persist($deposit);
+//                    $this->em->flush();
+//
+//                    $this->em->remove($deposit);
+                } else {
+//                    $this->errors[] = "Loan has un-refunded deposit : {$id}";
+//                    return false;
+                }
+                $this->errors[] = "Loan has a deposit : {$id}";
+                return false;
+            }
+
+        }
+
+        $this->em->remove($loan);
+
+        try {
+            $this->em->flush();
+        } catch(\Exception $generalException) {
+            $this->errors[] = 'Loan failed to delete.';
+            $this->errors[] = $generalException->getMessage();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @param string $status
      * @param \DateTime $dateTo
      * @return int
