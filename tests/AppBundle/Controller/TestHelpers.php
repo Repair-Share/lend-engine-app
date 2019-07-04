@@ -171,9 +171,10 @@ class TestHelpers extends AuthenticatedControllerTest
      * @param Client $client
      * @param $contactId
      * @param int $itemId
+     * @param string $action
      * @return int
      */
-    public function createLoan(Client $client, $contactId, $itemId = 1000)
+    public function createLoan(Client $client, $contactId, $itemId = 1000, $action = 'checkout')
     {
         // Add an item to the basket
         $today = new \DateTime();
@@ -195,7 +196,7 @@ class TestHelpers extends AuthenticatedControllerTest
 
         // Confirm the loan (will be set to pending)
         $params = [
-            'action' => 'checkout',
+            'action' => $action,
             'row_fee' => [
                 $itemId => 10.00
             ]

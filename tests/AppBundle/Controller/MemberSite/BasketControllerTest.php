@@ -40,7 +40,7 @@ class BasketControllerTest extends AuthenticatedControllerTest
             'date_to'   => $today->format("Y-m-d"),
             'time_to'   => $today->format("17:00:00")
         ];
-        $this->client->request('POST', '/basket/add/1000?contactId='.$contactId, $params);
+        $this->client->request('POST', '/basket/add/1000?qty=1&contactId='.$contactId, $params);
 
         $this->assertTrue($this->client->getResponse() instanceof RedirectResponse);
         $crawler = $this->client->followRedirect();
@@ -48,8 +48,8 @@ class BasketControllerTest extends AuthenticatedControllerTest
         $this->assertContains('basketDetails', $crawler->html());
 
         // Check time zone OK
-        $this->assertContains($today->format("d F")." 9:00 am", $crawler->html());
-        $this->assertContains($today->format("d F")." 5:00 pm", $crawler->html());
+        $this->assertContains($today->format("j F")." 9:00 am", $crawler->html());
+        $this->assertContains($today->format("j F")." 5:00 pm", $crawler->html());
 
         // Confirm the reservation
         $params = [
@@ -68,8 +68,8 @@ class BasketControllerTest extends AuthenticatedControllerTest
         $this->assertContains('Reservation created by', $crawler->html());
 
         // Confirm that the time zone was saved properly
-        $this->assertContains($today->format("d F")." 9:00 am", $crawler->html());
-        $this->assertContains($today->format("d F")." 5:00 pm", $crawler->html());
+        $this->assertContains($today->format("j F")." 9:00 am", $crawler->html());
+        $this->assertContains($today->format("j F")." 5:00 pm", $crawler->html());
 
     }
 
