@@ -206,8 +206,8 @@ class LoanListController extends Controller
             $row[] = '<a title data-original-title="Open" href="'.$editUrl.'">'.$loan->getId().'</a>';
             $row[] = $status;
             $row[] = $loanInfo;
-            $row[] = $loanFromTime->format("d M Y").'<div style="font-size: 12px">'.$loanFromTime->format("g:i a").'</div>';
-            $row[] = $loan->getTimeIn()->format("d M Y").'<div style="font-size: 12px">'.$loan->getTimeIn()->format("g:i a").'</div>';
+            $row[] = $loanFromTime->format("l d M Y").'<div style="font-size: 12px">'.$loanFromTime->format("g:i a").'</div>';
+            $row[] = $loan->getTimeIn()->format("l d M Y").'<div style="font-size: 12px">'.$loan->getTimeIn()->format("g:i a").'</div>';
             $row[] = number_format($loan->getItemsTotal(), 2);
 
             $links = '<li><a href="'.$editUrl.'">Open</a></li>';
