@@ -201,5 +201,23 @@ class SiteOpening
 
         return $weekDayNames[$this->weekDay];
     }
+
+    /**
+     * @return string
+     */
+    public function getFriendlyTimeFrom()
+    {
+        $timeFrom = new \DateTime('2020-01-01 ' . $this->getTimeFrom());
+        return $timeFrom->format("g:i a");
+    }
+
+    /**
+     * @return string
+     */
+    public function getFriendlyTimeTo()
+    {
+        $timeTo = new \DateTime('2020-01-01 ' . $this->getTimeTo());
+        return $timeTo->format("g:i a");
+    }
 }
 

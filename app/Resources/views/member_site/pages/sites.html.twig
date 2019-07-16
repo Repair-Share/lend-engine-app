@@ -96,7 +96,7 @@
                             <div class="opening-header">Open every week:</div>
                             {% for opening in site.siteOpenings %}
                                 <div>
-                                    {{ opening.weekDayName }}, {{ opening.timeFrom }} - {{ opening.timeTo }}
+                                    {{ opening.weekDayName }}, {{ opening.friendlyTimeFrom }} - {{ opening.friendlyTimeTo }}
                                 </div>
                             {% endfor %}
                         {% endif %}
@@ -115,10 +115,10 @@
                             {% endif %}
 
                             {% for slot in site.openTimes %}
-                                <div>
-                                    {{ slot.date|date("l d F") }},
-                                    {{ slot.timeFrom }} -
-                                    {{ slot.timeTo }}
+                                <div style="padding-bottom: 3px">
+                                    {{ slot.date|date("l d F") }},<br>
+                                    {{ slot.friendlyTimeFrom }} -
+                                    {{ slot.friendlyTimeTo }}
                                 </div>
                             {% endfor %}
 
@@ -131,10 +131,8 @@
                         </div>
 
                         {% for slot in site.closedTimes %}
-                            <div>
+                            <div style="padding-bottom: 3px">
                                 {{ slot.date|date("l d F") }}
-                                {#{{ slot.timeFrom }} -#}
-                                {#{{ slot.timeTo }}#}
                             </div>
                         {% endfor %}
                     {% endif %}
