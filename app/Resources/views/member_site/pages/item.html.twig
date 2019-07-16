@@ -137,11 +137,9 @@
             var originalReturnDate = '{{ app.request.get('from') }}';
 
             var sites = [];
-            var activeSiteId;
             {% for site in sites %}
             sites[{{ site.id }}] = "{{ site.name }}";
             {% endfor %}
-            {#activeSiteId = '{% if app.user and app.user.activeSite %}{{ app.user.activeSite.id }}{% else %}{{ sites[0].id }}{% endif %}';#}
             var itemSiteId = '{{ product.inventoryLocation.site.id }}';
             var itemSiteName = sites[itemSiteId];
 
@@ -365,6 +363,11 @@
             borrowModal.on('click', '.borrowModalCancel', function () {
                 resetDates();
                 borrowModal.modal('hide');
+            });
+
+            borrowModal.on('click', '#set-pickup-today', function () {
+                resetDates();
+                setPickup(moment(), null, null, itemSiteId, itemSiteName);
             });
 
             borrowModal.on('click', '.site_from', function () {

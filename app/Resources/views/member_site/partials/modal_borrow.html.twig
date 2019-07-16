@@ -77,6 +77,12 @@
                         <button type="button" class="btn btn-success" data-dismiss="modal" id="choosePickupButton" style="margin: 10px 0;">
                             {% trans %}public_item.button_choose_pickup{% endtrans %}
                         </button>
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div style="margin-top: 20px;">
+                                <button type="button" class="btn btn-xs btn-default" id="set-pickup-today">Today</button>
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="col-md-4">
                         <h4>{% trans %}public_item.return_by{% endtrans %} ...</h4>
