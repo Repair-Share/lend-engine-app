@@ -23,7 +23,6 @@ class SiteDataController extends Controller
         $data = [];
 
         $itemId   = $request->get('itemId');
-        $siteId   = $request->get('site');
         $dateFrom = $request->get('start');
         $dateTo   = $request->get('end');
 
@@ -41,8 +40,6 @@ class SiteDataController extends Controller
         $settingsService = $this->get('settings');
 
         /** @var $site \AppBundle\Entity\Site */
-        // Use the following from the UI if we get users with loads of sites
-//        $sites = $siteRepo->findBy(['id' => [1]]);
         $sites = $item->getSites();
         if (count($sites) == 0) {
             $sites = $siteRepo->findBy(['isActive' => true]);
@@ -207,7 +204,7 @@ class SiteDataController extends Controller
 
                 if ($slot->getType() == 'o') {
 
-                    // Remove if there are bookings for it
+                    // Remove this custom slot if there are bookings that clash with it
                     $slotIsValid = true;
 
                     foreach ($bookings AS $loanRow) {
@@ -236,7 +233,6 @@ class SiteDataController extends Controller
                             'siteName' => $site->getName(),
                             'changeover' => $s_changeover,
                             'title' => 'Additional hours',
-//                            'rendering' => 'background',
                             'color' => $site->getColour(),
                             'start'  => $s_start,
                             'end'    => $s_end,
@@ -246,35 +242,13 @@ class SiteDataController extends Controller
                 } else {
                     // Check all opening times loaded so far
                     foreach ($data AS $k => $openingTime) {
-                        // if any opening time lies within closed custom slot, remove it
-                        if ($openingTime['start'] > $s_start && $openingTime['end'] < $s_end) {
+                        // If any opening time lies within closed custom slot, remove it
+                        if ($openingTime['start'] >= $s_start && $openingTime['end'] <= $s_end) {
                             unset($data[$k]);
                         }
                     }
                 }
             }
-
-//        $openDays = [];
-//        foreach ($data AS $k => $event) {
-//            $openDays[] = substr($event['start'], 0, 10);
-//        }
-
-        // For all remaining days in the view, create a blocked out cell
-//        $day = new \DateTime($dateFrom);
-//        $to  = new \DateTime($dateTo);
-//        while ($day <= $to) {
-//            if (in_array($day->format("Y-m-d"), $openDays)) {
-//                // We have a slot for this day
-//            } else {
-//                $data[] = [
-//                    'title' => '-',
-//                    'start'  => $day->format("Y-m-d"),
-//                    'end'    => $day->format("Y-m-d"),
-//                    'rendering' => 'background'
-//                ];
-//            }
-//            $day->modify("+1 day");
-//        }
 
         }
         $data = array_values($data);
