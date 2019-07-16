@@ -64,6 +64,7 @@ class SubscribeController extends Controller
                 $charge = new Payment();
                 $charge->setAmount(-$amount);
                 $charge->setContact($contact);
+                $charge->setCreatedBy($contact);
                 $charge->setNote("Membership fee (self serve).");
 
                 if (!$paymentService->create($charge, null)) {
@@ -77,6 +78,7 @@ class SubscribeController extends Controller
                 $payment = new Payment();
                 $payment->setAmount($amount);
                 $payment->setContact($contact);
+                $payment->setCreatedBy($contact);
                 $payment->setPaymentMethod($paymentMethod);
                 $payment->setNote("Payment for membership fee.");
 
@@ -102,6 +104,8 @@ class SubscribeController extends Controller
 
                 $membership = new Membership();
                 $membership->setContact($contact);
+                $membership->setCreatedBy($contact);
+                $membership->setPrice($amount);
 
                 $mType = $membershipTypeRepo->find($membershipTypeId);
                 $membership->setMembershipType($mType);
@@ -134,6 +138,16 @@ class SubscribeController extends Controller
 
                 // save the new membership
                 $em->persist($membership);
+
+                if (isset($payment)) {
+                    $payment->setMembership($membership);
+                    $em->persist($payment);
+                }
+
+                if (isset($charge)) {
+                    $charge->setMembership($membership);
+                    $em->persist($charge);
+                }
 
                 // Switch the contact to this new membership
                 $contact->setActiveMembership($membership);
