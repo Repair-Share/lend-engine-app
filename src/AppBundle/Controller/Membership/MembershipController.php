@@ -188,10 +188,10 @@ class MembershipController extends Controller
                 $amount  = $form->get('paymentAmount')->getData();
                 $paymentMethod = $form->get('paymentMethod')->getData();
 
-                $token   = $form->get('stripeToken')->getData();
-                $cardId  = $form->get('stripeCardId')->getData();
+//                $token   = $form->get('stripeToken')->getData();
+//                $cardId  = $form->get('stripeCardId')->getData();
 
-                // Create a payment which is saved when we receive OK from Stripe
+                // Create a payment
                 $payment = new Payment();
                 $payment->setCreatedBy($user);
                 $payment->setPaymentMethod($paymentMethod);
@@ -200,20 +200,28 @@ class MembershipController extends Controller
                 $payment->setNote($paymentNote);
                 $payment->setContact($contact);
 
-                if ($token || $cardId) {
-                    $cardDetails = [
-                        'token'  => $token,
-                        'cardId' => $cardId,
-                    ];
-                    if ($feeAmount > 0 && $paymentMethod->getId() == $stripePaymentMethodId) {
-                        $amount += $feeAmount;
-                        $payment->setAmount($amount);
-                    }
-                } else {
-                    $cardDetails = null;
+//                if ($token || $cardId) {
+//                    $cardDetails = [
+//                        'token'  => $token,
+//                        'cardId' => $cardId,
+//                    ];
+//                    if ($feeAmount > 0 && $paymentMethod->getId() == $stripePaymentMethodId) {
+//                        $amount += $feeAmount;
+//                        $payment->setAmount($amount);
+//                    }
+//                } else {
+//                    $cardDetails = null;
+//                }
+
+                if ($stripePaymentMethodId == $paymentMethod->getId()) {
+//                    if ($feeAmount > 0 && $paymentMethod->getId() == $stripePaymentMethodId) {
+//                        $amount += $feeAmount;
+//                        $payment->setAmount($amount);
+//                    }
+                    $payment->setPspCode($request->get('chargeId'));
                 }
 
-                if (!$paymentService->create($payment, $cardDetails)) {
+                if (!$paymentService->create($payment)) {
                     $paymentOk = false;
                     foreach ($paymentService->errors AS $error) {
                         $this->addFlash('error', $error);

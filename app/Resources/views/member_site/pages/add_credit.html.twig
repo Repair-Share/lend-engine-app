@@ -14,6 +14,19 @@
         {% endif %}
     </h2>
 
+    {{ include('member_site/partials/account_balance.html.twig') }}
+
+    {{ form_start(form, { 'attr' : { 'class': 'payment-form', 'id' : "paymentForm" } }) }}
+
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
     {{ include('cores/payment_core.html.twig') }}
+
+    <button type="button" class="btn btn-success payment-submit" data-text="Add credit">{% trans %}button_add_credit{% endtrans %}</button>
+
+    {{ form_end(form) }}
 
 {% endblock %}

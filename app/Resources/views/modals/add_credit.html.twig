@@ -9,5 +9,20 @@
 {% endblock %}
 
 {% block body %}
+
+    {{ form_start(form, { 'attr' : { 'class': 'payment-form', 'id' : "paymentForm" } }) }}
+
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
     {{ include('cores/payment_core.html.twig') }}
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block footer %}
+    <button class="payment-submit btn btn-success">Add credit</button>
 {% endblock %}

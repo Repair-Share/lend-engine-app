@@ -4,6 +4,7 @@ namespace AppBundle\Controller\MemberSite;
 
 use AppBundle\Entity\CreditCard;
 use AppBundle\Entity\Payment;
+use AppBundle\Form\Type\AddCreditType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -105,7 +106,6 @@ class PaymentController extends Controller
         $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
 
         /** @var \AppBundle\Entity\Contact $contact */
-
         if ($contactId = $request->get('c')) {
             if (!$contact = $contactRepo->find($contactId)) {
                 $this->addFlash('error', "Can't find that contact");
@@ -115,33 +115,43 @@ class PaymentController extends Controller
             $contact = $this->getUser();
         }
 
-        $amount = $request->get('paymentAmount');
-        if ($amount < 0) {
-            $this->addFlash('error', "Payment amount must be more than zero. Refunds should be issued using the payments list.");
-        } else if ($amount > 0) {
+        // Create the form
+        $form = $this->createForm(AddCreditType::class, null, [
+            'em' => $em,
+            'action' => $this->generateUrl('add_credit')
+        ]);
 
-            $paymentMethodId = $request->get('paymentMethod');
-            $paymentMethod = $pmRepo->find($paymentMethodId);
+        $form->handleRequest($request);
 
-            $paymentDate = new \DateTime();
-            $paymentOk = true;
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            $payment = new Payment();
-            $payment->setCreatedBy($user);
-            $payment->setContact($contact);
-            $payment->setAmount($amount);
-            $payment->setPaymentDate($paymentDate);
-            $payment->setPaymentMethod($paymentMethod);
-            if ($note = $request->get('paymentNote')) {
-                $payment->setNote($note);
-            } else {
-                $payment->setNote("Credit added.");
-            }
+            $amount = $form->get('paymentAmount')->getData();
 
-            $cardDetails = null;
-            $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
+            if ($amount < 0) {
+                $this->addFlash('error', "Payment amount must be more than zero. Refunds should be issued using the payments list.");
+            } else if ($amount > 0) {
+                $paymentMethodId = $form->get('paymentMethod')->getData();
+                $paymentMethod = $pmRepo->find($paymentMethodId);
 
-            if ($stripePaymentMethodId == $paymentMethod->getId()) {
+                $paymentDate = new \DateTime();
+                $paymentOk = true;
+
+                $payment = new Payment();
+                $payment->setCreatedBy($user);
+                $payment->setContact($contact);
+                $payment->setAmount($amount);
+                $payment->setPaymentDate($paymentDate);
+                $payment->setPaymentMethod($paymentMethod);
+                if ($note = $form->get('paymentNote')->getData()) {
+                    $payment->setNote($note);
+                } else {
+                    $payment->setNote("Credit added.");
+                }
+
+                $cardDetails = null;
+                $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
+
+                if ($stripePaymentMethodId == $paymentMethod->getId()) {
 //                if ($amount < $minimumPaymentAmount) {
 //                    $this->addFlash('error', 'A minimum payment of '.number_format($minimumPaymentAmount, 2).' is required.');
 //                    return $this->redirectToRoute('add_credit', ['c' => $contact->getId()]);
@@ -150,33 +160,36 @@ class PaymentController extends Controller
 //                    'token'  => $request->get('stripeToken'),
 //                    'cardId' => $request->get('stripeCardId'),
 //                ];
-                $payment->setPspCode($request->get('chargeId'));
-            }
-
-            if (!$paymentService->create($payment, $cardDetails)) {
-                $paymentOk = false;
-                foreach ($paymentService->errors AS $error) {
-                    $this->addFlash('error', $error);
+                    $payment->setPspCode($request->get('chargeId'));
                 }
-            }
 
-            if ($paymentOk == true) {
-                // Update the contact balance
-                $contactService->recalculateBalance($contact);
-                $this->addFlash('success', 'Payment recorded OK.');
-            } else {
-                $this->addFlash('error', 'There was an error creating the payment.');
-            }
+                if (!$paymentService->create($payment, $cardDetails)) {
+                    $paymentOk = false;
+                    foreach ($paymentService->errors AS $error) {
+                        $this->addFlash('error', $error);
+                    }
+                }
 
-            if ($request->get('return') == 'basket') {
-                return $this->redirectToRoute('basket_show', ['payment' => 'ok']);
-            } else if ($request->get('return') == 'admin') {
-                return $this->redirectToRoute('contact', ['id' => $contact->getId()]);
-            }
+                if ($paymentOk == true) {
+                    // Update the contact balance
+                    $contactService->recalculateBalance($contact);
+                    $this->addFlash('success', 'Payment recorded OK.');
+                } else {
+                    $this->addFlash('error', 'There was an error creating the payment.');
+                }
 
-            return $this->redirectToRoute('payments');
+                if ($request->get('return') == 'basket') {
+                    return $this->redirectToRoute('basket_show', ['payment' => 'ok']);
+                } else if ($request->get('return') == 'admin') {
+                    return $this->redirectToRoute('contact', ['id' => $contact->getId()]);
+                }
+
+                return $this->redirectToRoute('payments');
+
+            }
 
         }
+
 
         $customerStripeId = $contact->getStripeCustomerId();
         if ($customerStripeId && $stripeUseSavedCards) {
@@ -221,7 +234,7 @@ class PaymentController extends Controller
                 'user'    => $contact,
                 'contact' => $contact,
                 'initialPaymentAmount' => $paymentAmount,
-                'paymentMethods' => $paymentMethods
+                'form' => $form->createView()
             ]
         );
 

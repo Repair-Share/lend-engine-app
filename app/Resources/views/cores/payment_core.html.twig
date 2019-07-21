@@ -1,6 +1,14 @@
 {% trans_default_domain 'member_site' %}
 
-{{ include('member_site/partials/account_balance.html.twig') }}
+{#
+
+THIS CODE IS EMBEDDED EVERYWHERE WE NEED TO TAKE A PAYMENT
+All forms which require payment need the fields:
+paymentAmount
+paymentMethod
+paymentNote
+
+#}
 
 <style>
     .StripeElement {
@@ -22,82 +30,60 @@
 
         {{ include('partials/credit-cards.html.twig') }}
 
-        <form method="POST" name="payment" class="payment-form" id="paymentForm" action="{{ path('add_credit') }}">
-
-            <div class="row">
-                <div class="col-sm-4">
-                    <div class="form-group">
-                        <label>{% trans %}public_add_credit.amount_to_add{% endtrans %}</label>
-                        <div class="input-group">
-                            <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
-                            <input type="text" value="{{ initialPaymentAmount|number_format(2) }}" data-number-to-fixed="2" class="form-control payment-amount col-xs-2" name="paymentAmount" id="payment-amount" />
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    {{ form_row(form.paymentAmount) }}
+                    {% if tenantInformation.minimumPaymentAmount > 0 %}
+                        <div class="help-block">
+                            {% trans %}public_add_credit.min_amount{% endtrans %}: {{ tenantInformation.currencySymbol }} {{ tenantInformation.minimumPaymentAmount|number_format(2) }}
                         </div>
-                        {% if tenantInformation.minimumPaymentAmount > 0 %}
-                            <div class="help-block">
-                                {% trans %}public_add_credit.min_amount{% endtrans %}: {{ tenantInformation.currencySymbol }} {{ tenantInformation.minimumPaymentAmount|number_format(2) }}
-                            </div>
-                        {% endif %}
-                    </div>
+                    {% endif %}
                 </div>
-
-                {% if is_granted('ROLE_ADMIN') %}
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label for="paymentMethod" class="control-label">{% trans %}public_add_credit.payment_method{% endtrans %}</label>
-                            <select name="paymentMethod" id="paymentMethod" class="form-control payment-method">
-                                {% for method in paymentMethods %}
-                                    <option value="{{ method.id }}">{{ method.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                {% else %}
-                    <input type="hidden" class="payment-method" name="paymentMethod" id="paymentMethod" value="{{ tenantInformation.stripePaymentMethodId }}">
-                {% endif %}
-
-            </div>
-
-            <div class="row" id="cardDetails" style="display:none;">
-                <div class="col-md-8">
-                    <div class="form-group">
-                        <label for="card-element" class="control-label">Card details</label>
-                        <div id="card-element"></div>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div id="paymentError" class="alert alert-danger" style="display:none"></div>
-                </div>
-
             </div>
 
             {% if is_granted('ROLE_ADMIN') %}
-                <br>
-                <div class="row">
-                    <div class="col-sm-8">
-                        <div class="form-group">
-                            <label class="control-label">Add an optional note for this payment</label>
-                            <textarea name="paymentNote" placeholder="Note will be visible to member" class="form-control" size="5"></textarea>
-                        </div>
-                    </div>
+                <div class="col-sm-6">
+                    {{ form_row(form.paymentMethod) }}
                 </div>
+            {% else %}
+                <input type="hidden" class="payment-method" name="paymentMethod" id="paymentMethod" value="{{ tenantInformation.stripePaymentMethodId }}">
             {% endif %}
 
-            <input type="hidden" name="c" value="{{ contact.id }}">
-            <input type="hidden" name="return" value="{{ app.request.get('return') }}">
-            <input type="hidden" class="contact-email" id="contact-email" name="contactEmail" value="{{ contact.email }}">
-            <input type="hidden" class="stripe-card-id" id="stripeCardId" name="stripeCardId" value="">
-            <input type="hidden" id="stripePaymentMethod" name="stripePaymentMethod" value="">
-            <input type="hidden" id="chargeId" name="chargeId" value="">
+        </div>
 
-            {% if tenantInformation.stripeFee > 0 %}
-                <div style="color:#ff4930; padding: 10px 0;">
-                    {{ tenantInformation.currencySymbol }} {{ tenantInformation.stripeFee|number_format(2, '.') }} {% trans %}public_add_credit.processing_fee{% endtrans %}.
+        <div class="row" id="cardDetails" style="display:none;">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="card-element" class="control-label">Card details</label>
+                    <div id="card-element"></div>
                 </div>
-            {% endif %}
+            </div>
+            <div id="paymentError" class="col-md-12" style="display:none">
+                <div class="alert alert-danger" id="paymentErrorMessage"></div>
+            </div>
+        </div>
 
-            <button type="button" class="btn btn-success payment-submit" data-text="Add credit">{% trans %}button_add_credit{% endtrans %}</button>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="row">
+                <div class="col-sm-12">
+                    {{ form_row(form.paymentNote) }}
+                </div>
+            </div>
+        {% endif %}
 
-        </form>
+        <input type="hidden" name="c" value="{{ contact.id }}">
+        <input type="hidden" name="return" value="{{ app.request.get('return') }}">
+        <input type="hidden" class="contact-email" id="contact-email" name="contactEmail" value="{{ contact.email }}">
+        <input type="hidden" class="stripe-card-id" id="stripeCardId" name="stripeCardId" value="">
+        <input type="hidden" id="stripePaymentMethod" name="stripePaymentMethod" value="">
+        <input type="hidden" id="chargeId" name="chargeId" value="">
+
+        {% if tenantInformation.stripeFee > 0 %}
+            <div style="color:#ff4930; padding: 10px 0;">
+                {{ tenantInformation.currencySymbol }} {{ tenantInformation.stripeFee|number_format(2, '.') }} {% trans %}public_add_credit.processing_fee{% endtrans %}.
+            </div>
+        {% endif %}
 
     </div>
 </div>

@@ -12,7 +12,7 @@
         </div>
     {% else %}
 
-        {{ form_start(form, { 'attr' : { 'class': 'payment-form' } }) }}
+        {{ form_start(form, { 'attr' : { 'class': 'payment-form', 'id' : "paymentForm" } }) }}
 
         {{ form_errors(form) }}
         {% if help is defined %}
@@ -31,37 +31,29 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <h4>Take payment now</h4>
-                <div class="help-block">
-                    Choosing Stripe will prompt you for card details at the next step.
-                </div>
-            </div>
-        </div>
+        {% set initialPaymentAmount = 0 %}
+        {{ include('cores/payment_core.html.twig') }}
 
-        {{ include('partials/credit-cards.html.twig') }}
+        {#<div class="row">#}
+            {#<div class="col-md-6">#}
+                {#{{ form_row(form.paymentMethod) }}#}
+            {#</div>#}
+            {#<div class="col-md-6">#}
+                {#{{ form_row(form.paymentAmount) }}#}
+            {#</div>#}
+        {#</div>#}
 
-        <div class="row">
-            <div class="col-md-6">
-                {{ form_row(form.paymentMethod) }}
-            </div>
-            <div class="col-md-6">
-                {{ form_row(form.paymentAmount) }}
-            </div>
-        </div>
+        {#<div class="row">#}
+            {#<div class="col-md-12">#}
+                {#{{ form_row(form.paymentNote) }}#}
 
-        <div class="row">
-            <div class="col-md-12">
-                {{ form_row(form.paymentNote) }}
-
-                {% if tenantInformation.stripeFee > 0 %}
-                    <div style="color:#ff4930">
-                        {{ tenantInformation.stripeFee|number_format(2, '.') }} fee will be added to Stripe payments
-                    </div>
-                {% endif %}
-            </div>
-        </div>
+                {#{% if tenantInformation.stripeFee > 0 %}#}
+                    {#<div style="color:#ff4930">#}
+                        {#{{ tenantInformation.stripeFee|number_format(2, '.') }} fee will be added to Stripe payments#}
+                    {#</div>#}
+                {#{% endif %}#}
+            {#</div>#}
+        {#</div>#}
 
         {{ form_end(form) }}
 
@@ -93,6 +85,7 @@
             $(".modal-body").on("change", "#membership_membershipType", function () {
                 var membershipTypeId = $(this).val();
                 $("#membership_price").val(membershipTypePrices[membershipTypeId].toFixed(2));
+                $(".payment-amount").val(membershipTypePrices[membershipTypeId].toFixed(2));
             });
 
         });

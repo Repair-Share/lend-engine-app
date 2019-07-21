@@ -224,7 +224,12 @@ $(".modal-content").delegate(".modal-submit", "click", function(event) {
 });
 
 function waitButton(obj) {
-    obj.removeClass('bg-green').addClass('btn-default').attr('disabled', true).before('<img src="/images/ajax-loader.gif" style="padding-right: 10px">');
+    obj.removeClass('bg-green').addClass('btn-default').attr('disabled', true).before('<img src="/images/ajax-loader.gif" id="spinner" style="padding-right: 10px">');
+}
+
+function unWaitButton(obj) {
+    $("#spinner").remove();
+    obj.addClass('bg-green').removeClass('btn-default').attr('disabled', false).html(obj.data('text'));
 }
 
 var barcode = '';
