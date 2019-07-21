@@ -6,25 +6,22 @@
             {% if contact.creditCards|length > 0 %}
                 <div style="overflow: hidden">
                     {% for card in contact.creditCards %}
-                        <a class="" onClick="setCard('{{ card.cardId }}'); return false;">
-                            <span class="creditCard" id="{{ card.cardId }}">
-                                <span class="creditCardText">
-                                    {{ card.brand }}<br />
-                                    XXXX XXXX XXXX {{ card.last4 }}<br />
-                                    {{ card.expMonth }} / {{ card.expYear }}
-                                </span>
-                                <br /><span class="card-select">{% trans %}public_add_credit.use_this_card{% endtrans %}</span>
-                            </span>
-                        </a>
+                        <span class="creditCard" id="{{ card.cardId }}">
+                            <div class="creditCardText">
+                                <div style="font-size: 14px;">{{ card.brand|upper }}</div>
+                                XXXX XXXX XXXX {{ card.last4 }}<br />
+                                {{ card.expMonth }} / {{ card.expYear }}
+                            </div>
+
+                            <div style="padding: 6px 0;">
+                            <a class="btn btn-primary btn-xs card-select" onClick="setCard('{{ card.cardId }}'); return false;">{% trans %}public_add_credit.use_this_card{% endtrans %}</a>
+                            <a class="pull-right card-delete" style="padding: 4px;" href="/remove-payment-method?paymentMethodId={{ card.cardId }}&c={{ contact.id }}">{% trans %}public_add_credit.remove_card{% endtrans %}</a>
+                            </div>
+                        </span>
                     {% endfor %}
                 </div>
                 <p>
                     {% trans %}public_add_credit.choose_card{% endtrans %}<br />
-                    {% if is_granted('ROLE_ADMIN') %}
-                    <a style="font-size: 12px;" href="https://dashboard.stripe.com/test/customers/{{ contact.stripeCustomerId }}" target="_blank">
-                        Edit cards for this customer using your Stripe.com account
-                    </a>
-                    {% endif %}
                 </p>
             {% else %}
 

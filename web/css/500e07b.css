@@ -14240,8 +14240,7 @@ ul.children select { width: 100%; }
 }
 
 .creditCard a:hover {
-    cursor: pointer;
-    background-color: #defafa;
+
 }
 
 .creditCard.active {

@@ -142,6 +142,38 @@ class StripeHandler
     }
 
     /**
+     * @param $customerStripeId
+     * @return bool|\Stripe\Collection
+     */
+    public function getCustomerPaymentMethods($customerStripeId)
+    {
+        try {
+            $paymentMethods = \Stripe\PaymentMethod::all(["customer" => $customerStripeId, "type" => "card"]);
+            return $paymentMethods;
+        } catch (\Exception $e) {
+            $this->errors[] = $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
+     * @param $stripeCustomerId
+     * @param $paymentMethodId
+     * @return bool
+     */
+    public function attachPaymentMethod($stripeCustomerId, $paymentMethodId)
+    {
+        try {
+            $paymentMethod = \Stripe\PaymentMethod::retrieve($paymentMethodId);
+            $paymentMethod->attach(['customer' => $stripeCustomerId]);
+            return true;
+        } catch (\Exception $e) {
+            $this->errors[] = $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
      * @param array $customer
      * @return \Stripe\Customer
      */
@@ -230,10 +262,16 @@ class StripeHandler
     /**
      * @param $paymentMethodId
      * @param $amount
+     * @param $customer array
      * @return bool|static
      */
-    public function createPaymentIntent($paymentMethodId, $amount)
+    public function createPaymentIntent($paymentMethodId, $amount, $customer)
     {
+        // Always have a customer for payments
+        if (!$customer['id']) {
+            $customer = $this->createCustomer($customer);
+        }
+
         try {
             $intent = \Stripe\PaymentIntent::create([
                 'payment_method' => $paymentMethodId,
@@ -241,6 +279,8 @@ class StripeHandler
                 'currency' => $this->currency,
                 'confirmation_method' => 'manual',
                 'confirm' => true,
+                'customer' => $customer['id'],
+                'setup_future_usage' => 'off_session'
             ]);
             return $intent;
         } catch (\Exception $e) {
@@ -268,11 +308,32 @@ class StripeHandler
     }
 
     /**
+     * @param $paymentMethodId
+     * @return bool|static
+     */
+    public function removePaymentMethod($paymentMethodId)
+    {
+        try {
+            $payment_method = \Stripe\PaymentMethod::retrieve($paymentMethodId);
+            $payment_method->detach();
+            return $payment_method;
+        } catch (\Exception $e) {
+            $this->errors[] = $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
      * @param $token
      * @param $cardId
      * @param Payment $payment
      * @param $msg string
      * @return bool|\Stripe\Charge
+     *
+     *
+     * @deprecated  : Must use the createPaymentIntent flow now
+     *
+     *
      */
     public function processPayment($token, $cardId, $payment, $msg = '')
     {

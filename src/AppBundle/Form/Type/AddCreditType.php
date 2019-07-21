@@ -51,7 +51,6 @@ class AddCreditType extends AbstractType
                 'placeholder' => 'Note will be visible to member'
             )
         ));
-
     }
 
     /**

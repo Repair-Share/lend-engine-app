@@ -6,7 +6,7 @@ if (stripePublicApiKey) {
     var card = elements.create('card');
 }
 
-$(document).delegate(".payment-method", "change", function(event) {
+$(document).delegate(".payment-method", "change", function() {
     setupPaymentFields();
 });
 
@@ -28,6 +28,8 @@ function setupPaymentFields() {
             }
         });
         $("#cardDetails").show();
+    } else {
+        $("#cardDetails").hide();
     }
 }
 
@@ -53,40 +55,49 @@ function processPaymentForm(e) {
     waitButton($('.payment-submit'));
 
     if ( paymentMethod.val() == stripePaymentMethodId
-        && paymentMethod.val()
-        && !$("#stripeCardId").val() ) {
+        && paymentMethod.val() ) {
 
         event.preventDefault();
 
-        stripe.createPaymentMethod('card', card).then(function(result) {
-            if (result.error) {
-                // Inform the customer that there was an error.
-                $("#paymentErrorMessage").html(result.error.message);
-                $("#paymentError").show();
-                unWaitButton($('.payment-submit'));
-            } else {
-                // Send paymentMethod.id to server to create a payment intent
-                fetch('/stripe/payment-intent', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        stripePaymentMethodId: result.paymentMethod.id,
-                        amount: paymentAmount.val() * 100 + (stripePaymentFee * 100)
-                    })
-                }).then(function(result) {
-                    result.json().then(function(json) {
-                        console.log(json);
-                        handleServerResponse(json);
-                    })
-                });
-
-            }
-        });
+        if ( $("#stripeCardId").val() ) {
+            // Use it for the paymentIntent
+            createPaymentIntent($("#stripeCardId").val(), paymentAmount);
+        } else {
+            stripe.createPaymentMethod('card', card).then(function(result) {
+                if (result.error) {
+                    // Inform the customer that there was an error.
+                    $("#paymentErrorMessage").html(result.error.message);
+                    $("#paymentError").show();
+                    unWaitButton($('.payment-submit'));
+                } else {
+                    createPaymentIntent(result.paymentMethod.id, paymentAmount);
+                }
+            });
+        }
     } else {
         $("#paymentForm").submit();
     }
+}
+
+function createPaymentIntent(paymentMethodId, paymentAmount) {
+    // Send paymentMethod.id to server to create a payment intent
+    fetch('/stripe/payment-intent', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            stripePaymentMethodId: paymentMethodId,
+            contactId: $("#contactId").val(),
+            saveCard: $("#saveCard").val(),
+            amount: paymentAmount.val() * 100 + (stripePaymentFee * 100)
+        })
+    }).then(function(response) {
+        response.json().then(function(json) {
+            console.log(json);
+            handleServerResponse(json);
+        })
+    });
 }
 
 function handleServerResponse(response) {
@@ -147,8 +158,9 @@ function setCard(cardId) {
     $(".card-select").html("Use this card");
     selectedCard.addClass('active');
     selectedCard.find('.card-select').html("This card will be used.");
+    selectedCard.find('.card-delete').remove();
     $("#stripeCardId").val(cardId);
-    $("#paymentMethod").val(stripePaymentMethodId);
+    $(".payment-method").val(stripePaymentMethodId);
     setUpSelectMenus();
 }
 

@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Loan;
 
 use AppBundle\Entity\CoreLoan;
+use AppBundle\Entity\CreditCard;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\Payment;
 use AppBundle\Form\Type\LoanCheckOutType;
@@ -58,10 +59,14 @@ class LoanController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
+        /** @var \AppBundle\Services\StripeHandler $stripeService */
+        $stripeService = $this->get('service.stripe');
+
         /** @var \AppBundle\Repository\LoanRepository $repo */
         $repo = $em->getRepository('AppBundle:Loan');
 
         $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
+        $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
 
         /** @var \AppBundle\Entity\Loan $loan */
         if (!$loan = $repo->find($loanId)) {
@@ -146,66 +151,43 @@ class LoanController extends Controller
                 }
             }
 
+            // Amount including deposits
             if ($paymentAmount > 0) {
 
-                if ($stripePaymentMethodId == $paymentMethod->getId()) {
-                    $cardDetails = [
-                        'token'  => $form->get('stripeToken')->getData(),
-                        'cardId' => $form->get('stripeCardId')->getData(),
-                    ];
-                }
-
                 // Take the deposit amount off
-                $paymentAmount -= $totalDeposits;
+                $loanAmount = $paymentAmount - $totalDeposits;
 
                 // Create the payment for the loan itself
-                if ($paymentAmount > 0) {
+                if ($loanAmount > 0) {
                     $payment = new Payment();
                     $payment->setCreatedBy($user);
                     $payment->setPaymentMethod($paymentMethod);
-                    $payment->setAmount($paymentAmount);
+                    $payment->setAmount($loanAmount);
                     $paymentNote = Payment::TEXT_PAYMENT_RECEIVED.'. '.$form->get('paymentNote')->getData();
                     $payment->setNote($paymentNote);
                     $payment->setContact($loan->getContact());
                     $payment->setType(Payment::PAYMENT_TYPE_PAYMENT);
                     $payment->setLoan($loan);
 
-                    if (!$paymentService->create($payment, $cardDetails)) {
+                    if ($stripePaymentMethodId == $paymentMethod->getId()) {
+                        $payment->setPspCode($request->get('chargeId'));
+                    }
+
+                    if (!$paymentService->create($payment)) {
                         $paymentOk = false;
                         foreach ($paymentService->errors AS $error) {
                             $this->addFlash('error', $error);
                         }
                     }
-
-                    // unset the token so we can't use it for deposits
-                    if (isset($cardDetails['token']) && $cardDetails['token']) {
-                        unset($cardDetails['token']);
-                    }
                 }
 
                 // Create the deposits as separate payments
-                // Retrieve the cardId from the customer (if we've saved it with the first payment)
                 if ($paymentOk == true) {
+
                     if ($deposits = $request->request->get('deposits')) {
 
-                        // If we're using a new card for the payment, we can't reuse the token so get the saved card
-                        if (isset($cardDetails['token']) && $cardDetails['token']) {
-                            // we still have the token from Stripe Checkout (fee was zero)
-                        } else if (!$cardDetails['cardId'] && $stripePaymentMethodId == $paymentMethod->getId()) {
-                            $contact = $contactService->loadCustomerCards($loan->getContact());
-                            $cards = $contact->getCreditCards();
-                            if (is_array($cards) && count($cards) > 0) {
-                                $cardId = $cards[0]->getCardId();
-                                $cardDetails = [
-                                    'cardId' => $cardId
-                                ];
-                            } else {
-                                $this->addFlash('error', "Customer has no credit cards saved to take a deposit.");
-                                $paymentOk = false;
-                            }
-                        }
-
                         foreach ($deposits AS $loanRowId => $amount) {
+
                             if ($amount > 0 && $paymentOk == true) {
                                 $p = new Payment();
                                 $p->setType(Payment::PAYMENT_TYPE_DEPOSIT);
@@ -219,13 +201,19 @@ class LoanController extends Controller
                                 $p->setLoanRow($loanRows[$loanRowId]);
                                 $p->setIsDeposit(true); // Creates deposit, payment and links to loan row
 
-                                if (!$paymentService->create($p, $cardDetails)) {
+                                // This can link multiple payments to one Stripe charge
+                                if ($stripePaymentMethodId == $paymentMethod->getId()) {
+                                    $p->setPspCode($request->get('chargeId'));
+                                }
+
+                                if (!$paymentService->create($p)) {
                                     $paymentOk = false;
                                     foreach ($paymentService->errors AS $error) {
                                         $this->addFlash('error', $error);
                                     }
                                 }
                             }
+
                         }
                     }
                 }

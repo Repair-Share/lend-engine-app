@@ -20,8 +20,8 @@
         <table width="100%" class="table table-hover table-striped data-table">
             <thead>
             <tr>
-                <th></th>
                 <th>{% trans %}th.date{% endtrans %}</th>
+                <th></th>
                 <th>{% trans %}th.payment_method{% endtrans %}</th>
                 <th style="text-align:right">{% trans %}th.fee{% endtrans %}/{% trans %}th.payment{% endtrans %}</th>
                 <th style="text-align:right">{% trans %}th.deposit{% endtrans %}</th>
@@ -30,10 +30,11 @@
             </thead>
             {% for payment in user.payments %}
                 <tr>
+                    <td data-sort="{{ payment.createdAt|date("Y-m-d H:i") }}">
+                        {{ payment.paymentDate|date("d M Y") }}
+                        <div style="font-size: 11px; color: #aaa;">{{ payment.createdAt|date("g:i a") }}</div>
+                    </td>
                     <td>
-                        {% if payment.inventoryItem %}
-                            <div>{{ payment.inventoryItem.name }}</div>
-                        {% endif %}
                         {% if payment.event %}
                             <div>{{ payment.event.title }}</div>
                         {% endif %}
@@ -42,17 +43,19 @@
                                 <a href="{{ path('public_loan', {loanId: payment.loan.id}) }}">{% trans %}Loan{% endtrans %} {{ payment.loan.id }}</a>
                             </div>
                         {% endif %}
+                        {% if payment.inventoryItem %}
+                            <div>{{ payment.inventoryItem.name }}</div>
+                        {% endif %}
                         {% if payment.note %}
                             <div>{{ payment.note }}</div>
                         {% endif %}
                     </td>
                     <td>
-                        {{ payment.paymentDate|date("d M Y") }}
-                        <div style="font-size: 11px; color: #aaa;">{{ payment.createdAt|date("g:i a") }}</div>
-                    </td>
-                    <td>
                         {% if payment.paymentMethod %}
                             {{ payment.paymentMethod.name }}
+                            {% if is_granted("ROLE_ADMIN") %}
+                                <div style="font-size: 11px; color: #ccc;">{{ payment.pspCode }}</div>
+                            {% endif %}
                         {% endif %}
                     </td>
                     <td align="right">

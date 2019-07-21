@@ -24,17 +24,44 @@ class PaymentController extends Controller
         /** @var \AppBundle\Services\StripeHandler $stripeService */
         $stripeService = $this->get('service.stripe');
 
+        /** @var \AppBundle\Services\Payment\PaymentService $paymentService */
+        $paymentService = $this->get('service.payment');
+
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->get('service.contact');
+
+        $em = $this->getDoctrine()->getManager();
+
+        $message = '';
+
         $data = json_decode($request->getContent(), true);
 
         $minimumPaymentAmount = $this->get('settings')->getSettingValue('stripe_minimum_payment');
 
         if (isset($data['stripePaymentMethodId'])) {
+            // We've got a payment method from a user entering a card number or re-using a card
             $paymentMethodId = $data['stripePaymentMethodId'];
             $amount = $data['amount'];
             if ($amount/100 < $minimumPaymentAmount) {
                 return new JsonResponse(['error' => 'A minimum payment of '.number_format($minimumPaymentAmount, 2).' is required.']);
             }
-            $intent = $stripeService->createPaymentIntent($paymentMethodId, $amount);
+
+            $contact = $contactService->get($data['contactId']);
+            $customer = [
+                'id' => $contact->getStripeCustomerId(),
+                'description' => $contact->getName(),
+                'email' => $contact->getEmail()
+            ];
+
+            $intent = $stripeService->createPaymentIntent($paymentMethodId, $amount, $customer);
+
+            if (!$contact->getStripeCustomerId()) {
+                $contact->setStripeCustomerId($intent->customer);
+                $em->persist($contact);
+                $em->flush();
+                $message .= 'Added Stripe customer ID. ';
+            }
+
         } else if (isset($data['paymentIntentId'])) {
             $paymentIntentId = $data['paymentIntentId'];
             $intent = $stripeService->retrievePaymentIntent($paymentIntentId);
@@ -50,6 +77,7 @@ class PaymentController extends Controller
         if ($intent == null) {
             return new JsonResponse([
                 'error' => $extraErrors,
+                'message' => $message,
                 'errors' => $stripeService->errors
             ]);
         } else if ($intent->status == 'requires_action' &&
@@ -57,20 +85,30 @@ class PaymentController extends Controller
             # Tell the client to handle the action
             return new JsonResponse([
                 'requires_action' => true,
-                'payment_intent_client_secret' => $intent->client_secret
+                'payment_intent_client_secret' => $intent->client_secret,
+                'message' => $message,
             ]);
         } else if ($intent->status == 'succeeded') {
-            # The payment didn’t need any additional actions and completed!
+
+            # The payment didn't need any additional actions and completed OK
+            if (isset($data['contactId']) && isset($data['saveCard'])) {
+                if ($data['saveCard']) {
+                    $paymentService->saveCard($data['contactId'], $intent->payment_method);
+                }
+            }
+
             # Handle post-payment fulfillment
             return new JsonResponse([
                 'success' => true,
-                'charge_id' => $intent->charges->data[0]->id
+                'charge_id' => $intent->charges->data[0]->id,
+                'message' => $message,
             ]);
         } else {
             # Invalid status or intent
             return new JsonResponse([
                 'error' => 'Invalid PaymentIntent status : '.$intent->status . $extraErrors,
-                'errors' => $stripeService->errors
+                'errors' => $stripeService->errors,
+                'message' => $message,
             ]);
         }
     }
@@ -93,9 +131,6 @@ class PaymentController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
-        /** @var \AppBundle\Services\StripeHandler $stripeService */
-        $stripeService = $this->get('service.stripe');
-
         /** @var \AppBundle\Services\Payment\PaymentService $paymentService */
         $paymentService = $this->get('service.payment');
 
@@ -103,7 +138,6 @@ class PaymentController extends Controller
         $pmRepo = $em->getRepository('AppBundle:PaymentMethod');
 
         $minimumPaymentAmount = $this->get('settings')->getSettingValue('stripe_minimum_payment');
-        $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
 
         /** @var \AppBundle\Entity\Contact $contact */
         if ($contactId = $request->get('c')) {
@@ -125,7 +159,7 @@ class PaymentController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $amount = $form->get('paymentAmount')->getData();
+            $amount   = $form->get('paymentAmount')->getData();
 
             if ($amount < 0) {
                 $this->addFlash('error', "Payment amount must be more than zero. Refunds should be issued using the payments list.");
@@ -148,22 +182,13 @@ class PaymentController extends Controller
                     $payment->setNote("Credit added.");
                 }
 
-                $cardDetails = null;
                 $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
 
                 if ($stripePaymentMethodId == $paymentMethod->getId()) {
-//                if ($amount < $minimumPaymentAmount) {
-//                    $this->addFlash('error', 'A minimum payment of '.number_format($minimumPaymentAmount, 2).' is required.');
-//                    return $this->redirectToRoute('add_credit', ['c' => $contact->getId()]);
-//                }
-//                $cardDetails = [
-//                    'token'  => $request->get('stripeToken'),
-//                    'cardId' => $request->get('stripeCardId'),
-//                ];
                     $payment->setPspCode($request->get('chargeId'));
                 }
 
-                if (!$paymentService->create($payment, $cardDetails)) {
+                if (!$paymentService->create($payment)) {
                     $paymentOk = false;
                     foreach ($paymentService->errors AS $error) {
                         $this->addFlash('error', $error);
@@ -190,24 +215,7 @@ class PaymentController extends Controller
 
         }
 
-
-        $customerStripeId = $contact->getStripeCustomerId();
-        if ($customerStripeId && $stripeUseSavedCards) {
-            // Retrieve their cards
-            $stripeCustomer = $stripeService->getCustomerById($customerStripeId);
-
-            if (isset($stripeCustomer['sources']['data'])) {
-                foreach($stripeCustomer['sources']['data'] AS $source) {
-                    $creditCard = new CreditCard();
-                    $creditCard->setLast4($source['last4']);
-                    $creditCard->setExpMonth($source['exp_month']);
-                    $creditCard->setExpYear($source['exp_year']);
-                    $creditCard->setBrand($source['brand']);
-                    $creditCard->setCardId($source['id']);
-                    $contact->addCreditCard($creditCard);
-                }
-            }
-        }
+        $contact = $contactService->loadCustomerCards($contact);
 
         if (!$paymentAmount = $request->get('amount')) {
             $paymentAmount = $minimumPaymentAmount;
@@ -226,8 +234,6 @@ class PaymentController extends Controller
             $template = 'member_site/pages/add_credit.html.twig';
         }
 
-        $paymentMethods = $pmRepo->findAllOrderedByName();
-
         return $this->render(
             $template,
             [
@@ -238,6 +244,30 @@ class PaymentController extends Controller
             ]
         );
 
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     * @Route("remove-payment-method", name="remove_payment_method")
+     */
+    public function removePaymentMethod(Request $request)
+    {
+        /** @var \AppBundle\Services\StripeHandler $stripeService */
+        $stripeService = $this->get('service.stripe');
+
+        $paymentMethodId = $request->get('paymentMethodId');
+        $c = $request->get('c');
+
+        if (!$stripeService->removePaymentMethod($paymentMethodId)) {
+            foreach ($stripeService->errors AS $error) {
+                $this->addFlash("error", $error);
+            }
+        } else {
+            $this->addFlash("success", "Removed card OK");
+        }
+
+        return $this->redirectToRoute('add_credit', ['c' => $c]);
     }
 
 }

@@ -34,13 +34,12 @@ class LoanCheckOutType extends AbstractType
             'choices' => $activePaymentMethods,
             'required' => false,
             'mapped' => true,
-            'placeholder' => 'Choose an option',
             'attr' => [
                 'class' => 'payment-method'
             ]
         ));
 
-        $builder->add('paymentAmount', TextType::class, array(
+        $builder->add('paymentAmount', CurrencyamountType::class, array(
             'label' => 'Payment taken now',
             'data' => number_format($this->paymentDue, 2),
             'required' => false,

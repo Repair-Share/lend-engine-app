@@ -83,7 +83,7 @@
         </div>
     {% endif %}
 
-    {{ form_start(form, { 'attr' : { 'class': 'payment-form' } }) }}
+    {{ form_start(form, { 'attr' : { 'class': 'payment-form', 'id': "paymentForm" } }) }}
 
         {{ form_errors(form) }}
         {% if help is defined %}
@@ -345,31 +345,10 @@
         <div class="col-md-6">
 
             {% set contact = loan.contact %}
-            {{ include('partials/credit-cards.html.twig') }}
 
-            <div class="form-group">
-                <label>Take payment of:</label>
-                <div class="input-group">
-                    <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
-                    {{ form_widget(form.paymentAmount) }}
-                </div>
-                {% if loan.contact.balance < 0 %}
-                    {% set balance = -loan.contact.balance %}
-                    <div style="padding: 4px; color: #ff671d">Including outstanding balance of {{ tenantInformation.currencySymbol }}{{ balance|number_format(2, '.') }}</div>
-                {% endif %}
+            <div id="paymentBlock" style="display:block">
+                {{ include('cores/payment_core.html.twig') }}
             </div>
-
-            {{ form_row(form.paymentMethod) }}
-
-            <div style="display: none">
-                {{ form_row(form.paymentNote) }}
-            </div>
-
-            {% if tenantInformation.stripeFee > 0 %}
-                <div style="color:#ff4930; padding: 10px 0;">
-                    {{ tenantInformation.currencySymbol }} {{ tenantInformation.stripeFee|number_format(2, '.') }} {% trans %}public_add_credit.processing_fee{% endtrans %}.
-                </div>
-            {% endif %}
 
         </div>
     </div>
@@ -480,7 +459,7 @@
         $(document).ready(function() {
             calculateLoanTotal();
 
-            var form = $("#form-loan");
+            var form = $("#paymentForm");
 
             form.on('keyup', '.deposit-amount', function() {
                 // We don't want the save button here as deposit amount is not stored on loan row so we can't save

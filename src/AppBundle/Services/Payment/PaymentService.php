@@ -4,6 +4,7 @@ namespace AppBundle\Services\Payment;
 
 use AppBundle\Entity\Contact;
 use AppBundle\Entity\Deposit;
+use AppBundle\Services\Contact\ContactService;
 use AppBundle\Services\StripeHandler;
 use AppBundle\Services\SettingsService;
 use AppBundle\Entity\ItemMovement;
@@ -34,6 +35,9 @@ class PaymentService
      */
     private $stripeService;
 
+    /** @var ContactService */
+    private $contactService;
+
     /**
      * @var PaymentRepository
      */
@@ -44,11 +48,12 @@ class PaymentService
      */
     public $errors = [];
 
-    public function __construct(EntityManager $em, SettingsService $settings, StripeHandler $stripeService)
+    public function __construct(EntityManager $em, SettingsService $settings, StripeHandler $stripeService, ContactService $contactService)
     {
         $this->em        = $em;
         $this->settings  = $settings;
         $this->stripeService = $stripeService;
+        $this->contactService = $contactService;
         $this->repo = $em->getRepository('AppBundle:Payment');
     }
 
@@ -67,11 +72,10 @@ class PaymentService
 
     /**
      * @param Payment $p
-     * @param null $cardDetails
      * @return Payment
      * @throws \Exception
      */
-    public function create(Payment $p, $cardDetails = null)
+    public function create(Payment $p)
     {
         // Validate
         if (!$p->getContact()) {
@@ -87,60 +91,28 @@ class PaymentService
 
         // Don't add card fee to deposits
         // If a deposit is being taken as part of a loan payment, then the card fee will be added to the loan payment portion
+        // Deposits cannot be taken any other way   ??
         if ($p->getType() == Payment::PAYMENT_TYPE_DEPOSIT) {
             $feeAmount = 0;
         }
 
-        // If Stripe payment is required first, go off and do that
-//        $stripePaymentMethodId = $this->settings->getSettingValue('stripe_payment_method');
-//
-//        if ($p->getPaymentMethod() && $stripePaymentMethodId == $p->getPaymentMethod()->getId()) {
-//
-//            if ($feeAmount > 0) {
-//                // Increase the amount of this payment
-//                $p->setAmount($feeAmount + $basePaymentAmount);
-//                // Add a fee to reduce the customer balance by the fee amount
-//                $fee = new Payment();
-//                $fee->setCreatedBy($p->getCreatedBy());
-//                $fee->setAmount(-$feeAmount);
-//                $fee->setContact($p->getContact());
-//                $fee->setLoan($p->getLoan());
-//                $fee->setNote("Card fee.");
-//                $this->em->persist($fee);
-//            }
-//
-//            if (!isset($cardDetails['token'])) {
-//                $cardDetails['token'] = null;
-//            }
-//            if (!isset($cardDetails['cardId'])) {
-//                $cardDetails['cardId'] = null;
-//            }
-//
-//            $token  = $cardDetails['token'];
-//            $cardId = $cardDetails['cardId'];
-//
-//            if (!$token && !$cardId) {
-//                $this->errors[] = "A card ID or token is required to process a payment with Stripe";
-//            }
-//
-//            if ($p->getLoan()) {
-//                $note = 'Loan '.$p->getLoan()->getId();
-//            } else {
-//                $note = 'Payment taken via Lend Engine';
-//            }
-//            if ($charge = $this->stripeService->processPayment($token, $cardId, $p, $note)) {
-//                // $p will be persisted later
-//                if (isset($charge->id)) {
-//                    $p->setPspCode($charge->id);
-//                }
-//            } else {
-//                $this->errors[] = 'Payment service failed to get a successful payment from Stripe for "'.$p->getNote().'" ';
-//                foreach ($this->stripeService->errors AS $error) {
-//                    $this->errors[] = $error;
-//                }
-//                return false;
-//            }
-//        }
+        $stripePaymentMethodId = $this->settings->getSettingValue('stripe_payment_method');
+
+        if ($p->getPaymentMethod() && $stripePaymentMethodId == $p->getPaymentMethod()->getId()) {
+
+            if ($feeAmount > 0) {
+                // Increase the amount of this payment
+                $p->setAmount($feeAmount + $basePaymentAmount);
+                // Add a fee to reduce the customer balance by the fee amount
+                $fee = new Payment();
+                $fee->setCreatedBy($p->getCreatedBy());
+                $fee->setAmount(-$feeAmount);
+                $fee->setContact($p->getContact());
+                $fee->setLoan($p->getLoan());
+                $fee->setNote("Card fee.");
+                $this->em->persist($fee);
+            }
+        }
 
         // Create a deposit entity as well as a payment
         if ($p->getType() == Payment::PAYMENT_TYPE_DEPOSIT) {
@@ -178,6 +150,24 @@ class PaymentService
 
     }
 
+    /**
+     * @param $contactId
+     * @param $paymentMethod
+     * @return bool
+     */
+    public function saveCard($contactId, $paymentMethod)
+    {
+        $contact = $this->contactService->get($contactId);
+
+        if ($stripeCustomerId = $contact->getStripeCustomerId()) {
+            // We already have a customer in Stripe, add this card
+            if (!$this->stripeService->attachPaymentMethod($stripeCustomerId, $paymentMethod)) {
+                // @todo pass the [non-fatal] errors up to the user
+            }
+        }
+
+        return true;
+    }
     /**
      * @param $id
      * @return bool

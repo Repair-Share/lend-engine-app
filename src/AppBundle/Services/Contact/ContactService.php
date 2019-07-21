@@ -40,7 +40,7 @@ class ContactService
 
     /**
      * @param $id
-     * @return null|object
+     * @return \AppBundle\Entity\Contact
      */
     public function get($id)
     {
@@ -212,15 +212,14 @@ class ContactService
         $customerStripeId = $contact->getStripeCustomerId();
         if ($customerStripeId && $stripeUseSavedCards) {
             // Retrieve their cards
-            $stripeCustomer = $stripeService->getCustomerById($customerStripeId);
-
-            if (isset($stripeCustomer['sources']['data'])) {
-                foreach($stripeCustomer['sources']['data'] AS $source) {
+            $paymentMethods = $stripeService->getCustomerPaymentMethods($customerStripeId);
+            if (isset($paymentMethods['data'])) {
+                foreach($paymentMethods['data'] AS $source) {
                     $creditCard = new CreditCard();
-                    $creditCard->setLast4($source['last4']);
-                    $creditCard->setExpMonth($source['exp_month']);
-                    $creditCard->setExpYear($source['exp_year']);
-                    $creditCard->setBrand($source['brand']);
+                    $creditCard->setLast4($source['card']['last4']);
+                    $creditCard->setExpMonth($source['card']['exp_month']);
+                    $creditCard->setExpYear($source['card']['exp_year']);
+                    $creditCard->setBrand($source['card']['brand']);
                     $creditCard->setCardId($source['id']);
                     $contact->addCreditCard($creditCard);
                 }

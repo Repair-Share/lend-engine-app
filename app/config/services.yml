@@ -193,6 +193,7 @@ services:
             - "@doctrine.orm.entity_manager"
             - "@settings"
             - "@service.stripe"
+            - "@service.contact"
 
     service.checkout:
         class: AppBundle\Services\Loan\CheckoutService

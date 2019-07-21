@@ -118,11 +118,6 @@ class MembershipController extends Controller
         /** @var \AppBundle\Services\Payment\PaymentService $paymentService */
         $paymentService = $this->get('service.payment');
 
-        /** @var \AppBundle\Services\StripeHandler $stripeService */
-        $stripeService = $this->get('service.stripe');
-
-        $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
-
         $membership = new Membership();
         $user = $this->getUser();
         $membership->setCreatedBy($user);
@@ -169,7 +164,7 @@ class MembershipController extends Controller
                 $fee->setMembership($membership);
                 $fee->setNote("Membership fee.");
 
-                if (!$paymentService->create($fee, null)) {
+                if (!$paymentService->create($fee)) {
                     foreach ($paymentService->errors AS $error) {
                         $this->addFlash('error', $error);
                     }
@@ -177,8 +172,6 @@ class MembershipController extends Controller
 
             }
 
-            // Add Stripe fee
-            $feeAmount = (float)$this->get('settings')->getSettingValue('stripe_fee');
             $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
 
             $paymentOk = true;
@@ -187,9 +180,6 @@ class MembershipController extends Controller
 
                 $amount  = $form->get('paymentAmount')->getData();
                 $paymentMethod = $form->get('paymentMethod')->getData();
-
-//                $token   = $form->get('stripeToken')->getData();
-//                $cardId  = $form->get('stripeCardId')->getData();
 
                 // Create a payment
                 $payment = new Payment();
@@ -200,24 +190,7 @@ class MembershipController extends Controller
                 $payment->setNote($paymentNote);
                 $payment->setContact($contact);
 
-//                if ($token || $cardId) {
-//                    $cardDetails = [
-//                        'token'  => $token,
-//                        'cardId' => $cardId,
-//                    ];
-//                    if ($feeAmount > 0 && $paymentMethod->getId() == $stripePaymentMethodId) {
-//                        $amount += $feeAmount;
-//                        $payment->setAmount($amount);
-//                    }
-//                } else {
-//                    $cardDetails = null;
-//                }
-
                 if ($stripePaymentMethodId == $paymentMethod->getId()) {
-//                    if ($feeAmount > 0 && $paymentMethod->getId() == $stripePaymentMethodId) {
-//                        $amount += $feeAmount;
-//                        $payment->setAmount($amount);
-//                    }
                     $payment->setPspCode($request->get('chargeId'));
                 }
 
@@ -266,22 +239,7 @@ class MembershipController extends Controller
             );
         }
 
-        $customerStripeId = $contact->getStripeCustomerId();
-        if ($customerStripeId && $stripeUseSavedCards) {
-            // retrieve their cards
-            $stripeCustomer = $stripeService->getCustomerById($customerStripeId);
-            if (isset($stripeCustomer['sources']['data'])) {
-                foreach($stripeCustomer['sources']['data'] AS $source) {
-                    $creditCard = new CreditCard();
-                    $creditCard->setLast4($source['last4']);
-                    $creditCard->setExpMonth($source['exp_month']);
-                    $creditCard->setExpYear($source['exp_year']);
-                    $creditCard->setBrand($source['brand']);
-                    $creditCard->setCardId($source['id']);
-                    $contact->addCreditCard($creditCard);
-                }
-            }
-        }
+        $contact = $contactService->loadCustomerCards($contact);
 
         return $this->render(
             'modals/membership.html.twig',

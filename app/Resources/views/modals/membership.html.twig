@@ -31,29 +31,9 @@
             </div>
         </div>
 
-        {% set initialPaymentAmount = 0 %}
-        {{ include('cores/payment_core.html.twig') }}
-
-        {#<div class="row">#}
-            {#<div class="col-md-6">#}
-                {#{{ form_row(form.paymentMethod) }}#}
-            {#</div>#}
-            {#<div class="col-md-6">#}
-                {#{{ form_row(form.paymentAmount) }}#}
-            {#</div>#}
-        {#</div>#}
-
-        {#<div class="row">#}
-            {#<div class="col-md-12">#}
-                {#{{ form_row(form.paymentNote) }}#}
-
-                {#{% if tenantInformation.stripeFee > 0 %}#}
-                    {#<div style="color:#ff4930">#}
-                        {#{{ tenantInformation.stripeFee|number_format(2, '.') }} fee will be added to Stripe payments#}
-                    {#</div>#}
-                {#{% endif %}#}
-            {#</div>#}
-        {#</div>#}
+        <div id="paymentBlock" style="display:none">
+            {{ include('cores/payment_core.html.twig') }}
+        </div>
 
         {{ form_end(form) }}
 
@@ -76,19 +56,27 @@
 
     <script>
         $(document).ready(function () {
+            $(".modal-body").on("change", "#membership_membershipType", function () {
+                setPaymentAmount();
+            });
+        });
 
+        function setPaymentAmount() {
             var membershipTypePrices = [];
             {% for type in membershipTypePrices %}
             membershipTypePrices[{{ type.id }}] = {{ type.price }};
             {% endfor %}
+            var membershipTypeId = $("#membership_membershipType").val();
+            $("#membership_price").val(membershipTypePrices[membershipTypeId].toFixed(2));
+            $(".payment-amount").val(membershipTypePrices[membershipTypeId].toFixed(2));
+            if (membershipTypePrices[membershipTypeId] > 0) {
+                $("#paymentBlock").fadeIn();
+            } else {
+                $("#paymentBlock").fadeOut();
+            }
+        }
 
-            $(".modal-body").on("change", "#membership_membershipType", function () {
-                var membershipTypeId = $(this).val();
-                $("#membership_price").val(membershipTypePrices[membershipTypeId].toFixed(2));
-                $(".payment-amount").val(membershipTypePrices[membershipTypeId].toFixed(2));
-            });
-
-        });
+        setPaymentAmount();
     </script>
 {% endblock %}
 

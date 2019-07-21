@@ -14,8 +14,7 @@
 }
 
 .creditCard a:hover {
-    cursor: pointer;
-    background-color: #defafa;
+
 }
 
 .creditCard.active {

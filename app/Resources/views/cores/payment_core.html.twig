@@ -34,11 +34,6 @@ paymentNote
             <div class="col-sm-6">
                 <div class="form-group">
                     {{ form_row(form.paymentAmount) }}
-                    {% if tenantInformation.minimumPaymentAmount > 0 %}
-                        <div class="help-block">
-                            {% trans %}public_add_credit.min_amount{% endtrans %}: {{ tenantInformation.currencySymbol }} {{ tenantInformation.minimumPaymentAmount|number_format(2) }}
-                        </div>
-                    {% endif %}
                 </div>
             </div>
 
@@ -47,7 +42,9 @@ paymentNote
                     {{ form_row(form.paymentMethod) }}
                 </div>
             {% else %}
-                <input type="hidden" class="payment-method" name="paymentMethod" id="paymentMethod" value="{{ tenantInformation.stripePaymentMethodId }}">
+                <div class="col-sm-6" style="display:none">
+                    {{ form_row(form.paymentMethod) }}
+                </div>
             {% endif %}
 
         </div>
@@ -58,10 +55,20 @@ paymentNote
                     <label for="card-element" class="control-label">Card details</label>
                     <div id="card-element"></div>
                 </div>
+                <div class="form-group">
+                    <label style="font-weight: normal">
+                        <input type="checkbox" id="saveCard" name="saveCard" value="1" {% if tenantInformation.setting('stripe_use_saved_cards') %}checked{% endif %}> Save this card for future use
+                    </label>
+                </div>
             </div>
             <div id="paymentError" class="col-md-12" style="display:none">
                 <div class="alert alert-danger" id="paymentErrorMessage"></div>
             </div>
+            {% if tenantInformation.stripeFee > 0 %}
+                <div class="col-md-12" style="color:#ff4930; padding-bottom: 10px;">
+                    {{ tenantInformation.currencySymbol }} {{ tenantInformation.stripeFee|number_format(2, '.') }} {% trans %}public_add_credit.processing_fee{% endtrans %}.
+                </div>
+            {% endif %}
         </div>
 
         {% if is_granted('ROLE_ADMIN') %}
@@ -72,18 +79,17 @@ paymentNote
             </div>
         {% endif %}
 
-        <input type="hidden" name="c" value="{{ contact.id }}">
+        <input type="hidden" name="c" id="contactId" value="{{ contact.id }}">
         <input type="hidden" name="return" value="{{ app.request.get('return') }}">
         <input type="hidden" class="contact-email" id="contact-email" name="contactEmail" value="{{ contact.email }}">
         <input type="hidden" class="stripe-card-id" id="stripeCardId" name="stripeCardId" value="">
         <input type="hidden" id="stripePaymentMethod" name="stripePaymentMethod" value="">
         <input type="hidden" id="chargeId" name="chargeId" value="">
 
-        {% if tenantInformation.stripeFee > 0 %}
-            <div style="color:#ff4930; padding: 10px 0;">
-                {{ tenantInformation.currencySymbol }} {{ tenantInformation.stripeFee|number_format(2, '.') }} {% trans %}public_add_credit.processing_fee{% endtrans %}.
-            </div>
-        {% endif %}
-
     </div>
 </div>
+<script>
+    {% if not is_granted('ROLE_ADMIN') %}
+        $(".payment-method").val({{ tenantInformation.stripePaymentMethodId }});
+    {% endif %}
+</script>

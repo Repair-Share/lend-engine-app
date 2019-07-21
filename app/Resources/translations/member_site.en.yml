@@ -195,6 +195,7 @@ public_add_credit:
   title: Add credit
   choose_card: Choose an existing card above, or just continue below to use a new card
   use_this_card: Use this card
+  remove_card: Remove
   amount_to_add: Amount to add
   payment_method: Payment method
   min_amount: Minimum card amount
