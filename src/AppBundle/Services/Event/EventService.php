@@ -97,6 +97,10 @@ class EventService
             $builder->andWhere("event.date >= '".$filter['from']."'");
         }
 
+        if (isset($filter['isOnlyOpeningHour'])) {
+            $builder->andWhere("event.title IS NULL");
+        }
+
         if (isset($filter['to'])) {
             $builder->andWhere("event.date <= '".$filter['to']."'");
         }
@@ -142,12 +146,15 @@ class EventService
      */
     public function removePastEvents()
     {
-        $today = new \DateTime();
-        $today->modify("-30 day");
-        $filter = ['to' => $today->format("Y-m-d")];
-        $data = $this->eventSearch(0, 100, $filter);
-        foreach ($data['data'] AS $s) {
-            $this->em->remove($s);
+        $d = new \DateTime();
+        $d->modify("-30 day");
+        $filter = [
+            'to'    => $d->format("Y-m-d"),
+            'isOnlyOpeningHour' => true
+        ];
+        $results = $this->eventSearch(0, 100, $filter);
+        foreach ($results['data'] AS $event) {
+            $this->em->remove($event);
         }
         $this->em->flush();
     }
