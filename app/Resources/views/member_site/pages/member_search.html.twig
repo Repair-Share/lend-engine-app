@@ -65,7 +65,7 @@
                 {% else %}
                     <div class="membership-info alert alert-warning" style="padding: 10px; margin: 10px 0">
                         <i class="fa fa-warning"></i> No active membership
-                        <a class="modal-link pull-right" href="{{ path('membership', {contactId: contact.id}) }}">Subscribe now</a>
+                        <a class="modal-link pull-right" href="{{ path('subscribe', {c: contact.id}) }}">Subscribe now</a>
                     </div>
                 {% endif %}
 
