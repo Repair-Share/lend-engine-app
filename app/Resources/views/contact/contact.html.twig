@@ -41,7 +41,7 @@
         {% if contact.activeMembership is null %}
             No active membership
             <span class="item-inventory-detail-span">
-                <a class="modal-link" href="{{ path('membership', {contactId : contact.id}) }}">Add membership</a>
+                <a href="{{ path('choose_membership', {c : contact.id}) }}">Add membership</a>
             </span>
         {% else %}
             <strong>{{ contact.activeMembership.membershipType.name }}</strong> member until {{ contact.activeMembership.expiresAt|date('d M Y') }}

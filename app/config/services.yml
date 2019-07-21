@@ -149,7 +149,7 @@ services:
         class: AppBundle\Services\Membership\MembershipService
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@service_container"
+            - "@service.contact"
 
     service.event:
         class: AppBundle\Services\Event\EventService

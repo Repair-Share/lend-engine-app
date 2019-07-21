@@ -1,0 +1,107 @@
+{% extends 'member_site/themes/loader.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block accountNav %}
+    {{ include('member_site/themes/widgets/account_menu.html.twig') }}
+{% endblock %}
+
+{% block body %}
+    <style>
+        .membership-type {
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .membership-type:hover {
+            background-color: #efefef;
+        }
+    </style>
+    <h2>
+        {% trans %}public_user.choose_membership_type{% endtrans %}
+        {% if user is defined and user.id != app.user.id %}
+            {{ include('member_site/partials/session_user.html.twig') }}
+        {% endif %}
+    </h2>
+
+
+
+        {% if user.activeMembership is defined and user.activeMembership and user.activeMembership.status == 'ACTIVE' %}
+            <div class="alert alert-info">
+                {{ 'public_account.current_member_type'|trans({'%type%':user.activeMembership.membershipType.name}, 'member_site') }}<br>
+                {{ 'public_account.membership_expires_on'|trans({}) }} {{ user.activeMembership.expiresAt|date("D j F Y") }}
+            </div>
+        {% endif %}
+
+        {% if membershipTypes|length > 0 %}
+
+            {% for membershipType in membershipTypes %}
+
+            <div class="row membership-type">
+
+                <div class="col-md-12">
+                    <h4>{{ membershipType.name }} : {{ tenantInformation.currencySymbol }}{{ membershipType.price }}</h4>
+                    {% if not membershipType.isSelfServe %}<i class="fa fa-user-secret"></i> Available for admins only{% endif %}
+                    <hr size="1" noshade>
+                </div>
+
+                <div class="col-md-4">
+                    <div>
+                        {{ membershipType.duration }} {% transchoice membershipType.duration %}days{% endtranschoice %}
+                    </div>
+                    <div>
+                        {% if membershipType.creditLimit > 0 %}
+                            {{ tenantInformation.currencySymbol }}{{ membershipType.creditLimit|number_format() }} {{ 'public_misc.credit_limit'|trans({}) }}
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if membershipType.discount > 0 %}
+                            {{ membershipType.discount|number_format() }}% {{ 'public_registration.discount_on_fees'|trans({}) }}
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="help-block">
+                        {{ membershipType.description|nl2br }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <a href="{{ path('subscribe') }}?membershipTypeId={{ membershipType.id }}&c={{ app.request.get('c') }}" class="btn btn-success">
+                        {% if user.activeMembership is defined
+                        and user.activeMembership
+                        and user.activeMembership.status == 'ACTIVE'
+                        and user.activeMembership.membershipType == membershipType %}{{ 'public_registration.button_renew'|trans({}) }}{% else %}{{ 'public_registration.button_subscribe'|trans({}) }}{% endif %}
+                    </a>
+
+                    <div class="help-block">
+                        {% if user.activeMembership is defined
+                        and user.activeMembership
+                        and user.activeMembership.status == 'ACTIVE'
+                        and user.activeMembership.membershipType == membershipType
+                        and user.activeMembership.expiresAt|date("Y-m-d") < date()|date_modify("+14 days")|date("Y-m-d")
+                        %}
+                            {{ 'public_registration.membership_deferred'|trans({}) }} <strong>{{ user.activeMembership.expiresAt|date("j F Y") }}</strong>.
+                        {% else %}
+                            {{ 'public_registration.membership_starts_today'|trans({}) }}
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+            <div class="alert alert-warning">
+                {{ 'public_registration.no_self_serve_memberships'|trans({}) }}
+            </div>
+        {% endif %}
+
+
+{% endblock %}
+
+{% block pagejs %}{% endblock %}

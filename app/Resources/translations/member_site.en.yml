@@ -186,7 +186,7 @@ public_loan:
 public_user_menu:
   contact_info: Profile
 
-text_borrow_with_membership: With full membership you will be able to borrow and reserve this item online.
+text_borrow_with_membership: With a membership you will be able to borrow and reserve this item online. Visit "my account" to see memberships available.
 
 text_no_membership: We don't have an active membership for you.
 
@@ -208,6 +208,7 @@ public_loans:
 # Member site : Logged in : Payments list
 public_payments:
   no_payment: No payments or fees yet
+  no_payment_required: No payment required
   title: Fees and Payments
 
 # Registration page
@@ -216,8 +217,8 @@ public_registration:
   terms_link: View our Terms and Conditions
   terms_label: I agree to the Terms and Conditions
   email_confirmed: Your email address has now been confirmed
-  membership_starts_today: Your new membership will start today.
-  membership_deferred: Your membership will be renewed from
+  membership_starts_today: Membership will start today.
+  membership_deferred: Membership will be renewed from
   discount_on_fees: discount on loan fees
   button_renew: Renew membership
   button_subscribe: Subscribe
@@ -225,6 +226,7 @@ public_registration:
 
 public_user:
   choose_membership_type: Choose a membership type
+  subscription_payment: Subscription payment
 
 msg_success:
   payment_ok: Payment made OK. Your account balance has been amended.

@@ -3,32 +3,29 @@
 namespace AppBundle\Services\Membership;
 
 use AppBundle\Entity\Contact;
+use AppBundle\Entity\Membership;
+use AppBundle\Entity\MembershipType;
+use AppBundle\Entity\Note;
+use AppBundle\Services\Contact\ContactService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\DependencyInjection\Container;
 
 class MembershipService
 {
 
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager */
     private $em;
 
-    /**
-     * @var Container
-     */
-    private $container;
+    /** @var ContactService */
+    private $contactService;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $errors = [];
 
-    public function __construct(EntityManager $em, Container $container)
+    public function __construct(EntityManager $em, ContactService $contactService)
     {
         $this->em        = $em;
-        $this->container = $container;
+        $this->contactService = $contactService;
     }
 
     /**

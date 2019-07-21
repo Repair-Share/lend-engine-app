@@ -31,7 +31,7 @@
             <p>
                 {{ 'public_account.membership_about_to_expire'|trans({}, 'member_site') }}
                 <br><br>
-                <a href="{{ path('subscribe') }}" class="btn btn-primary">Renew now</a>
+                <a href="{{ path('choose_membership') }}" class="btn btn-primary">Renew now</a>
             </p>
         </div>
     {% else %}
@@ -40,7 +40,7 @@
             {{ 'public_account.membership_expires_on'|trans({}, 'member_site') }} {{ app.user.activeMembership.expiresAt|date("D d F Y") }}
             <p>
                 <br>
-                <a href="{{ path('subscribe') }}" class="btn btn-sm btn-primary">
+                <a href="{{ path('choose_membership') }}" class="btn btn-sm btn-primary">
                     {{ 'public_account.button_change_membership'|trans({}, 'member_site') }}
                 </a>
             </p>
@@ -51,6 +51,6 @@
     <div class="alert alert-info">
         {{ 'text_no_membership'|trans({}, 'member_site') }}
         <br><br>
-        <a href="{{ path('subscribe') }}" class="btn btn-sm btn-primary">{{ 'public_account.button_subscribe_now'|trans({}, 'member_site') }}</a>
+        <a href="{{ path('choose_membership') }}" class="btn btn-sm btn-primary">{{ 'public_account.button_subscribe_now'|trans({}, 'member_site') }}</a>
     </div>
 {% endif %}

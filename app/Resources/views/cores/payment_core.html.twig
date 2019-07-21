@@ -8,6 +8,12 @@ paymentAmount
 paymentMethod
 paymentNote
 
+Loan checkout
+Membership subscribe via modal (admin)
+Membership subscribe self serve
+Add credit
+Book a place on event
+
 #}
 
 <style>
@@ -31,7 +37,7 @@ paymentNote
         {{ include('partials/credit-cards.html.twig') }}
 
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-6 admin-only">
                 <div class="form-group">
                     {{ form_row(form.paymentAmount) }}
                 </div>
@@ -71,13 +77,11 @@ paymentNote
             {% endif %}
         </div>
 
-        {% if is_granted('ROLE_ADMIN') %}
-            <div class="row">
-                <div class="col-sm-12">
-                    {{ form_row(form.paymentNote) }}
-                </div>
+        <div class="row admin-only">
+            <div class="col-sm-12">
+                {{ form_row(form.paymentNote) }}
             </div>
-        {% endif %}
+        </div>
 
         <input type="hidden" name="c" id="contactId" value="{{ contact.id }}">
         <input type="hidden" name="return" value="{{ app.request.get('return') }}">

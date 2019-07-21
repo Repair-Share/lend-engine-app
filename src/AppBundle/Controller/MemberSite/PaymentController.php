@@ -120,7 +120,6 @@ class PaymentController extends Controller
      */
     public function addCredit(Request $request)
     {
-        // Added if user chooses Stripe
         $user = $this->getUser();
 
         $em = $this->getDoctrine()->getManager();

@@ -25,6 +25,7 @@ function setupPaymentFields() {
                 $("#paymentError").show();
             } else {
                 $("#paymentError").hide();
+
             }
         });
         $("#cardDetails").show();
@@ -52,8 +53,6 @@ function processPaymentForm(e) {
         return false;
     }
 
-    waitButton($('.payment-submit'));
-
     if ( paymentMethod.val() == stripePaymentMethodId
         && paymentMethod.val() ) {
 
@@ -63,12 +62,12 @@ function processPaymentForm(e) {
             // Use it for the paymentIntent
             createPaymentIntent($("#stripeCardId").val(), paymentAmount);
         } else {
+
             stripe.createPaymentMethod('card', card).then(function(result) {
                 if (result.error) {
                     // Inform the customer that there was an error.
                     $("#paymentErrorMessage").html(result.error.message);
                     $("#paymentError").show();
-                    unWaitButton($('.payment-submit'));
                 } else {
                     createPaymentIntent(result.paymentMethod.id, paymentAmount);
                 }
@@ -80,6 +79,7 @@ function processPaymentForm(e) {
 }
 
 function createPaymentIntent(paymentMethodId, paymentAmount) {
+    waitButton($('.payment-submit'));
     // Send paymentMethod.id to server to create a payment intent
     fetch('/stripe/payment-intent', {
         method: 'POST',
@@ -149,7 +149,6 @@ $(document).ready(function() {
 
 /**
  * Used on the payment processing modals to choose from an existing card
- * Also see similar in member_site.js
  * @param cardId
  */
 function setCard(cardId) {
@@ -164,10 +163,10 @@ function setCard(cardId) {
     setUpSelectMenus();
 }
 
-function showTakePaymentFields() {
-    $("#payment-fields").show();
-    $(".no-payment-needed").hide();
-    setUpSelectMenus();
-}
+//function showTakePaymentFields() {
+//    $("#payment-fields").show();
+//    $(".no-payment-needed").hide();
+//    setUpSelectMenus();
+//}
 
 /* END PAYMENT PROCESSING */

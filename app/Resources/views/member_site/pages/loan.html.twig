@@ -343,9 +343,7 @@
     <div class="row checkout payment-details">
         <div class="col-md-6"></div>
         <div class="col-md-6">
-
             {% set contact = loan.contact %}
-
             <div id="paymentBlock" style="display:block">
                 {{ include('cores/payment_core.html.twig') }}
             </div>
@@ -595,8 +593,8 @@
                 }
             {% else %}
                 $("#loan_check_out_paymentAmount").val(toPay.toFixed(2));
-                // Hide the payment form, but set values based on member's credit limit
-                $(".payment-details").hide();
+                // Hide the payment amount field, but set values based on member's credit limit
+                $(".admin-only").hide();
                 if (toPay > 0) {
                     {% if tenantInformation.selfCheckout %}
                     var availableCredit = creditLimit*1 + accountBalance*1;
@@ -618,6 +616,8 @@
                         $("#form-checkout").after('<div class="alert alert-warning">No payment methods are available to check out.</div>').remove();
                     }
                     {% endif %}
+                } else {
+                    $(".payment-details").hide();
                 }
 
             {% endif %}
