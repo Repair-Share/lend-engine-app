@@ -52,7 +52,11 @@ class SubscribeController extends Controller
             if ($amount > 0) {
 
                 // We need to have a success from Stripe
-                $paymentMethodId = $request->get('paymentMethodId');
+                if (!$paymentMethodId = $request->get('paymentMethodId')) {
+                    $this->addFlash("error", "No payment method was set, but the membership type has an amount.");
+                    return $this->redirectToRoute('fos_user_profile_show');
+                }
+
                 $paymentMethod   = $pmRepo->find($paymentMethodId);
                 $token           = $request->get('stripeToken');
 
