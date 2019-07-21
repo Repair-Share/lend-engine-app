@@ -91,12 +91,12 @@
 
     {% if tenantInformation.stripeAccessToken|length > 0 %}
         <script src="https://checkout.stripe.com/checkout.js"></script>
+        <script src="https://js.stripe.com/v3/"></script>
     {% endif %}
 
     {% javascripts
     '@AppBundle/Resources/js/jQuery-2.1.4.min.js'
     '@AppBundle/Resources/js/bootstrap.js'
-    '@AppBundle/Resources/js/payment.js'
     '@AppBundle/Resources/js/moment.js'
     '@AppBundle/Resources/js/member_site.js'
     '@AppBundle/Resources/js/jquery.mark.min.js'
@@ -107,6 +107,7 @@
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 
+    <script src="/js/payment.js"></script>
     <script src="/plugins/fullcalendar/core/main.min.js"></script>
     <script src="/plugins/fullcalendar/daygrid/main.min.js"></script>
     <script src="/plugins/fullcalendar/timegrid/main.min.js"></script>

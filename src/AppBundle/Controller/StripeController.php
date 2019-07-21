@@ -194,4 +194,5 @@ class StripeController extends Controller
 
         return $this->redirectToRoute('settings');
     }
+
 }

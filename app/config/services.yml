@@ -215,7 +215,7 @@ services:
         class: AppBundle\Services\StripeHandler
         arguments:
             - "@doctrine.orm.entity_manager"
-            - "@service_container"
+            - "@settings"
 
     service.fos_user_mailer:
         class: AppBundle\Mailer\FOSMailer

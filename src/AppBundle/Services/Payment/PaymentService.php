@@ -92,55 +92,55 @@ class PaymentService
         }
 
         // If Stripe payment is required first, go off and do that
-        $stripePaymentMethodId = $this->settings->getSettingValue('stripe_payment_method');
-
-        if ($p->getPaymentMethod() && $stripePaymentMethodId == $p->getPaymentMethod()->getId()) {
-
-            if ($feeAmount > 0) {
-                // Increase the amount of this payment
-                $p->setAmount($feeAmount + $basePaymentAmount);
-                // Add a fee to reduce the customer balance by the fee amount
-                $fee = new Payment();
-                $fee->setCreatedBy($p->getCreatedBy());
-                $fee->setAmount(-$feeAmount);
-                $fee->setContact($p->getContact());
-                $fee->setLoan($p->getLoan());
-                $fee->setNote("Card fee.");
-                $this->em->persist($fee);
-            }
-
-            if (!isset($cardDetails['token'])) {
-                $cardDetails['token'] = null;
-            }
-            if (!isset($cardDetails['cardId'])) {
-                $cardDetails['cardId'] = null;
-            }
-
-            $token  = $cardDetails['token'];
-            $cardId = $cardDetails['cardId'];
-
-            if (!$token && !$cardId) {
-                $this->errors[] = "A card ID or token is required to process a payment with Stripe";
-            }
-
-            if ($p->getLoan()) {
-                $note = 'Loan '.$p->getLoan()->getId();
-            } else {
-                $note = 'Payment taken via Lend Engine';
-            }
-            if ($charge = $this->stripeService->processPayment($token, $cardId, $p, $note)) {
-                // $p will be persisted later
-                if (isset($charge->id)) {
-                    $p->setPspCode($charge->id);
-                }
-            } else {
-                $this->errors[] = 'Payment service failed to get a successful payment from Stripe for "'.$p->getNote().'" ';
-                foreach ($this->stripeService->errors AS $error) {
-                    $this->errors[] = $error;
-                }
-                return false;
-            }
-        }
+//        $stripePaymentMethodId = $this->settings->getSettingValue('stripe_payment_method');
+//
+//        if ($p->getPaymentMethod() && $stripePaymentMethodId == $p->getPaymentMethod()->getId()) {
+//
+//            if ($feeAmount > 0) {
+//                // Increase the amount of this payment
+//                $p->setAmount($feeAmount + $basePaymentAmount);
+//                // Add a fee to reduce the customer balance by the fee amount
+//                $fee = new Payment();
+//                $fee->setCreatedBy($p->getCreatedBy());
+//                $fee->setAmount(-$feeAmount);
+//                $fee->setContact($p->getContact());
+//                $fee->setLoan($p->getLoan());
+//                $fee->setNote("Card fee.");
+//                $this->em->persist($fee);
+//            }
+//
+//            if (!isset($cardDetails['token'])) {
+//                $cardDetails['token'] = null;
+//            }
+//            if (!isset($cardDetails['cardId'])) {
+//                $cardDetails['cardId'] = null;
+//            }
+//
+//            $token  = $cardDetails['token'];
+//            $cardId = $cardDetails['cardId'];
+//
+//            if (!$token && !$cardId) {
+//                $this->errors[] = "A card ID or token is required to process a payment with Stripe";
+//            }
+//
+//            if ($p->getLoan()) {
+//                $note = 'Loan '.$p->getLoan()->getId();
+//            } else {
+//                $note = 'Payment taken via Lend Engine';
+//            }
+//            if ($charge = $this->stripeService->processPayment($token, $cardId, $p, $note)) {
+//                // $p will be persisted later
+//                if (isset($charge->id)) {
+//                    $p->setPspCode($charge->id);
+//                }
+//            } else {
+//                $this->errors[] = 'Payment service failed to get a successful payment from Stripe for "'.$p->getNote().'" ';
+//                foreach ($this->stripeService->errors AS $error) {
+//                    $this->errors[] = $error;
+//                }
+//                return false;
+//            }
+//        }
 
         // Create a deposit entity as well as a payment
         if ($p->getType() == Payment::PAYMENT_TYPE_DEPOSIT) {

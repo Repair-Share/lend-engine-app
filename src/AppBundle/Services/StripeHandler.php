@@ -5,7 +5,6 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Tenant;
 use AppBundle\Entity\Payment;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\DependencyInjection\Container;
 use Stripe\Stripe;
 
 /**
@@ -65,12 +64,12 @@ use Stripe\Stripe;
 class StripeHandler
 {
 
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager */
     private $em;
 
-    private $container;
+    /** @var SettingsService */
+    private $settingsService;
+
     public  $currency;
     private $apiKey;
 
@@ -78,16 +77,16 @@ class StripeHandler
 
     public $errors = [];
 
-    public function __construct(EntityManager $em, Container $container)
+    public function __construct(EntityManager $em, SettingsService $settings)
     {
         $this->em        = $em;
-        $this->container = $container;
+        $this->settingsService = $settings;
 
-        $this->currency = $this->container->get('settings')->getSettingValue('org_currency');
-        $this->apiKey   = $this->container->get('settings')->getSettingValue('stripe_access_token');
+        $this->currency = $this->settingsService->getSettingValue('org_currency');
+        $this->apiKey   = $this->settingsService->getSettingValue('stripe_access_token');
 
         // A per-transaction fee charged by the library to the member
-        $this->cardFee  = $this->container->get('settings')->getSettingValue('stripe_fee');
+        $this->cardFee  = $this->settingsService->getSettingValue('stripe_fee');
 
         if ($this->apiKey) {
             $this->setApiKey($this->apiKey);
@@ -163,23 +162,22 @@ class StripeHandler
      * @param $msg
      * @return \Stripe\Charge
      */
-    public function chargeWithToken($token, $amount, $msg = 'Lend Engine charge')
-    {
-        $params = [
-            'amount'        => $amount,
-            'currency'      => $this->currency,
-            'source'        => $token,
-            'description'   => $msg,
-//            'application_fee' => round($amount * $this->fee, 0)
-        ];
-        try {
-            $charge = \Stripe\Charge::create($params);
-            return $charge;
-        } catch (\Exception $e) {
-            $this->errors[] = $e->getMessage();
-            return false;
-        }
-    }
+//    public function chargeWithToken($token, $amount, $msg = 'Lend Engine charge')
+//    {
+//        $params = [
+//            'amount'        => $amount,
+//            'currency'      => $this->currency,
+//            'source'        => $token,
+//            'description'   => $msg,
+//        ];
+//        try {
+//            $charge = \Stripe\Charge::create($params);
+//            return $charge;
+//        } catch (\Exception $e) {
+//            $this->errors[] = $e->getMessage();
+//            return false;
+//        }
+//    }
 
     /**
      * @param $customerId
@@ -194,7 +192,6 @@ class StripeHandler
             'currency'      => $this->currency,
             'customer'      => $customerId,
             'description'   => $msg,
-//            'application_fee' => round($amount * $this->fee, 0)
         ];
         try {
             $charge = \Stripe\Charge::create($params);
@@ -212,19 +209,58 @@ class StripeHandler
      * @param $msg
      * @return bool|\Stripe\Charge
      */
-    public function chargeWithCard($cardId, $customerId, $amount, $msg = 'Lend Engine charge')
+//    public function chargeWithCard($cardId, $customerId, $amount, $msg = 'Lend Engine charge')
+//    {
+//        $params = [
+//            'amount'        => $amount,
+//            'currency'      => $this->currency,
+//            'customer'      => $customerId,
+//            'source'        => $cardId,
+//            'description'   => $msg,
+//        ];
+//        try {
+//            $charge = \Stripe\Charge::create($params);
+//            return $charge;
+//        } catch (\Exception $e) {
+//            $this->errors[] = $e->getMessage();
+//            return false;
+//        }
+//    }
+
+    /**
+     * @param $paymentMethodId
+     * @param $amount
+     * @return bool|static
+     */
+    public function createPaymentIntent($paymentMethodId, $amount)
     {
-        $params = [
-            'amount'        => $amount,
-            'currency'      => $this->currency,
-            'customer'      => $customerId,
-            'source'        => $cardId,
-            'description'   => $msg,
-//            'application_fee' => round($amount * $this->fee, 0)
-        ];
         try {
-            $charge = \Stripe\Charge::create($params);
-            return $charge;
+            $intent = \Stripe\PaymentIntent::create([
+                'payment_method' => $paymentMethodId,
+                'amount' => $amount,
+                'currency' => $this->currency,
+                'confirmation_method' => 'manual',
+                'confirm' => true,
+            ]);
+            return $intent;
+        } catch (\Exception $e) {
+            $this->errors[] = $e->getMessage();
+            return false;
+        }
+    }
+
+    /**
+     * @param $paymentIntentId
+     * @return bool|static
+     */
+    public function retrievePaymentIntent($paymentIntentId)
+    {
+        try {
+            $intent = \Stripe\PaymentIntent::retrieve(
+                $paymentIntentId
+            );
+            $intent->confirm();
+            return $intent;
         } catch (\Exception $e) {
             $this->errors[] = $e->getMessage();
             return false;
