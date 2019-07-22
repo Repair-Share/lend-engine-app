@@ -8380,10 +8380,10 @@ div#report-filter {
     color: #000;
 }
 
-.sidebar-menu>li>a {
+.skin-black-light .sidebar-menu>li>a {
     font-weight: 400;
 }
-.sidebar-menu>li.active>a {
+.skin-black-light .sidebar-menu>li.active>a {
     font-weight: 500;
 }
 

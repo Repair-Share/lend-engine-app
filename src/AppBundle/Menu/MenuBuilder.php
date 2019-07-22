@@ -49,8 +49,8 @@ class MenuBuilder
         $this->addMenuItem('Dashboard', 'homepage', 'fa-bar-chart');
         $this->addMenuItem('Member site', 'home', 'fa-window-maximize');
 
-        $this->addMenuItem('Loans', null, 'fa-shopping-bag');
-        $this->addChildItem('Loans', 'All', 'loan_list', '', '', ['status' => 'ALL']);
+        $this->addMenuItem('Loans', 'loan_list', 'fa-shopping-bag');
+        $this->addChildItem('Loans', 'All', 'loan_list', '', '');
         $this->addChildItem('Loans', 'Pending', 'loan_list', '', '', ['status' => 'PENDING']);
         $this->addChildItem('Loans', 'On loan', 'loan_list', '', '', ['status' => 'ACTIVE']);
         $this->addChildItem('Loans', 'Overdue', 'loan_list', '', '', ['status' => 'OVERDUE']);
