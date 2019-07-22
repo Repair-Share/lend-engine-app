@@ -72,6 +72,7 @@
         var stripePaymentFee = "{{ tenantInformation.stripeFee }}";
         var stripePublicApiKey = "{{ tenantInformation.stripePublicApiKey }}";
         var currencyIsoCode = "{{ tenantInformation.currency }}";
+        var currencySymbol = "{{ tenantInformation.currencySymbol }}";
         var minimumPaymentAmount = {{ tenantInformation.minimumPaymentAmount|number_format(2) }};
         var orgName = "{{ tenantInformation.companyName }}";
         var isAdmin = {% if is_granted('ROLE_ADMIN') %}true{% else %}false{% endif %};

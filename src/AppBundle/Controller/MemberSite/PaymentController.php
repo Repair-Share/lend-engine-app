@@ -39,7 +39,7 @@ class PaymentController extends Controller
         $minimumPaymentAmount = $this->get('settings')->getSettingValue('stripe_minimum_payment');
 
         if (isset($data['stripePaymentMethodId'])) {
-            
+
             // We've got a payment method from a user entering a card number or re-using a card
             $paymentMethodId = $data['stripePaymentMethodId'];
             $amount = $data['amount'];

@@ -52,6 +52,12 @@ function processPaymentForm(e) {
         return false;
     }
 
+    if (stripePaymentFee > 0 && paymentMethod.val() == stripePaymentMethodId) {
+        if (!window.confirm("A card payment fee of "+currencySymbol+stripePaymentFee+" will be added.")) {
+            return false;
+        }
+    }
+
     if ( paymentMethod.val() == stripePaymentMethodId
         && paymentMethod.val() ) {
 
