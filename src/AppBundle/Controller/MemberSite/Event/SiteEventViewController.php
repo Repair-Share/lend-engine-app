@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\MemberSite\Event;
 
 use AppBundle\Entity\Event;
+use AppBundle\Form\Type\EventBookingType;
 use Doctrine\DBAL\DBALException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -54,11 +55,20 @@ class SiteEventViewController extends Controller
             $event->setIsBookable(false);
         }
 
+        $user = $contactService->loadCustomerCards($user);
+
+        // Create the form
+        $form = $this->createForm(EventBookingType::class, null, [
+            'em' => $em,
+            'action' => $this->generateUrl('event_book', ['eventId' => $event->getId()])
+        ]);
+
         return $this->render(
             'member_site/pages/event_preview.html.twig',
             [
                 'event' => $event,
                 'user' => $user,
+                'form' => $form->createView(),
                 'alreadyBooked' => $alreadyBooked,
                 'stripePaymentMethodId' => $stripePaymentMethodId,
                 'paymentMethods' => $paymentMethods

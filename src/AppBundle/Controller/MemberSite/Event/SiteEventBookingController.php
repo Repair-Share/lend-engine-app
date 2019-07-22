@@ -5,6 +5,7 @@ namespace AppBundle\Controller\MemberSite\Event;
 use AppBundle\Entity\Attendee;
 use AppBundle\Entity\Event;
 use AppBundle\Entity\Payment;
+use AppBundle\Form\Type\EventBookingType;
 use Doctrine\DBAL\DBALException;
 use Postmark\PostmarkClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -27,13 +28,9 @@ class SiteEventBookingController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
-        /** @var \AppBundle\Repository\PaymentMethodRepository $pmRepo */
-        $pmRepo = $em->getRepository('AppBundle:PaymentMethod');
-
         /** @var \AppBundle\Services\Payment\PaymentService $paymentService */
         $paymentService = $this->get('service.payment');
 
-        $feeAmount = (float)$this->get('settings')->getSettingValue('stripe_fee');
         $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
 
         if ($userId = $this->get('session')->get('sessionUserId')) {
@@ -55,96 +52,99 @@ class SiteEventBookingController extends Controller
             }
         }
 
-        if ($alreadyBooked == true) {
-            $this->addFlash("success", "You're already booked on this event.");
-        } else {
+        // Create the form
+        $form = $this->createForm(EventBookingType::class, null, [
+            'em' => $em,
+            'action' => $this->generateUrl('event_book', ['eventId' => $event->getId()])
+        ]);
 
-            $attendee = new Attendee();
-            $attendee->setEvent($event);
-            $attendee->setContact($user);
-            $attendee->setCreatedBy($this->getUser());
-            $attendee->setIsConfirmed(true);
+        $form->handleRequest($request);
 
-            $eventPrice      = $request->request->get("paymentAmount");
-            $paymentMethodId = $request->request->get("paymentMethod");
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            $token    = $request->request->get("stripeToken");
-            $cardId   = $request->request->get("stripeCardId");
-
-            $paymentOk = true;
-            if ($eventPrice > 0) {
-                $attendee->setPrice($eventPrice);
-
-                // Create fee
-                $payment = new Payment();
-                $payment->setContact($user);
-                $payment->setType(Payment::PAYMENT_TYPE_FEE);
-                $payment->setEvent($event);
-                $payment->setAmount($eventPrice);
-                $payment->setCreatedBy($this->getUser());
-                $em->persist($payment);
-
-                if ($paymentMethodId) {
-
-                    $p = new Payment();
-                    $p->setContact($user);
-                    $p->setType(Payment::PAYMENT_TYPE_PAYMENT);
-                    $p->setEvent($event);
-                    $p->setAmount($eventPrice);
-                    $p->setCreatedBy($this->getUser());
-                    $p->setPaymentMethod($pmRepo->find($paymentMethodId));
-
-                    if ($token || $cardId) {
-                        $cardDetails = [
-                            'token'  => $token,
-                            'cardId' => $cardId,
-                        ];
-                        if ($feeAmount > 0 && $paymentMethodId == $stripePaymentMethodId) {
-                            $eventPrice += $feeAmount;
-                            $payment->setAmount($eventPrice);
-                        }
-                    } else {
-                        $cardDetails = null;
-                    }
-
-                    if ($paymentService->create($p, $cardDetails)) {
-                        $contactService->recalculateBalance($attendee->getContact());
-                    } else {
-                        $this->addFlash("error", "There was an error taking payment.");
-                        foreach ($paymentService->errors AS $error) {
-                            $this->addFlash('error', $error);
-                        }
-                        $paymentOk = false;
-                    }
-
-                }
-            }
-
-            if ($paymentOk == true) {
-                $em->persist($attendee);
-                try {
-                    $em->flush();
-
-                    if ($request->get('check_in')) {
-                        $this->addFlash("success", "Checked in - thank you!");
-                    } else {
-                        $this->addFlash("success", "You're booked in. See you soon!");
-                        $this->sendBookingConfirmationEmail($attendee);
-                    }
-                } catch (\Exception $e) {
-                    $this->addFlash("error", $e->getMessage());
-                }
+            if ($alreadyBooked == true) {
+                $this->addFlash("success", "You're already booked on this event.");
             } else {
 
+                $attendee = new Attendee();
+                $attendee->setEvent($event);
+                $attendee->setContact($user);
+                $attendee->setCreatedBy($this->getUser());
+                $attendee->setIsConfirmed(true);
+
+                $eventPrice    = $form->get("paymentAmount")->getData();
+                $paymentMethod = $form->get("paymentMethod")->getData();
+
+                $paymentOk = true;
+                if ($eventPrice > 0) {
+                    $attendee->setPrice($eventPrice);
+
+                    // Create fee
+                    $payment = new Payment();
+                    $payment->setContact($user);
+                    $payment->setType(Payment::PAYMENT_TYPE_FEE);
+                    $payment->setEvent($event);
+                    $payment->setAmount($eventPrice);
+                    $payment->setCreatedBy($this->getUser());
+                    $em->persist($payment);
+
+                    if ($paymentMethod) {
+
+                        $p = new Payment();
+                        $p->setContact($user);
+                        $p->setType(Payment::PAYMENT_TYPE_PAYMENT);
+                        $p->setEvent($event);
+                        $p->setAmount($eventPrice);
+                        $p->setCreatedBy($this->getUser());
+                        $p->setPaymentMethod($paymentMethod);
+
+                        if ($stripePaymentMethodId == $paymentMethod->getId()) {
+                            $p->setPspCode($request->get('chargeId'));
+                        }
+
+                        if ($paymentService->create($p)) {
+                            $contactService->recalculateBalance($attendee->getContact());
+                        } else {
+                            $this->addFlash("error", "There was an error taking payment.");
+                            foreach ($paymentService->errors AS $error) {
+                                $this->addFlash('error', $error);
+                            }
+                            $paymentOk = false;
+                        }
+
+                    }
+                }
+
+                if ($paymentOk == true) {
+                    $em->persist($attendee);
+                    try {
+                        $em->flush();
+
+                        if ($request->get('check_in')) {
+                            $this->addFlash("success", "Checked in - thank you!");
+                        } else {
+                            $this->addFlash("success", "You're booked in. See you soon!");
+                            $this->sendBookingConfirmationEmail($attendee);
+                        }
+                    } catch (\Exception $e) {
+                        $this->addFlash("error", $e->getMessage());
+                    }
+                } else {
+
+                }
+
+            }
+
+            if ($user == $this->getUser()) {
+                return $this->redirectToRoute('my_events');
+            } else {
+                return $this->redirectToRoute('event_list');
             }
 
         }
 
-        if ($user == $this->getUser()) {
-            return $this->redirectToRoute('my_events');
-        } else {
-            return $this->redirectToRoute('event_list');
-        }
+        return $this->redirectToRoute('event_list');
+
     }
 
 

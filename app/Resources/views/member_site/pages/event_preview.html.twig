@@ -11,10 +11,9 @@
             var geocoder = new google.maps.Geocoder();
             var marker;
 
-            geocoder.geocode({'address': '{{ event.site.address|replace({"\r\n": ", "}) }}, {{ event.site.postcode }}, {{ tenantInformation.country }}'}, function(results, status)
-            {
+            geocoder.geocode({'address': '{{ event.site.address|replace({"\r\n": ", "}) }}, {{ event.site.postcode }}, {{ tenantInformation.country }}'}, function (results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
-                    var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
+                    var _position = {lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
                     var mapOptions = {
                         zoom: 12,
                         center: _position,
@@ -36,8 +35,14 @@
             }
         }
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             add_markers();
+            $("#event_booking_paymentAmount").val({{ event.price }});
+            {% if not is_granted("ROLE_ADMIN") %}
+            $("#event_booking_paymentMethod").val(stripePaymentMethodId);
+            $(".admin-only").hide();
+            setupPaymentFields();
+            {% endif %}
         });
     </script>
 
@@ -48,14 +53,14 @@
         }
     </style>
 
-{% if event.attendees|length >= event.maxAttendees and event.maxAttendees > 0 %}
-    {% set hasSpaces = false %}
-    <div class="alert alert-warning">
-        The maximum number of attendees ({{ event.maxAttendees }}) has been reached. This event is now full.
-    </div>
-{% else %}
-    {% set hasSpaces = true %}
-{% endif %}
+    {% if event.attendees|length >= event.maxAttendees and event.maxAttendees > 0 %}
+        {% set hasSpaces = false %}
+        <div class="alert alert-warning">
+            The maximum number of attendees ({{ event.maxAttendees }}) has been reached. This event is now full.
+        </div>
+    {% else %}
+        {% set hasSpaces = true %}
+    {% endif %}
 
     <div style="margin-bottom: 20px">
         {{ event.description|nl2br }}
@@ -64,19 +69,26 @@
     {% if event.facebookUrl %}
         <div style="margin-bottom: 10px">
             <a href="{{ event.facebookUrl }}" target="_blank">
-                <img src="/images/fb.png" style="height: 20px; width: 20px; vertical-align: middle"> View this event on Facebook
+                <img src="/images/fb.png" style="height: 20px; width: 20px; vertical-align: middle"> View this event on
+                Facebook
             </a>
         </div>
+    {% endif %}
+
+    {{ form_start(form, { 'attr' : { 'class': 'payment-form', 'id' : "paymentForm" } }) }}
+
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
     {% endif %}
 
     <div class="row">
         <div class="col-md-7">
             <style type="text/css">
-                #map
-                {
-                    height:300px;
-                    width:100%;
-                    display:block;
+                #map {
+                    height: 300px;
+                    width: 100%;
+                    display: block;
                     margin-bottom: 10px;
                 }
             </style>
@@ -88,88 +100,75 @@
             {{ event.site.address|nl2br }}<br>
             {{ event.site.postcode }}<br>
             <br>
+
             <div class="modal-mini-header">Time</div>
             {{ event.date|date("l j F") }}<br>
             {{ event.friendlyTimeFrom }} - {{ event.friendlyTimeTo }}<br>
 
+            <br>
 
-            {% if tenantInformation.feature('EventBooking') %}
-            {#BOOKING FORM#}
-            <form method="POST" action="{{ path('event_book', {eventId: event.id} ) }}" class="payment-form" id="bookingForm">
-                <br>
-                <div class="modal-mini-header">Cost</div>
-                {% if event.price > 0 %}
-                    {% if is_granted("ROLE_ADMIN") %}
-                        <div class="input-group">
-                            <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
-                            <input type="text" id="paymentAmount" name="paymentAmount" value="{{ event.price|number_format(2) }}" class="form-control payment-amount">
-                        </div>
-                        <div class="form-group" style="padding-top: 10px;">
-                            <label>Payment method</label>
-                            <select name="paymentMethod" id="paymentMethod" class="form-control payment-method">
-                                <option></option>
-                                {% for paymentMethod in paymentMethods %}
-                                <option value="{{ paymentMethod.id }}">{{ paymentMethod.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    {% else %}
-                        {{ tenantInformation.currencySymbol }} {{ event.price|number_format(2) }}
-                        <input type="hidden" id="paymentAmount" name="paymentAmount" class="payment-amount" value="{{ event.price|number_format(2) }}">
-                        <input type="hidden" id="paymentMethod" name="paymentMethod" class="payment-method" value="{{ stripePaymentMethodId }}">
-                    {% endif %}
-                {% else %}
-                    Free
-                {% endif %}
-                <input type="hidden" name="stripeToken" id="stripeToken" class="stripe-token">
-                <input type="hidden" name="stripeCardId" id="stripeCardId">
-            </form>
-
-            {#BOOKING BUTTON#}
-            <div style="padding-top: 10px">
-
-                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-
-                    {% if alreadyBooked == true %}
-                        <div class="alert alert-warning">
-                            {% if is_granted("ROLE_ADMIN") %}
-                                {{ user.name }} is already booked on this event.
-                            {% else %}
-                                You're attending.
-                            {% endif %}
-                        </div>
-                    {% else %}
-                        <input type="hidden" name="contactEmail" id="contactEmail" class="contact-email" value="{{ user.email }}">
-                        {% if event.isBookable or is_granted("ROLE_ADMIN") %}
-                            <button type="button" class="btn btn-success btn-block btn-loading payment-submit" id="buttonBook">
-                                Book now
-                            </button>
-                            {% if app.user != user %}
-                                <div class="small help-block">You are booking <strong>{{ user.name }}</strong> onto this event.</div>
-                            {% endif %}
-                        {% else %}
-                            {#Non bookable event#}
-                            <div class="alert alert-warning">Please contact us to book</div>
-                        {% endif %}
-                    {% endif %}
-
-                {% else %}
-
-                    {% if event.isBookable and hasSpaces == true %}
-                        <div class="alert alert-warning">
-                            <a href="{{ path('fos_user_security_login') }}?event={{ event.id }}">Log in</a> or
-                            <a href="{{ path('fos_user_registration_register') }}?event={{ event.id }}">register</a> to book.
-                        </div>
-                    {% endif %}
-
-                {% endif %}
-
-            </div>
-            {% endif %}
-
+            <div class="modal-mini-header">Cost</div>
+            {{ tenantInformation.currencySymbol }} {{ event.price|number_format(2) }}
         </div>
     </div>
 
+    {% if tenantInformation.feature('EventBooking') %}
+        {#BOOKING FORM#}
+        <div class="row">
+            <div class="col-md-12">
+
+                <div id="paymentBlock" style="display:{% if event.price > 0 %}block{% else %}none{% endif %}">
+                    {% set contact = user %}
+                    {{ include('cores/payment_core.html.twig') }}
+                </div>
+
+                {#BOOKING BUTTON#}
+                <div style="padding-top: 10px">
+
+                    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+
+                        {% if alreadyBooked == true %}
+                            <div class="alert alert-warning">
+                                {% if is_granted("ROLE_ADMIN") %}
+                                    {{ user.name }} is already booked on this event.
+                                {% else %}
+                                    You're attending.
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            {% if event.isBookable or is_granted("ROLE_ADMIN") %}
+                                <button type="button" class="btn btn-success btn-block btn-loading payment-submit" id="buttonBook">
+                                    Book now
+                                </button>
+                                {% if app.user != user %}
+                                    <div class="small help-block">You are booking <strong>{{ user.name }}</strong> onto
+                                        this event.
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                {#Non bookable event#}
+                                <div class="alert alert-warning">Please contact us to book</div>
+                            {% endif %}
+                        {% endif %}
+
+                    {% else %}
+
+                        {% if event.isBookable and hasSpaces == true %}
+                            <div class="alert alert-warning">
+                                <a href="{{ path('fos_user_security_login') }}?event={{ event.id }}">Log in</a> or
+                                <a href="{{ path('fos_user_registration_register') }}?event={{ event.id }}">register</a>
+                                to book.
+                            </div>
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {{ form_end(form) }}
 
 {% endblock %}
 
@@ -177,26 +176,27 @@
     <div class="row">
         <div class="col-md-3">
             {% if is_granted("ROLE_ADMIN") %}
-                <a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">Edit event</a>
+                <a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">Edit
+                    event</a>
             {% endif %}
         </div>
 
         {% if tenantInformation.feature('EventBooking') %}
             {% if (event.price == 0 and is_granted("IS_AUTHENTICATED_REMEMBERED")) or is_granted("ROLE_ADMIN") %}
-            <div class="col-md-6">
-                {% if alreadyBooked != true %}
-                <div class="help-block" style="font-size: 12px; text-align: left">
-                    Checking in adds you as an attendee without sending a booking confirmation email.
+                <div class="col-md-6">
+                    {% if alreadyBooked != true %}
+                        <div class="help-block" style="font-size: 12px; text-align: left">
+                            Checking in adds you as an attendee without sending a booking confirmation email.
+                        </div>
+                    {% endif %}
                 </div>
-                {% endif %}
-            </div>
-            <div class="col-md-3">
-                {% if alreadyBooked != true %}
-                    <a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-primary">Check in</a>
-                {% endif %}
-            </div>
+                <div class="col-md-3">
+                    {% if alreadyBooked != true %}
+                        <a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-primary">Check
+                            in</a>
+                    {% endif %}
+                </div>
             {% endif %}
         {% endif %}
-
     </div>
 {% endblock %}

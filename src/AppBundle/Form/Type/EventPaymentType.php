@@ -1,6 +1,10 @@
 <?php
 namespace AppBundle\Form\Type;
 
+/**
+ * Used in admin to take payment for an event after an attendee has booked
+ */
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 

@@ -52,14 +52,15 @@ function processPaymentForm(e) {
         return false;
     }
 
-    if (stripePaymentFee > 0 && paymentMethod.val() == stripePaymentMethodId) {
+    if (stripePaymentFee > 0 && paymentMethod.val() == stripePaymentMethodId && paymentAmount.val() > 0) {
         if (!window.confirm("A card payment fee of "+currencySymbol+stripePaymentFee+" will be added.")) {
             return false;
         }
     }
 
     if ( paymentMethod.val() == stripePaymentMethodId
-        && paymentMethod.val() ) {
+        && paymentMethod.val()
+        && paymentAmount.val() > 0 ) {
 
         event.preventDefault();
 
@@ -78,6 +79,7 @@ function processPaymentForm(e) {
             });
         }
     } else {
+        waitButton($('.payment-submit'));
         $("#paymentForm").submit();
     }
 }
@@ -166,11 +168,5 @@ function setCard(cardId) {
     $(".payment-method").val(stripePaymentMethodId);
     setUpSelectMenus();
 }
-
-//function showTakePaymentFields() {
-//    $("#payment-fields").show();
-//    $(".no-payment-needed").hide();
-//    setUpSelectMenus();
-//}
 
 /* END PAYMENT PROCESSING */

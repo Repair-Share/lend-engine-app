@@ -8,11 +8,14 @@ paymentAmount
 paymentMethod
 paymentNote
 
+Workflows which take payment:
 Loan checkout
+Loan extension
 Membership subscribe via modal (admin)
 Membership subscribe self serve
 Add credit
-Book a place on event
+Book a place on event; member site
+Take payment for an attendee already booked
 
 #}
 
@@ -38,21 +41,11 @@ Book a place on event
 
         <div class="row">
             <div class="col-sm-6 admin-only">
-                <div class="form-group">
-                    {{ form_row(form.paymentAmount) }}
-                </div>
+                {{ form_row(form.paymentAmount) }}
             </div>
-
-            {% if is_granted('ROLE_ADMIN') %}
-                <div class="col-sm-6">
-                    {{ form_row(form.paymentMethod) }}
-                </div>
-            {% else %}
-                <div class="col-sm-6" style="display:none">
-                    {{ form_row(form.paymentMethod) }}
-                </div>
-            {% endif %}
-
+            <div class="col-sm-6" {% if not is_granted('ROLE_ADMIN') %}style="display:none"{% endif %}>
+                {{ form_row(form.paymentMethod) }}
+            </div>
         </div>
 
         <div class="row" id="cardDetails" style="display:none;">
@@ -88,7 +81,6 @@ Book a place on event
 
         <input type="hidden" name="c" id="contactId" value="{{ contact.id }}">
         <input type="hidden" name="return" value="{{ app.request.get('return') }}">
-        <input type="hidden" class="contact-email" id="contact-email" name="contactEmail" value="{{ contact.email }}">
         <input type="hidden" class="stripe-card-id" id="stripeCardId" name="stripeCardId" value="">
         <input type="hidden" id="stripePaymentMethod" name="stripePaymentMethod" value="">
         <input type="hidden" id="chargeId" name="chargeId" value="">
@@ -97,6 +89,6 @@ Book a place on event
 </div>
 <script>
     {% if not is_granted('ROLE_ADMIN') %}
-        $(".payment-method").val({{ tenantInformation.stripePaymentMethodId }});
+        $(".payment-method").val(stripePaymentMethodId);
     {% endif %}
 </script>

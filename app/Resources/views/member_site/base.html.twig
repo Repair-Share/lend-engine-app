@@ -69,7 +69,7 @@
 
     <script>
         var stripePaymentMethodId = "{{ tenantInformation.stripePaymentMethodId }}";
-        var stripePaymentFee = "{{ tenantInformation.stripeFee }}";
+        var stripePaymentFee = "{{ tenantInformation.stripeFee|number_format(2) }}";
         var stripePublicApiKey = "{{ tenantInformation.stripePublicApiKey }}";
         var currencyIsoCode = "{{ tenantInformation.currency }}";
         var currencySymbol = "{{ tenantInformation.currencySymbol }}";

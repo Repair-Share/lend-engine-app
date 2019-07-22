@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
-class EventController extends Controller
+class EventEditController extends Controller
 {
     /**
      * @Route("admin/event/{eventId}", requirements={"eventId": "\d+"}, defaults={"eventId": 0}, name="event_admin")

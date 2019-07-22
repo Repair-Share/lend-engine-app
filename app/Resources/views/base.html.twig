@@ -55,8 +55,9 @@
         var ajaxDeletePath = "{{ path('ajax_delete') }}";
         var stripePublicApiKey = "{{ tenantInformation.stripePublicApiKey }}";
         var stripePaymentMethodId = "{{ tenantInformation.stripePaymentMethodId }}";
-        var stripePaymentFee = "{{ tenantInformation.stripeFee }}";
+        var stripePaymentFee = "{{ tenantInformation.stripeFee|number_format(2) }}";
         var currencyIsoCode = "{{ tenantInformation.currency }}";
+        var currencySymbol = "{{ tenantInformation.currencySymbol }}";
         var minimumPaymentAmount = {{ tenantInformation.minimumPaymentAmount|number_format(2) }};
         var orgName = "{{ tenantInformation.companyName }}";
     </script>

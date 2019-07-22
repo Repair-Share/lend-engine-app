@@ -169,7 +169,6 @@ class PaymentController extends Controller
                 $paymentMethod = $pmRepo->find($paymentMethodId);
 
                 $paymentDate = new \DateTime();
-                $paymentOk = true;
 
                 $payment = new Payment();
                 $payment->setCreatedBy($user);
@@ -189,19 +188,14 @@ class PaymentController extends Controller
                     $payment->setPspCode($request->get('chargeId'));
                 }
 
-                if (!$paymentService->create($payment)) {
-                    $paymentOk = false;
-                    foreach ($paymentService->errors AS $error) {
-                        $this->addFlash('error', $error);
-                    }
-                }
-
-                if ($paymentOk == true) {
-                    // Update the contact balance
+                if ($paymentService->create($payment)) {
                     $contactService->recalculateBalance($contact);
                     $this->addFlash('success', 'Payment recorded OK.');
                 } else {
                     $this->addFlash('error', 'There was an error creating the payment.');
+                    foreach ($paymentService->errors AS $error) {
+                        $this->addFlash('error', $error);
+                    }
                 }
 
                 if ($request->get('return') == 'basket') {
