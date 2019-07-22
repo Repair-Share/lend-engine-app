@@ -7,6 +7,7 @@ use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\Note;
 use AppBundle\Entity\Payment;
+use AppBundle\Form\Type\LoanExtendType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -144,6 +145,7 @@ class ItemController extends Controller
             $template = 'member_site/pages/item.html.twig';
         }
 
+        $formView = null;
         if ($loanRowId = $request->get('extend')) {
 
             /** @var \AppBundle\Services\StripeHandler $stripeService */
@@ -172,6 +174,14 @@ class ItemController extends Controller
                     }
                 }
             }
+
+            // Create the form
+            $form = $this->createForm(LoanExtendType::class, null, [
+                'em' => $em,
+                'action' => $this->generateUrl('extend_loan', ['loanRowId' => $loanRowId])
+            ]);
+
+            $formView = $form->createView();
         }
 
         // Convert links into links
@@ -205,7 +215,10 @@ class ItemController extends Controller
             // Used for admins to choose 'today' when reserving (time is overridden when calendar loads):
             'currentPickupTime' => $pickupTime->format("Y-m-d 09:00:00"),
             'currentPickupSiteId' => $site->getId(),
-            'currentPickupSiteName' => $site->getName()
+            'currentPickupSiteName' => $site->getName(),
+
+            // Extension form is rendered with a form type to include payment_core
+            'form' => $formView
         ));
     }
 }

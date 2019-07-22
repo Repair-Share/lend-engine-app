@@ -99,7 +99,6 @@ class PaymentService
         $stripePaymentMethodId = $this->settings->getSettingValue('stripe_payment_method');
 
         if ($p->getPaymentMethod() && $stripePaymentMethodId == $p->getPaymentMethod()->getId()) {
-
             if ($feeAmount > 0) {
                 // Increase the amount of this payment
                 $p->setAmount($feeAmount + $basePaymentAmount);

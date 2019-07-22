@@ -38,13 +38,25 @@
 
     {% if app.request.get('extend') %}
 
-    <form method="POST" id="reserve_form" class="payment-form" action="{{ path('extend_loan', {loanRowId: app.request.get('extend')}) }}">
+        {{ form_start(form, { 'attr' : { 'class': 'payment-form', 'id' : "paymentForm" } }) }}
+
+    {#<form method="POST" id="reserve_form" class="payment-form" action="{{ path('extend_loan', {loanRowId: app.request.get('extend')}) }}">#}
         <input type="hidden" name="new_return_date" id="newReturnDate">
         <input type="hidden" name="new_return_time" id="newReturnTime">
         <input type="hidden" name="new_return_site_id" id="newReturnSiteId">
         <input type="hidden" name="contactEmail" id="contactEmail" class="contact-email" value="{{ user.email }}">
 
         {{ include('member_site/partials/modal_extend.html.twig') }}
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    Choose a new return date.
+                </div>
+                <div id="calendar"></div>
+            </div>
+        </div>
+        {{ form_end(form) }}
 
     {% else %}
 
@@ -60,21 +72,16 @@
 
         {{ include('member_site/partials/modal_borrow.html.twig') }}
 
-    {% endif %}
-
         <div class="row">
             <div class="col-md-12">
-                {% if app.request.get('extend') %}
-                    <div class="alert alert-info">
-                        {#Admin only#}
-                        Choose a new return date.
-                    </div>
-                {% endif %}
                 <div id="calendar"></div>
             </div>
         </div>
 
     </form>
+
+
+    {% endif %}
 
     <br>
     <div class="row">
@@ -408,12 +415,14 @@
             });
 
             extendModal.on('click', '.charge-to', function () {
+                var extensionFeeAmount = $("#extensionFeeAmount").val();
                 if ($(this).prop("checked") == true) {
-                    $("#paymentMethodId").val(stripePaymentMethodId);
+                    $("#loan_extend_paymentAmount").val(extensionFeeAmount);
                     $("#confirmDateChange").addClass("payment-submit");
                     $("#creditCards").show();
                 } else {
-                    $("#paymentMethodId").val("");
+                    $("#loan_extend_paymentMethod").val("");
+                    $("#loan_extend_paymentAmount").val("");
                     $("#confirmDateChange").removeClass("payment-submit");
                     $("#creditCards").hide();
                 }

@@ -124,20 +124,16 @@ class LoanExtendController extends Controller
             $noteText .= " (extension fee ".number_format($extensionFee, 2).")";
 
             // Mark it as paid
-            if ($paymentMethodId = $request->get('paymentMethodId')) {
+            $formValues = $request->get('loan_extend');
+
+            $paymentMethodId = $formValues['paymentMethod'];
+            $paymentAmount   = $formValues['paymentAmount'];
+            if ($paymentMethodId && $paymentAmount) {
 
                 /** @var \AppBundle\Entity\PaymentMethod $paymentMethod */
                 $paymentMethod = $this->getDoctrine()->getRepository('AppBundle:PaymentMethod')->find($paymentMethodId);
 
                 $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
-
-                $feeAmount = (float)$this->get('settings')->getSettingValue('stripe_fee');
-                if ($feeAmount > 0 && $stripePaymentMethodId == $paymentMethod->getId()) {
-                    $extensionFee = $feeAmount + $extensionFee;
-                }
-
-                $token   = $request->get('stripeToken');
-                $cardId  = $request->get('stripeCardId');
 
                 $payment = new Payment();
                 $payment->setCreatedBy($user);
@@ -147,16 +143,11 @@ class LoanExtendController extends Controller
                 $payment->setNote($paymentNote);
                 $payment->setContact($loan->getContact());
 
-                if ($token || $cardId) {
-                    $cardDetails = [
-                        'token'  => $token,
-                        'cardId' => $cardId,
-                    ];
-                } else {
-                    $cardDetails = null;
+                if ($stripePaymentMethodId == $paymentMethod->getId()) {
+                    $payment->setPspCode($request->get('chargeId'));
                 }
 
-                if (!$paymentService->create($payment, $cardDetails)) {
+                if (!$paymentService->create($payment)) {
                     $paymentOk = false;
                     foreach ($paymentService->errors AS $error) {
                         $this->addFlash('error', $error);

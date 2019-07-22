@@ -25,7 +25,6 @@ function setupPaymentFields() {
                 $("#paymentError").show();
             } else {
                 $("#paymentError").hide();
-
             }
         });
         $("#cardDetails").show();
@@ -62,7 +61,6 @@ function processPaymentForm(e) {
             // Use it for the paymentIntent
             createPaymentIntent($("#stripeCardId").val(), paymentAmount);
         } else {
-
             stripe.createPaymentMethod('card', card).then(function(result) {
                 if (result.error) {
                     // Inform the customer that there was an error.

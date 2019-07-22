@@ -40,7 +40,7 @@
                             <div class="form-group" style="margin-top: 10px">
                                 <label style="font-weight: normal">
                                     <input type="checkbox" class="charge-to" name="chargeTo" value="card">
-                                    Pay for this fee by card now
+                                    Take payment for this fee now
                                 </label>
                             </div>
                             {% endif %}
@@ -53,48 +53,20 @@
                 {% if tenantInformation.getStripePublicApiKey %}
                     <div class="row" id="creditCards" style="display: none">
                         <div class="col-md-12">
-                            {% if user.stripeCustomerId %}
-                                <div style="overflow: hidden">
-                                    {% for card in user.creditCards %}
-                                        <span class="creditCard" id="{{ card.cardId }}">
-                        <span class="creditCardText">
-                            {{ card.brand }}<br/>
-                            XXXX XXXX XXXX {{ card.last4 }}<br/>
-                            {{ card.expMonth }} / {{ card.expYear }}
-                        </span>
-                        <br/>
-                        <a class="card-select" onClick="setCard('{{ card.cardId }}'); return false;">
-                            {% trans %}public_add_credit.use_this_card{% endtrans %}
-                        </a>
-                    </span>
-                                    {% endfor %}
-                                </div>
-                            {% else %}
-                                This member has no credit cards stored. You'll be prompted to take card details next.
-                            {% endif %}
+                            {% set contact = user %}
+                            {{ include('cores/payment_core.html.twig') }}
                         </div>
                     </div>
                 {% endif %}
 
-                <div class="row">
-                    <div class="col-md-12">
-                        {% if tenantInformation.stripeFee > 0 %}
-                            <div style="color:#ff4930">
-                                {{ tenantInformation.stripeFee|number_format(2, '.') }} fee will be added to Stripe payments
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
             </div>
             <div class="modal-footer">
                 {#Set when user chooses to charge card#}
-                <input type="hidden" name="paymentMethodId" id="paymentMethodId" class="payment-method" value="">
-
-                <input type="hidden" name="stripeToken" id="stripeToken" class="stripe-token">
-                <input type="hidden" name="stripeCardId" id="stripeCardId" class="stripe-card-id">
-
                 <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Choose another date</button>
-                <button type="submit" class="btn btn-success" id="confirmDateChange">Confirm</button>
+
+                {#payment-submit class is added when user chooses to show card details#}
+                {#JS in item.html#}
+                <button type="submit" class="btn btn-success" data-text="Confirm" id="confirmDateChange">Confirm</button>
             </div>
         </div>
     </div>

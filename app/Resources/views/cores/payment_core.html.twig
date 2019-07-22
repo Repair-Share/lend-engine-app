@@ -67,14 +67,17 @@ Book a place on event
                     </label>
                 </div>
             </div>
-            <div id="paymentError" class="col-md-12" style="display:none">
-                <div class="alert alert-danger" id="paymentErrorMessage"></div>
-            </div>
             {% if tenantInformation.stripeFee > 0 %}
                 <div class="col-md-12" style="color:#ff4930; padding-bottom: 10px;">
                     {{ tenantInformation.currencySymbol }} {{ tenantInformation.stripeFee|number_format(2, '.') }} {% trans %}public_add_credit.processing_fee{% endtrans %}.
                 </div>
             {% endif %}
+        </div>
+
+        <div class="row" id="paymentError" style="display:none">
+            <div class="col-md-12">
+                <div class="alert alert-danger" id="paymentErrorMessage"></div>
+            </div>
         </div>
 
         <div class="row admin-only">

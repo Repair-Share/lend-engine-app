@@ -237,6 +237,8 @@ class SubscribeController extends Controller
             );
         }
 
+        $contact = $contactService->loadCustomerCards($contact);
+
         return $this->render(
             'member_site/pages/subscribe.html.twig',
             [
