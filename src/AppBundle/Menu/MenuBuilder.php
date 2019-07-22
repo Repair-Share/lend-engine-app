@@ -38,16 +38,18 @@ class MenuBuilder
         /** @var \AppBundle\Entity\Contact $user */
         $user = $this->tokenStorage->getToken()->getUser();
 
-        $this->menu = $this->factory->createItem('root', array(
-            'childrenAttributes' => array(
-                'class' => 'sidebar-menu'
-            )
-        ));
+        $data = [
+            'childrenAttributes' => [
+                'class' => 'sidebar-menu tree',
+                'data-widget' => 'tree'
+            ]
+        ];
+        $this->menu = $this->factory->createItem('root', $data);
 
         $this->addMenuItem('Dashboard', 'homepage', 'fa-bar-chart');
         $this->addMenuItem('Member site', 'home', 'fa-window-maximize');
 
-        $this->addMenuItem('Loans', 'loan_list', 'fa-shopping-bag');
+        $this->addMenuItem('Loans', null, 'fa-shopping-bag');
         $this->addChildItem('Loans', 'All', 'loan_list', '', '', ['status' => 'ALL']);
         $this->addChildItem('Loans', 'Pending', 'loan_list', '', '', ['status' => 'PENDING']);
         $this->addChildItem('Loans', 'On loan', 'loan_list', '', '', ['status' => 'ACTIVE']);
@@ -427,15 +429,21 @@ class MenuBuilder
      */
     private function addMenuItem($label, $route, $icon = '')
     {
-        // Add menu tags:
-        // <small class="label pull-right bg-green">new</small>
-        $this->menu->addChild($label, array(
-            'route' => $route,
-            'class' => 'treeview',
-            'childrenAttributes' => array('class' => 'treeview-menu',),
+        $data = [
+            'childrenAttributes' => [
+                'class' => 'treeview-menu'
+            ],
             'label' => '<i class="fa '.$icon.'"></i> <span> '.$label.'</span>',
-            'extras' => array('safe_label' => true)
-        ));
+            'extras' => [
+                'safe_label' => true
+            ]
+        ];
+        if ($route) {
+            $data['route'] = $route;
+        } else {
+            $data['uri'] = '#';
+        }
+        $this->menu->addChild($label, $data);
     }
 
     /**
@@ -454,6 +462,7 @@ class MenuBuilder
                 'routeParameters' => $routeParameters,
                 'extras' => array('safe_label' => true),
             ));
+        $this->menu[$parent]->setAttribute('class', 'treeview');
     }
 
 }
