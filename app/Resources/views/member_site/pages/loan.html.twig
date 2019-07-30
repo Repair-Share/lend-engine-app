@@ -118,6 +118,12 @@
                     <div>
                         <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a>
                     </div>
+
+                    {% if not row.isCheckedOut %}
+                    {#A field checked via validateCheckout to prevent checkout for non-available items#}
+                    <input type="hidden" class="item-location" value="{{ row.inventoryItem.inventoryLocation.isAvailable }}">
+                    {% endif %}
+
                     {% if row.inventoryItem.serial %}
                         <div class="basket-serial">{% trans %}public_item.serial{% endtrans %}: <strong>{{ row.inventoryItem.serial }}</strong></div>
                     {% endif %}
@@ -529,6 +535,15 @@
                     allowCheckOut = false;
                 }
             }
+
+            // Item can be loaned
+            $(".item-location").each(function(){
+                if (!$(this).val()) {
+                    $(this).after('<div class="label bg-orange">Not currently available</div>');
+                    checkoutButton.attr("disabled", true).html("Item(s) are not available to check out.");
+                    allowCheckOut = false;
+                }
+            });
 
             // All tests pass, ensure user can check out now
             if (allowCheckOut == true) {

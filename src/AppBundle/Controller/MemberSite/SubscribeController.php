@@ -78,9 +78,6 @@ class SubscribeController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
-        /** @var \AppBundle\Services\Membership\MembershipService $membershipService */
-        $membershipService = $this->get('service.membership');
-
         /** @var \AppBundle\Repository\MembershipTypeRepository $membershipTypeRepo */
         $membershipTypeRepo = $em->getRepository('AppBundle:MembershipType');
 
@@ -109,11 +106,15 @@ class SubscribeController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // Allow admins to update the amount paid for a subscription
+            // Inputs allow admins to update the amount paid for a subscription
             $amountPaid     = $form->get('paymentAmount')->getData();
             $price          = $form->get('price')->getData();
             $paymentMethod  = $form->get('paymentMethod')->getData();
-            $membershipType = $form->get('membershipType')->getData();
+
+            if (!$membershipType = $form->get('membershipType')->getData()) {
+                $this->addFlash("error", "Please choose a membership type");
+                return $this->redirectToRoute('choose_membership');
+            }
 
             $membership = new Membership();
             $membership->setContact($contact);

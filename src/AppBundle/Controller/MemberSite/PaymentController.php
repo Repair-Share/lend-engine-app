@@ -44,7 +44,7 @@ class PaymentController extends Controller
             $paymentMethodId = $data['stripePaymentMethodId'];
             $amount = $data['amount'];
             if ($amount/100 < $minimumPaymentAmount) {
-                return new JsonResponse(['error' => 'A minimum payment of '.number_format($minimumPaymentAmount, 2).' is required.']);
+                return new JsonResponse(['error' => 'A minimum payment of '.number_format($minimumPaymentAmount, 2).' is required. <br>You could <a href="/member/add-credit">add credit</a> instead.']);
             }
 
             $contact = $contactService->get($data['contactId']);

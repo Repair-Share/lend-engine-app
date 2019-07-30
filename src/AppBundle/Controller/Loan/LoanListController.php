@@ -82,8 +82,6 @@ class LoanListController extends Controller
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
 
-        $authChecker = $this->get('security.authorization_checker');
-
         $em = $this->getDoctrine()->getManager();
         $data = array();
 
@@ -94,6 +92,9 @@ class LoanListController extends Controller
 
         $start  = $request->get('start');
         $length = $request->get('length');
+
+        // A hack since the search query seems to be returning number of results based on item rows rather than loans
+        $length += 50;
 
         $columns = $request->get('columns');
         if ($columns[1]['search']['value']) {
