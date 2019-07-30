@@ -14,7 +14,7 @@
         '@AppBundle/Resources/admin/css/plugins/datatables.css'
         '@AppBundle/Resources/admin/css/plugins/dataTables.fontAwesome.css'
         '@AppBundle/Resources/admin/css/plugins/buttons.dataTables.min.css'
-        '@AppBundle/Resources/admin/css/AdminLTE.min.css'
+        '@AppBundle/Resources/admin/css/AdminLTE.2.4.15.css'
         '@AppBundle/Resources/admin/css/skin-black-light.min.css'
         '@AppBundle/Resources/admin/css/main.css'
         '@AppBundle/Resources/admin/css/plugins/daterange.css'
@@ -208,7 +208,6 @@ filter='uglifyjs2'
 {% endjavascripts %}
 
 {% if tenantInformation.stripeAccessToken|length > 0 %}
-{#<script src="https://checkout.stripe.com/checkout.js"></script>#}
 <script src="https://js.stripe.com/v3/"></script>
 {% endif %}
 

@@ -1,0 +1,60 @@
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}Subscribe to <strong>{{ plan.name }}</strong> plan{% endblock %}
+{% block modalSubTitle %}GBP {{ plan.amount/100|number_format(2) }} per month{% endblock %}
+
+{% block modalBody %}
+
+    <style>
+        .StripeElement {
+            border: 1px solid #bdbdbd;
+            border-radius: 4px;
+        }
+        .StripeElement--focus {
+            border-color: #80BDFF;
+            outline:0;
+            box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+        #card-element {
+            padding: 8px;
+        }
+    </style>
+
+    {{ form_start(form, { 'attr' : { 'class': 'payment-form', 'id' : "paymentForm" } }) }}
+
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row" id="cardDetails" style="display:none;">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="card-element" class="control-label">Card details</label>
+                <div id="card-element"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="paymentError" style="display:none">
+        <div class="col-md-12">
+            <div class="alert alert-danger" id="paymentErrorMessage"></div>
+        </div>
+    </div>
+
+    <div class="alert alert-info" id="nothing-to-pay" style="display:none">This plan is free.</div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <a class="subscription-submit btn bg-green btn-loading">Subscribe</a>
+    <script>
+        var billingPublicApiKey = '{{ billing_public_key }}';
+    </script>
+    <script src="/js/billing.js"></script>
+{% endblock %}
+

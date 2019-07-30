@@ -1,8 +1,12 @@
 <?php
 
-namespace AppBundle\Controller\MemberSite;
+/**
+ * Handler for payment.js and billing.js
+ * Works with Stripe to create and update payment intent
+ */
 
-use AppBundle\Entity\CreditCard;
+namespace AppBundle\Controller\Payment;
+
 use AppBundle\Entity\Payment;
 use AppBundle\Form\Type\AddCreditType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -11,7 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class PaymentController extends Controller
+class StripePaymentController extends Controller
 {
 
     /**
@@ -30,13 +34,16 @@ class PaymentController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
+        /** @var $settingsService \AppBundle\Services\SettingsService */
+        $settingsService = $this->get('settings');
+
         $em = $this->getDoctrine()->getManager();
 
         $message = '';
 
         $data = json_decode($request->getContent(), true);
 
-        $minimumPaymentAmount = $this->get('settings')->getSettingValue('stripe_minimum_payment');
+        $minimumPaymentAmount = $settingsService->getSettingValue('stripe_minimum_payment');
 
         if (isset($data['stripePaymentMethodId'])) {
 

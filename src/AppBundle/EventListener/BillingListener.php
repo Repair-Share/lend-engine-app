@@ -29,6 +29,9 @@ class BillingListener
         if (!in_array($request->attributes->get('_route'),
             [
                 'billing',
+                'billing_payment',
+                'billing_payment_handler',
+                'billing_payment_success',
                 'fos_user_security_login',
                 'fos_user_security_logout',
                 'fos_user_resetting_request',

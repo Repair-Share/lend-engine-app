@@ -305,7 +305,7 @@ class BillingService
                 ],
                 [
                     'code' => 'starter',
-                    'stripeCode' => 'plan_Cv6rBge0LPVNin',
+                    'stripeCode' => 'plan_FX1HLedEtRzj4k',
                     'name' => 'Starter',
                     'amount' => 500
                 ],
@@ -337,22 +337,27 @@ class BillingService
     {
         $plan = 'NOTSET';
         switch ($planStripeCode) {
+
             case 'free':
                 $plan = 'free';
                 break;
+
             case 'standard':
             case 'starter':
             case 'plan_Cv8Lg7fyOJSB0z': // standard monthly 5.00
             case 'plan_Cv6TbQ0PPSnhyL': // test plan
             case 'plan_Cv6rBge0LPVNin': // test plan
+            case 'plan_FX1HLedEtRzj4k': // starter on test env
             case 'single':
                 $plan = 'starter';
                 break;
+
             case 'premium':
             case 'plus':
             case 'multiple':
                 $plan = 'plus';
                 break;
+
             case 'business':
             case 'plan_F4HR4VG76biNcB': // test
             case 'plan_F4HgQehPQ2nOlN': // prod

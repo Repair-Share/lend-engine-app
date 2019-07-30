@@ -40,10 +40,10 @@ Take payment for an attendee already booked
         {{ include('partials/credit-cards.html.twig') }}
 
         <div class="row">
-            <div class="col-sm-6 admin-only">
+            <div class="col-sm-6 admin-only" id="payment-amount-column">
                 {{ form_row(form.paymentAmount) }}
             </div>
-            <div class="col-sm-6" {% if not is_granted('ROLE_ADMIN') %}style="display:none"{% endif %}>
+            <div class="col-sm-6" {% if not is_granted('ROLE_ADMIN') %}style="display:none"{% endif %} id="payment-method-column">
                 {{ form_row(form.paymentMethod) }}
             </div>
         </div>
@@ -61,7 +61,7 @@ Take payment for an attendee already booked
                 </div>
             </div>
             {% if tenantInformation.stripeFee > 0 %}
-                <div class="col-md-12" style="color:#ff4930; padding-bottom: 10px;">
+                <div class="col-md-12" style="color:#ff4930; padding-bottom: 10px;" id="paymentFeeMessage">
                     {{ tenantInformation.currencySymbol }} {{ tenantInformation.stripeFee|number_format(2, '.') }} {% trans %}public_add_credit.processing_fee{% endtrans %}.
                 </div>
             {% endif %}

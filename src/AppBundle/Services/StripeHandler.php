@@ -189,29 +189,6 @@ class StripeHandler
     }
 
     /**
-     * @param $token
-     * @param $amount
-     * @param $msg
-     * @return \Stripe\Charge
-     */
-//    public function chargeWithToken($token, $amount, $msg = 'Lend Engine charge')
-//    {
-//        $params = [
-//            'amount'        => $amount,
-//            'currency'      => $this->currency,
-//            'source'        => $token,
-//            'description'   => $msg,
-//        ];
-//        try {
-//            $charge = \Stripe\Charge::create($params);
-//            return $charge;
-//        } catch (\Exception $e) {
-//            $this->errors[] = $e->getMessage();
-//            return false;
-//        }
-//    }
-
-    /**
      * @param $customerId
      * @param $amount
      * @param $msg
@@ -233,31 +210,6 @@ class StripeHandler
             return false;
         }
     }
-
-    /**
-     * @param $cardId
-     * @param $customerId
-     * @param $amount
-     * @param $msg
-     * @return bool|\Stripe\Charge
-     */
-//    public function chargeWithCard($cardId, $customerId, $amount, $msg = 'Lend Engine charge')
-//    {
-//        $params = [
-//            'amount'        => $amount,
-//            'currency'      => $this->currency,
-//            'customer'      => $customerId,
-//            'source'        => $cardId,
-//            'description'   => $msg,
-//        ];
-//        try {
-//            $charge = \Stripe\Charge::create($params);
-//            return $charge;
-//        } catch (\Exception $e) {
-//            $this->errors[] = $e->getMessage();
-//            return false;
-//        }
-//    }
 
     /**
      * @param $paymentMethodId
@@ -324,80 +276,6 @@ class StripeHandler
     }
 
     /**
-     * @param $token
-     * @param $cardId
-     * @param Payment $payment
-     * @param $msg string
-     * @return bool|\Stripe\Charge
-     *
-     *
-     * @deprecated  : Must use the createPaymentIntent flow now
-     *
-     *
-     */
-    public function processPayment($token, $cardId, $payment, $msg = '')
-    {
-
-        if (!$token && !$cardId) {
-            $this->errors[] = 'Either Stripe checkout token or card ID is required.';
-        }
-
-        $amount = $payment->getAmount();
-        if (!$amount || $amount < 0) {
-            $this->errors[] = 'Positive amount is required to charge via Stripe. Tried with: '.$amount;
-        }
-
-        $contact = $payment->getContact();
-        if ($token && !$contact->getStripeCustomerId()) {
-
-            // We don't yet have this customer in Stripe so create them
-            $stripeCustomer = [
-                'description' => $contact->getName(),
-                'email' => $contact->getEmail(),
-                'source' => $token
-            ];
-
-            if ($stripeCustomer = $this->createCustomer($stripeCustomer)) {
-
-                $customerStripeId = $stripeCustomer['id'];
-                $contact->setStripeCustomerId($customerStripeId);
-                $this->em->persist($contact);
-
-                // The card just used will have been set as the default for the new Stripe customer
-                if (isset($stripeCustomer['sources']['data'])) {
-                    foreach ($stripeCustomer['sources']['data'] AS $source) {
-                        $cardId = $source['id'];
-                    }
-                }
-
-                try {
-                    $this->em->flush($contact);
-                } catch (\Exception $generalException) {
-                    $this->errors[] = 'Failed to update member with Stripe details: '.$generalException->getMessage();
-                }
-
-            } else {
-
-                $this->errors[] = 'Could not create customer in Stripe.';
-                return false;
-
-            }
-
-        }
-
-        if ($cardId && $contact->getStripeCustomerId()) {
-            $charge = $this->chargeWithCard($cardId, $contact->getStripeCustomerId(), $amount*100, $msg);
-            return $charge;
-        } else if ($token) {
-            $charge = $this->chargeWithToken($token, $amount*100, $msg);
-            return $charge;
-        }
-
-        $this->errors[] = 'Other payment error.';
-        return false;
-    }
-
-    /**
      * @param $chargeId
      * @param $amount
      * @return bool|\Stripe\ApiResource
@@ -428,73 +306,119 @@ class StripeHandler
 
     /**
      * Subscribe the tenant to a Lend Engine plan
-     * @param $token
+     * @param $tokenId
      * @param Tenant $tenant
      * @param $planCode
      * @return bool|\Stripe\Charge
      */
-    public function createSubscription($token, Tenant $tenant, $planCode)
+    public function createSubscription($tokenId, Tenant $tenant, $planCode)
+    {
+
+        if ($stripeCustomerId = $tenant->getStripeCustomerId()) {
+            // Update the customer to use the new card details
+            \Stripe\Customer::update(
+                $stripeCustomerId,
+                ['source' => $tokenId,]
+            );
+        } else {
+            // new customer
+            $customerDetails = [
+                'name' => $tenant->getName(),
+                'description' => $tenant->getOrgEmail(),
+                'email' => $tenant->getOwnerEmail(),
+                'source' => $tokenId
+            ];
+
+            if (!$customer = $this->createCustomer($customerDetails)) {
+                $this->errors[] = "Could not create a customer in Stripe";
+                return false;
+            }
+
+            $stripeCustomerId = $customer['id'];
+            $tenant->setStripeCustomerId($stripeCustomerId);
+        }
+
+        try {
+
+            $response = \Stripe\Subscription::create([
+                'customer' => $stripeCustomerId,
+                'plan'     => $planCode,
+                'expand' => ['latest_invoice.payment_intent']
+            ]);
+
+            if (isset($response->error)) {
+                $this->errors[] = $response->error->type.' : '.$response->error->message;
+                return false;
+            }
+
+            if ($response->status == 'active') {
+                return $response;
+            } else if ($response->status == 'incomplete') {
+                // Save the Stripe customer ID, but not the subscription
+                $this->errors[] = 'Your card failed. Please try again.';
+                try {
+                    $this->em->persist($tenant);
+                    $this->em->flush($tenant);
+                } catch (\Exception $generalException) {
+                    $this->errors[] = 'Failed to update tenant with new Stripe ID: '.$generalException->getMessage();
+                }
+                return $response;
+            } else {
+                $this->errors[] = 'Unhandled response status: '.$response->status;
+                return false;
+            }
+        } catch (\Exception $generalException) {
+            $this->errors[] = $generalException->getMessage();
+        }
+
+        return false;
+
+//        $response = \Stripe\Subscription::create([
+//            'customer' => $stripeCustomerId,
+//            'items'    => [
+//                'plan' => [
+//                    'id' => $planCode
+//                ]
+//            ],
+//            'expand' => ['latest_invoice.payment_intent']
+//        ]);
+
+
+
+    }
+
+    /**
+     * @param Tenant $tenant
+     * @param $planCode
+     * @param $subscriptionId
+     * @return bool
+     */
+    public function activateSubscription(Tenant $tenant, $planCode, $subscriptionId)
     {
         $oldSubscriptionId = $tenant->getSubscriptionId();
 
-        if ($token && !$tenant->getStripeCustomerId()) {
+        // ACTIVATE SUBSCRIPTION
+        $tenant->setPlan($planCode);
+        $tenant->setStatus(Tenant::STATUS_LIVE);
+        $tenant->setSubscriptionId($subscriptionId);
 
-            // We don't yet have this customer in Stripe so create them
-            $stripeCustomer = [
-                'description' => $tenant->getName(),
-                'email' => $tenant->getOwnerEmail(),
-                'source' => $token
-            ];
+        try {
+            $this->em->persist($tenant);
+            $this->em->flush($tenant);
 
-            if ($stripeCustomer = $this->createCustomer($stripeCustomer)) {
-
-                $customerStripeId = $stripeCustomer['id'];
-                $tenant->setStripeCustomerId($customerStripeId);
-                $this->em->persist($tenant);
-
-                // The card just used will have been set as the default for the new Stripe customer
-                if (isset($stripeCustomer['sources']['data'])) {
-                    foreach ($stripeCustomer['sources']['data'] AS $source) {
-                        $cardId = $source['id'];
-                    }
-                }
-
+            // Cancel any existing plans
+            if ($oldSubscriptionId) {
                 try {
-                    $this->em->flush($tenant);
-                } catch (\Exception $generalException) {
-                    $this->errors[] = 'Failed to update account with Stripe details: '.$generalException->getMessage();
-                }
-
-            }
-        }
-
-        // We should now have a customer
-        if ($tenant->getStripeCustomerId()) {
-
-            if ($subscription = $this->subscribeCustomer($tenant->getStripeCustomerId(), $planCode)) {
-                // Save the new plan
-                $tenant->setPlan($planCode);
-                $tenant->setStatus(Tenant::STATUS_LIVE);
-                $tenant->setSubscriptionId($subscription['id']);
-                $this->em->persist($tenant);
-                try {
-                    $this->em->flush($tenant);
-                    // Cancel any existing plans
-                    if ($oldSubscriptionId) {
-                        try {
-                            $sub = \Stripe\Subscription::retrieve($oldSubscriptionId);
-                            $sub->cancel();
-                        } catch (\Exception $e) {
-                            $this->errors[] = 'Failed to cancel previous subscription: '.$e->getMessage();
-                            $this->errors[] = $e->getMessage();
-                        }
-                    }
-                    return true;
-                } catch (\Exception $generalException) {
-                    $this->errors[] = 'Failed to update account with new plan: '.$generalException->getMessage();
+                    $sub = \Stripe\Subscription::retrieve($oldSubscriptionId);
+                    $sub->cancel();
+                } catch (\Exception $e) {
+                    $this->errors[] = 'Failed to cancel previous subscription: '.$e->getMessage();
+                    $this->errors[] = $e->getMessage();
                 }
             }
-
+            return true;
+        } catch (\Exception $generalException) {
+            $this->errors[] = 'Failed to update account with new plan: '.$generalException->getMessage();
         }
 
         return false;
@@ -549,39 +473,6 @@ class StripeHandler
         try {
             $this->em->flush($tenant);
             return true;
-        } catch (\Exception $e) {
-            $this->errors[] = $e->getMessage();
-            return false;
-        }
-    }
-
-    /**
-     * @param string $stripeCustomerId
-     * @param string $planCode
-     * @return bool|\Stripe\Subscription
-     */
-    public function subscribeCustomer($stripeCustomerId, $planCode)
-    {
-        try {
-            $response = \Stripe\Subscription::create([
-                'customer' => $stripeCustomerId,
-                'plan'     => $planCode
-            ]);
-
-//            $response = \Stripe\Subscription::create([
-//                'customer' => $stripeCustomerId,
-//                'items'    => [
-//                    'plan' => [
-//                        'id' => $planCode
-//                    ]
-//                ]
-//            ]);
-
-            if (isset($response->error)) {
-                $this->errors[] = $response->error->type.' : '.$response->error->message;
-                return false;
-            }
-            return $response;
         } catch (\Exception $e) {
             $this->errors[] = $e->getMessage();
             return false;

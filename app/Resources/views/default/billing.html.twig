@@ -199,7 +199,7 @@
                                         </div>
                                     {% else %}
                                         <br><br>
-                                        <button type="submit" id="{{ plan.stripeCode }}" data-amount="{{ plan.amount }}" class="btn btn-success subscribe-submit" title="{{ plan.stripeCode }}">Choose this plan</button>
+                                        <a id="{{ plan.stripeCode }}" class="btn btn-success modal-link" title="{{ plan.stripeCode }}" href="{{ path('billing_payment', {planCode: plan.stripeCode}) }}">Choose this plan</a>
                                     {% endif %}
 
                                 </div>
@@ -226,45 +226,8 @@
 {% endblock %}
 
 {% block pagejs %}
-    {#If we've not already included it#}
+    {#If we've not already included it (if organisation is using Stripe)#}
     {% if tenantInformation.stripeAccessToken|length == 0 %}
-        <script src="https://checkout.stripe.com/checkout.js"></script>
+        <script src="https://js.stripe.com/v3/"></script>
     {% endif %}
-
-    <script>
-
-        var subscriptionHandler = StripeCheckout.configure({
-            key: '{{ billing_public_key }}',
-            locale: 'auto',
-            token: function(token) {
-                $("#stripeToken").val(token.id);
-                $("#subsForm").submit();
-                waitButton($('.subscribe-submit'));
-            }
-        });
-
-        // When user clicks payment button, route through Stripe if appropriate
-        $(document).on('click', ".subscribe-submit", function(e) {
-
-            var paymentAmount = $(this).data('amount');
-            var planCode = $(this).attr('id');
-            $("#planCode").val(planCode);
-
-            if (planCode == 'free') {
-                $("#subsForm").submit();
-                waitButton($('.subscribe-submit'));
-            } else {
-                // Open Checkout with further options:
-                subscriptionHandler.open({
-                    name: 'Lend Engine',
-                    zipCode: false,
-                    currency: 'gbp',
-                    allowRememberMe: false,
-                    email:  '{{ tenantInformation.accountOwnerEmail }}',
-                    panelLabel: "Subscribe now"
-                });
-                e.preventDefault();
-            }
-        });
-    </script>
 {% endblock %}
