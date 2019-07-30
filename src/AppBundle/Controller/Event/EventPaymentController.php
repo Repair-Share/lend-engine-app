@@ -28,8 +28,6 @@ class EventPaymentController extends Controller
         /** @var \AppBundle\Repository\AttendeeRepository $attendeeRepo */
         $attendeeRepo = $em->getRepository('AppBundle:Attendee');
 
-        // Add Stripe fee
-        $feeAmount = (float)$this->get('settings')->getSettingValue('stripe_fee');
         $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
 
         /** @var \AppBundle\Entity\Attendee $attendee */
@@ -56,9 +54,6 @@ class EventPaymentController extends Controller
             $paymentMethod = $form->get('paymentMethod')->getData();
             $paymentNote   = $form->get('paymentNote')->getData();
 
-            $token   = $form->get('stripeToken')->getData();
-            $cardId  = $form->get('stripeCardId')->getData();
-
             // Create a payment which is saved when we receive OK from Stripe
             $payment = new Payment();
             $payment->setCreatedBy($this->getUser());
@@ -69,20 +64,11 @@ class EventPaymentController extends Controller
             $payment->setEvent($event);
             $payment->setType(Payment::PAYMENT_TYPE_PAYMENT);
 
-            if ($token || $cardId) {
-                $cardDetails = [
-                    'token'  => $token,
-                    'cardId' => $cardId,
-                ];
-                if ($feeAmount > 0 && $paymentMethod->getId() == $stripePaymentMethodId) {
-                    $paymentAmount += $feeAmount;
-                    $payment->setAmount($paymentAmount);
-                }
-            } else {
-                $cardDetails = null;
+            if ($stripePaymentMethodId == $paymentMethod->getId()) {
+                $payment->setPspCode($request->get('chargeId'));
             }
 
-            if ($paymentService->create($payment, $cardDetails)) {
+            if ($paymentService->create($payment)) {
                 $contactService->recalculateBalance($attendee->getContact());
                 $this->addFlash("success", "Payment taken OK");
             } else {

@@ -5,39 +5,18 @@
 
 {% block modalBody %}
 
-    {{ form_start(form, { 'attr' : { 'class': 'payment-form' } }) }}
+    {{ form_start(form, { 'attr' : { 'class': 'payment-form', 'id' : "paymentForm" } }) }}
 
     {{ form_errors(form) }}
     {% if help is defined %}
         <span class="help">{{ help }}</span>
     {% endif %}
 
-    <input type="hidden" name="contactId" id="contactId" value="{{ attendee.contact.id }}">
-    <input type="hidden" name="contactEmail" id="contactEmail" class="contact-email" value="{{ attendee.contact.email }}">
+    <input type="hidden" name="c" id="c" value="{{ attendee.contact.id }}">
 
     {% set contact = attendee.contact %}
-    {{ include('partials/credit-cards.html.twig') }}
+    {{ include('cores/payment_core.html.twig') }}
 
-    <div class="row">
-        <div class="col-md-4">
-            {{ form_row(form.paymentAmount) }}
-        </div>
-        <div class="col-md-4">
-            {{ form_row(form.paymentMethod) }}
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            {{ form_row(form.paymentNote) }}
-            {% if tenantInformation.stripeFee > 0 %}
-                <div style="color:#ff4930">
-                    {{ tenantInformation.stripeFee|number_format(2, '.') }} fee will be added to Stripe payments
-                </div>
-            {% endif %}
-        </div>
-    </div>
-    
     {{ form_end(form) }}
 
 {% endblock %}
