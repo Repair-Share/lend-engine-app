@@ -22,10 +22,10 @@ class PaymentControllerTest extends AuthenticatedControllerTest
         $this->assertContains('Add credit', $crawler->html());
 
         // Cash payment
-        $form = $crawler->filter('form[name="payment"]')->form(array(
-            'paymentMethod' => 1,
-            'paymentAmount' => 10.99,
-            'paymentNote'   => 'Payment note',
+        $form = $crawler->filter('form[name="add_credit"]')->form(array(
+            'add_credit[paymentMethod]' => 1,
+            'add_credit[paymentAmount]' => 10.99,
+            'add_credit[paymentNote]'   => 'Payment note',
         ),'POST');
 
         $this->client->submit($form);

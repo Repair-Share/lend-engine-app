@@ -232,10 +232,6 @@ filter='uglifyjs2'
         if ($("#choose-site-link").html()) {
             $("#choose-site-link").click();
         }
-        // Contact mage / new membership process
-        {% if app.request.get('open') == 'membership' %}
-        $("#addMembership").click();
-        {% endif %}
     });
     {% for flash_message in app.session.flashbag.get('success') %}
     $.growl.notice({title: "", message: "{{ flash_message }}"});

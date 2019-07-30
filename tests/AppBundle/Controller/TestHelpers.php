@@ -89,14 +89,14 @@ class TestHelpers extends AuthenticatedControllerTest
     public function subscribeContact(Client $client, $contactId)
     {
         // Subscribe a contact to membership type 1
-        $crawler = $client->request('GET', '/admin/membership/contact/'.$contactId);
-        $this->assertContains('New membership for', $crawler->html());
+        $crawler = $client->request('GET', '/member/subscribe?membershipTypeId=1&c='.$contactId);
+        $this->assertContains('Subscription payment', $crawler->html());
 
-        $form = $crawler->filter('form[name="membership"]')->form(array(
-            'membership[membershipType]' => 1,
-            'membership[price]'          => 15,
-            'membership[paymentMethod]'  => 1,
-            'membership[paymentAmount]'  => 15
+        $form = $crawler->filter('form[name="membership_subscribe"]')->form(array(
+            'membership_subscribe[membershipType]' => 1,
+            'membership_subscribe[price]'          => 15,
+            'membership_subscribe[paymentMethod]'  => 1,
+            'membership_subscribe[paymentAmount]'  => 15
         ),'POST');
 
         $client->submit($form);
@@ -104,7 +104,7 @@ class TestHelpers extends AuthenticatedControllerTest
         $this->assertTrue($client->getResponse() instanceof RedirectResponse);
         $crawler = $client->followRedirect();
 
-        $this->assertContains('Membership saved', $crawler->html());
+        $this->assertContains('Subscribed OK', $crawler->html());
 
         // Confirm the user now has a membership
         $membershipId = (int)$crawler->filter('#active-membership-id')->text();
@@ -122,10 +122,10 @@ class TestHelpers extends AuthenticatedControllerTest
         $crawler = $client->request('GET', '/member/add-credit?c='.$contactId);
         $this->assertContains('Add credit', $crawler->html());
 
-        $form = $crawler->filter('form[name="payment"]')->form(array(
-            'paymentMethod' => 1,
-            'paymentAmount' => $amount,
-            'paymentNote'   => 'Payment note',
+        $form = $crawler->filter('form[name="add_credit"]')->form(array(
+            'add_credit[paymentMethod]' => 1,
+            'add_credit[paymentAmount]' => $amount,
+            'add_credit[paymentNote]'   => 'Payment note',
         ),'POST');
 
         $client->submit($form);
