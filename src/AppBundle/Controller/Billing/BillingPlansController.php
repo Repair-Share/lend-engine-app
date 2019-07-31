@@ -33,6 +33,7 @@ class BillingPlansController extends Controller
         }
 
         return $this->render('default/billing.html.twig', array(
+            'token' => md5($tenant->getStub()),
             'plans' => $plans,
             'subscription' => $subscription
         ));

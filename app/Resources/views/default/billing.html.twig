@@ -199,7 +199,7 @@
                                         </div>
                                     {% else %}
                                         <br><br>
-                                        <a id="{{ plan.stripeCode }}" class="btn btn-success modal-link" title="{{ plan.stripeCode }}" href="{{ path('billing_payment', {planCode: plan.stripeCode}) }}">Choose this plan</a>
+                                        <a id="{{ plan.stripeCode }}" class="btn btn-success" title="{{ plan.stripeCode }}" href="https://www.lend-engine.com/subscribe?account={{ tenantInformation.accountCode }}&planCode={{ plan.stripeCode }}&token={{ token }}">Choose this plan</a>
                                     {% endif %}
 
                                 </div>

@@ -256,12 +256,24 @@ class BillingService
     /**
      * Returns the CURRENT billing plans for display in the UI
      * Customers on legacy plans are mapped to one of the current plans in CustomConnectionFactory
+     *
+     *
+     * Any changes to this map also need to be made on lend-engine-site codebase
+     *
+     *
      * @return array
      */
     public function getPlans()
     {
 
-        if ($this->env == 'prod') {
+        /**
+         *
+         * We now have to use only the live plans, since payment is processed all on www.lend-engine.com
+         * To test the subscription flow, boot a dev server on lend-engine-site and access the subscribe page manually
+         * /subscribe?account=XX&planCode={devPlanCode}&token=md5({accountCode})
+         *
+         */
+        if ($this->env == 'prod' || 1) {
 
             // ALL PROD SERVERS
 
