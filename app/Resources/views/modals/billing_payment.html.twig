@@ -1,7 +1,7 @@
 {% extends 'modal.html.twig' %}
 
-{% block modalTitle %}Subscribe to <strong>{{ plan.name }}</strong> plan{% endblock %}
-{% block modalSubTitle %}GBP {{ plan.amount/100|number_format(2) }} per month{% endblock %}
+{% block modalTitle %}Subscribe to Lend Engine <strong>{{ plan.name }}</strong>{% endblock %}
+{% block modalSubTitle %}{% endblock %}
 
 {% block modalBody %}
 
@@ -44,6 +44,10 @@
     </div>
 
     <div class="alert alert-info" id="nothing-to-pay" style="display:none">This plan is free.</div>
+
+    <div class="help-block" id="billInfo">
+        Your card will be billed &pound;{{ plan.amount/100|number_format(2) }} per month.
+    </div>
 
     {{ form_end(form) }}
 

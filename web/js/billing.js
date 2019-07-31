@@ -14,8 +14,7 @@ var billingCard = billingElements.create('card');
 billingCard.mount('#card-element');
 billingCard.addEventListener('change', function(event) {
     if (event.error) {
-        $("#paymentErrorMessage").html(event.error.message);
-        $("#paymentError").show();
+        handleErrors(event);
     } else {
         $("#paymentError").hide();
     }
@@ -25,6 +24,7 @@ $(document).ready(function() {
     if ($("#billing_paymentAmount").val() == 0) {
         $("#nothing-to-pay").fadeIn();
         $("#cardDetails").hide();
+        $("#billInfo").hide();
     } else {
         $("#cardDetails").show();
     }
@@ -32,14 +32,13 @@ $(document).ready(function() {
 
 function processPaymentForm(e) {
     console.log("Processing subscription form");
+    var errorMessage = '';
     $("#paymentError").hide();
     var paymentAmount = $(".payment-amount");
     if ( paymentAmount.val() > 0 ) {
         billingStripe.createToken(billingCard).then(function(result) {
             if (result.error) {
-                // Inform the customer that there was an error.
-                $("#paymentErrorMessage").html(result.error.message);
-                $("#paymentError").show();
+                handleErrors(result);
             } else {
                 submitFormWithToken(result.token.id);
             }
@@ -73,8 +72,7 @@ function submitFormWithToken(tokenId) {
 function handleServerResponse(response) {
     console.log(response);
     if (response.error) {
-        $("#paymentErrorMessage").html(response.error);
-        $("#paymentError").show();
+        handleErrors(response);
         unWaitButton($('.subscription-submit'));
     } else if (response.requires_action) {
         // Use Stripe.js to handle required card action
@@ -91,9 +89,7 @@ function handleAction(response) {
         response.payment_intent_client_secret
     ).then(function(result) {
         if (result.error) {
-            console.log(result.error);
-            $("#paymentErrorMessage").html(result.error.message);
-            $("#paymentError").show();
+            handleErrors(result);
             unWaitButton($('.subscription-submit'));
         } else {
             // success, submit the form
@@ -101,4 +97,24 @@ function handleAction(response) {
             $("#paymentForm").submit();
         }
     });
+}
+
+function handleErrors(result) {
+    console.log(result);
+    var errorMessage = '';
+    if (result.error.message != undefined) {
+        errorMessage += result.error.message;
+    }
+    if (result.error != undefined) {
+        errorMessage += result.error;
+    }
+    if (result.errors != undefined) {
+        if (result.errors.length > 0) {
+            $.each(result.errors, function(k,v) {
+                errorMessage += '<br>'+v;
+            });
+        }
+    }
+    $("#paymentErrorMessage").html(errorMessage);
+    $("#paymentError").show();
 }

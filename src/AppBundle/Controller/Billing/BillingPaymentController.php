@@ -21,14 +21,8 @@ class BillingPaymentController extends Controller
      */
     public function billingPaymentAction(Request $request)
     {
-
-        $em = $this->getDoctrine()->getManager();
-
         /** @var \AppBundle\Services\StripeHandler $stripeService */
         $stripeService = $this->get('service.stripe');
-
-        /** @var $settingsService \AppBundle\Services\SettingsService */
-        $settingsService = $this->get('settings');
 
         /** @var \AppBundle\Services\BillingService $billingService */
         $billingService = $this->get('billing');
@@ -178,6 +172,12 @@ class BillingPaymentController extends Controller
                         'subscription_id' => $subscriptionResponse->id,
                         'payment_intent_client_secret' => $subscriptionResponse->latest_invoice->payment_intent->client_secret,
                         'message' => $message,
+                    ]);
+                } else {
+                    return new JsonResponse([
+                        'error' => "Unknown subscription status : ".$subscriptionResponse->status,
+                        'message' => $message,
+                        'errors' => $stripeService->errors
                     ]);
                 }
 

@@ -11,7 +11,7 @@ class BillingType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('paymentAmount', TextType::class, array(
+        $builder->add('paymentAmount', HiddenType::class, array(
             'label' => 'Payment amount',
             'required' => false,
             'mapped' => false,
@@ -20,19 +20,19 @@ class BillingType extends AbstractType
             ]
         ));
 
-        $builder->add('stripeTokenId', TextType::class, array(
+        $builder->add('stripeTokenId', HiddenType::class, array(
             'label' => 'Token',
             'required' => false,
             'mapped' => false
         ));
 
-        $builder->add('planCode', TextType::class, array(
+        $builder->add('planCode', HiddenType::class, array(
             'label' => 'planCode',
             'required' => false,
             'mapped' => false
         ));
 
-        $builder->add('subscriptionId', TextType::class, array(
+        $builder->add('subscriptionId', HiddenType::class, array(
             'label' => 'subscriptionId',
             'required' => false,
             'mapped' => false

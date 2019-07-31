@@ -316,10 +316,15 @@ class StripeHandler
 
         if ($stripeCustomerId = $tenant->getStripeCustomerId()) {
             // Update the customer to use the new card details
-            \Stripe\Customer::update(
-                $stripeCustomerId,
-                ['source' => $tokenId,]
-            );
+            try {
+                \Stripe\Customer::update(
+                    $stripeCustomerId,
+                    ['source' => $tokenId,]
+                );
+            } catch (\Exception $generalException) {
+                $this->errors[] = $generalException->getMessage();
+                return false;
+            }
         } else {
             // new customer
             $customerDetails = [
