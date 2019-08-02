@@ -59,14 +59,10 @@ class LoanController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
-        /** @var \AppBundle\Services\StripeHandler $stripeService */
-        $stripeService = $this->get('service.stripe');
-
         /** @var \AppBundle\Repository\LoanRepository $repo */
         $repo = $em->getRepository('AppBundle:Loan');
 
         $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
-        $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
 
         /** @var \AppBundle\Entity\Loan $loan */
         if (!$loan = $repo->find($loanId)) {
