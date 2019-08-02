@@ -39,7 +39,7 @@ class BillingService
             'ContactAttachment' => false,
             'Deposits'          => false,
             'CustomEmail'       => false,
-            'Site'              => false, // restrict items to sites
+            'Site'              => false, // allow multiple sites
             'Page'              => false, // add/edit web pages
             'PrivateSite'       => false,
             'CustomStyle'       => false,
@@ -90,7 +90,7 @@ class BillingService
                     'ContactAttachment' => true,
                     'Deposits'          => true,
                     'CustomEmail'       => true,
-                    'Site'              => false,
+                    'Site'              => true,
                     'Page'              => true,
                     'PrivateSite'       => true,
                     'CustomStyle'       => true,
