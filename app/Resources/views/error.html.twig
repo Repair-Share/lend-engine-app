@@ -8,8 +8,8 @@
 
     {% stylesheets
     '@AppBundle/Resources/css/bootstrap.css'
-    '@AppBundle/Resources/admin/css/AdminLTE.css'
-    '@AppBundle/Resources/admin/css/skin-black-light.css'
+    '@AppBundle/Resources/admin/css/AdminLTE.2.4.15.css'
+    '@AppBundle/Resources/admin/css/skin-black-light.min.css'
     '@AppBundle/Resources/admin/css/main.css'
     filter='cssrewrite'
     %}
@@ -28,7 +28,7 @@
 {% javascripts
 '@AppBundle/Resources/js/jQuery-2.1.4.min.js'
 '@AppBundle/Resources/js/bootstrap.js'
-'@AppBundle/Resources/admin/js/plugins/adminLTE.js'
+'@AppBundle/Resources/admin/js/plugins/adminlte.2.4.15.js'
 filter='uglifyjs2'
 %}
 <script src="{{ asset_url }}"></script>
