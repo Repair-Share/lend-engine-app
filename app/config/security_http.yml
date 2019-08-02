@@ -23,6 +23,11 @@ security:
                 path:   logout
                 target: home
             anonymous:    true
+            remember_me:
+                secret:   '%secret%'
+                lifetime: 604800 # 1 week in seconds
+                path:     /
+                always_remember_me: true
 
     access_control:
         - { path: ^/admin, role: ROLE_ADMIN }
