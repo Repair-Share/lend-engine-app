@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller;
+namespace AppBundle\Controller\Item;
 
 use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\InventoryLocation;
@@ -35,8 +35,6 @@ class ItemArchiveController extends Controller
         /** @var \AppBundle\Entity\InventoryItem $inventoryItem */
         $inventoryItem = $inventoryItemRepo->find($id);
 
-        $fromLocation = $inventoryItem->getInventoryLocation();
-
         $form = $this->createForm(ItemRemoveType::class, null, array(
             'action' => $this->generateUrl('item_archive', ['id' => $inventoryItem->getId()])
         ));
@@ -47,7 +45,7 @@ class ItemArchiveController extends Controller
 
             $userNote = $form->get('notes')->getData();
 
-            if ( $inventoryService->itemRemove($inventoryItem, $fromLocation, $userNote) ) {
+            if ( $inventoryService->itemRemove($inventoryItem, $userNote) ) {
                 $this->addFlash('success', 'Item deleted.');
             } else {
                 $this->addFlash('error', "Failed to delete item.");

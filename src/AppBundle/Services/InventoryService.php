@@ -275,12 +275,13 @@ class InventoryService
 
     /**
      * @param $inventoryItem
-     * @param $fromLocation
      * @return bool
      */
-    public function itemRemove(InventoryItem $inventoryItem, InventoryLocation $fromLocation, $userNote = '')
+    public function itemRemove(InventoryItem $inventoryItem, $userNote = '')
     {
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
+
+        $fromLocation = $inventoryItem->getInventoryLocation();
 
         $transactionRow = new ItemMovement();
         $transactionRow->setInventoryLocation($fromLocation);

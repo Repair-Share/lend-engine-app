@@ -35,6 +35,9 @@ class BatchUpdateItemController extends Controller
         /** @var $conditionRepo \AppBundle\Repository\ItemConditionRepository */
         $conditionRepo = $em->getRepository('AppBundle:ItemCondition');
 
+        /** @var \AppBundle\Services\InventoryService $inventoryService */
+        $inventoryService = $this->get('service.inventory');
+
         $count = 0;
         foreach ($idSet AS $itemId) {
             /** @var \AppBundle\Entity\InventoryItem $item */
@@ -44,26 +47,36 @@ class BatchUpdateItemController extends Controller
                     $tagId = $request->get("batchTag");
                     $tag = $tagRepo->find($tagId);
                     $item->setTags([$tag]);
+                    $em->persist($item);
                     $count++;
                     break;
                 case "condition":
                     $conditionId = $request->get("batchCondition");
                     $condition = $conditionRepo->find($conditionId);
                     $item->setCondition($condition);
+                    $em->persist($item);
                     $count++;
                     break;
                 case "fee":
                     $fee = $request->get("batchFee");
                     $item->setLoanFee($fee);
+                    $em->persist($item);
                     $count++;
                     break;
                 case "period":
                     $period = $request->get("batchPeriod");
                     $item->setMaxLoanDays($period);
+                    $em->persist($item);
                     $count++;
                     break;
+                case "delete":
+                    if ( $inventoryService->itemRemove($item, "Batch deleted") ) {
+                        $count++;
+                    } else {
+                        $this->addFlash('error', "Failed to delete item:".$item->getId());
+                    }
+                    break;
             }
-            $em->persist($item);
         }
 
         try {
@@ -73,7 +86,7 @@ class BatchUpdateItemController extends Controller
             $this->addFlash("error", $e->getMessage());
         }
 
-        return $this->redirectToRoute('item_list');
+        return $this->redirectToRoute('item_list', ['search' => $request->get('searchBox')]);
     }
 
 }

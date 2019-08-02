@@ -22,7 +22,10 @@
             font-size: 12px;
         }
     </style>
-    {{ form_start(form) }}
+
+    {{ form_start(form, { 'attr' : { 'class': 'item-form', 'id' : "itemForm" } }) }}
+
+    <input type="hidden" name="numberOfCopies" id="numberOfCopies" value="0">
 
     {% if countItems > 1 and tenantInformation.setting('group_similar_items') == 1 %}
         <div class="item-group">
@@ -340,9 +343,12 @@
                 class="btn btn-default btn-loading hidden-xs">Save
             and add another
         </button>
-        <button type="submit" id="save-and-copy" name="submitForm" value="saveAndCopy"
-                class="btn btn-default btn-loading hidden-xs">Copy
+
+        <button type="submit" id="save-and-copy" name="submitForm" value="saveAndCopy" class="btn btn-default btn-loading hidden-xs">
+            Copy
         </button>
+
+
     </div>
 
     {{ form_end(form) }}
@@ -380,7 +386,8 @@
             {% endif %}
 
             $('#item_tabs a').click(function (e) {
-                e.preventDefault(); $(this).tab('show');
+                e.preventDefault();
+                $(this).tab('show');
                 setUpSelectMenus();
             });
 
@@ -626,6 +633,13 @@
                 }, "text");
             }
             {% endif %}
+
+            $(document).on('click', '#save-and-copy', function(e){
+                e.preventDefault();
+                var copies = window.prompt("How many copies?", 1);
+                $("#numberOfCopies").val(copies);
+                $("#itemForm").submit();
+            });
         });
     </script>
     <script src="/js/pages/item.js"></script>

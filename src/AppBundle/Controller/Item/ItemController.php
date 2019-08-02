@@ -332,8 +332,8 @@ class ItemController extends Controller
                 if ($request->get('submitForm') == 'saveAndNew') {
                     $this->addFlash('success', "Item saved. Ready to add a new one!");
                     return $this->redirectToRoute('item_type');
-                } elseif ($request->get('submitForm') == 'saveAndCopy') {
-                    return $this->redirectToRoute('item_copy', ['id' => $product->getId()]);
+                } elseif ($request->get('numberOfCopies') > 0) {
+                    return $this->redirectToRoute('item_copy', ['id' => $product->getId(), 'numberOfCopies' => $request->get('numberOfCopies')]);
                 } else {
                     $this->addFlash('success', "Item saved.");
                     return $this->redirectToRoute('item', ['id' => $product->getId()]);

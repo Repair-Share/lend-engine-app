@@ -125,6 +125,7 @@
                 <select id="batch-option" name="batch-option" style="width:200px">
                     <option value="">-- choose --</option>
                     <option value="move">Move / assign</option>
+                    <option value="delete">Delete</option>
                     <option value="fee">Set loan fee</option>
                     <option value="period">Set loan period (days)</option>
                     <option value="tag">Set category</option>
@@ -152,7 +153,7 @@
                 <span id="batchPeriodWrapper" class="batchSelectWrapper" style="display:none;">
                     <input id="batchPeriod" name="batchPeriod" class="form-control input-100" style="display: inline; position: relative; top: 1px;">
                 </span>
-                <button type="button" id="batchCommit" style="display:none;" class="btn btn-sm btn-default batchSelectWrapper">Update</button>
+                <button type="button" id="batchCommit" style="display:none;" class="btn btn-sm btn-primary batchSelectWrapper">Update</button>
             </div>
         </div>
         <div class="row" id="item-list-body">
@@ -283,9 +284,12 @@
                 } else if (action == 'tag') {
                     $(".batchSelectWrapper").hide();
                     $("#batchTagWrapper, #batchCommit").fadeIn();
-                } else if (action = 'condition') {
+                } else if (action == 'condition') {
                     $(".batchSelectWrapper").hide();
                     $("#batchConditionWrapper, #batchCommit").fadeIn();
+                } else if (action == 'delete') {
+                    $(".batchSelectWrapper").hide();
+                    $("#batchCommit").fadeIn();
                 }
             });
 
@@ -294,6 +298,7 @@
             $("#data-table-inventory_filter label input").css("height", "34px");
             $("div.dataTables_wrapper div.dataTables_filter input").css("text-align", "left");
             $("#data-table-inventory_filter label input").attr("placeholder", "Item name, code, serial");
+            $("#data-table-inventory_filter label input").attr("name", "searchBox");
             $("#data-table-inventory_filter label input").css("width", "200px");
 
             //http://coderexample.com/datatable-custom-column-search/
