@@ -55,7 +55,9 @@ class SiteEventViewController extends Controller
             $event->setIsBookable(false);
         }
 
-        $user = $contactService->loadCustomerCards($user);
+        if ($user) {
+            $user = $contactService->loadCustomerCards($user);
+        }
 
         // Create the form
         $form = $this->createForm(EventBookingType::class, null, [
