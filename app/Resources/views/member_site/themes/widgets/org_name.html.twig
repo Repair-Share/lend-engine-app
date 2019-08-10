@@ -5,7 +5,7 @@
         </a>
     {% elseif tenantInformation.logoImageName %}
         <a href="{{ path('home') }}">
-            <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/files/{{ tenantInformation.logoImageName }}"
+            <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/site_images/{{ tenantInformation.logoImageName }}"
                  id="site-logo" class="img-responsive hidden-xs" style="height: 80px">
         </a>
     {% else %}

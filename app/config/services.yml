@@ -71,7 +71,7 @@ services:
         arguments:
             -
                 version: 'latest' # or 'latest'
-                region:  "us-west-2" # 'eu-central-1' for example
+                region:  "us-west-2" # Oregon
                 credentials:
                     key:    "%aws_key%"
                     secret: "%aws_secret%"

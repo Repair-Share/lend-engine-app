@@ -142,11 +142,18 @@ oneup_flysystem:
                  client: lendengine.s3_client
                  bucket: lend-engine
                  prefix: ''
-
+        file_adapter:
+             awss3v3:
+                 client: lendengine.s3_client
+                 bucket: lend-engine
+                 prefix: ''
     filesystems:
         product_image_fs:
             adapter: product_adapter
             mount:   product_image_fs
+        secure_file_fs:
+            adapter: file_adapter
+            mount:   secure_file_fs
 
 # Image and file uploader
 oneup_uploader:
@@ -162,7 +169,7 @@ oneup_uploader:
             namer: uploader.file_namer
             storage:
                 type: flysystem
-                filesystem: oneup_flysystem.product_image_fs_filesystem
+                filesystem: oneup_flysystem.secure_file_fs_filesystem
         siteimages:
             frontend: dropzone
             namer: uploader.siteimage_namer
