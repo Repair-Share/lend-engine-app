@@ -145,7 +145,7 @@ oneup_flysystem:
         file_adapter:
              awss3v3:
                  client: lendengine.s3_client
-                 bucket: lend-engine
+                 bucket: lend-engine-files
                  prefix: ''
     filesystems:
         product_image_fs:

@@ -79,7 +79,7 @@
             fileName: fileName,
             fileId: fileId,
             fileSize: fileSize.toFixed(2),
-            filePath: "{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/files/" + fileName,
+            filePath: "/file/{{ tenantInformation.schema }}/"+fileName,
             sendToMember: sendToMemberCheckbox
         };
         var html = template(file);

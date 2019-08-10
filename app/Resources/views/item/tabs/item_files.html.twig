@@ -82,7 +82,7 @@
             fileName: fileName,
             fileId: fileId,
             fileSize: fileSize.toFixed(2),
-            filePath: "{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/files/" + fileName,
+            filePath: "/file/{{ tenantInformation.schema }}/"+fileName,
             sendToMember: sendToMemberCheckbox
         };
         var html = template(file);
@@ -101,12 +101,13 @@
 
     // Remove a file
     $("#item-files").on("click", ".file-delete", function () {
+        var fileId = $(this).attr('id');
         var fileName  = $(this).data('filename');
         var fileDiv   = $(this).parent();
         if (window.confirm("Are you sure you want to delete this file?")) {
             $(this).html('<img src="/images/ajax-loader.gif">');
             $.get(
-                    "/admin/file/" + fileName + "/remove",
+                    "/admin/file/" + fileId + "/remove",
                     {item: "{{ product.id }}"},
                     function (data) {
                         if (data == "ok") {

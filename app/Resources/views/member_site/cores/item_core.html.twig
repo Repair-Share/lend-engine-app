@@ -224,7 +224,7 @@
                 {% for file in product.fileAttachments %}
                     <div>
                     {% if app.user.id is defined  %}
-                        <a target="_blank" href="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/files/{{ file.fileName }}">{{ file.fileName }}</a>
+                        <a target="_blank" href="/file/{{ tenantInformation.schema }}/{{ file.fileName }}">{{ file.fileName }}</a>
                     {% else %}
                         {{ file.fileName }}
                     {% endif %}

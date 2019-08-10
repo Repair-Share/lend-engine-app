@@ -214,6 +214,12 @@ class TenantService
         return $this->container->getParameter('s3_bucket');
     }
 
+    // Different bucket with restricted permissions
+    public function getS3BucketFiles()
+    {
+        return $this->container->getParameter('s3_bucket_files');
+    }
+
     public function getStripePublicApiKey()
     {
         return $this->settings->getSettingValue('stripe_publishable_key');
