@@ -67,7 +67,7 @@
             <div class="row">
                 <div class="col-md-4">
                     {% if tenantInformation.logoImageName %}
-                        <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/files/{{ tenantInformation.logoImageName }}" class="img-thumbnail img-responsive">
+                        <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/site_images/{{ tenantInformation.logoImageName }}" class="img-thumbnail img-responsive">
                     {% else %}
                         No logo yet
                     {% endif %}
@@ -149,7 +149,7 @@
         var fileUploader = new Dropzone("div#fileUploader", {
             method: "post",
             paramName: "file", // The name that will be used to transfer the file
-            url: "{{ oneup_uploader_endpoint('files') }}",
+            url: "{{ oneup_uploader_endpoint('siteimages') }}",
             maxFilesize: 0.2, // MB
             acceptedFiles: "image/*",
             accept: function (file, done) {
