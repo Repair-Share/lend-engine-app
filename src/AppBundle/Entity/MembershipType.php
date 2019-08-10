@@ -48,7 +48,7 @@ class MembershipType
      *
      * @ORM\Column(name="duration", type="integer")
      */
-    private $duration = 0;
+    private $duration = 1;
 
     /**
      * @var float
@@ -199,6 +199,9 @@ class MembershipType
      */
     public function getDuration()
     {
+        if ($this->duration == 0) {
+            $this->duration = 1;
+        }
         return $this->duration;
     }
 
