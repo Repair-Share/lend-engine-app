@@ -40,7 +40,7 @@ class SiteEventViewController extends Controller
         if (!$event = $eventService->get($eventId)) {
             return $this->redirectToRoute('event_list');
         }
-
+        
         $paymentMethods = $pmRepo->findAllOrderedByName();
 
         $alreadyBooked = false;
@@ -58,7 +58,7 @@ class SiteEventViewController extends Controller
         }
 
         // If we can't pay for it online and a price is due, make it not bookable
-        if (!$stripePaymentMethodId && $event->getPrice() && !$isAdmin) {
+        if (!$stripePaymentMethodId && $event->getPrice() > 0 && !$isAdmin) {
             $event->setIsBookable(false);
         }
 

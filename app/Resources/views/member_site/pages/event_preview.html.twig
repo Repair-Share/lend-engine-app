@@ -153,7 +153,7 @@
 
                     {% else %}
 
-                        {% if event.isBookable  %}
+                        {% if event.isBookable %}
                             <div class="alert alert-warning">
                                 <a href="{{ path('fos_user_security_login') }}?event={{ event.id }}">Log in</a> or
                                 <a href="{{ path('fos_user_registration_register') }}?event={{ event.id }}">register</a>
