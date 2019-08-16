@@ -50,13 +50,16 @@ class SiteEventViewController extends Controller
             }
         }
 
-        // If we can't pay for it online and a price is due, make it not bookable
-        if (!$stripePaymentMethodId && $event->getPrice() && !$user->hasRole("ROLE_ADMIN")) {
-            $event->setIsBookable(false);
-        }
-
         if ($user) {
             $user = $contactService->loadCustomerCards($user);
+            $isAdmin = $user->hasRole("ROLE_ADMIN");
+        } else {
+            $isAdmin = false;
+        }
+
+        // If we can't pay for it online and a price is due, make it not bookable
+        if (!$stripePaymentMethodId && $event->getPrice() && !$isAdmin) {
+            $event->setIsBookable(false);
         }
 
         // Create the form
