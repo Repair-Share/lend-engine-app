@@ -159,6 +159,10 @@
                                 <a href="{{ path('fos_user_registration_register') }}?event={{ event.id }}">register</a>
                                 to book.
                             </div>
+                        {% else %}
+                            <div>
+                                This event is not bookable online.
+                            </div>
                         {% endif %}
 
                     {% endif %}

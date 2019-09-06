@@ -40,7 +40,7 @@ class SiteEventViewController extends Controller
         if (!$event = $eventService->get($eventId)) {
             return $this->redirectToRoute('event_list');
         }
-        
+
         $paymentMethods = $pmRepo->findAllOrderedByName();
 
         $alreadyBooked = false;

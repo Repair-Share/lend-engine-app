@@ -60,7 +60,7 @@ class SiteEventBookingController extends Controller
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if (($form->isSubmitted() && $form->isValid()) || $request->get('check_in')) {
 
             if ($alreadyBooked == true) {
                 $this->addFlash("success", "You're already booked on this event.");
