@@ -93,6 +93,13 @@ class MembershipType
     private $isSelfServe = 0;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    private $isActive = true;
+
+    /**
      * Get id
      *
      * @return integer
@@ -342,5 +349,29 @@ class MembershipType
     public function getMaxItems()
     {
         return $this->maxItems;
+    }
+
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     *
+     * @return PaymentMethod
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
     }
 }

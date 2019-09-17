@@ -44,6 +44,7 @@ class MembershipTypeController extends Controller
 
             $tableRows[] = array(
                 'id' => $i->getId(),
+                'class' => $i->getIsActive() ? 'item-active' : 'item-inactive',
                 'data' => array(
                     $i->getName(),
                     $i->getIsSelfServe() ? 'Yes' : '',

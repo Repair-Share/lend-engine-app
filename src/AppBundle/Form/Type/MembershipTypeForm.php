@@ -4,6 +4,7 @@ namespace AppBundle\Form\Type;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -86,6 +87,15 @@ class MembershipTypeForm extends AbstractType
                 'placeholder' => '',
                 'class' => 'input-100',
                 'data-help' => "Typically you'd create a membership type for temporary membership, which is automatically assigned to a user when they register. This allows them to add credit and reserve items."
+            )
+        ));
+
+        $builder->add('isActive', CheckboxType::class, array(
+            'label' => 'This membership type is active',
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'data-help' => "",
             )
         ));
 

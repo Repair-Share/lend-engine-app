@@ -44,7 +44,10 @@ class SubscribeController extends Controller
         // Get the available self serve memberships to give to the member as choices
         $filter = [];
         if (!$user->hasRole("ROLE_ADMIN")) {
-            $filter = ['isSelfServe' => true];
+            $filter = ['isSelfServe' => true, 'isActive' => true];
+        } else {
+            $filter = ['isActive' => true];
+
         }
         $availableMembershipTypes = $membershipTypeRepo->findBy($filter);
 
