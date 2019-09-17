@@ -32,6 +32,7 @@ class SettingsReservationsController extends Controller
 
         $form->handleRequest($request);
 
+        /** @var \Doctrine\ORM\EntityManager $em */
         $em = $this->getDoctrine()->getManager();
 
         /** @var $repo \AppBundle\Repository\SettingRepository */
@@ -54,6 +55,22 @@ class SettingsReservationsController extends Controller
             } catch (\PDOException $e) {
                 $this->addFlash('error','Error updating settings.');
             }
+            return $this->redirectToRoute('settings_reservations');
+        }
+
+        if ($request->get('setAllItemsNonReservable')) {
+            $q = "UPDATE inventory_item i SET i.is_reservable = 0";
+            $stmt = $em->getConnection()->prepare($q);
+            $stmt->execute();
+            $this->addFlash('success','All items are now non-reservable by members.');
+            return $this->redirectToRoute('settings_reservations');
+        }
+
+        if ($request->get('setAllItemsHidden')) {
+            $q = "UPDATE inventory_item i SET i.show_on_website = 0";
+            $stmt = $em->getConnection()->prepare($q);
+            $stmt->execute();
+            $this->addFlash('success','All items are now not shown online.');
             return $this->redirectToRoute('settings_reservations');
         }
 

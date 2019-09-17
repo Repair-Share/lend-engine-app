@@ -119,6 +119,17 @@
             {{ form_row(form.default_calendar_view) }}
             {{ form_row(form.drag_to_book) }}
 
+            <div class="form-group">
+                <label class="control-label">Bulk update items</label>
+                <p>
+                    <a href="{{ path('settings_reservations') }}?setAllItemsNonReservable=true" class="btn btn-xs btn-default">Set all items as non-reservable</a>
+                </p>
+                <p>
+                    <a href="{{ path('settings_reservations') }}?setAllItemsHidden=true" class="btn btn-xs btn-default">Set all items as NOT shown online</a>
+                    <span class="help-block">(will still show for admins)</span>
+                </p>
+            </div>
+
             <br />
 
         </div>
