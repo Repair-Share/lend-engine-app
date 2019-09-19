@@ -105,7 +105,7 @@
                     </td>
                     <td style="text-align: right">
                         {% if is_granted('ROLE_ADMIN') %}
-                            <input type="text" class="basket-amount row-total" name="row_fee[{{ row.inventoryItem.id }}]" value="{{ row.fee|number_format(2) }}">
+                            <input type="text" class="basket-amount row-total save-on-change" name="row_fee[{{ row.inventoryItem.id }}]" value="{{ row.fee|number_format(2) }}">
                         {% else %}
                             {{ row.fee|number_format(2) }}
                             <input type="hidden" class="row-total" value="{{ row.fee|number_format(2) }}">
@@ -145,19 +145,19 @@
 
 
                         <div style="margin-top: 40px; border-top:1px solid #efefef; padding-top: 10px;">
-                        {% if tenantInformation.basket.reservationFee > 0 %}
 
+                        {% if tenantInformation.basket.reservationFee > 0 %}
                             {% trans %}note_reservation_fee{% endtrans %}
                             {% if is_granted('ROLE_ADMIN') %}
-                                <input type="text" class="basket-amount fee-amount" name="booking_fee" value="{{ tenantInformation.basket.reservationFee|number_format(2) }}">
+                                <input type="text" class="basket-amount fee-amount save-on-change" name="booking_fee" value="{{ tenantInformation.basket.reservationFee|number_format(2) }}">
                             {% else %}
                                 {{ tenantInformation.currencySymbol }} {{ tenantInformation.basket.reservationFee|number_format(2) }}
                                 <input type="hidden" class="fee-amount" value="{{ tenantInformation.basket.reservationFee|number_format(2) }}">
                             {% endif %}
-
-
                         {% endif %}
+
                         <button type="button" class="btn btn-success hideOnFormChange" style="margin-left: 20px;" id="buttonConfirm">{% trans %}public_basket.confirm_reservation{% endtrans %}</button>
+
                         </div>
 
                     </div>
@@ -260,7 +260,7 @@
                 waitButton($('#buttonCheckOut'));
             });
 
-            $("#basketDetails").on('keyup', '.row-total', function() {
+            $("#form-basket").on('keyup', '.save-on-change', function() {
                 calculateBasketTotal();
                 $(".hideOnFormChange").attr('disabled', true);
                 $("#buttonSave").show();
