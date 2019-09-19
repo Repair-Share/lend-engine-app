@@ -54,6 +54,9 @@
                 </div>
             </div>
 
+            {#So we can redirect back to the original page#}
+            <input type="hidden" name="itemId" value="{{ itemId }}">
+
             <button type="button" class="btn btn-success payment-submit" data-text="Subscribe">{% trans %}public_registration.button_subscribe{% endtrans %}</button>
 
             {{ form_end(form) }}

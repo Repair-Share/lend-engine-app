@@ -24,8 +24,6 @@
         {% endif %}
     </h2>
 
-
-
         {% if user.activeMembership is defined and user.activeMembership and user.activeMembership.status == 'ACTIVE' %}
             <div class="alert alert-info">
                 {{ 'public_account.current_member_type'|trans({'%type%':user.activeMembership.membershipType.name}, 'member_site') }}<br>
@@ -70,7 +68,7 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <a href="{{ path('subscribe') }}?membershipTypeId={{ membershipType.id }}&c={{ app.request.get('c') }}" class="btn btn-success">
+                    <a href="{{ path('subscribe') }}?membershipTypeId={{ membershipType.id }}&c={{ app.request.get('c') }}&itemId={{ itemId }}" class="btn btn-success">
                         {% if user.activeMembership is defined
                         and user.activeMembership
                         and user.activeMembership.status == 'ACTIVE'

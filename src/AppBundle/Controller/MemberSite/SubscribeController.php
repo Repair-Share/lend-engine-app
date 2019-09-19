@@ -55,6 +55,7 @@ class SubscribeController extends Controller
             'member_site/pages/choose_membership.html.twig',
             [
                 'user'    => $contact,
+                'itemId'  => $request->get('itemId'),
                 'contact' => $contact,
                 'membershipTypes' => $availableMembershipTypes
             ]
@@ -219,7 +220,10 @@ class SubscribeController extends Controller
 
             $contactService->recalculateBalance($membership->getContact());
 
-            if ($user->hasRole("ROLE_ADMIN")) {
+            if ($itemId = $request->get('itemId')) {
+                $this->addFlash("success", "Subscribed OK");
+                return $this->redirectToRoute('public_product', ['productId' => $itemId]);
+            } else if ($user->hasRole("ROLE_ADMIN")) {
                 $this->addFlash("success", "Subscribed OK");
                 return $this->redirectToRoute('contact', ['id' => $contact->getId()]);
             } else {
@@ -249,6 +253,7 @@ class SubscribeController extends Controller
                 'form'    => $form->createView(),
                 'user'    => $contact,
                 'contact' => $contact,
+                'itemId'  => $request->get('itemId'),
                 'membershipTypePrices' => $membershipTypePrices
             ]
         );

@@ -261,7 +261,7 @@
                     {% if is_granted('ROLE_ADMIN') %}
                         <div class="alert alert-warning">
                             {{ user.name }} does not have an active membership.<br>
-                            <a href="{{ path('choose_membership', {c: user.id}) }}" class="modal-link">Subscribe now</a>,
+                            <a href="{{ path('choose_membership', {c: user.id, itemId: product.id}) }}">Subscribe now</a>,
                             or <a href="{{ path('member_search', {itemId: product.id}) }}">change user</a>.
                         </div>
                     {% else %}
