@@ -9,8 +9,10 @@ use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\Note;
 use AppBundle\Entity\Payment;
+use AppBundle\Repository\SettingRepository;
 use AppBundle\Services\Contact\ContactService;
 use AppBundle\Services\Booking\BookingService;
+use AppBundle\Services\SettingsService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\Container;
@@ -39,6 +41,9 @@ class CheckoutService
      */
     private $reservationService;
 
+    /** @var SettingsService  */
+    private $settings;
+
     /**
      * @var array
      */
@@ -54,12 +59,14 @@ class CheckoutService
         EntityManager $em,
         Container $container,
         ContactService $contactService,
-        BookingService $reservationService)
+        BookingService $reservationService,
+        SettingsService $settings)
     {
         $this->em        = $em;
         $this->container = $container;
         $this->contactService = $contactService;
         $this->reservationService = $reservationService;
+        $this->settings = $settings;
     }
 
     /**
@@ -210,13 +217,16 @@ class CheckoutService
 
     /**
      * @param InventoryItem $item
-     * @param $from
-     * @param $to
+     * @param $from \DateTime
+     * @param $to \DateTime
      * @param $loanId
      * @return bool
      */
     public function isItemReserved(InventoryItem $item, $from, $to, $loanId = null)
     {
+        $timeZone = $this->settings->getSettingValue('org_timezone');
+        $tz = new \DateTimeZone($timeZone);
+
         $itemId = $item->getId();
 
         // Check if this item is reserved on another loan, but not yet collected
@@ -235,25 +245,31 @@ class CheckoutService
                 continue;
             }
 
+            $dueOutAt = $reservation->getDueOutAt()->setTimeZone($tz);
+            $dueInAt  = $reservation->getDueInAt()->setTimeZone($tz);
+
             $reservedItemId = $reservation->getInventoryItem()->getId();
-            $errorMsg = '"'.$reservation->getInventoryItem()->getName().'" (ID '.$reservedItemId.') is reserved by '.$reservation->getLoan()->getContact()->getName();
-            $errorMsg .= ' (ref '.$reservation->getLoan()->getId().', '.$reservation->getDueOutAt()->format("d M").'-'.$reservation->getDueInAt()->format("d M").')';
+            $errorMsg = '"'.$reservation->getInventoryItem()->getName().'" (#'.$reservedItemId.') is reserved by '.$reservation->getLoan()->getContact()->getName();
+            $errorMsg .= ' (ref '.$reservation->getLoan()->getId().', '.$dueOutAt->format("d M H:i").' - '.$dueInAt->format("d M H:i").')';
 
             // The loan STARTS during another reservation
-            if ($from > $reservation->getDueOutAt() && $from < $reservation->getDueInAt()) {
+            if ($from->format("Y-m-d H:i:s") > $dueOutAt->format("Y-m-d H:i:s") && $from->format("Y-m-d H:i:s") < $dueInAt->format("Y-m-d H:i:s")) {
                 $this->errors[] = $errorMsg;
+                $this->errors[] = "Requested {$from->format("d M H:i")} - {$to->format("d M H:i")} (STARTS)";
                 return true;
             }
 
             // The loan ENDS during another reservation
-            if ($to > $reservation->getDueOutAt() && $to < $reservation->getDueInAt()) {
+            if ($to->format("Y-m-d H:i:s") > $dueOutAt->format("Y-m-d H:i:s") && $to->format("Y-m-d H:i:s") < $dueInAt->format("Y-m-d H:i:s")) {
                 $this->errors[] = $errorMsg;
+                $this->errors[] = "Requested {$from->format("d M H:i")} - {$to->format("d M H:i")} (ENDS)";
                 return true;
             }
 
             // The loan period CONTAINS a reservation
-            if ($from < $reservation->getDueOutAt() && $to > $reservation->getDueInAt()) {
+            if ($from->format("Y-m-d H:i:s") < $dueOutAt->format("Y-m-d H:i:s") && $to->format("Y-m-d H:i:s") > $dueInAt->format("Y-m-d H:i:s")) {
                 $this->errors[] = $errorMsg;
+                $this->errors[] = "Requested {$from->format("d M H:i")} - {$to->format("d M H:i")} (CONTAINS)";
                 return true;
             }
 

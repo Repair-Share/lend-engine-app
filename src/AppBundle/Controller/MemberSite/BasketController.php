@@ -218,6 +218,7 @@ class BasketController extends Controller
             return $this->redirectToRoute('home');
         }
 
+        // Create them a basket if there isn't one yet
         if (!$basket = $this->getBasket()) {
             if ($request->get('contactId')) {
                 $basketContactId = $request->get('contactId');
@@ -256,10 +257,12 @@ class BasketController extends Controller
             return $this->redirectToRoute('home');
         }
 
+        // Catch-all
         if (!$qtyRequired = $request->get('qty')) {
             $qtyRequired = 1;
         }
 
+        // Prevent user from adding the same item again
         foreach ($basket->getLoanRows() AS $row) {
             if ($row->getInventoryItem()->getId() == $itemId) {
                 $msg = $this->get('translator')->trans('msg_success.basket_item_exists', [], 'member_site');
@@ -287,6 +290,14 @@ class BasketController extends Controller
         $dFrom = new \DateTime($request->get('date_from').' '.$request->get('time_from'));
         $dTo   = new \DateTime($request->get('date_to').' '.$request->get('time_to'));
 
+        if ($checkoutService->isItemReserved($product, $dFrom, $dTo, null)) {
+            $this->addFlash('error', "This item is reserved or on loan for your selected dates");
+            foreach ($checkoutService->errors AS $error) {
+                $this->addFlash('error', $error);
+            }
+            return $this->redirectToRoute('public_product', ['productId' => $product->getId()]);
+        }
+
         $row = new LoanRow();
         $row->setLoan($basket);
         $row->setInventoryItem($product);
@@ -299,6 +310,7 @@ class BasketController extends Controller
 
         $qtyFulfilled = 1;
 
+        // If we're bulk adding, run through a loop for more rows
         if ($qtyRequired > 1) {
 
             // get other items with the same name, and find others which are available
