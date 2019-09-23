@@ -202,15 +202,15 @@ class SiteDataController extends Controller
 
                         // Slots that exist wholly within a booking
                         if ($s_start > $loanRow->getDueOutAt()->format("Y-m-d H:i:00")
-                            && $s_end <= $loanRow->getDueInAt()->format("Y-m-d H:i:00")) {
+                            && $s_end < $loanRow->getDueInAt()->format("Y-m-d H:i:00")) {
                             $slotIsValid = false;
-                            $debug = 'EXISTS DURING BOOKING ';
+                            $debug = $s_start.' EXISTS DURING BOOKING ';
                         }
                         // Slots that start while the booking is active
                         if ($s_start > $loanRow->getDueOutAt()->format("Y-m-d H:i:00")
                             && $s_start < $loanRow->getDueInAt()->format("Y-m-d H:i:00")) {
                             $slotIsValid = false;
-                            $debug = 'STARTS DURING BOOKING ';
+                            $debug = $s_start.' STARTS DURING BOOKING ';
                         }
                     }
 
