@@ -201,7 +201,7 @@ class SiteDataController extends Controller
                         /** @var $loanRow \AppBundle\Entity\LoanRow */
 
                         // Slots that exist wholly within a booking
-                        if ($s_start >= $loanRow->getDueOutAt()->format("Y-m-d H:i:00")
+                        if ($s_start > $loanRow->getDueOutAt()->format("Y-m-d H:i:00")
                             && $s_end <= $loanRow->getDueInAt()->format("Y-m-d H:i:00")) {
                             $slotIsValid = false;
                             $debug = 'EXISTS DURING BOOKING ';
