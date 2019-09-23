@@ -277,7 +277,7 @@ class ItemImportController extends Controller
 
     /**
      * @param $name
-     * @return \AppBundle\Entity\ItemCondition
+     * @return ItemCondition|bool|null|object
      */
     private function getConditionId($name)
     {
@@ -304,7 +304,7 @@ class ItemImportController extends Controller
 
     /**
      * @param $name
-     * @return object
+     * @return ProductTag|bool|mixed|null|object
      */
     private function getOrCreateTag($name)
     {
@@ -373,7 +373,7 @@ class ItemImportController extends Controller
 
     /**
      * @param $header
-     * @return bool
+     * @return bool|\Symfony\Component\HttpFoundation\RedirectResponse
      */
     private function validateHeader($header)
     {
@@ -425,6 +425,12 @@ class ItemImportController extends Controller
                     return $data;
                 }
                 break;
+            case 'html':
+                if ($data) {
+                    $data = preg_replace("/<br>/", "\n", $data);
+                    return $data;
+                }
+                break;
             case 'number':
                 if (!is_numeric($data)) {
                     return array(
@@ -472,9 +478,9 @@ class ItemImportController extends Controller
             'Code' => 'text',
             'Name' => 'text',
             'Short description' => 'text',
-            'Long description' => 'text',
-            'Components' => 'text',
-            'Care information' => 'text',
+            'Long description' => 'html',
+            'Components' => 'html',
+            'Care information' => 'html',
             'Serial' => 'text',
             'Brand' => 'text',
             'Price paid' => 'number',

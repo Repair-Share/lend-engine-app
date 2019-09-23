@@ -91,6 +91,8 @@ class ItemExportController extends Controller
                     $itemTypeName = $item->getItemType()->getName();
                 }
 
+                $description = preg_replace("/[\n\r]/", "<br>", $item->getDescription());
+
                 $itemArray = [
                     $item->getCreatedAt()->format("Y-m-d"),
                     $item->getSku(),
@@ -107,7 +109,7 @@ class ItemExportController extends Controller
                     $item->getLoanFee(),
                     $item->getMaxLoanDays(),
                     $item->getNote(),
-                    $item->getDescription(),
+                    $description,
                     $item->getComponentInformation(),
                     $item->getCareInformation(),
                     $item->getKeywords(),
