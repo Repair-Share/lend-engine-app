@@ -29,12 +29,19 @@ class LoanSearchController extends Controller
         /** @var \AppBundle\Repository\LoanRepository $loanRepo */
         $loanRepo = $em->getRepository('AppBundle:Loan');
 
+        /** @var $settingsService \AppBundle\Services\SettingsService */
+        $settingsService = $this->get('settings');
+
         // Who are we
         $user = $this->getUser();
         $sessionUserId = $this->get('session')->get('sessionUserId');
         if ($sessionUserId && $user->getId() != $sessionUserId) {
             $user = $contactRepo->find($sessionUserId);
         }
+
+        // Modify times to match local time for calendar
+        $tz = $settingsService->getSettingValue('org_timezone');
+        $timeZone = new \DateTimeZone($tz);
 
         // Get the data
         $loans = [];
@@ -45,7 +52,12 @@ class LoanSearchController extends Controller
             $searchResults = $loanRepo->findLoans(0, 100, $filter, null);
 
             foreach ($searchResults['data'] AS $loan) {
-                /** @var $contact \AppBundle\Entity\Loan */
+                /** @var $loan \AppBundle\Entity\Loan */
+                /** @var $row \AppBundle\Entity\LoanRow */
+                foreach ($loan->getLoanRows() AS $row) {
+                    $row->setDueOutAt( $row->getDueOutAt()->setTimezone($timeZone) );
+                    $row->setDueInAt( $row->getDueInAt()->setTimezone($timeZone) );
+                }
                 $loans[] = $loan;
             }
         }
