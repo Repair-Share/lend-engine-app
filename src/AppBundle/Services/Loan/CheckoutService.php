@@ -245,29 +245,35 @@ class CheckoutService
                 continue;
             }
 
-            $dueOutAt = $reservation->getDueOutAt()->setTimeZone($tz);
-            $dueInAt  = $reservation->getDueInAt()->setTimeZone($tz);
+            $dueOutAt = $reservation->getDueOutAt()->setTimezone($tz);
+            $dueInAt  = $reservation->getDueInAt()->setTimezone($tz);
+
+            // Formatted for easier logic comparison
+            $dueOutAt_f = $dueOutAt->format("Y-m-d H:i:s");
+            $dueInAt_f = $dueInAt->format("Y-m-d H:i:s");
+            $requestFrom = $from->format("Y-m-d H:i:s");
+            $requestTo = $to->format("Y-m-d H:i:s");
 
             $reservedItemId = $reservation->getInventoryItem()->getId();
             $errorMsg = '"'.$reservation->getInventoryItem()->getName().'" (#'.$reservedItemId.') is reserved by '.$reservation->getLoan()->getContact()->getName();
             $errorMsg .= ' (ref '.$reservation->getLoan()->getId().', '.$dueOutAt->format("d M H:i").' - '.$dueInAt->format("d M H:i").')';
 
-            // The loan STARTS during another reservation
-            if ($from->format("Y-m-d H:i:s") > $dueOutAt->format("Y-m-d H:i:s") && $from->format("Y-m-d H:i:s") < $dueInAt->format("Y-m-d H:i:s")) {
+            // The requested START date is during another reservation
+            if ($requestFrom >= $dueOutAt_f && $requestFrom < $dueInAt_f) {
                 $this->errors[] = $errorMsg;
                 $this->errors[] = "Requested {$from->format("d M H:i")} - {$to->format("d M H:i")} (STARTS)";
                 return true;
             }
 
-            // The loan ENDS during another reservation
-            if ($to->format("Y-m-d H:i:s") > $dueOutAt->format("Y-m-d H:i:s") && $to->format("Y-m-d H:i:s") < $dueInAt->format("Y-m-d H:i:s")) {
+            // The requested END date is during or matches the end of another reservation
+            if ($requestTo > $dueOutAt_f && $requestTo <= $dueInAt_f) {
                 $this->errors[] = $errorMsg;
                 $this->errors[] = "Requested {$from->format("d M H:i")} - {$to->format("d M H:i")} (ENDS)";
                 return true;
             }
 
-            // The loan period CONTAINS a reservation
-            if ($from->format("Y-m-d H:i:s") < $dueOutAt->format("Y-m-d H:i:s") && $to->format("Y-m-d H:i:s") > $dueInAt->format("Y-m-d H:i:s")) {
+            // The requested date period CONTAINS a reservation
+            if ($requestFrom < $dueOutAt_f && $requestTo > $dueInAt_f) {
                 $this->errors[] = $errorMsg;
                 $this->errors[] = "Requested {$from->format("d M H:i")} - {$to->format("d M H:i")} (CONTAINS)";
                 return true;
