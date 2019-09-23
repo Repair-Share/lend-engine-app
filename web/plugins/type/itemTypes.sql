@@ -1668,4 +1668,3 @@ REPLACE INTO item_type (id, parent_id, name) VALUES (913, 5613, "Vehicle Mainten
 REPLACE INTO item_type (id, parent_id, name) VALUES (8301, 5613, "Vehicle Safety & Security");
 REPLACE INTO item_type (id, parent_id, name) VALUES (8237, 5613, "Vehicle Storage & Cargo");
 REPLACE INTO item_type (id, parent_id, name) VALUES (8526, 5613, "Motor Vehicle Electronics");
-REPLACE INTO item_type (id, parent_id, name) VALUES (, null, "");

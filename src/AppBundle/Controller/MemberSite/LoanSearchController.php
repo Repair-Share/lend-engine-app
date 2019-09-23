@@ -40,8 +40,8 @@ class LoanSearchController extends Controller
         }
 
         // Modify times to match local time for calendar
-        $tz = $settingsService->getSettingValue('org_timezone');
-        $timeZone = new \DateTimeZone($tz);
+//        $tz = $settingsService->getSettingValue('org_timezone');
+//        $timeZone = new \DateTimeZone($tz);
 
         // Get the data
         $loans = [];
@@ -53,11 +53,6 @@ class LoanSearchController extends Controller
 
             foreach ($searchResults['data'] AS $loan) {
                 /** @var $loan \AppBundle\Entity\Loan */
-                /** @var $row \AppBundle\Entity\LoanRow */
-                foreach ($loan->getLoanRows() AS $row) {
-                    $row->setDueOutAt( $row->getDueOutAt()->setTimezone($timeZone) );
-                    $row->setDueInAt( $row->getDueInAt()->setTimezone($timeZone) );
-                }
                 $loans[] = $loan;
             }
         }
