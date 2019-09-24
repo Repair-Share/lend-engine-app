@@ -80,16 +80,7 @@ class ItemController extends Controller
 
         // Pro-rate to get a DAILY fee which is used on the calendar for bookings
         $dailyFee = round($itemFee / $itemLoanDays, 6);
-
-        // Multiply out for the UI, if items are loaned per-period
-        if (1) {
-            $itemFee = round($itemFee, 2);
-        } else {
-            if ($minLoanDays > $itemLoanDays) {
-                $itemFee = $itemFee * $minLoanDays;
-                $itemLoanDays = $itemLoanDays * $minLoanDays;
-            }
-        }
+        $itemFee = round($itemFee, 2);
 
         $product->setLoanFee($itemFee);
         $product->setMaxLoanDays($itemLoanDays);
@@ -195,6 +186,11 @@ class ItemController extends Controller
             $product->$setter($string);
         }
 
+        // This will prevent members (but not admins) from reserving
+        if (!$product->getInventoryLocation()->getIsAvailable()) {
+            $product->setIsReservable(false);
+        }
+
         return $this->render($template, array(
             'product' => $product,
             'user' => $contact,
@@ -209,7 +205,6 @@ class ItemController extends Controller
             'reservationFee' => $reservationFee,
             'isMultiSite' => $isMultiSite,
             'sites' => $sites,
-            'allowBorrow' => 1,
             'pageTitle' => 'Borrow '.$product->getName(),
 
             // Used for admins to choose 'today' when reserving (time is overridden when calendar loads):
