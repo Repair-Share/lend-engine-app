@@ -180,12 +180,14 @@ class SiteDataController extends Controller
 
                 $s_start = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeFrom(), 0, 2).':'.substr($slot->getTimeFrom(), 2, 2).':00';
                 $s_end   = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeTo(), 0, 2).':'.substr($slot->getTimeTo(), 2, 2).':00';
-                $s_changeover = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeChangeover(), 0, 2).':'.substr($slot->getTimeChangeover(), 2, 2).':00';
 
                 // We've set a custom changeover time, use it for the start of the slot
                 // This allows same day return and pickup
                 if ($slot->getTimeChangeover()) {
+                    $s_changeover = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeChangeover(), 0, 2).':'.substr($slot->getTimeChangeover(), 2, 2).':00';
                     $s_start = $s_changeover;
+                } else {
+                    $s_changeover = null;
                 }
 
                 if ($slot->getType() == 'o') {
