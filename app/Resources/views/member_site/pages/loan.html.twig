@@ -125,7 +125,13 @@
                     {% endif %}
 
                     {% if row.inventoryItem.serial %}
-                        <div class="basket-serial">{% trans %}public_item.serial{% endtrans %}: <strong>{{ row.inventoryItem.serial }}</strong></div>
+                        <div class="basket-serial">
+                            {% trans %}public_item.serial{% endtrans %}: <strong>{{ row.inventoryItem.serial }}</strong>
+                        </div>
+                    {% endif %}
+
+                    {% if tenantInformation.setting('use_labels') %}
+                        <div class="basket-barcode">Barcode: {{ row.inventoryItem.id }}</div>
                     {% endif %}
 
                     <div>

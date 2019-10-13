@@ -57,9 +57,15 @@
                         </td>
                         <td>
                             <strong>{{ row.inventoryItem.name }}</strong>
+
+                            {% if tenantInformation.setting('use_labels') %}
+                            <div>Barcode: {{ row.inventoryItem.id }}</div>
+                            {% endif %}
+
                             {% if row.inventoryItem.serial %}
                                 <div>{% trans %}public_item.serial{% endtrans %}: {{ row.inventoryItem.serial }}</div>
                             {% endif %}
+
                             <div>Due in at {{ row.dueInAt|date("d F g:i a") }}</div>
                             {% if row.id == loanRow.id and loanRow.loan.loanRows|length > 1 %}
                                 <span class="label bg-brown">You're checking in this item</span>
