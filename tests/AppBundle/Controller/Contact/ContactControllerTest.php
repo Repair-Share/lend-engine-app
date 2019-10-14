@@ -16,12 +16,13 @@ class ContactControllerTest extends AuthenticatedControllerTest
     public function testContactAction()
     {
         $crawler = $this->client->request('GET', '/admin/contact');
+
         $this->assertContains('Add a new contact', $crawler->html());
 
         $form = $crawler->filter('form[name="contact"]')->form(array(
             'contact[firstName]' => "Seamus",
             'contact[lastName]'  => "O'Neill",
-            'contact[email]'     => 'seamus@email.com',
+            'contact[email]'     => 'seamus'.rand().'@email.com',
         ),'POST');
 
         $this->client->submit($form);
