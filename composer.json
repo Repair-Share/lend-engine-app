@@ -39,7 +39,8 @@
         "symfony/serializer": "^3.2",
         "symfony/property-info": "^3.2",
         "guzzlehttp/guzzle": "^6.3",
-        "constantcontact/constantcontact": "3.0.0-alpha"
+        "constantcontact/constantcontact": "3.0.0-alpha",
+        "captcha-com/symfony-captcha-bundle": "4.*"
     },
     "require-dev": {
         "phpunit/phpunit": "~7.1",

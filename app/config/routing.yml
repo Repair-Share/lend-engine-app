@@ -5,6 +5,9 @@ app:
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
 
+captcha_routing:
+    resource: "@CaptchaBundle/Resources/config/routing.yml"
+
 oneup_uploader:
     resource: .
     type: uploader

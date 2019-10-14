@@ -26,6 +26,7 @@ class AppKernel extends Kernel
             new Staffim\RollbarBundle\StaffimRollbarBundle(),
             new Hype\MailchimpBundle\HypeMailchimpBundle(),
             new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
+            new Captcha\Bundle\CaptchaBundle\CaptchaBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
