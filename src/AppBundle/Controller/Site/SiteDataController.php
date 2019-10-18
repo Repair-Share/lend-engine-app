@@ -26,6 +26,10 @@ class SiteDataController extends Controller
         $dateFrom = $request->get('start');
         $dateTo   = $request->get('end');
 
+        // We can pass in a loan row to allow slots for shortening an existing loan
+        // Passed to getBookings
+        $loanRowId = $request->get('excludeLoanRowId');
+
         /** @var $siteRepo \AppBundle\Repository\SiteRepository */
         $siteRepo = $this->getDoctrine()->getRepository('AppBundle:Site');
 
@@ -47,7 +51,8 @@ class SiteDataController extends Controller
             $filter = [
                 'item_ids' => [$itemId],
                 'from'     => new \DateTime($dateFrom),
-                'to'       => new \DateTime($dateTo)
+                'to'       => new \DateTime($dateTo),
+                'excludeBookingId' => $loanRowId
             ];
             $bookings = $reservationService->getBookings($filter);
         }

@@ -794,7 +794,7 @@
             }
 
             function addSitesToCal() {
-                var url = "{{ path('site_data') }}?itemId={{ product.id }}";
+                var url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}";
                 calendar.addEventSource( {
                     url: url,
                     type: 'GET',

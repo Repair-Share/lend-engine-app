@@ -41,7 +41,7 @@ class CustomConnectionFactory extends ConnectionFactory
         }
 
         if (!$this->server || !$this->username || !$this->password) {
-            throw new PDOException("Could not get DB account details.");
+            throw new \Exception("Could not get database details.");
         }
     }
 

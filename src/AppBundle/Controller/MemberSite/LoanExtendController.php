@@ -69,8 +69,8 @@ class LoanExtendController extends Controller
         $inventoryItem = $loanRow->getInventoryItem();
 
         $newDueDate = new \DateTime($newReturnDate.' '.$newReturnTime);
-        $interval = $newDueDate->diff($loanRow->getDueInAt());
-        $days = round($interval->format('%a'), 0);
+        $interval = $loanRow->getDueInAt()->diff($newDueDate);
+        $days = round($interval->format('%R%a'), 0);
 
         if ($days == 1) {
             $dayWord = 'day';
@@ -87,7 +87,7 @@ class LoanExtendController extends Controller
 
         // Add a note (with local time, not UTC)
         $newDueDateLocalFormat = $newDueDate->format("d F g:i a");
-        $noteText = 'Extended <strong>'.$loanRow->getInventoryItem()->getName().'</strong> '.$days.' '.$dayWord.' to '.$newDueDateLocalFormat;
+        $noteText = 'Updated return date for <strong>'.$loanRow->getInventoryItem()->getName().'</strong> '.$days.' '.$dayWord.' to '.$newDueDateLocalFormat;
 
         $newDueDate->modify("{$offSet} hours");
 
@@ -117,7 +117,7 @@ class LoanExtendController extends Controller
             $payment->setAmount(-$extensionFee);
             $payment->setContact($contact);
             $payment->setLoan($loan);
-            $payment->setNote("Extend ".$inventoryItem->getName()." {$days} {$dayWord} to ".$newDueDateLocalFormat.".");
+            $payment->setNote("Updated return date for ".$inventoryItem->getName()." {$days} {$dayWord} to ".$newDueDateLocalFormat.".");
             $payment->setCreatedBy($user);
             $payment->setInventoryItem($inventoryItem);
             $em->persist($payment);

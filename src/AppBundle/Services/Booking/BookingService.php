@@ -61,6 +61,10 @@ class BookingService
             $builder->setParameter('dueInAt', new \DateTime());
         }
 
+        if (isset($filter['excludeBookingId']) && $filter['excludeBookingId']) {
+            $builder->andWhere('lr.id != '.(int)$filter['excludeBookingId']);
+        }
+
         $builder->andWhere("lr.checkedInAt IS NULL");
 
         $builder->setFirstResult($start);
