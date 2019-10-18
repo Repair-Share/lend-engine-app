@@ -123,7 +123,7 @@ fos_user:
             template: emails/fos_registration.email.twig
         form:
             type: AppBundle\Form\RegistrationType
-            validation_groups: [AppBundleRegistration]
+            validation_groups: [AppBundleSiteRegistration]
     profile:
         form:
             type: AppBundle\Form\ProfileType

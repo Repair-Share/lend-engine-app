@@ -4,4 +4,4 @@ AppBundle\Entity\Contact:
              fields: email
              errorPath: email 
              message: fos_user.email.already_used
-             groups: [ "AppBundleRegistration", "AppBundleProfile" ]
+             groups: [ "AppBundleContactEdit", "AppBundleProfile", "AppBundleSiteRegistration" ]

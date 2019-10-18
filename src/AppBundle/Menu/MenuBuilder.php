@@ -73,7 +73,7 @@ class MenuBuilder
         $this->addMenuItem('Contacts / Members', 'contact_list', 'fa-group');
 
         if ($this->container->get('settings')->getSettingValue('ft_events')) {
-            $this->addMenuItem('Events <span class="label bg-orange">NEW</span>', 'admin_event_list', 'fa-calendar');
+            $this->addMenuItem('Events', 'admin_event_list', 'fa-calendar');
         }
 
         $this->addMenuItem('Reports', 'null', 'fa-signal');

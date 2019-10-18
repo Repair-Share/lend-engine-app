@@ -306,7 +306,7 @@ class Contact extends BaseUser
     private $subscriber = false;
 
     /**
-     * @CaptchaAssert\ValidCaptcha(message = "CAPTCHA validation failed, try again.",groups={"AppBundleRegistrationOff"})
+     * @CaptchaAssert\ValidCaptcha(message = "CAPTCHA validation failed, try again.", groups={"AppBundleSiteRegistration"})
      */
     protected $captchaCode;
 

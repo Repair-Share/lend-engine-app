@@ -159,7 +159,7 @@ class RegistrationType extends AbstractType
     {
         $resolver->setDefaults(array(
             'translation_domain' => 'member_site',
-            'validation_groups' => ['AppBundleRegistration']
+
         ));
     }
 }
