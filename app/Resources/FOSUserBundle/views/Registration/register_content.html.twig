@@ -27,7 +27,7 @@
                     {{ form_row(form.plainPassword) }}
 
                     {% if tenantInformation.setting('use_captcha') %}
-                    {{ form_row(form.captchaCode) }}
+                    {#{{ form_row(form.captchaCode) }}#}
                     {% endif %}
 
                     {{ form_row(form.subscriber) }}

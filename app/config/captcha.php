@@ -8,6 +8,7 @@ return [
         'UserInputID' => 'captchaCode',
         'ImageWidth' => 250,
         'ImageHeight' => 50,
-        'HelpLinkText' => ' &nbsp;'
+        'HelpLinkText' => ' &nbsp;',
+        'ImageStyle' => ImageStyle::Snow // only supported in paid versions
     ]
 ];
