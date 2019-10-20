@@ -253,11 +253,7 @@ class ScheduleHandler
                 $replyToEmail   = $tenantService->getReplyToEmail();
                 $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
-                $automateThisEmail = $this->settings->getSettingValue('automate_email_membership');
-                if ($automateThisEmail != 1) {
-                    $resultString .= '    ... skipping : membership expiry not activated'.PHP_EOL;
-                    continue;
-                }
+                $sendEmailReminders = $this->settings->getSettingValue('automate_email_membership');
 
                 try {
 
@@ -293,7 +289,7 @@ class ScheduleHandler
                             // Flush the Em here
                             $tenantEntityManager->flush();
 
-                            if ($toEmail = $contact->getEmail()) {
+                            if ($toEmail = $contact->getEmail() && $sendEmailReminders == 1) {
 
                                 try {
 
