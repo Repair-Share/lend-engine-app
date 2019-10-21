@@ -4,9 +4,10 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Extend loan</h2>
+                <h2>Extend loan {{ loanId }}</h2>
             </div>
             <div class="modal-body">
+                <div class="alert alert-danger" id="modalWarning" style="display: none"></div>
                 <div class="row">
                     <div class="col-md-6">
                         <label>Original return date</label>
@@ -19,33 +20,36 @@
                         <a href="javascript:void(0);" class="time ui-timepicker-input new_time_to" id=""></a>
                     </div>
                     <div class="col-md-12">
+
                         <div class="alert alert-info" style="font-size: 18px; font-weight: bold; margin-top: 10px; text-align: center">
-                            +<span class="extend_days"></span> days
+                            <span class="extend_days"></span> days
+                            &nbsp;/&nbsp;
+                            {{ tenantInformation.currencySymbol }} <span class="extension-fee-amount"></span>
                         </div>
-                        <div id="extensionFeeMessage" style="display: none; margin-top: 10px;">
-                            <label>
-                                <input type="checkbox" name="charge_extension_fee" checked="checked">
-                                Charge a fee ({{ dailyFee|number_format(2) }} per day)
-                            </label>
+
+                        <div style="display:{% if is_granted('ROLE_ADMIN') %}block{% else %}none{% endif %};">
+                            <label>Fee</label>
                             <div class="input-group">
                                 <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
-                                <input type="text" class="form-control col-xs-2 payment-amount" data-number-to-fixed="2" name="extension_fee_amount" id="extensionFeeAmount">
+                                <input type="text" class="form-control col-xs-2 payment-amount"
+                                       data-number-to-fixed="2" name="extension_fee_amount" id="extensionFeeAmount">
                             </div>
+                        </div>
 
-                            <div class="help-block">
-                                {{ tenantInformation.currencySymbol }} {{ user.balance|number_format(2) }} available balance
-                            </div>
+                        <div class="help-block">
+                            {{ tenantInformation.currencySymbol }} {{ user.balance|number_format(2) }} available balance
+                        </div>
 
-                            {% if tenantInformation.getStripePublicApiKey %}
+                        {% if tenantInformation.getStripePublicApiKey and is_granted("ROLE_ADMIN") %}
+                            {#Else the payment block is shown by default for self-checkout users#}
                             <div class="form-group" style="margin-top: 10px">
                                 <label style="font-weight: normal">
                                     <input type="checkbox" class="charge-to" name="chargeTo" value="card">
                                     Take payment for this fee now
                                 </label>
                             </div>
-                            {% endif %}
+                        {% endif %}
 
-                        </div>
                     </div>
 
                 </div>
@@ -61,7 +65,6 @@
 
             </div>
             <div class="modal-footer">
-                {#Set when user chooses to charge card#}
                 <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Choose another date</button>
 
                 {#payment-submit class is added when user chooses to show card details#}

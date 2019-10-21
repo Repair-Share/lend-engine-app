@@ -11,7 +11,7 @@ $(document).delegate(".payment-method", "change", function() {
 });
 
 $(document).delegate(".payment-submit", "click", function(e) {
-    processPaymentForm(e);
+    return processPaymentForm(e);
 });
 
 // Show the card fields when a user (or onLoad) selects the Stripe payment method.
@@ -54,6 +54,7 @@ function processPaymentForm(e) {
 
     if (stripePaymentFee > 0 && paymentMethod.val() == stripePaymentMethodId && paymentAmount.val() > 0) {
         if (!window.confirm("A card payment fee of "+currencySymbol+stripePaymentFee+" will be added.")) {
+            event.preventDefault();
             return false;
         }
     }

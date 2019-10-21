@@ -16,6 +16,22 @@ class LoanExtendController extends Controller
 {
 
     /**
+     * Test coverage required:
+     * As admin, with no Stripe card set up (use cash)
+     * As admin, with fee above min payment amount with Stripe
+     * As admin, with fee below Stripe minimum payment amount
+     * As admin, with fee and payment with cash
+     * As admin, with fee but no payment for it (on account)
+     * As admin, with no fee (override to zero)
+     * As member, and selfCheckout = yes, with no Stripe card set up
+     * As member, and selfCheckout = yes, with no fee amount
+     * As member, and selfCheckout = yes, with fee amount above Stripe minimum amount
+     * As member, and selfCheckout = yes, with fee below Stripe minimum
+     * As member, with self checkout off. No extension possible.
+     */
+
+
+    /**
      * @Route("loan/extend/{loanRowId}", name="extend_loan", requirements={"loanRowId": "\d+"})
      * @param $loanRowId
      * @param $request
@@ -110,7 +126,7 @@ class LoanExtendController extends Controller
 
         $paymentOk = true;
 
-        if ($extensionFee != 0 && $request->get('charge_extension_fee')) {
+        if ($extensionFee != 0) {
 
             // Create the charge
             $payment = new Payment();
@@ -159,7 +175,7 @@ class LoanExtendController extends Controller
         }
 
         if ($paymentOk == false) {
-            $this->addFlash('error', "The item return date was not extended.");
+            $this->addFlash('error', "The item return date was not changed.");
             return $this->redirectToRoute('public_loan', array('loanId' => $loan->getId()));
         }
 
@@ -180,7 +196,7 @@ class LoanExtendController extends Controller
                 $contactService->recalculateBalance($contact);
             }
 
-            $this->addFlash('success','Loan extended OK.');
+            $this->addFlash('success','Loan return date was updated OK.');
             $toEmail = $loanRow->getLoan()->getContact()->getEmail();
             $locale  = $loanRow->getLoan()->getContact()->getLocale();
 
@@ -230,7 +246,7 @@ class LoanExtendController extends Controller
             }
 
         } catch (\Exception $generalException) {
-            $this->addFlash('error', 'There was an error extending the loan.');
+            $this->addFlash('error', 'There was an error updating the loan return date.');
             $this->addFlash('debug', 'PaymentError: '.$generalException->getMessage());
         }
 

@@ -137,6 +137,9 @@ class ItemController extends Controller
         }
 
         $formView = null;
+
+        $loanId = '';
+        $loanStartAt = '';
         if ($loanRowId = $request->get('extend')) {
 
             /** @var \AppBundle\Services\StripeHandler $stripeService */
@@ -145,6 +148,12 @@ class ItemController extends Controller
             /** @var \AppBundle\Entity\LoanRow $loanRow */
             $loanRow = $em->getRepository('AppBundle:LoanRow')->find($loanRowId);
             $contact = $loanRow->getLoan()->getContact();
+            $loanId  = $loanRow->getLoan()->getId();
+
+            $timeZone = $this->get('settings')->getSettingValue('org_timezone');
+            $tz = new \DateTimeZone($timeZone);
+
+            $loanStartAt = $loanRow->getDueOutAt()->setTimezone($tz)->format("Y-m-d H:i:00");
 
             $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
 
@@ -205,6 +214,11 @@ class ItemController extends Controller
             'reservationFee' => $reservationFee,
             'isMultiSite' => $isMultiSite,
             'sites' => $sites,
+
+            // When extending a loan we need the existing times to check with
+            'loanId' => $loanId,
+            'loanStartAt' => $loanStartAt,
+
             'pageTitle' => 'Borrow '.$product->getName(),
 
             // Used for admins to choose 'today' when reserving (time is overridden when calendar loads):

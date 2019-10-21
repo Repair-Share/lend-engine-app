@@ -178,7 +178,7 @@ class SubscribeController extends Controller
                 $this->addFlash("success", "Subscribed OK");
                 return $this->redirectToRoute('contact', ['id' => $contact->getId()]);
             } else {
-                $this->addFlash("success", "Welcome!");
+                $this->addFlash("success", "Welcome! You are now a member.");
                 return $this->redirectToRoute('fos_user_profile_show');
             }
 

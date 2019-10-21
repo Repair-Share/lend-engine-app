@@ -40,7 +40,7 @@
 
         {{ form_start(form, { 'attr' : { 'class': 'payment-form', 'id' : "paymentForm" } }) }}
 
-    {#<form method="POST" id="reserve_form" class="payment-form" action="{{ path('extend_loan', {loanRowId: app.request.get('extend')}) }}">#}
+        <input type="hidden" name="loanStartAt" id="loanStartAt" value="{{ loanStartAt }}">
         <input type="hidden" name="new_return_date" id="newReturnDate">
         <input type="hidden" name="new_return_time" id="newReturnTime">
         <input type="hidden" name="new_return_site_id" id="newReturnSiteId">
@@ -72,14 +72,9 @@
 
         {{ include('member_site/partials/modal_borrow.html.twig') }}
 
-        <div class="row">
-            <div class="col-md-12">
-                <div id="calendar"></div>
-            </div>
-        </div>
+        <div id="calendar"></div>
 
     </form>
-
 
     {% endif %}
 
@@ -160,6 +155,8 @@
             basketSiteFromName = '{{ tenantInformation.basket.loanRows|first.siteFrom.name }}';
             hasBasket = true;
             {% endif %}
+
+            var extendLoanId = '{{ loanId }}';
 
             // Set up timepickers
             var timeFromPicker  = $('.show_time_from');
@@ -347,7 +344,7 @@
                 calculateTotalFee();
             });
 
-            // Change the return up time text and value
+            // Change the return time text and value
             borrowModal.on('selectTime', '#time_to_picker', function() {
                 var t = timeToPicker.timepicker('getTime');
                 timeToPicker.html(moment(t).format("h:mm a"));
@@ -360,6 +357,10 @@
                 var t = newTimeToPicker.timepicker('getTime');
                 newTimeToPicker.html(moment(t).format("h:mm a"));
                 $("#newReturnTime").val(moment(t).format("HH:mm"));
+
+                var start = moment($("#loanStartAt").val());
+                var end   = moment($("#newReturnDate").val()+" "+$("#newReturnTime").val()+":00");
+                validateBookingPeriod(start, end);
             });
 
             page.on('click', '.button-borrow', function(event) {
@@ -414,9 +415,17 @@
                 dragSelect = false; // we just want to choose a date so don't set start AND end dates when click/drag
             });
 
-            extendModal.on('click', '.charge-to', function () {
+            extendModal.on('keyup', '#extensionFeeAmount', function () {
+                var feeAmount = $(this).val()*1;
+                $(".extension-fee-amount").html(feeAmount.toFixed(2)); // the user display
+                $("#loan_extend_paymentAmount").html(feeAmount.toFixed(2)); // the payment amount
+                showHidePaymentFields();
+            });
+
+            function showHidePaymentFields() {
+                $("#paymentErrorMessage").hide(); // in case there was a Stripe error
                 var extensionFeeAmount = $("#extensionFeeAmount").val();
-                if ($(this).prop("checked") == true) {
+                if (extensionFeeAmount > 0) {
                     $("#loan_extend_paymentAmount").val(extensionFeeAmount);
                     $("#confirmDateChange").addClass("payment-submit");
                     $("#creditCards").show();
@@ -426,7 +435,12 @@
                     $("#confirmDateChange").removeClass("payment-submit");
                     $("#creditCards").hide();
                 }
-            });
+                if (isAdmin) {
+                    $("#payment-amount-column").show();
+                } else {
+                    $("#payment-amount-column").hide();
+                }
+            }
 
             function loadSiteOpeningTimes() {
                 addSitesToCal();
@@ -479,10 +493,11 @@
                 var duration, days, hours, extensionFee;
 
                 if (calendarMode == 'extend') {
-                    // Extending a loan
-                    if (!validateExtensionDate(eventEnd)) {
+
+                    if (!validateBookingPeriod(eventStart, eventEnd, siteId)) {
                         return false;
                     }
+
                     var originalDate = moment(originalReturnDate);
                     duration = moment.duration(eventEnd.diff(originalDate));
                     days = duration.asDays();
@@ -508,7 +523,8 @@
                     if (dailyFee > 0) {
                         extensionFee = dailyFee * days;
                         $("#extensionFeeAmount").val(extensionFee.toFixed(2));
-                        $("#extensionFeeMessage").show();
+                        $(".extension-fee-amount").html(extensionFee.toFixed(2));
+                        showHidePaymentFields();
                     }
 
                     extendModal.modal();
@@ -537,7 +553,7 @@
             function setReturn(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName) {
 
                 var duration, days, hours;
-                bookingStartFrom = moment($("#date_from").val()+" "+$("#time_from").val());
+                bookingStartFrom = moment($("#date_from").val()+" "+$("#time_from").val()+":00");
 
                 duration     = moment.duration(selectedTime.diff(bookingStartFrom));
                 days         = duration.asDays();
@@ -635,9 +651,7 @@
                     var returnTime;
                     returnTime = moment(selectedTime);
                     returnTime = returnTime.add(itemLoanDays, 'd');
-                    if (overlapsExistingBooking(selectedTime, returnTime)) {
-                        console.log("Cannot auto-set end date as conflicts with another booking.");
-                    } else if (!isValidBookingTime(returnTime, siteId)) {
+                    if (!isValidBookingTime(returnTime, siteId)) {
                         console.log("Cannot auto-set end date as there is no opening hour slot for T+"+itemLoanDays);
                     } else {
                         console.log("Auto-setting return time based on item loan period.");
@@ -671,11 +685,11 @@
             }
 
             function validateBookingPeriod(start, end, siteId) {
-                var bookingPeriodIsValid = true;
+                console.log("Validating dates:");
+                console.log(start);
+                console.log(end);
 
-                if (overlapsExistingBooking(start, end)) {
-                    bookingPeriodIsValid = false;
-                }
+                validateLoanPeriod({{ product.id }}, start.format("YYYY-MM-DD HH:mm:00"), end.format("YYYY-MM-DD HH:mm:00"), siteId);
 
                 if (!isValidBookingTime(start, siteId)) {
                     console.log("validateBookingPeriod : start time is not within opening hours");
@@ -689,18 +703,28 @@
                     return false;
                 }
 
-                if (bookingPeriodIsValid == false) {
-                    console.log("validateBookingPeriod : booking within other booking");
-                    alert(text_clash_date);
-                    return false;
-                }
-
                 if (moment(end) < moment(start)) {
                     alert(text_return_after_pickup+" ("+start.format("DD MMMM h:mm a")+")");
                     return false;
                 }
 
                 return true;
+            }
+
+            function validateLoanPeriod(itemId, timeFrom, timeTo) {
+                $.get( "{{ path('validate_loan_period') }}?itemId="+itemId+"&timeFrom="+timeFrom+"&timeTo="+timeTo+"&loanId="+extendLoanId, function( data ) {
+                    console.log(data);
+                    if (data.error) {
+                        console.log("AJAX validation says no");
+                        $("#modalWarning").html(text_clash_date).fadeIn();
+                        $("#borrowModalConfirm").attr('disabled', true);
+                        $("#confirmDateChange").attr('disabled', true);
+                    } else {
+                        $("#modalWarning").hide();
+                        $("#borrowModalConfirm").attr('disabled', false);
+                        $("#confirmDateChange").attr('disabled', false);
+                    }
+                });
             }
 
             /** Returns the event that the time was found in */
@@ -721,33 +745,6 @@
                     }
                 });
                 return eventFound;
-            }
-
-            function overlapsExistingBooking(start, end) {
-                var overlaps = false;
-                // Check against other bookings
-                $(bookings).each(function() {
-                    var bookingStart = moment(this.start);
-                    if (bookingStart > moment(start) && bookingStart < moment(end)) {
-                        overlaps = true;
-                    }
-                });
-                return overlaps;
-            }
-
-            function validateExtensionDate(newDate) {
-                var returnValue = true;
-                var o = moment(originalReturnDate);
-                var n = moment(newDate);
-                $(bookings).each(function() {
-                    var bookingStart = moment(this.start);
-                    if (bookingStart > o && bookingStart < n) {
-                        // This booking lies between the old and new dates
-                        alert(alert_already_booked);
-                        returnValue = false;
-                    }
-                });
-                return returnValue;
             }
 
             function goToLoan(calEvent) {
