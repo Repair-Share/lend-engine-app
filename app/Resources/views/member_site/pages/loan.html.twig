@@ -364,12 +364,10 @@
             <div id="paymentBlock" style="display:block">
                 {{ include('cores/payment_core.html.twig') }}
             </div>
-
         </div>
     </div>
 
     <div class="row" id="checkoutButtonRow">
-
         <div class="col-md-12">
             {% if tenantInformation.selfCheckout %}
                 {% if loan.status in ['RESERVED', 'PENDING'] %}
@@ -384,7 +382,6 @@
                 {% endif %}
             {% endif %}
         </div>
-
     </div>
 
     {{ form_end(form) }}
@@ -641,6 +638,8 @@
                     } else {
                         $("#form-checkout").after('<div class="alert alert-warning">No payment methods are available to check out.</div>').remove();
                     }
+                    {% else %}
+                    $(".payment-details").hide();
                     {% endif %}
                 } else {
                     $(".payment-details").hide();

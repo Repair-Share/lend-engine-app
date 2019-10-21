@@ -85,7 +85,9 @@
             <div class="col-xs-6 col-md-4 site-id-{{ site.id }}">
                 <div class="site" style="border-left: 8px solid {{ site.colour }};">
                     <div style="padding-bottom: 6px;">{{ site.name }}</div>
-                    <a href="https://www.google.co.uk/maps/search/{{ site.address }},{{ site.postCode }}" target="_blank">
+                    <a href="https://www.google.co.uk/maps/search/{{ site.address }},{{ site.postCode }}"
+                       class="hidden-xs"
+                       target="_blank">
                         {{ site.address }} <i class="fa fa-external-link-alt" style="font-size: 0.8em"></i>
                     </a>
                 </div>
@@ -450,7 +452,11 @@
                     }
 
                     if (dailyFee > 0) {
-                        extensionFee = dailyFee * days;
+                        if (fixedFeePricing == 1) {
+                            extensionFee = itemFee;
+                        } else {
+                            extensionFee = dailyFee * days;
+                        }
                         $("#extensionFeeAmount").val(extensionFee.toFixed(2));
                         $(".extension-fee-amount").html(extensionFee.toFixed(2));
                         showHidePaymentFields();
