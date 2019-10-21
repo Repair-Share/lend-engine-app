@@ -187,7 +187,7 @@ then the user will also be shown a button to continue to choose a membership.',
             'required' => true,
             'attr' => [
                 'class' => 'input-100',
-                'data-help' => ""
+                'data-help' => "Also allows members to extend loans themselves"
             ]
         ));
 

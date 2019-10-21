@@ -111,34 +111,6 @@ EOH;
             ]
         ));
 
-        $builder->add('drag_to_book', ToggleType::class, array(
-            'expanded' => true,
-            'multiple' => false,
-            'label' => 'Click and drag on the calendar to create bookings (beta)',
-            'data' => (int)$dbData['drag_to_book'],
-            'required' => true,
-            'attr' => [
-                'class' => 'input-100 toggle-switch',
-                'data-help' => "Click and drag on the calendar month or week view to book an item for the chosen period.
-                The pickup and return site is currently restricted to the item's current site."
-            ]
-        ));
-
-        $choices = [
-            'Month' => 'dayGridMonth',
-            'Week' => 'timeGridWeek',
-        ];
-        $builder->add('default_calendar_view', ChoiceType::class, array(
-            'choices' => $choices,
-            'label' => 'Default calendar view',
-            'data' => (int)$dbData['default_calendar_view'],
-            'required' => true,
-            'attr' => [
-                'class' => 'input-100',
-                'data-help' => "Choose 'week' if your loans are mainly short-term per-hour."
-            ]
-        ));
-
         $builder->add('daily_overdue_fee', TextType::class, array(
             'label' => 'Late return fee (per day)',
             'data' => $dbData['daily_overdue_fee'],

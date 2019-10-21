@@ -183,87 +183,16 @@
             var txt;
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
+                plugins: [ 'interaction', 'dayGrid' ],
                 locale: "{{ app.request.locale }}",
-                selectAllow: function(info) {
-                    var isValidTime = true;
-                    var events = calendar.getEvents();
-                    var blockedEventEnd;
-
-                    // First check the start time is outside grey area
-                    var selectedTimeStart;
-                    if (calendar.view.type == "dayGridMonth") {
-                        selectedTimeStart = moment(info.startStr+" 12:00:00"); // includes time when in week mode, otherwise date
-                    } else {
-                        selectedTimeStart = moment(info.startStr);
-                    }
-                    $(events).each(function(e, event) {
-                        if (event.title == '-') {
-                            if (event.end == null) {
-                                blockedEventEnd = moment(moment(event.start).format("YYYY-MM-DD")+" 23:59:59");
-                            } else {
-                                blockedEventEnd = moment(event.end);
-                            }
-                            if (selectedTimeStart > moment(event.start) && selectedTimeStart < blockedEventEnd) {
-                                // We're hovering over a grey event
-                                isValidTime = false;
-                            }
-                        }
-                    });
-
-                    // Next check the end time is outside grey area
-                    var selectedTimeEnd;
-                    if (calendar.view.type == "dayGridMonth") {
-                        selectedTimeEnd = moment(info.endStr+" 12:00:00"); // includes time when in week mode, otherwise date
-                        selectedTimeEnd.subtract(1, 'days');
-                    } else {
-                        selectedTimeEnd = moment(info.endStr);
-                    }
-                    $(events).each(function(e, event) {
-                        if (event.title == '-') {
-                            if (event.end == null) {
-                                blockedEventEnd = moment(moment(event.start).format("YYYY-MM-DD")+" 23:59:59");
-                            } else {
-                                blockedEventEnd = moment(event.end);
-                            }
-                            if (selectedTimeEnd > moment(event.start) && selectedTimeEnd < blockedEventEnd) {
-                                // We're hovering over a grey event
-                                isValidTime = false;
-                            }
-                        }
-                    });
-
-                    return isValidTime;
-                },
-                defaultView: '{{ tenantInformation.setting('default_calendar_view') }}',
+                defaultView: 'dayGridMonth',
                 allDaySlot: false,
                 minTime: '07:00:00',
                 maxTime: '22:00:00',
-                {% if app.user and tenantInformation.setting('drag_to_book') and not app.request.get('extend') %}selectable: true,{% endif %}
                 header: {
                     left:   'title',
                     center: '',
-                    right:  'dayGridMonth,timeGridWeek prev,next'
-                },
-                select: function(selection) {
-                    var start, end, e;
-                    if (dragSelect == false || basketPickupTime) {
-                        alert("Drag select is not available. Please choose a site from the month view.");
-                        return false;
-                    }
-                    if (selection.startStr.length == 10) {
-                        // We're picking from the month view
-                        start = moment(openingTimesByDate[selection.startStr]);
-                        e = moment(selection.endStr);
-                        e.subtract(1, "days");
-                        end = moment(closingTimesByDate[e.format("YYYY-MM-DD")]);
-                    } else {
-                        // we're picking from the week view
-                        start = moment(selection.startStr);
-                        end   = moment(selection.endStr);
-                    }
-                    setPickup(start, start, end, itemSiteId, itemSiteName);
-                    setReturn(end, start, end, itemSiteId, itemSiteName);
+                    right:  'prev,next'
                 },
                 eventClick: function(info) {
                     if (info.event.extendedProps.siteId) {

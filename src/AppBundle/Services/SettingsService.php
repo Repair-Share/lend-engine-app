@@ -109,7 +109,6 @@ class SettingsService
         // For new as-yet-unset values
         $defaultSettings = [
             'group_similar_items' => 1,
-            'default_calendar_view' => 'dayGridMonth',
             'org_locale' => 'en',
             'label_type' => '11355',
             'org_timezone' => 'Europe/London'
@@ -257,8 +256,6 @@ class SettingsService
             // Setup values
             'multi_site',
             'setup_opening_hours',
-            'drag_to_book',
-            'default_calendar_view',
             'show_events_online',
             'self_checkout',
 
