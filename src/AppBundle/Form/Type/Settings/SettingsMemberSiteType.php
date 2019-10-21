@@ -169,16 +169,16 @@ then the user will also be shown a button to continue to choose a membership.',
             ]
         ));
 
-        $builder->add('use_captcha', ToggleType::class, array(
-            'expanded' => true,
-            'label' => 'Display anti-spam (captcha) on registration page',
-            'data' => (int)$dbData['use_captcha'],
-            'required' => true,
-            'attr' => [
-                'class' => 'input-100',
-                'data-help' => ""
-            ]
-        ));
+//        $builder->add('use_captcha', ToggleType::class, array(
+//            'expanded' => true,
+//            'label' => 'Display anti-spam (captcha) on registration page',
+//            'data' => (int)$dbData['use_captcha'],
+//            'required' => true,
+//            'attr' => [
+//                'class' => 'input-100',
+//                'data-help' => ""
+//            ]
+//        ));
 
         $builder->add('self_checkout', ToggleType::class, array(
             'expanded' => true,

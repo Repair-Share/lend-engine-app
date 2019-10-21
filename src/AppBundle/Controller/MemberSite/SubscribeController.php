@@ -13,55 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SubscribeController extends Controller
 {
-
-    /**
-     * @Route("choose_membership", name="choose_membership")
-     * @param Request $request
-     * @return Response
-     */
-    public function chooseMembership(Request $request)
-    {
-        $user = $this->getUser();
-
-        $em = $this->getDoctrine()->getManager();
-
-        /** @var \AppBundle\Services\Contact\ContactService $contactService */
-        $contactService = $this->get('service.contact');
-
-        /** @var \AppBundle\Entity\Contact $contact */
-        if ($contactId = $request->get('c')) {
-            if (!$contact = $contactService->get($contactId)) {
-                $this->addFlash('error', "Can't find that contact");
-                return $this->redirectToRoute('homepage');
-            }
-        } else {
-            $contact = $this->getUser();
-        }
-
-        /** @var \AppBundle\Repository\MembershipTypeRepository $membershipTypeRepo */
-        $membershipTypeRepo = $em->getRepository('AppBundle:MembershipType');
-
-        // Get the available self serve memberships to give to the member as choices
-        $filter = [];
-        if (!$user->hasRole("ROLE_ADMIN")) {
-            $filter = ['isSelfServe' => true, 'isActive' => true];
-        } else {
-            $filter = ['isActive' => true];
-
-        }
-        $availableMembershipTypes = $membershipTypeRepo->findBy($filter);
-
-        return $this->render(
-            'member_site/pages/choose_membership.html.twig',
-            [
-                'user'    => $contact,
-                'itemId'  => $request->get('itemId'),
-                'contact' => $contact,
-                'membershipTypes' => $availableMembershipTypes
-            ]
-        );
-    }
-
     /**
      * @param Request $request
      * @return Response
@@ -164,8 +115,9 @@ class SubscribeController extends Controller
                 $em->persist($activeMembership);
             }
 
-            // update the contact
+            // update the contact and save everything
             $em->persist($contact);
+            $em->flush();
 
             $note = new Note();
             $note->setContact($contact);
@@ -175,7 +127,6 @@ class SubscribeController extends Controller
             $em->persist($note);
 
             if ($price > 0) {
-
                 // The membership fee
                 $charge = new Payment();
                 $charge->setAmount(-$price);
