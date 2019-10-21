@@ -2,7 +2,7 @@ imports:
     - { resource: config_dev.yml }
 
 framework:
-    test: ~
+    test: true
     session:
         storage_id: session.storage.mock_file
     profiler:

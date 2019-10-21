@@ -15,6 +15,8 @@
 
     <php>
         <server name="KERNEL_DIR" value="app/" />
+        <server name="SYMFONY_ENV" value="test" />
+        <server name="APP_ENV" value="test" />
     </php>
 
     <filter>

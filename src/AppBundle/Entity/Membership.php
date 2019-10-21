@@ -48,9 +48,9 @@ class Membership
     /**
      * @var string
      *
-     * @ORM\Column(name="price", type="decimal")
+     * @ORM\Column(name="price", type="decimal", scale=2)
      */
-    private $price = 0;
+    private $price = 0.00;
 
     /**
      * @var \DateTime
