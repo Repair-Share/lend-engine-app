@@ -258,6 +258,7 @@ class SettingsService
             'setup_opening_hours',
             'show_events_online',
             'self_checkout',
+            'self_extend',
 
             // Web page header text
             'page_event_header',

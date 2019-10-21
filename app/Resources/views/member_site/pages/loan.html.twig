@@ -162,7 +162,7 @@
                         {% endif %}
                         {#EXTEND#}
                         {% if (row.isCheckedOut and not row.checkedInAt) or (loan.status in ['RESERVED', 'PENDING']) %}
-                            {% if is_granted('ROLE_ADMIN') or tenantInformation.selfCheckout %}
+                            {% if is_granted('ROLE_ADMIN') or tenantInformation.selfExtend %}
                                 <a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id, from: row.dueInAt|date("Y-m-d H:i:s") }) }}"
                                    class="btn btn-xs btn-primary">
                                     Change return date

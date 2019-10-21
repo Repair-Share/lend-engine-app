@@ -524,6 +524,21 @@ class TenantService
     }
 
     /**
+     * @return bool|string
+     */
+    public function getSelfExtend()
+    {
+        if ($user = $this->container->get('security.token_storage')->getToken()->getUser()) {
+            if ($user != "anon.") {
+                if ($user->hasRole('ROLE_ADMIN')) {
+                    return true;
+                }
+            }
+        }
+        return (int)$this->getSetting('self_extend');
+    }
+
+    /**
      * @return string
      */
     public function getReplyToEmail()

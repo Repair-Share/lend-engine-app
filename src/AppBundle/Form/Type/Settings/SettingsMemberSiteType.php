@@ -187,7 +187,18 @@ then the user will also be shown a button to continue to choose a membership.',
             'required' => true,
             'attr' => [
                 'class' => 'input-100',
-                'data-help' => "Also allows members to extend loans themselves"
+                'data-help' => ""
+            ]
+        ));
+
+        $builder->add('self_extend', ToggleType::class, array(
+            'expanded' => true,
+            'label' => 'Allow members to change loan return dates themselves.',
+            'data' => (int)$dbData['self_extend'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => "Any fees due will need to be paid using the Stripe integration."
             ]
         ));
 
