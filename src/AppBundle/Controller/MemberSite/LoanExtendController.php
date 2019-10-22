@@ -28,6 +28,9 @@ class LoanExtendController extends Controller
      * As member, and selfCheckout = yes, with fee amount above Stripe minimum amount
      * As member, and selfCheckout = yes, with fee below Stripe minimum
      * As member, with self checkout off. No extension possible.
+     * As member, with balance on account to pay for extension
+     * As member, with no balance on account but credit limit allows negative balance
+     * As member, with no balance on account, and no credit limit (cannot extend)
      */
 
 
@@ -96,6 +99,7 @@ class LoanExtendController extends Controller
 
         // Update the row (offsetting for timezone so that time is serialized as UTC)
         // Also done in basketController (should be anywhere we take in dates from the calendar picker)
+        // There's a bug where we're working with dates on the 'other side' of a DST changeover however
         $tz = $settingsService->getSettingValue('org_timezone');
         $timeZone = new \DateTimeZone($tz);
         $utc = new \DateTime('now', new \DateTimeZone("UTC"));
@@ -105,6 +109,7 @@ class LoanExtendController extends Controller
         $newDueDateLocalFormat = $newDueDate->format("d F g:i a");
         $noteText = 'Updated return date for <strong>'.$loanRow->getInventoryItem()->getName().'</strong> '.$days.' '.$dayWord.' to '.$newDueDateLocalFormat;
 
+        // Convert to UTC
         $newDueDate->modify("{$offSet} hours");
 
         // Save
@@ -126,7 +131,7 @@ class LoanExtendController extends Controller
 
         $paymentOk = true;
 
-        if ($extensionFee != 0) {
+        if ($extensionFee > 0) {
 
             // Create the charge
             $payment = new Payment();
@@ -139,11 +144,13 @@ class LoanExtendController extends Controller
             $em->persist($payment);
             $noteText .= " (extension fee ".number_format($extensionFee, 2).")";
 
-            // Mark it as paid
             $formValues = $request->get('loan_extend');
 
-            $paymentMethodId = $formValues['paymentMethod'];
-            $paymentAmount   = $formValues['paymentAmount'];
+            $paymentMethodId = isset($formValues['paymentMethod']) ? $formValues['paymentMethod'] : null;
+            $paymentAmount   = isset($formValues['paymentAmount']) ? $formValues['paymentAmount'] : null;
+
+            // If we are taking payment, create the payments in the DB
+            // If we're not taking payment it will be added to account
             if ($paymentMethodId && $paymentAmount) {
 
                 /** @var \AppBundle\Entity\PaymentMethod $paymentMethod */
@@ -221,15 +228,13 @@ class LoanExtendController extends Controller
 
                     $message = $this->renderView(
                         'emails/loan_extend.html.twig',
-                        array(
-                            'loanRow'     => $loanRow
-                        )
+                        ['loanRow' => $loanRow]
                     );
 
                     $client->sendEmail(
                         "{$senderName} <{$fromEmail}>",
                         $toEmail,
-                        $subject,
+                        $subject.' | '.$loanRow->getLoan()->getId(),
                         $message,
                         null,
                         null,

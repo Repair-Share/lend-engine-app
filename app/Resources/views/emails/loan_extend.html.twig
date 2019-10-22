@@ -7,11 +7,22 @@
 
 {% block content %}
 
+    <p>Loan {{ loanRow.loan.id }} | {{ loanRow.loan.contact.name }}</p>
     <p>{{ tenantInformation.getEmailLoanExtensionHeader|raw }}</p>
-    <br>
 
-    "{{ loanRow.inventoryItem.name }}" {{ 'le_email.extend.due_back'|trans() }}
-    <strong>{{ loanRow.dueInAt|date('d F g:i a') }}</strong>
+    <table>
+        <tr>
+            <td valign="top" style="padding-right: 15px; width: 60px;">
+                {% if loanRow.inventoryItem.imageName %}
+                    <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ loanRow.inventoryItem.imageName }}">
+                {% endif %}
+            </td>
+            <td valign="top" >
+                "{{ loanRow.inventoryItem.name }}" {{ 'le_email.extend.due_back'|trans() }}
+                <strong>{{ loanRow.dueInAt|date('d F g:i a') }}</strong>
+            </td>
+        </tr>
+    </table>
 
     <br>
     <br>

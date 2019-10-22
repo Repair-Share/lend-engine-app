@@ -47,7 +47,7 @@
                     {{ payment.note }}
                 </td>
                 <td>
-                    {% if payment.type == 'DEPOSIT' or payment.type == 'PAYMENT' %}
+                    {% if (payment.type == 'DEPOSIT' or payment.type == 'PAYMENT') and payment.paymentMethod %}
                         <a href="{{ path('refund', {id: payment.id, amount: payment.amount}) }}" id="id-{{ payment.id }}" class="btn btn-default btn-xs modal-link refund-button">Refund</a>
                     {% endif %}
                 </td>

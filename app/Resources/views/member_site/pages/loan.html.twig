@@ -633,7 +633,7 @@
                         // No credit limit, carry on regardless of account balance
                         $("#loan_check_out_paymentAmount").val(0);
                     } else if (availableCredit < toPay && creditLimit != null) {
-                        $("#form-checkout").after('<div class="alert alert-warning">Insufficient credit on account to check out.</div>').remove();
+                        $("#form-checkout").after('<div class="alert alert-warning">You don\'t have enough credit on account to check out.</div>').remove();
                     } else {
                         $("#form-checkout").after('<div class="alert alert-warning">No payment methods are available to check out.</div>').remove();
                     }

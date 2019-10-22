@@ -56,6 +56,7 @@
                 <div id="calendar"></div>
             </div>
         </div>
+
         {{ form_end(form) }}
 
     {% else %}
@@ -456,6 +457,9 @@
                             extensionFee = itemFee;
                         } else {
                             extensionFee = dailyFee * days;
+                        }
+                        if (days < 0) {
+                            extensionFee = 0; // don't charge negative fees
                         }
                         $("#extensionFeeAmount").val(extensionFee.toFixed(2));
                         $(".extension-fee-amount").html(extensionFee.toFixed(2));

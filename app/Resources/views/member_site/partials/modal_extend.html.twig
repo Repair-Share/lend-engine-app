@@ -31,7 +31,7 @@
                             <label>Fee</label>
                             <div class="input-group">
                                 <span class="input-group-addon">{{ tenantInformation.currencySymbol }}</span>
-                                <input type="text" class="form-control col-xs-2 payment-amount"
+                                <input type="text" class="form-control col-xs-2"
                                        data-number-to-fixed="2" name="extension_fee_amount" id="extensionFeeAmount">
                             </div>
                         </div>
@@ -54,14 +54,12 @@
 
                 </div>
 
-                {% if tenantInformation.getStripePublicApiKey %}
-                    <div class="row" id="creditCards" style="display: none">
-                        <div class="col-md-12">
-                            {% set contact = user %}
-                            {{ include('cores/payment_core.html.twig') }}
-                        </div>
+                <div class="row" id="creditCards" style="display: none">
+                    <div class="col-md-12">
+                        {% set contact = user %}
+                        {{ include('cores/payment_core.html.twig') }}
                     </div>
-                {% endif %}
+                </div>
 
             </div>
             <div class="modal-footer">

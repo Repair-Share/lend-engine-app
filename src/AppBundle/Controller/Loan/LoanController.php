@@ -240,6 +240,17 @@ class LoanController extends Controller
         $contact = $contactService->loadCustomerCards($loan->getContact());
         $loan->setContact($contact);
 
+        // Ensure UI shows local time
+//        $tz = $this->get('settings')->getSettingValue('org_timezone');
+//        $timeZone = new \DateTimeZone($tz);
+//        $utc = new \DateTime('now', new \DateTimeZone("UTC"));
+//        $offSet = -$timeZone->getOffset($utc)/3600;
+//
+//        /** @var \AppBundle\Entity\LoanRow $loanRow */
+//        foreach ($loan->getLoanRows() AS $loanRow) {
+//            $loanRow->getDueInAt()->modify("{$offSet} hours");
+//        }
+
         return $this->render('member_site/pages/loan.html.twig', [
                 'form' => $form->createView(),
                 'loan' => $loan,
