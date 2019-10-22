@@ -52,14 +52,16 @@ class ContactService
      * @param $start
      * @param $length
      * @param $filter
+     * @param $sort
      *
      * @return array
      */
-    public function contactSearch($start, $length, $filter)
+    public function contactSearch($start, $length, $filter, $sort = [])
     {
         $repository = $this->em->getRepository('AppBundle:Contact');
 
         $builder = $repository->createQueryBuilder('c');
+        $builder->leftJoin('c.memberships', 'm');
         $builder->select('c');
         $builder->where('c.id > 1');
         $builder->andWhere('c.isActive = 1');
@@ -79,11 +81,14 @@ class ContactService
         }
 
         if (isset($filter['hasMembership']) && $filter['hasMembership'] == 1) {
-            $builder->leftJoin('c.memberships', 'm');
             $builder->andWhere('m.expiresAt > :date');
             $builder->andWhere('m.status != :statusCancelled');
             $builder->setParameter('date', date("Y-m-d H:i:s"));
             $builder->setParameter('statusCancelled', Membership::SUBS_STATUS_CANCELLED);
+        }
+
+        if (isset($filter['membershipType']) && $filter['membershipType']) {
+            $builder->andWhere('m.membershipType = '.(int)$filter['membershipType']);
         }
 
         if (isset($filter['date_from']) && $filter['date_from']) {
@@ -105,7 +110,11 @@ class ContactService
         $builder->setMaxResults($length);
 
         // Add order by:
-        $builder->addOrderBy("c.firstName");
+        if (is_array($sort) && count($sort) > 0 && $this->validateSort($sort)) {
+            $builder->addOrderBy("c.".$sort['column'], $sort['direction']);
+        } else {
+            $builder->addOrderBy("c.firstName");
+        }
 
         // Get the data:
         $query = $builder->getQuery();
@@ -227,6 +236,15 @@ class ContactService
         }
 
         return $contact;
+    }
+
+    /**
+     * @param array $sort
+     * @return bool
+     */
+    private function validateSort($sort = [])
+    {
+        return true;
     }
 
 }

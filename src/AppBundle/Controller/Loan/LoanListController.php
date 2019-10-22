@@ -59,7 +59,7 @@ class LoanListController extends Controller
         $reserved = (int)$loanService->countLoans(Loan::STATUS_RESERVED);
 
         return $this->render(
-            'member_site/pages/loan_list.html.twig',
+            'loan/loan_list.html.twig',
             array(
                 'searchString'  => $searchString,
                 'statuses'      => $statuses,

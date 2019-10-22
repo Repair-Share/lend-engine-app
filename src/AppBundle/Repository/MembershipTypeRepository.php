@@ -5,14 +5,19 @@ namespace AppBundle\Repository;
 class MembershipTypeRepository extends \Doctrine\ORM\EntityRepository
 {
     /**
-     * @return array
+     * @param bool $includeAll
+     * @return mixed
      */
-    public function findAllOrderedByName()
+    public function findAllOrderedByName($includeAll = false)
     {
+        if ($includeAll == true) {
+            $sql = 'SELECT mt FROM AppBundle:MembershipType mt ORDER BY mt.name ASC';
+        } else {
+            $sql = 'SELECT mt FROM AppBundle:MembershipType mt WHERE mt.isActive = 1 ORDER BY mt.name ASC';
+        }
+
         return $this->getEntityManager()
-            ->createQuery(
-                'SELECT mt FROM AppBundle:MembershipType mt WHERE mt.isActive = 1 ORDER BY mt.name ASC'
-            )
+            ->createQuery($sql)
             ->getResult();
     }
 }
