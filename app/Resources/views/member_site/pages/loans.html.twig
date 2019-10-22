@@ -31,8 +31,8 @@
                 <td>
                     {% for row in loan.loanRows %}
                         <div>
-                            <a href="{{ path('public_loan', {loanId: loan.id}) }}">{{ row.inventoryItem.name }}</a>
-                            ({{ row.inventoryItem.sku }})
+                            <a href="{{ path('public_loan', {loanId: loan.id}) }}">{{ row.inventoryItem.name }}</a>&nbsp;
+                            {% if row.inventoryItem.sku %}<br>{{ row.inventoryItem.sku }}{% endif %}
                             <br>{{ row.dueOutAt|date("d F g:i a") }} - {{ row.dueInAt|date("d F g:i a") }}
                             <br>{{ row.duration }} days
                         </div>

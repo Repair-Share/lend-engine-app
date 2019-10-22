@@ -779,6 +779,17 @@ class Contact extends BaseUser
      */
     public function getLoans()
     {
+        // sort the loans
+        $sortedLoans = [];
+        /** @var \AppBundle\Entity\Loan $loan */
+        foreach ($this->loans AS $loan) {
+            $key = $loan->getTimeIn()->format("Y-m-d");
+            $sortedLoans[$key] = $loan;
+        }
+
+        krsort($sortedLoans);
+        $this->loans = $sortedLoans;
+
         return $this->loans;
     }
 
@@ -871,6 +882,16 @@ class Contact extends BaseUser
      */
     public function getPayments()
     {
+        // sort by date desc
+        $sortedPayments = [];
+        foreach ($this->payments AS $payment) {
+            $key = $payment->getPaymentDate()->format("Y-m-d");
+            $sortedPayments[$key] = $payment;
+        }
+
+        krsort($sortedPayments);
+        $this->payments = $sortedPayments;
+
         return $this->payments;
     }
 
