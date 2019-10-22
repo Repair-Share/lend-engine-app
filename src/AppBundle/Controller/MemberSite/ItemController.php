@@ -195,8 +195,9 @@ class ItemController extends Controller
             $product->$setter($string);
         }
 
-        // This will prevent members (but not admins) from reserving
-        if (!$product->getInventoryLocation()->getIsAvailable()) {
+        // An item in repair will prevent members (but not admins) from reserving
+        // The exception is 'on loan' which does allow people to reserve in the future
+        if (!$product->getInventoryLocation()->getIsAvailable() && $product->getInventoryLocation()->getId() != 1) {
             $product->setIsReservable(false);
         }
 
