@@ -172,7 +172,12 @@ class StripePaymentController extends Controller
             if ($amount < 0) {
                 $this->addFlash('error', "Payment amount must be more than zero. Refunds should be issued using the payments list.");
             } else if ($amount > 0) {
-                $paymentMethodId = $form->get('paymentMethod')->getData();
+
+                if (!$paymentMethodId = $form->get('paymentMethod')->getData()) {
+                    $this->addFlash("error", "No payment method chosen.");
+                    return $this->redirectToRoute('payments');
+                }
+
                 $paymentMethod = $pmRepo->find($paymentMethodId);
 
                 $paymentDate = new \DateTime();
