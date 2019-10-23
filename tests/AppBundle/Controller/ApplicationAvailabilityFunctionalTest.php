@@ -46,6 +46,7 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
 
             ['/admin/page/list'],
 
+            // Users
             ['/admin/users/list'],
             ['/admin/user'],
 
@@ -91,7 +92,7 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/admin/report/non_loaned_items'],
             ['/admin/report/report_payments'],
             ['/admin/report/report_costs'],
-            ['/admin/membership/list'],
+            ['/admin/report/report_memberships'],
 
             // Admin datatables JSON
             ['/admin/dt/loan/list'],

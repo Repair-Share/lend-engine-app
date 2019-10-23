@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Called when user is logging in to ensure that any missed database migrations are run
+ *
+ */
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Contact;
