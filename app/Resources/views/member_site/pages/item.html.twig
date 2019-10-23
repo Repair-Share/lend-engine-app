@@ -41,6 +41,7 @@
         {{ form_start(form, { 'attr' : { 'class': 'payment-form', 'id' : "paymentForm" } }) }}
 
         <input type="hidden" name="loanStartAt" id="loanStartAt" value="{{ loanStartAt }}">
+        <input type="hidden" name="itemDueInAt" id="itemDueInAt" value="{{ itemDueInAt }}">
         <input type="hidden" name="new_return_date" id="newReturnDate">
         <input type="hidden" name="new_return_time" id="newReturnTime">
         <input type="hidden" name="new_return_site_id" id="newReturnSiteId">
@@ -139,7 +140,7 @@
             var closingTimesByDate = [];
 
             var calendarMode = '{% if app.request.get('extend') %}extend{% else %}booking{% endif %}';
-            var originalReturnDate = '{{ app.request.get('from') }}';
+            var originalReturnDate = '{{ itemDueInAt }}';
 
             var sites = [];
             {% for site in sites %}
@@ -426,6 +427,7 @@
 
                 if (calendarMode == 'extend') {
 
+                    console.log("Extending");
                     if (!validateBookingPeriod(eventStart, eventEnd, siteId)) {
                         return false;
                     }
@@ -835,7 +837,7 @@
             // EXTENDING A LOAN
             {% if app.request.get('extend') %}
             loadSiteOpeningTimes();
-            var pickupCell = $(".fc-bg").find("[data-date='{{ app.request.get("from")|slice(0,10) }}']");
+            var pickupCell = $(".fc-bg").find("[data-date='{{ itemDueInAt|slice(0,10) }}']");
             pickupCell.css('backgroundColor', '#d9edf7');
             pickupCell.html('<div style="padding: 5px; font-size: 10px;">Due back</div>');
             {% endif %}

@@ -22,7 +22,7 @@ class LoanCheckInController extends Controller
      * @param $loanRowId
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
-    public function loanCheckInAction(Request $request, $loanRowId)
+    public function loanCheckIn(Request $request, $loanRowId)
     {
 
         $em = $this->getDoctrine()->getManager();

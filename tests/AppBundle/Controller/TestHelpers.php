@@ -6,6 +6,7 @@
 
 namespace Tests\AppBundle\Controller;
 
+use AppBundle\Entity\Setting;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Tests\AppBundle\Controller\AuthenticatedControllerTest;
@@ -210,6 +211,33 @@ class TestHelpers extends AuthenticatedControllerTest
         $this->assertGreaterThan(0, $loanId);
 
         return $loanId;
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     * @return bool
+     */
+    public function setSettingValue($key, $value)
+    {
+        $kernel = $this->bootKernel();
+
+        /** @var \Doctrine\ORM\EntityManager $em */
+        $em = $kernel->getContainer()->get('doctrine')->getManager();
+        $repo = $em->getRepository("AppBundle:Setting");
+
+        /** @var \AppBundle\Entity\Setting $setting */
+        if (!$setting = $repo->findOneBy(['setupKey' => $key])) {
+            $setting = new Setting();
+            $setting->setSetupKey($key);
+        }
+
+        // Change the setting to 'charge when placing reservation'
+        $setting->setSetupValue($value);
+        $em->persist($setting);
+        $em->flush();
+
+        return true;
     }
 
 }

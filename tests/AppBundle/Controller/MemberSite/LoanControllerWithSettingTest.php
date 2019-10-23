@@ -18,22 +18,7 @@ class LoanControllerWithSettingTest extends AuthenticatedControllerTest
      */
     public function testLoanWhenChargedAtReservation()
     {
-        $kernel = $this->bootKernel();
-
-        /** @var \Doctrine\ORM\EntityManager $em */
-        $em = $kernel->getContainer()->get('doctrine')->getManager();
-        $repo = $em->getRepository("AppBundle:Setting");
-
-        /** @var \AppBundle\Entity\Setting $setting */
-        if (!$setting = $repo->findOneBy(['setupKey' => 'charge_daily_fee'])) {
-            $setting = new Setting();
-            $setting->setSetupKey('charge_daily_fee');
-        }
-
-        // Change the setting to 'charge when placing reservation'
-        $setting->setSetupValue(1);
-        $em->persist($setting);
-        $em->flush();
+        $this->helpers->setSettingValue('charge_daily_fee', 1);
 
         // Create an item with a deposit amount
         $itemId = $this->helpers->createItem($this->client);
@@ -95,9 +80,7 @@ class LoanControllerWithSettingTest extends AuthenticatedControllerTest
         $this->assertEquals(0.50, $contactBalance);
 
         // Reset the setting back afterwards
-        $setting->setSetupValue(0);
-        $em->persist($setting);
-        $em->flush();
+        $this->helpers->setSettingValue('charge_daily_fee', 0);
     }
 
 }

@@ -156,15 +156,16 @@
                     <div class="help-block">
                         {#CHECK IN #}
                         {% if row.isCheckedOut and row.isReturned != true and tenantInformation.selfCheckout %}
-                            <a href="{{ path('loan_check_in', {loanRowId: row.id}) }}" data-loan-row-id="{{ row.id }}" id="check-in-{{ row.inventoryItem.id }}" class="btn btn-xs btn-success">Check in</a>
+                            <a href="{{ path('loan_check_in', {loanRowId: row.id}) }}" data-loan-row-id="{{ row.id }}"
+                               id="check-in-{{ row.inventoryItem.id }}" class="btn btn-xs btn-success btn_checkin">Check in</a>
                             <!-- For functional testing: /-->
                             <div class="check-in-row-id" style="display:none;">{{ row.id }}</div>
                         {% endif %}
                         {#EXTEND#}
                         {% if (row.isCheckedOut and not row.checkedInAt) or (loan.status in ['RESERVED', 'PENDING']) %}
                             {% if is_granted('ROLE_ADMIN') or tenantInformation.selfExtend %}
-                                <a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id, from: row.dueInAt|date("Y-m-d H:i:s") }) }}"
-                                   class="btn btn-xs btn-primary">
+                                <a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id }) }}"
+                                   class="btn btn-xs btn-primary btn_extend" data-loan-row-id="{{ row.id }}">
                                     Change return date
                                 </a>
                             {% endif %}

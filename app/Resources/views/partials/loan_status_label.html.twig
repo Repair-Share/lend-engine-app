@@ -1,13 +1,13 @@
 {% if loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_PENDING') %}
-    <div class="label bg-gray">{% trans %}loan_status.pending{% endtrans %}</div>
+    <div id="loanStatusLabel" class="label bg-gray">{% trans %}loan_status.pending{% endtrans %}</div>
 {% elseif loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_ACTIVE') %}
-    <div class="label bg-teal">{% trans %}loan_status.on_loan{% endtrans %}</div>
+    <div id="loanStatusLabel" class="label bg-teal">{% trans %}loan_status.on_loan{% endtrans %}</div>
 {% elseif loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_OVERDUE') %}
-    <div class="label bg-red">{% trans %}loan_status.overdue{% endtrans %}</div>
+    <div id="loanStatusLabel" class="label bg-red">{% trans %}loan_status.overdue{% endtrans %}</div>
 {% elseif loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_RESERVED') %}
-    <div class="label bg-orange">{% trans %}loan_status.reserved{% endtrans %}</div>
+    <div id="loanStatusLabel" class="label bg-orange">{% trans %}loan_status.reserved{% endtrans %}</div>
 {% elseif loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_CANCELLED') %}
-    <div class="label bg-gray">{% trans %}loan_status.cancelled{% endtrans %}</div>
+    <div id="loanStatusLabel" class="label bg-gray">{% trans %}loan_status.cancelled{% endtrans %}</div>
 {% elseif loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_CLOSED') %}
-    <div class="label bg-green">{% trans %}loan_status.closed{% endtrans %}</div>
+    <div id="loanStatusLabel" class="label bg-green">{% trans %}loan_status.closed{% endtrans %}</div>
 {% endif %}

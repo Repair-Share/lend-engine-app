@@ -140,6 +140,8 @@ class ItemController extends Controller
 
         $loanId = '';
         $loanStartAt = '';
+        $itemDueInAt = '';
+
         if ($loanRowId = $request->get('extend')) {
 
             /** @var \AppBundle\Services\StripeHandler $stripeService */
@@ -154,6 +156,7 @@ class ItemController extends Controller
             $tz = new \DateTimeZone($timeZone);
 
             $loanStartAt = $loanRow->getDueOutAt()->setTimezone($tz)->format("Y-m-d H:i:00");
+            $itemDueInAt = $loanRow->getDueInAt()->setTimezone($tz)->format("Y-m-d H:i:00");
 
             $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
 
@@ -219,6 +222,7 @@ class ItemController extends Controller
             // When extending a loan we need the existing times to check with
             'loanId' => $loanId,
             'loanStartAt' => $loanStartAt,
+            'itemDueInAt' => $itemDueInAt,
 
             'pageTitle' => 'Borrow '.$product->getName(),
 
