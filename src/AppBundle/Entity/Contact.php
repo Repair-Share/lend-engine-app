@@ -781,10 +781,12 @@ class Contact extends BaseUser
     {
         // sort the loans
         $sortedLoans = [];
+        $n = 0;
         /** @var \AppBundle\Entity\Loan $loan */
         foreach ($this->loans AS $loan) {
-            $key = $loan->getTimeIn()->format("Y-m-d");
+            $key = $loan->getTimeIn()->format("Y-m-d H:i:s".$n);
             $sortedLoans[$key] = $loan;
+            $n++;
         }
 
         krsort($sortedLoans);
@@ -884,9 +886,11 @@ class Contact extends BaseUser
     {
         // sort by date desc
         $sortedPayments = [];
+        $n = 0;
         foreach ($this->payments AS $payment) {
-            $key = $payment->getPaymentDate()->format("Y-m-d");
+            $key = $payment->getPaymentDate()->format("Y-m-d H:i:s".$n);
             $sortedPayments[$key] = $payment;
+            $n++;
         }
 
         krsort($sortedPayments);
