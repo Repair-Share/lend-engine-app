@@ -7,12 +7,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class ChooseItemTypeController extends Controller
+class ChooseItemSectorController extends Controller
 {
     /**
-     * @Route("admin/item_type", name="item_type")
+     * @Route("admin/item_sector", name="item_sector")
      */
-    public function chooseItemTypeAction()
+    public function chooseItemSectorAction()
     {
         // Check to see if user has exceeded item count
         $em = $this->getDoctrine()->getManager();
@@ -35,7 +35,7 @@ class ChooseItemTypeController extends Controller
             return $this->redirectToRoute('item_list');
         }
 
-        return $this->render('default/itemType.html.twig', array(
+        return $this->render('item/item_sector.html.twig', array(
 
         ));
     }

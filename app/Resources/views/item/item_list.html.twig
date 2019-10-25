@@ -15,7 +15,7 @@
     {% if is_granted('ROLE_SUPER_USER') %}
         <a class="btn btn-default" href="{{ path('export_items') }}" style="margin-right: 10px">Export</a>
     {% endif %}
-    <a class="btn bg-green" href="{{ path('item_type') }}">Add item</a>
+    <a class="btn bg-green" href="{{ path('item_sector') }}">Add item</a>
 {% endblock %}
 
 {% block body %}

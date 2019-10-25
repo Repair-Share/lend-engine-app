@@ -27,7 +27,7 @@ class TestHelpers extends AuthenticatedControllerTest
             $itemName = "Item ".rand();
         }
 
-        $crawler = $client->request('GET', '/admin/item?typeId=33');
+        $crawler = $client->request('GET', '/admin/item?sectorId=33');
         $this->assertContains('Add a new item', $crawler->html());
 
         $form = $crawler->filter('form[name="item"]')->form(array(

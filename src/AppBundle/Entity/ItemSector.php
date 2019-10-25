@@ -6,12 +6,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ItemType
+ * ItemSector
  *
  * @ORM\Table(name="_core.item_type", options={"collate"="utf8mb4_unicode_ci", "charset"="utf8mb4"})
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ItemTypeRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ItemSectorRepository")
  */
-class ItemType
+class ItemSector
 {
     /**
      * @var integer
@@ -28,14 +28,14 @@ class ItemType
     private $name;
 
     /**
-     * @var ItemType
-     * @ORM\ManyToOne(targetEntity="ItemType", inversedBy="children")
+     * @var ItemSector
+     * @ORM\ManyToOne(targetEntity="ItemSector", inversedBy="children")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      */
     protected $parent;
 
     /**
-     * @ORM\OneToMany(targetEntity="ItemType", mappedBy="parent")
+     * @ORM\OneToMany(targetEntity="ItemSector", mappedBy="parent")
      */
     protected $children;
 
@@ -93,7 +93,7 @@ class ItemType
     /**
      * Get parent
      *
-     * @return ItemType
+     * @return ItemSector
      */
     public function getParent()
     {
@@ -101,7 +101,7 @@ class ItemType
     }
 
     /**
-     * @param $parent ItemType
+     * @param $parent ItemSector
      * @return $this
      */
     public function setParent($parent)

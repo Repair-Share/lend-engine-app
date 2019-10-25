@@ -33,7 +33,7 @@ class ItemController extends Controller
         $user = $this->getUser();
 
         $skuStub = $this->get('service.tenant')->getCodeStub();
-        $itemTypeId = null;
+        $itemSectorId = null;
 
         if ($id) {
 
@@ -49,9 +49,9 @@ class ItemController extends Controller
 
             $pageTitle = $product->getName();
 
-            /** @var \AppBundle\Entity\ItemType $itemType */
-            if ($itemType = $product->getItemType()) {
-                $itemTypeId = $itemType->getId();
+            /** @var \AppBundle\Entity\ItemSector $itemSector */
+            if ($itemSector = $product->getItemSector()) {
+                $itemSectorId = $itemSector->getId();
             }
 
         } else {
@@ -77,16 +77,16 @@ class ItemController extends Controller
             $location = $locationRepo->find($defaultLocationId);
             $product->setInventoryLocation($location);
 
-            $itemTypeId = $request->get('typeId');
-            /** @var \AppBundle\Repository\ItemTypeRepository $itemTypeRepo */
-            $itemTypeRepo = $this->getDoctrine()->getRepository('AppBundle:ItemType');
+            $itemSectorId = $request->get('sectorId');
+            /** @var \AppBundle\Repository\ItemSectorRepository $itemSectorRepo */
+            $itemSectorRepo = $this->getDoctrine()->getRepository('AppBundle:ItemSector');
 
-            if (!$itemType = $itemTypeRepo->find($itemTypeId)) {
-                $this->addFlash('error', "Item type {$itemTypeId} not found");
-                return $this->redirectToRoute('item_type');
+            if (!$itemSector = $itemSectorRepo->find($itemSectorId)) {
+                $this->addFlash('error', "Item type {$itemSectorId} not found");
+                return $this->redirectToRoute('item_sector');
             }
 
-            $product->setItemType($itemType);
+            $product->setItemSector($itemSector);
 
             // Set the check-in and check-out prompts which are set to "on for all new products"
             /** @var $checkInPromptRepo \AppBundle\Repository\CheckInPromptRepository */
@@ -132,7 +132,7 @@ class ItemController extends Controller
             'em' => $em,
             'customFields' => $customFields,
             'customFieldValues' => $customFieldValues,
-            'itemTypeId' => $itemTypeId // manually set as it's unmapped
+            'itemSectorId' => $itemSectorId // manually set as it's unmapped
         ];
 
         $form = $this->createForm(ItemType::class, $product, $formOptions);
@@ -230,7 +230,7 @@ class ItemController extends Controller
                     $setting = new Setting();
                     $setting->setSetupKey('last_item_type');
                 }
-                $setting->setSetupValue($form->get('itemType')->getData());
+                $setting->setSetupValue($form->get('itemSector')->getData());
                 $em->persist($setting);
             }
 
@@ -331,7 +331,7 @@ class ItemController extends Controller
                 $em->flush();
                 if ($request->get('submitForm') == 'saveAndNew') {
                     $this->addFlash('success', "Item saved. Ready to add a new one!");
-                    return $this->redirectToRoute('item_type');
+                    return $this->redirectToRoute('item_sector');
                 } elseif ($request->get('numberOfCopies') > 0) {
                     return $this->redirectToRoute('item_copy', ['id' => $product->getId(), 'numberOfCopies' => $request->get('numberOfCopies')]);
                 } else {

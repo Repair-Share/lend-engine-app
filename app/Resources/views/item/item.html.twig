@@ -192,15 +192,15 @@
 
                         <div class="form-group">
                             <label class="control-label">Item type</label>
-                            {{ form_row(form.itemType) }}
-                            {% if item.itemType %}
-                                {{ item.itemType.name }}
+                            {{ form_row(form.itemSector) }}
+                            {% if item.itemSector %}
+                                {{ item.itemSector.name }}
                             {% else %}
                                 <i class="fa fa-exclamation-circle" style="color: #ff741e;"></i>
                                 Not set
                             {% endif %}
                             {% if item.id %}
-                                <a class="pull-right" href="{{ path('change_item_type', {itemId: item.id}) }}">Change</a>
+                                <a class="pull-right" href="{{ path('change_item_sector', {itemId: item.id}) }}">Change</a>
                             {% endif %}
                             <div class="help-block">
                                 Item type is used internally across the Lend Engine network to learn more about what people are lending and borrowing.

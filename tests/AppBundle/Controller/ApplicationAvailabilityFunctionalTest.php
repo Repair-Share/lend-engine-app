@@ -82,7 +82,7 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/admin/'],
             ['/admin/loan/list'],
             ['/admin/item/list'],
-            ['/admin/item_type'],
+            ['/admin/item_sector'],
             ['/admin/contact/list'],
 
             // Reports

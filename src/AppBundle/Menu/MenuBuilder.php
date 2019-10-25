@@ -64,7 +64,7 @@ class MenuBuilder
         if ( $this->container->get('security.authorization_checker')->isGranted("ROLE_SUPER_USER") ) {
             $this->addChildItem('Items', 'Bulk update <sup>beta</sup>', 'import_items', '');
         }
-        $this->addChildItem('Items', 'Add item', 'item_type', '');
+        $this->addChildItem('Items', 'Add item', 'item_sector', '');
 
         if ($this->container->get('settings')->getSettingValue('enable_waiting_list')) {
             $this->addChildItem('Items', 'Waiting list', 'item_waiting_list', '');

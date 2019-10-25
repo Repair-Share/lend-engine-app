@@ -7,22 +7,22 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class ChangeItemTypeController extends Controller
+class ChangeItemSectorController extends Controller
 {
     /**
-     * @Route("admin/item/{itemId}/change-type", name="change_item_type")
+     * @Route("admin/item/{itemId}/change-sector", name="change_item_sector")
      */
-    public function changeItemTypeAction(Request $request, $itemId)
+    public function changeItemSectorAction(Request $request, $itemId)
     {
         $em = $this->getDoctrine()->getManager();
 
-        if ($newTypeId = $request->get('typeId')) {
+        if ($newTypeId = $request->get('sectorId')) {
 
             /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
             $itemRepo = $this->getDoctrine()->getRepository('AppBundle:InventoryItem');
 
-            /** @var \AppBundle\Repository\ItemTypeRepository $itemTypeRepo */
-            $itemTypeRepo = $this->getDoctrine()->getRepository('AppBundle:ItemType');
+            /** @var \AppBundle\Repository\ItemSectorRepository $itemTypeRepo */
+            $itemTypeRepo = $this->getDoctrine()->getRepository('AppBundle:ItemSector');
 
             if (!$item = $itemRepo->find($itemId)) {
                 $this->addFlash('error', "Item {$itemId} not found");
@@ -34,7 +34,7 @@ class ChangeItemTypeController extends Controller
                 return $this->redirectToRoute('item', ['id' => $itemId]);
             }
 
-            $item->setItemType($itemType);
+            $item->setItemSector($itemType);
             $em->persist($item);
 
             try {
@@ -47,7 +47,7 @@ class ChangeItemTypeController extends Controller
             return $this->redirectToRoute('item', ['id' => $itemId]);
         }
 
-        return $this->render('default/itemType.html.twig', [
+        return $this->render('item/item_sector.html.twig', [
             'itemId' => $itemId
         ]);
     }

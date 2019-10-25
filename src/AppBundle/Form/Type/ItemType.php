@@ -1,5 +1,5 @@
 <?php
-// src/AppBundle/Form/Type/ItemType.php
+// src/AppBundle/Form/Type/ItemSector.php
 namespace AppBundle\Form\Type;
 
 use Doctrine\ORM\EntityManager;
@@ -43,7 +43,7 @@ class ItemType extends AbstractType
 
         $builder->add("name", TextType::class);
 
-        $builder->add('description', TextAreaType::class, array(
+        $builder->add('description', TextareaType::class, array(
             'label' => 'Full description (shown online)',
             'required' => false,
             'attr' => array(
@@ -53,7 +53,7 @@ class ItemType extends AbstractType
             )
         ));
 
-        $builder->add('careInformation', TextAreaType::class, array(
+        $builder->add('careInformation', TextareaType::class, array(
             'label' => 'Care information (admin only)',
             'required' => false,
             'attr' => array(
@@ -63,7 +63,7 @@ class ItemType extends AbstractType
             )
         ));
 
-        $builder->add('componentInformation', TextAreaType::class, array(
+        $builder->add('componentInformation', TextareaType::class, array(
             'label' => 'Components / contents (shown online)',
             'required' => false,
             'attr' => array(
@@ -98,11 +98,11 @@ class ItemType extends AbstractType
             ));
         }
 
-        // Editing item type is a separate process due to the large number of types possible, so hide the field
+        // Editing item sector is a separate process due to the large number of types possible, so hide the field
         // We do it in a separate full screen UI
-        $builder->add('itemType', HiddenType::class, array(
+        $builder->add('itemSector', HiddenType::class, array(
             'mapped' => false,
-            'data' => $options['itemTypeId']
+            'data' => $options['itemSectorId']
         ));
 
         $builder->add('sku', TextType::class, array(
@@ -394,7 +394,7 @@ class ItemType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'AppBundle\Entity\InventoryItem',
             'em' => null,
-            'itemTypeId' => null,
+            'itemSectorId' => null,
             'customFields' => null,
             'customFieldValues' => null
         ));

@@ -94,7 +94,7 @@ class RegistrationController extends Controller
             $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
             $client = new PostmarkClient($postmarkApiKey);
-            $ownerEmail = $this->get('service.tenant')->getCompanyEmail();
+            $ownerEmail = $tenantService->getCompanyEmail();
 
             $extra = '';
             if ($addedToMailchimp) {

@@ -87,8 +87,8 @@ class ItemExportController extends Controller
                 }
 
                 $itemTypeName = '';
-                if ($item->getItemType()) {
-                    $itemTypeName = $item->getItemType()->getName();
+                if ($item->getItemSector()) {
+                    $itemTypeName = $item->getItemSector()->getName();
                 }
 
                 $description = preg_replace("/[\n\r]/", "<br>", $item->getDescription());

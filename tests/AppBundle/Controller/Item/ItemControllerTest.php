@@ -9,7 +9,7 @@ class ItemControllerTest extends AuthenticatedControllerTest
 {
     public function testItemAction()
     {
-        $crawler = $this->client->request('GET', '/admin/item?typeId=33');
+        $crawler = $this->client->request('GET', '/admin/item?sectorId=33');
         $this->assertContains('Add a new item', $crawler->html());
 
         $form = $crawler->filter('form[name="item"]')->form(array(

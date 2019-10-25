@@ -271,12 +271,12 @@ class InventoryItem
     private $shortUrl;
 
     /**
-     * @var ItemType
+     * @var ItemSector
      *
-     * @ORM\ManyToOne(targetEntity="ItemType")
-     * @ORM\JoinColumn(name="item_type", referencedColumnName="id", nullable=true)
+     * @ORM\ManyToOne(targetEntity="ItemSector")
+     * @ORM\JoinColumn(name="item_sector", referencedColumnName="id", nullable=true)
      */
-    private $itemType;
+    private $itemSector;
 
     /** @var string */
     private $quantity;
@@ -1391,22 +1391,22 @@ class InventoryItem
     }
 
     /**
-     * @param $type ItemType
+     * @param $type ItemSector
      * @return $this
      */
-    public function setItemType(ItemType $type)
+    public function setItemSector(ItemSector $type)
     {
-        $this->itemType = $type;
+        $this->itemSector = $type;
 
         return $this;
     }
 
     /**
-     * @return ItemType
+     * @return ItemSector
      */
-    public function getItemType()
+    public function getItemSector()
     {
-        return $this->itemType;
+        return $this->itemSector;
     }
 
 
