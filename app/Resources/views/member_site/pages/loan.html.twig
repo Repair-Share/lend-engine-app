@@ -108,7 +108,7 @@
                         <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" alt="" class="img-responsive">
                     {% endif %}
 
-                    {% if loan.loanRows|length > 1 and not row.isCheckedOut %}
+                    {% if loan.loanRows|length > 1 and not row.isCheckedOut and loan.status in ['RESERVED', 'PENDING'] %}
                     <a href="{{ path('loan_item_remove', {rowId: row.id}) }}" class="btn btn-xs btn-danger" style="margin-top: 4px;">
                         {% trans %}public_basket.remove_item{% endtrans %}
                     </a>
@@ -119,7 +119,7 @@
                         <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a>
                     </div>
 
-                    {% if not row.isCheckedOut %}
+                    {% if not row.isCheckedOut and row.inventoryItem.inventoryLocation %}
                     {#A field checked via validateCheckout to prevent checkout for non-available items#}
                     <input type="hidden" class="item-location" value="{{ row.inventoryItem.inventoryLocation.isAvailable }}">
                     {% endif %}
@@ -134,16 +134,16 @@
                         <div class="basket-barcode">Barcode: {{ row.inventoryItem.id }}</div>
                     {% endif %}
 
+                    {% if row.inventoryItem.itemType == 'loan' %}
                     <div>
                         <i class="far fa-clock"></i>
                         {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
-
                         ( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
                     </div>
-
                     <div class="multi-site">
                         <i class="far fa-hospital"></i> {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
                     </div>
+                    {% endif %}
 
                     {# Checked in #}
                     {% if row.isReturned %}
@@ -155,7 +155,7 @@
 
                     <div class="help-block">
                         {#CHECK IN #}
-                        {% if row.isCheckedOut and row.isReturned != true and tenantInformation.selfCheckout %}
+                        {% if row.isCheckedOut and row.isReturned != true and tenantInformation.selfCheckout and row.inventoryItem.itemType == 'loan' %}
                             <a href="{{ path('loan_check_in', {loanRowId: row.id}) }}" data-loan-row-id="{{ row.id }}"
                                id="check-in-{{ row.inventoryItem.id }}" class="btn btn-xs btn-success btn_checkin">Check in</a>
                             <!-- For functional testing: /-->
@@ -163,9 +163,9 @@
                         {% endif %}
                         {#EXTEND#}
                         {% if (row.isCheckedOut and not row.checkedInAt) or (loan.status in ['RESERVED', 'PENDING']) %}
-                            {% if is_granted('ROLE_ADMIN') or tenantInformation.selfExtend %}
+                            {% if (is_granted('ROLE_ADMIN') or tenantInformation.selfExtend) and row.inventoryItem.itemType == 'loan' %}
                                 <a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id }) }}"
-                                   class="btn btn-xs btn-primary btn_extend" data-loan-row-id="{{ row.id }}">
+                                   class="btn btn-xs btn-default btn_extend" data-loan-row-id="{{ row.id }}">
                                     Change return date
                                 </a>
                             {% endif %}
@@ -545,9 +545,10 @@
             }
 
             // Item can be loaned
+            $(".cannot-checkout").remove();
             $(".item-location").each(function(){
                 if (!$(this).val()) {
-                    $(this).after('<div class="label bg-orange">Not currently available</div>');
+                    $(this).after('<div class="cannot-checkout" style="color: #de7c34">Item cannot be checked out now.</div>');
                     checkoutButton.attr("disabled", true).html("Item(s) are not available to check out.");
                     allowCheckOut = false;
                 }

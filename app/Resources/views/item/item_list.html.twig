@@ -18,8 +18,17 @@
     <a class="btn bg-green" href="{{ path('item_sector') }}">Add item</a>
 {% endblock %}
 
+{% block header_bar %}
+     {% if app.request.get('kit') %}
+     <div class="header-bar">
+         Search for item(s) to add to kit, select row(s) and choose "add to kit".
+     </div>
+     {% endif %}
+{% endblock %}
+
 {% block body %}
 
+    {% if not app.request.get('kit') %}
     <div class="row" id="primary-filter" style="display:block">
         <div id="primary-filter-inner">
             <form method="GET" class="">
@@ -117,6 +126,7 @@
             </form>
         </div>
     </div>
+    {% endif %}
 
     <form method="POST" id="batchActionForm" action="{{ path('batch_update_item') }}">
         <div class="row" id="batch-action-wrapper" style="padding-bottom: 15px">
@@ -124,6 +134,9 @@
                 With <span id="count-rows"></span> selected items :
                 <select id="batch-option" name="batch-option" style="width:200px">
                     <option value="">-- choose --</option>
+                    {% if app.request.get('kit') %}
+                        <option value="add_to_kit">Add to kit</option>
+                    {% endif %}
                     <option value="move">Move / assign</option>
                     <option value="delete">Delete</option>
                     <option value="fee">Set loan fee</option>
@@ -153,6 +166,7 @@
                 <span id="batchPeriodWrapper" class="batchSelectWrapper" style="display:none;">
                     <input id="batchPeriod" name="batchPeriod" class="form-control input-100" style="display: inline; position: relative; top: 1px;">
                 </span>
+                <input type="hidden" name="kit_id" value="{{ app.request.get('kit') }}">
                 <button type="button" id="batchCommit" style="display:none;" class="btn btn-sm btn-primary batchSelectWrapper">Update</button>
             </div>
         </div>
@@ -268,7 +282,7 @@
                     alert("You can only batch process up to 50 items at a time.");
                     return false;
                 } else if (countSelectedRows == 0) {
-                    alert("Easy tiger. Select some rows before batch updating.");
+                    alert("Select some rows before batch updating.");
                     $("#batch-option").val("");
                     $(".batchSelectWrapper").hide();
                     return false;
@@ -287,11 +301,20 @@
                 } else if (action == 'condition') {
                     $(".batchSelectWrapper").hide();
                     $("#batchConditionWrapper, #batchCommit").fadeIn();
+                } else if (action == 'add_to_kit') {
+                    $(".batchSelectWrapper").hide();
+                    $("#batchCommit").text("Add to kit").fadeIn();
                 } else if (action == 'delete') {
                     $(".batchSelectWrapper").hide();
                     $("#batchCommit").fadeIn();
                 }
             });
+
+            {% if app.request.get('kit') %}
+            $("#batch-option").val('add_to_kit');
+            $(".batchSelectWrapper").hide();
+            $("#batchCommit").text("Add to kit").fadeIn();
+            {% endif %}
 
             dataTable.buttons().container().appendTo('#data-table-inventory_length').css('padding-right', '20px');
 

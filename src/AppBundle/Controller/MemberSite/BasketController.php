@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\MemberSite;
 
+use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\Note;
@@ -257,7 +258,7 @@ class BasketController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        // Catch-all
+        // Catch-all if no qty is given
         if (!$qtyRequired = $request->get('qty')) {
             $qtyRequired = 1;
         }
@@ -307,6 +308,31 @@ class BasketController extends Controller
         $row->setDueInAt($dTo);
         $row->setFee($fee);
         $basket->addLoanRow($row);
+
+        if ($product->getItemType() == InventoryItem::TYPE_KIT) {
+            /** @var \AppBundle\Entity\KitComponent $kitComponent */
+            foreach ($product->getComponents() AS $kitComponent) {
+
+                if ($checkoutService->isItemReserved($kitComponent->getComponent(), $dFrom, $dTo, null)) {
+                    $this->addFlash("error", "Cannot add ".$kitComponent->getComponent()->getName());
+                    foreach ($checkoutService->errors AS $error) {
+                        $this->addFlash('error', $error);
+                    }
+                } else {
+                    $row = new LoanRow();
+                    $row->setLoan($basket);
+                    $row->setInventoryItem($kitComponent->getComponent());
+                    $row->setSiteFrom($siteFrom);
+                    $row->setSiteTo($siteTo);
+                    $row->setDueOutAt($dFrom);
+                    $row->setDueInAt($dTo);
+                    $row->setFee(0);
+                    $row->setProductQuantity($kitComponent->getQuantity());
+                    $basket->addLoanRow($row);
+                }
+
+            }
+        }
 
         $qtyFulfilled = 1;
 

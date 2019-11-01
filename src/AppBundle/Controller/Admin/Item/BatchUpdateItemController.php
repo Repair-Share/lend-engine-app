@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Admin\Item;
 
+use AppBundle\Entity\InventoryItem;
+use AppBundle\Entity\KitComponent;
 use AppBundle\Entity\ProductTag;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -38,6 +40,7 @@ class BatchUpdateItemController extends Controller
         /** @var \AppBundle\Services\InventoryService $inventoryService */
         $inventoryService = $this->get('service.inventory');
 
+        $kitId = null;
         $count = 0;
         foreach ($idSet AS $itemId) {
             /** @var \AppBundle\Entity\InventoryItem $item */
@@ -63,6 +66,28 @@ class BatchUpdateItemController extends Controller
                     $em->persist($item);
                     $count++;
                     break;
+                case "add_to_kit":
+                    $kitId = $request->get("kit_id");
+                    /** @var \AppBundle\Entity\InventoryItem $kit */
+                    if ($item->getItemType() == InventoryItem::TYPE_KIT) {
+                        $this->addFlash("error", "You can't add a kit to a kit.");
+                    } else if ($kit = $itemRepo->find($kitId)) {
+                        $alreadyAdded = false;
+                        foreach ($kit->getComponents() AS $component) {
+                            if ($component->getComponent()->getId() == $item->getId()) {
+                                $alreadyAdded = true;
+                            }
+                        }
+                        if ($alreadyAdded == false) {
+                            $component = new KitComponent();
+                            $component->setQuantity(1);
+                            $component->setInventoryItem($kit);
+                            $component->setComponent($item);
+                            $em->persist($component);
+                            $this->addFlash("success", "Added 1 x ".$item->getName()." to kit. Update quantity if required.");
+                        }
+                    }
+                    break;
                 case "period":
                     $period = $request->get("batchPeriod");
                     $item->setMaxLoanDays($period);
@@ -81,12 +106,19 @@ class BatchUpdateItemController extends Controller
 
         try {
             $em->flush();
-            $this->addFlash("success", "Updated {$count} items.");
+            if ($count > 0) {
+                $this->addFlash("success", "Updated {$count} items.");
+            }
         } catch (\Exception $e) {
             $this->addFlash("error", $e->getMessage());
         }
 
-        return $this->redirectToRoute('item_list', ['search' => $request->get('searchBox')]);
+        if ($kitId) {
+            return $this->redirectToRoute('item', ['id' => $kitId]);
+        } else {
+            return $this->redirectToRoute('item_list', ['search' => $request->get('searchBox')]);
+        }
+
     }
 
 }

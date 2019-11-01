@@ -56,7 +56,7 @@
 
                             <a href="{{ path('item', {id: product.id}) }}" class="btn btn-xs btn-primary role-admin">Edit</a>
 
-                            {% if product.inventoryLocation.id > 1 %}
+                            {% if product.inventoryLocation and product.inventoryLocation.id > 1 %}
                                 <a href="{{ url('item_move', {idSet: product.id}) }}" class="btn btn-xs btn-primary modal-link">Move / assign</a>
                                 <a href="{{ url('item_archive', {id: product.id}) }}" class="btn btn-xs btn-primary modal-link">Delete</a>
                             {% endif %}
@@ -106,7 +106,7 @@
             {% endif %}
 
             {#Item status#}
-            {% if product.inventoryLocation.id == 1 %}
+            {% if product.inventoryLocation and product.inventoryLocation.id == 1 %}
 
                 <span class="label label-info">
                     {% trans %}public_item.on_loan{% endtrans %}
@@ -116,7 +116,7 @@
 
                 {{ include('member_site/partials/waiting_list.html.twig') }}
 
-            {% elseif product.inventoryLocation.isAvailable == 1 %}
+            {% elseif product.inventoryLocation and product.inventoryLocation.isAvailable == 1 %}
 
                 <div>
                     <span class="label label-success pull-left">
@@ -125,7 +125,7 @@
                     <div class="clearfix" style="padding-bottom:10px;"></div>
                 </div>
 
-            {% else %}
+            {% elseif product.inventoryLocation %}
 
                 <span class="label label-warning">
                     {% trans %}public_item.not_available{% endtrans %}
@@ -134,13 +134,17 @@
 
                 {{ include('member_site/partials/waiting_list.html.twig') }}
 
+            {% else %}
+
+                {#Kit item without a location#}
+
             {% endif %}
 
             <div class="clearfix"></div>
 
             {#Item details#}
 
-            {% if product.inventoryLocation.id > 1 %}
+            {% if product.inventoryLocation and product.inventoryLocation.id > 1 %}
                 {% if isMultiSite == true or is_granted('ROLE_ADMIN') %}
                     <div class="item-info item-site">
                         <span class="item-info-label">{% trans %}public_item.location{% endtrans %}:</span>
@@ -195,9 +199,22 @@
 
         </div>
 
+        {#DESCRIPTION#}
         <p id="item-detail-description">
             {{ product.description|raw|nl2br }}
         </p>
+
+        {#KIT#}
+        {% if product.itemType == 'kit' %}
+            <div id="kit-wrapper">
+                {% trans %}public_item.kit_containing{% endtrans %}:
+                {% for component in product.components %}
+                    <div>{{ component.quantity }}
+                        <a href="{{ path('public_product', {productId: component.component.id}) }}">{{ component.component.name }}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
         {#CUSTOM FIELDS#}
         {% if product.textFieldValues|length > 0 and tenantInformation.feature('ProductField') %}

@@ -20,6 +20,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class InventoryItem
 {
 
+    CONST TYPE_LOAN  = 'loan';
+    CONST TYPE_KIT   = 'kit';
+    CONST TYPE_STOCK = 'stock';
+
     /**
      * @var integer
      *
@@ -29,6 +33,13 @@ class InventoryItem
      * @Groups({"basket"})
      */
     private $id;
+
+    /**
+     * @var string
+     * @ORM\Column(name="item_type", type="string", length=16, nullable=false)
+     * @Groups({"basket"})
+     */
+    private $itemType = 'loan';
 
     /**
      * @var \DateTime
@@ -106,6 +117,11 @@ class InventoryItem
      * @ORM\Column(name="component_information", type="string", length=1024, nullable=true)
      */
     private $componentInformation;
+
+    /**
+     * @ORM\OneToMany(targetEntity="KitComponent", mappedBy="inventoryItem", cascade={"persist", "remove"})
+     */
+    private $components;
 
     /**
      * @var string
@@ -296,6 +312,7 @@ class InventoryItem
         $this->fieldValues = new ArrayCollection();
         $this->fileAttachments = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->components = new ArrayCollection();
     }
 
     /**
@@ -1409,6 +1426,24 @@ class InventoryItem
         return $this->itemSector;
     }
 
+    /**
+     * @param $type string
+     * @return $this
+     */
+    public function setItemType($type)
+    {
+        $this->itemType = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getItemType()
+    {
+        return $this->itemType;
+    }
 
     /**
      * Set brand
@@ -1518,5 +1553,26 @@ class InventoryItem
     public function getQuantityAvailable()
     {
         return $this->quantityAvailable;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getComponents()
+    {
+        return $this->components;
+    }
+
+    /**
+     * @param $component KitComponent
+     * @return $this
+     */
+    public function addComponent(KitComponent $component)
+    {
+        if (!$this->components->contains($component)) {
+            $this->components[] = $component;
+        }
+
+        return $this;
     }
 }

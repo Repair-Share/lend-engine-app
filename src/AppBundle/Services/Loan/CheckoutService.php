@@ -96,10 +96,6 @@ class CheckoutService
 
         foreach ($loan->getLoanRows() AS $row) {
 
-            // set row as checked out
-            $row->setCheckedOutAt(new \DateTime());
-            $this->em->persist($row);
-
             // Move item to on-loan
             /** @var \AppBundle\Entity\InventoryLocation $location */
             if (!$location = $locationRepo->find(1)) {
@@ -109,15 +105,24 @@ class CheckoutService
 
             /** @var $row \AppBundle\Entity\LoanRow */
             $inventoryItem = $row->getInventoryItem();
-            $inventoryItem->setInventoryLocation($location);
-            $this->em->persist($inventoryItem);
 
-            $transactionRow = new ItemMovement();
-            $transactionRow->setInventoryLocation($location);
-            $transactionRow->setCreatedBy($user);
-            $transactionRow->setInventoryItem($inventoryItem);
-            $transactionRow->setLoanRow($row);
-            $this->em->persist($transactionRow);
+            if ($inventoryItem->getItemType() == InventoryItem::TYPE_LOAN) {
+                // Kits and stock items are not checked out in this way
+
+                // set row as checked out
+                $row->setCheckedOutAt(new \DateTime());
+                $this->em->persist($row);
+
+                $inventoryItem->setInventoryLocation($location);
+                $this->em->persist($inventoryItem);
+
+                $transactionRow = new ItemMovement();
+                $transactionRow->setInventoryLocation($location);
+                $transactionRow->setCreatedBy($user);
+                $transactionRow->setInventoryItem($inventoryItem);
+                $transactionRow->setLoanRow($row);
+                $this->em->persist($transactionRow);
+            }
 
             // Add some item history
             $note = new Note();
@@ -200,17 +205,23 @@ class CheckoutService
             $from   = $loanRow->getDueOutAt();
             $to     = $loanRow->getDueInAt();
             $loanId = $loan->getId();
+
             if ($this->isItemReserved($item, $from, $to, $loanId)) {
                 return false;
             }
-            if ($loanRow->getInventoryItem()->getInventoryLocation()->getId() == 1) {
-                $this->errors[] = 'Item "'.$loanRow->getInventoryItem()->getName().'" is already on loan.';
-                return false;
+
+            if ($loanRow->getInventoryItem()->getInventoryLocation()) {
+                // Kits don't have a location
+                if ($loanRow->getInventoryItem()->getInventoryLocation()->getId() == 1) {
+                    $this->errors[] = 'Item "'.$loanRow->getInventoryItem()->getName().'" is already on loan.';
+                    return false;
+                }
+                if ($loanRow->getInventoryItem()->getInventoryLocation()->getIsAvailable() != true) {
+                    $this->errors[] = 'Item "'.$loanRow->getInventoryItem()->getName().'" is in a reserved location ('.$loanRow->getInventoryItem()->getInventoryLocation()->getName().').';
+                    return false;
+                }
             }
-            if ($loanRow->getInventoryItem()->getInventoryLocation()->getIsAvailable() != true) {
-                $this->errors[] = 'Item "'.$loanRow->getInventoryItem()->getName().'" is in a reserved location ('.$loanRow->getInventoryItem()->getInventoryLocation()->getName().').';
-                return false;
-            }
+
         }
         return true;
     }

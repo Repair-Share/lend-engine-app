@@ -56,9 +56,13 @@ class ItemController extends Controller
 
         } else {
 
-            // Creating item
+            // Creating a new item
+            if ($request->get('type') == InventoryItem::TYPE_KIT) {
+                $pageTitle = 'Add a new kit';
+            } else {
+                $pageTitle = 'Add a new item';
+            }
 
-            $pageTitle = 'Add a new item';
             $product = new InventoryItem();
             $product->setCreatedBy($user);
 
@@ -107,6 +111,13 @@ class ItemController extends Controller
                 if ($checkOutPrompt->getDefaultOn()) {
                     $product->addCheckOutPrompt($checkOutPrompt);
                 }
+            }
+
+            $product->setItemType(InventoryItem::TYPE_LOAN);
+            if ($request->get('type') == InventoryItem::TYPE_KIT) {
+                $product->setItemType(InventoryItem::TYPE_KIT);
+            } else if ($request->get('type') == InventoryItem::TYPE_STOCK) {
+                $product->setItemType(InventoryItem::TYPE_STOCK);
             }
         }
 
@@ -327,6 +338,17 @@ class ItemController extends Controller
                 }
             }
 
+            if ($quantities = $request->get('component_qty')) {
+                foreach ($quantities AS $componentId => $quantity) {
+                    /** @var \AppBundle\Entity\KitComponent $kitComponent */
+                    foreach ($product->getComponents() AS $kitComponent) {
+                        if ($kitComponent->getComponent()->getId() == $componentId) {
+                            $kitComponent->setQuantity($quantity);
+                        }
+                    }
+                }
+            }
+
             try {
                 $em->flush();
                 if ($request->get('submitForm') == 'saveAndNew') {
@@ -409,7 +431,7 @@ class ItemController extends Controller
 
         $loanRowDetail = [];
 
-        if ($product->getInventoryLocation()->getId() == 1) {
+        if ($product->getInventoryLocation() && $product->getInventoryLocation()->getId() == 1) {
 
             // get the information about any current loan
             $filter = [

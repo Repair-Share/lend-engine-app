@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Admin\Item;
 
+use AppBundle\Entity\InventoryItem;
 use Doctrine\DBAL\DBALException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -75,14 +76,7 @@ class ItemListController extends Controller
     public function inventoryListAction(Request $request)
     {
 
-        $em = $this->getDoctrine()->getManager();
         $data = array();
-
-        /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
-        $itemRepo = $em->getRepository('AppBundle:InventoryItem');
-
-        /** @var \AppBundle\Services\Item\ItemService $itemService */
-        $itemService = $this->get('service.item');
 
         /** @var $reservationService \AppBundle\Services\Booking\BookingService */
         $reservationService = $this->get("service.booking");
@@ -177,7 +171,7 @@ class ItemListController extends Controller
             $statusHtml = '';
             $itemId = $item->getId();
 
-            if ($item->getInventoryLocation()->getId() == 1 && isset($activeLoans[$itemId])) {
+            if ($item->getInventoryLocation() && $item->getInventoryLocation()->getId() == 1 && isset($activeLoans[$itemId])) {
                 $available = '<div class="label bg-teal">On loan</div>';
 
                 $statusHtml = 'On loan to ';
@@ -203,23 +197,28 @@ class ItemListController extends Controller
                 $statusHtml .= '<div class="item-reservations"><a href="'.$loanUrl.'">'.$reservation->getLoan()->getContact()->getName().'</a></div>';
                 $statusHtml .= '<div class="item-reservations">'.$reservedFromDate.' to '.$reservedToDate.'</div>';
 
-            } else if ($item->getInventoryLocation()->getIsAvailable() == 1) {
+            } else if ($item->getInventoryLocation() && $item->getInventoryLocation()->getIsAvailable() == 1) {
                 $available = '<div class="label bg-green">Available</div>';
-            } else {
+            } else if ($item->getInventoryLocation()) {
                 $available = '<div class="label bg-yellow">On hold</div>';
+            } else {
+                // no location, it's a kit
+                $available = '<div class="label bg-gray">Kit</div>';
             }
 
             $editItemUrl = $this->generateUrl('item', array('id' => $itemId));
             $links = '<li><a href="'.$editItemUrl.'">Edit</a></li>';
 
-            $copyItemUrl = $this->generateUrl('item_copy', array('id' => $itemId));
-            $links .= '<li><a href="'.$copyItemUrl.'">Copy</a></li>';
+            if ($item->getItemType() == InventoryItem::TYPE_LOAN) {
+                $copyItemUrl = $this->generateUrl('item_copy', array('id' => $itemId));
+                $links .= '<li><a href="'.$copyItemUrl.'">Copy</a></li>';
+            }
 
             // Reservations
             $reserveItemUrl = $this->generateUrl('member_search', array('itemId' => $itemId, 'new' => 'reservation'));
             $links .= '<li><a href="'.$reserveItemUrl.'">Reserve</a></li>';
 
-            if ($item->getInventoryLocation()->getId() > 1) {
+            if ($item->getInventoryLocation() && $item->getInventoryLocation()->getId() > 1) {
                 $moveUrl = $this->generateUrl('item_move', ['idSet' => $itemId,]);
                 $links .= '<li><a class="modal-link" href="'.$moveUrl.'">Move / Assign</a></li>';
 
@@ -259,15 +258,18 @@ class ItemListController extends Controller
             $columns[] = $itemHtml;
 
             // Location / assignment
-            $locationName = preg_replace("/ /", '&nbsp;', $item->getInventoryLocation()->getName());
-
-            if ($item->getInventoryLocation()->getId() == 1) {
-                $locationHtml = $available;
-            } else if ($this->get('settings')->getSettingValue('multi_site')) {
-                $siteName = preg_replace("/ /", '&nbsp;', $item->getInventoryLocation()->getSite()->getName());
-                $locationHtml = $available .'<div class="item-location"><div>'.$siteName.'</div>'.$locationName.'</div>';
+            if ($item->getInventoryLocation()) {
+                $locationName = preg_replace("/ /", '&nbsp;', $item->getInventoryLocation()->getName());
+                if ($item->getInventoryLocation()->getId() == 1) {
+                    $locationHtml = $available;
+                } else if ($this->get('settings')->getSettingValue('multi_site')) {
+                    $siteName = preg_replace("/ /", '&nbsp;', $item->getInventoryLocation()->getSite()->getName());
+                    $locationHtml = $available .'<div class="item-location"><div>'.$siteName.'</div>'.$locationName.'</div>';
+                } else {
+                    $locationHtml = $available .'<div class="item-location">'.$locationName.'</div>';
+                }
             } else {
-                $locationHtml = $available .'<div class="item-location">'.$locationName.'</div>';
+                $locationHtml = '-';
             }
 
             if ($item->getAssignedTo()) {

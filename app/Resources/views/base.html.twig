@@ -26,6 +26,14 @@
         <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
 
+    <style>
+        .header-bar {
+            padding: 10px 20px;
+            background-color: #d2f3ff;
+            color: #294353;
+        }
+    </style>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
@@ -108,6 +116,8 @@
                 <a href="{{ path('billing') }}">See plans</a>
             </div>
         {% endif %}
+
+        {% block header_bar %}{% endblock %}
 
         {% if tenantInformation.trialExpiresAt|date("Y-m-d") < date()|date("Y-m-d") and tenantInformation.accountStatus == 'TRIAL' %}
             <div class="trial" style="background-color: #fff7a4; color: #ff6519; padding: 10px; ">

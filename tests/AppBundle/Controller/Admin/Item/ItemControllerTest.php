@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\AppBundle\Controller\Item;
+namespace Tests\AppBundle\Controller\Admin\Item;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Tests\AppBundle\Controller\AuthenticatedControllerTest;
@@ -9,6 +9,9 @@ class ItemControllerTest extends AuthenticatedControllerTest
 {
     public function testItemAction()
     {
+        $crawler = $this->client->request('GET', '/admin/item?sectorId=33&type=kit');
+        $this->assertContains('Add a new kit', $crawler->html());
+
         $crawler = $this->client->request('GET', '/admin/item?sectorId=33');
         $this->assertContains('Add a new item', $crawler->html());
 

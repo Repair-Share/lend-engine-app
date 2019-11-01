@@ -65,18 +65,4 @@ class ItemArchiveController extends Controller
 
     }
 
-    /**
-     * Modal content for adding inventory to a loan
-     * Contents are delivered via AJAX route "select_inventory"
-     * @Route("admin/inventory/search/", name="inventory_search")
-     */
-    public function searchAction(Request $request)
-    {
-        return $this->render(
-            'item/item_search.html.twig',
-            [
-                'loanId' => $request->get('loanId')
-            ]
-        );
-    }
 }

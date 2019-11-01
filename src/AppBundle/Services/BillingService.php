@@ -49,6 +49,8 @@ class BillingService
             'Labels'            => false,
             'WhiteLabel'        => false,
             'EventBooking'      => false,
+            'Kits'              => false,
+            'StockItems'        => false,
         ];
 
         switch ($plan) {
@@ -77,6 +79,8 @@ class BillingService
                     'Labels'            => false,
                     'WhiteLabel'        => false,
                     'EventBooking'      => true,
+                    'Kits'              => true,
+                    'StockItems'        => true,
                 ];
                 break;
 
@@ -100,6 +104,8 @@ class BillingService
                     'Labels'            => true,
                     'WhiteLabel'        => false,
                     'EventBooking'      => true,
+                    'Kits'              => true,
+                    'StockItems'        => true,
                 ];
                 break;
 
@@ -123,6 +129,8 @@ class BillingService
                     'Labels'            => true,
                     'WhiteLabel'        => true,
                     'EventBooking'      => true,
+                    'Kits'              => true,
+                    'StockItems'        => true,
                 ];
                 break;
 

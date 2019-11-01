@@ -146,6 +146,8 @@ public_item:
   see_all: See all
   discount: discount
   not_reservable: "This item is not available for reservation online. Please contact us."
+  see_parts: See parts
+  kit_containing: This item is a kit containing
 
 calendar:
   pickup_day: Pickup
@@ -181,6 +183,9 @@ public_basket:
 public_loan:
   title: Loan
   charged: Charged to account
+  check_in: Check in
+  select_items_to_check_in: Select items to check in
+  choose_new_date: Choose a new return date
 
 # Member site : Logged in : Menu
 public_user_menu:

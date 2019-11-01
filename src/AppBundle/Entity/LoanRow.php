@@ -13,6 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class LoanRow
 {
+
     /**
      * @var integer
      *

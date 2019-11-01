@@ -10,7 +10,7 @@
     </style>
 
     <h2>
-        Check in "{{ loanRow.inventoryItem.name }}"
+        {% trans %}public_loan.check_in{% endtrans %} "{{ loanRow.inventoryItem.name }}"
     </h2>
 
     {{ form_start(form) }}
@@ -43,12 +43,13 @@
 
     <div class="row">
         <div class="col-md-12">
-            <p>This loan has the following items due to return ...</p>
+            <p>{% trans %}public_loan.select_items_to_check_in{% endtrans %}:</p>
+
             <table class="table borderless" id="checkInDetails">
                 {% for row in loanRow.loan.loanRows %}
-                {% if not row.isReturned %}
+                {% if not row.isReturned and row.inventoryItem.itemType == 'loan' %}
                     <tr {% if row.id != loanRow.id %}style="color: #ccc"{% endif %}>
-                        <td style="width:100px">
+                        <td style="width:100px" class="hidden-xs">
                             {% if row.inventoryItem.imageName %}
                                 <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}" class="img-thumbnail img-responsive">
                             {% else %}
@@ -71,7 +72,13 @@
                                 <span class="label bg-brown">You're checking in this item</span>
                             {% endif %}
                         </td>
-
+                        <td>
+                            {% if canBulkCheckIn or row.id == loanRow.id %}
+                            <input type="checkbox" name="check_in[]" value="{{ loanRow.id }}" {% if row.id == loanRow.id %}checked{% endif %}>
+                            {% else %}
+                            <input type="checkbox" disabled>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endif %}
                 {% endfor %}
@@ -80,17 +87,11 @@
     </div>
 
     {% if loanRow.loan.loanRows|length > 1 and not canBulkCheckIn %}
-        <div class="row">
-            <div class="col-md-12">
-                <i class="fa fa-info-circle session-user"></i> Bulk item check in is not available for this loan as some items have check-in prompts or a deposit due to refund.
-                You'll need to check each item in separately.<br><br>
-            </div>
+        <div class="alert alert-warning">
+            Bulk item check in is not available for this loan as some items have check-in prompts or a deposit due to refund.
+            You'll need to check each item in separately.
         </div>
     {% endif %}
-
-    <div class="alert" style="display:{% if canBulkCheckIn %}block{% else %}none{% endif %}">
-        {{ form_row(form.check_in_all) }}
-    </div>
 
     {% if loanRow.deposit %}
     <div class="row">
@@ -200,7 +201,7 @@
             {% if loanRow.inventoryItem.checkInPrompts|length > 0 and tenantInformation.feature('CheckInPrompt') %}
                 Please complete all checks
             {% else %}
-                Check in item
+                Check in selected items
             {% endif %}
         </button>
     </div>

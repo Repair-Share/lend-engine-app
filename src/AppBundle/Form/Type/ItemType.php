@@ -146,10 +146,10 @@ class ItemType extends AbstractType
         $builder->add('depositAmount', TextType::class, array(
             'label' => 'Deposit amount',
             'required' => false,
-            'attr' => array(
-                'placeholder' => '',
+            'attr' => [
+                'class' => '',
                 'data-help' => ''
-            )
+            ]
         ));
 
         $builder->add('priceCost', TextType::class, array(
@@ -180,7 +180,7 @@ class ItemType extends AbstractType
             'label' => 'This item can be reserved by members online',
             'required' => false,
             'attr' => array(
-                'data-help' => "(Note that when logged in to member site as admin, all items are reservable online)"
+                'data-help' => "When logged in to member site as admin, all items are reservable online."
             )
         ));
 
@@ -231,7 +231,7 @@ class ItemType extends AbstractType
             'multiple' => true,
             'attr' => array(
                 'class' => '',
-                'data-help' => 'Choose more than one if you need. Also used for navigation on your member site.',
+                'data-help' => 'Choose more than one if you need. Also used for navigation on your member site. Add more in settings.',
             )
         ));
 

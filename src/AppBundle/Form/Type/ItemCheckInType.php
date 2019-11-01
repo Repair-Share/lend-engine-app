@@ -53,14 +53,6 @@ class ItemCheckInType extends AbstractType
             $formHelp = '';
         }
 
-        $builder->add('check_in_all', CheckboxType::class, array(
-            'label' => 'Check in ALL items on this loan with these settings',
-            'required' => false,
-            'attr' => [
-                'data-help' => 'Any fee entered will be applied to each item.',
-            ]
-        ));
-
         $locations    = $locationRepo->findOrderedByName('notOnLoan', $siteId);
         $defaultValue = $locations[0];
         if ($this->defaultCheckInLocation) {

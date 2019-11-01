@@ -21,6 +21,11 @@
     {% if item.showOnWebsite == false %}
         <i class="fa fa-exclamation-circle" data-toggle="tooltip" title="This item is not shown on your Lend Engine member website" style="color: #ff741e"></i>
     {% endif %}
+    {% if item.itemType == 'kit' %}
+        <i class="fa fa-sitemap" style="color:#000"></i>
+    {% elseif item.itemType == 'stock' %}
+        <i class="fa fa-cube" style="color:#000"></i>
+    {% endif %}
     <a href="{{ itemPreviewUrl }}" class="modal-link">{{ item.name }}</a>
 </span>
 

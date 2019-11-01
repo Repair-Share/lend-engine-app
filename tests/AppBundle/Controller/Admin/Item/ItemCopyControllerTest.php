@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\AppBundle\Controller\Item;
+namespace Tests\AppBundle\Controller\Admin\Item;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Tests\AppBundle\Controller\AuthenticatedControllerTest;

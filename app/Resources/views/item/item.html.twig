@@ -9,32 +9,56 @@
 
 {% block pageTitle %}{{ title }}{% endblock %}
 
-{% block body %}
+{% block header_bar %}
 
-    <style>
-        .item-group {
-            padding: 6px;
-            margin-bottom: 10px;
-            background-color: #d2f3ff;
-            border: 1px solid #b9d9ec;
-            border-radius: 4px;
-            color: #294353;
-            font-size: 12px;
-        }
-    </style>
-
-    {{ form_start(form, { 'attr' : { 'class': 'item-form', 'id' : "itemForm" } }) }}
-
-    <input type="hidden" name="numberOfCopies" id="numberOfCopies" value="0">
+    {% if item.itemType == 'kit' %}
+    <div class="header-bar">
+        <i class="fa fa-sitemap" style="color:#000"></i>
+        This item is a kit of other parts. It has no inventory level or location.
+    </div>
+        <style>
+            .item-loan {
+                display: none;
+            }
+        </style>
+    {% elseif item.itemType == 'stock' %}
+    <div class="header-bar">
+        <i class="fa fa-cube" style="color:#000"></i>
+        This is stock item (consumable)
+    </div>
+        <style>
+            .item-loan {
+                display: none;
+            }
+            .hide-for-stock-items {
+                display:none;
+            }
+        </style>
+    {% else %}
+        <style>
+            .item-loan {
+                display: block;
+            }
+        </style>
+    {% endif %}
 
     {% if countItems > 1 and tenantInformation.setting('group_similar_items') == 1 %}
-        <div class="item-group">
+        <div class="header-bar">
             There are <a href="{{ path('item_list') }}?search={{ item.name }}">{{ countItems }} items in this group</a>.
             All fields apart from <strong>code</strong>, <strong>serial number</strong> and <strong>condition</strong>
             will also be updated for other items in the group.
         </div>
     {% endif %}
 
+{% endblock %}
+
+{% block body %}
+
+    {{ form_start(form, { 'attr' : { 'class': 'item-form', 'id' : "itemForm" } }) }}
+
+    <input type="hidden" name="numberOfCopies" id="numberOfCopies" value="0">
+
+    {% if item.itemType != 'kit' %}
     <div id="item-inventory-detail">
         {% if item.id %}
             <input type="hidden" id="itemIdForTest" value="{{ item.id }}">
@@ -82,6 +106,7 @@
             {{ form_row(form.inventoryLocation) }}
         {% endif %}
     </div>
+    {% endif %}
 
     <div class="nav-tabs-custom">
 
@@ -89,9 +114,19 @@
             <li class="active">
                 <a href="#tab_1">Item information</a>
             </li>
+
+            {% if item.itemType == 'kit' %}
+            <li>
+                <a href="#item_components" id="set-item-components">Kit components ({{ item.components|length }})</a>
+            </li>
+            {% endif %}
+
+            {% if item.itemType == 'loan' %}
             <li>
                 <a href="#prompts" id="set-prompts">Check in/out</a>
             </li>
+            {% endif %}
+
             <li>
                 <a href="#custom_fields" id="set-custom-fields">Custom Fields</a>
             </li>
@@ -104,10 +139,13 @@
                     <a href="{{ path('item_files', {id: item.id}) }}" class="media_node" rel="tooltip"
                        data-toggle="tabajax" data-target="#item_files">Attachments</a>
                 </li>
+
+                {% if item.itemType == 'loan' %}
                 <li>
                     <a href="{{ path('item_reservations_html', {itemId: item.id}) }}" class="media_node" rel="tooltip"
                        data-toggle="tabajax" data-target="#item_reservations_html">Reservations</a>
                 </li>
+                {% endif %}
             {% endif %}
         </ul>
 
@@ -125,12 +163,9 @@
 
                         <div class="row">
                             <div class="col-md-5">
-                                {% if tenantInformation.codeStub == true %}
-                                {% else %}
-                                {% endif %}
                                 {{ form_row(form.sku) }}
                             </div>
-                            <div class="col-md-7">
+                            <div class="col-md-7 item-loan">
                                 {{ form_row(form.serial) }}
                             </div>
                         </div>
@@ -139,7 +174,7 @@
 
                         {{ form_row(form.tags) }}
 
-                        <div class="row">
+                        <div class="row hide-for-stock-items">
                             <div class="col-md-6">
                                 {{ form_row(form.loanFee) }}
                             </div>
@@ -148,7 +183,7 @@
                             </div>
                         </div>
 
-                        <div class="row" style="{% if not tenantInformation.feature('Deposits') %}display: none;{% endif %}">
+                        <div class="row item-loan" style="{% if not tenantInformation.feature('Deposits') %}display: none;{% endif %}">
                             <div class="col-md-6">
                                 {{ form_row(form.depositAmount) }}
                             </div>
@@ -157,7 +192,10 @@
                             </div>
                         </div>
 
-                        {{ form_row(form.condition) }}
+                        <div class="item-loan">
+                            {{ form_row(form.condition) }}
+                        </div>
+
                         {{ form_row(form.keywords) }}
 
                         <div class="row">
@@ -188,7 +226,10 @@
                         {{ form_row(form.description) }}
 
                         {{ form_row(form.componentInformation) }}
-                        {{ form_row(form.careInformation) }}
+
+                        <div class="hide-for-stock-items">
+                            {{ form_row(form.careInformation) }}
+                        </div>
 
                         <div class="form-group">
                             <label class="control-label">Item type</label>
@@ -208,7 +249,6 @@
                             </div>
                         </div>
 
-
                     </div>
 
                     <div class="col-md-4">
@@ -223,8 +263,13 @@
                                     <a class="btn btn-xs btn-default" href="{{ path('public_product', {productId: item.id}) }}">View on member site</a>
                                 </div>
                                 {% endif %}
+
                                 {{ form_row(form.showOnWebsite) }}
-                                {{ form_row(form.isReservable) }}
+
+                                <div class="hide-for-stock-items">
+                                    {{ form_row(form.isReservable) }}
+                                </div>
+
                             </div>
                         </div>
 
@@ -269,7 +314,12 @@
                 </div>
                 {% endif %}
 
-                <div class="row" {% if not tenantInformation.feature('CheckInPrompt') %}style="display:none"{% endif %}>
+                {% set showPrompts = '' %}
+                {% if not tenantInformation.feature('CheckInPrompt') %}
+                    {% set showPrompts = 'none' %}
+                {% endif %}
+
+                <div class="row" style="display: {{ showPrompts }}">
                     <div class="col-md-6">
                         {{ form_row(form.checkInPrompts) }}
                     </div>
@@ -278,7 +328,7 @@
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" style="display: {{ showPrompts }}">
                     <div class="col-md-12">
                         {% if tenantInformation.feature('CheckInPrompt') %}
                         <div class="page-help">
@@ -320,6 +370,70 @@
                 </div>
             </div>
 
+            {# KITTING #}
+            <div class="tab-pane" id="item_components">
+                {% if item.id %}
+                    {% if item.components|length > 0 %}
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>Qty</th>
+                                <th>Item</th>
+                                <th>SKU</th>
+                                <th>Serial</th>
+                                <th> </th>
+                            </tr>
+                            </thead>
+                            {% for component in item.components %}
+                            <tr>
+                                <td style="width:60px;">
+                                    {% if component.component.itemType == 'stock' %}
+                                        <input type="text" class="form-control" size="3" name="component_qty[{{ component.component.id }}]" value="{{ component.quantity }}">
+                                    {% else %}
+                                        1
+                                        <input type="hidden" class="form-control" size="3" name="component_qty[{{ component.component.id }}]" value="1">
+                                    {% endif %}
+                                </td>
+                                <td>{{ component.component.name }}</td>
+                                <td>{{ component.component.sku }}</td>
+                                <td>{{ component.component.serial }}</td>
+                                <td>
+                                    <a href="{{ path('remove_component', {itemId: item.id, componentId: component.component.id}) }}">Remove</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        <div class="alert">
+                            No components
+                        </div>
+                    {% endif %}
+
+                    <a class="btn btn-primary" href="{{ path('item_list') }}?kit={{ item.id }}">
+                        Add component(s)
+                    </a>
+                    <br><br>
+
+                {% else %}
+                    <div class="alert alert-info">
+                        Please save before adding components.
+                    </div>
+                {% endif %}
+
+                <div class="page-help">
+                    <p>Kits allow you to bundle multiple items together into one listing on your website.</p>
+                    <ul>
+                        <li>
+                            When someone creates a reservation or a loan for the kit, all the component items are
+                            added / reserved.
+                        </li>
+                        <li>The components may or may not be visible / borrowable online separately; depending on their settings. </li>
+                        <li>The price for a kit is used is place of the component prices.</li>
+                        <li>Consumables (stock items) can have a quantity.</li>
+                    </ul>
+                </div>
+            </div>
+
             <div class="tab-pane" id="item_info">
                 <!-- ajax-content -->
             </div>
@@ -328,9 +442,11 @@
                 <!-- ajax-content -->
             </div>
 
+            {% if item.itemType == 'loan' %}
             <div class="tab-pane" id="item_reservations_html">
                 <!-- ajax-content -->
             </div>
+            {% endif %}
 
         </div>
         <!-- /.tab-content -->
@@ -344,10 +460,11 @@
             and add another
         </button>
 
+        {% if item.itemType == 'loan' %}
         <button type="submit" id="save-and-copy" name="submitForm" value="saveAndCopy" class="btn btn-default btn-loading hidden-xs">
             Copy
         </button>
-
+        {% endif %}
 
     </div>
 

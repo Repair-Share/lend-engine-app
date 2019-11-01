@@ -1,14 +1,15 @@
 {% trans_default_domain 'member_site' %}
 {% extends 'member_site/themes/loader.html.twig' %}
 
-{% block sitesKey %}
-
-{% endblock %}
+{% block sitesKey %}{% endblock %}
 
 {% block body %}
 <style>
     .openinghours {
         font-size: 10px;
+    }
+    #kit-wrapper {
+        padding: 10px; background-color: #efefef; border: 1px solid #dedede; border-radius: 4px
     }
 </style>
     <div class="row" id="item-title">
@@ -52,7 +53,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="alert alert-info">
-                    Choose a new return date.
+                    {% trans %}public_loan.choose_new_date{% endtrans %}.
                 </div>
                 <div id="calendar"></div>
             </div>
@@ -146,7 +147,12 @@
             {% for site in sites %}
             sites[{{ site.id }}] = "{{ site.name }}";
             {% endfor %}
+
+            {% if product.inventoryLocation %}
             var itemSiteId = '{{ product.inventoryLocation.site.id }}';
+            {% else %}
+            var itemSiteId = '';
+            {% endif %}
             var itemSiteName = sites[itemSiteId];
 
             var dragSelect = true;

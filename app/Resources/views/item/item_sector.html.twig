@@ -54,12 +54,13 @@
             {% if itemId is defined %}
                 <form method="GET" action="{{ path('change_item_sector', {'itemId': itemId}) }}">
                     <input type="hidden" name="sectorId" value="" id="item-sector">
-                    <input type="hidden" name="itemId" value="{{ itemId }}" id="item-type">
+                    <input type="hidden" name="itemId" value="{{ itemId }}" id="item-id">
                     <button type="submit" class="btn bg-green" id="submit-button" disabled>Choose a type</button>
                 </form>
             {% else %}
                 <form method="GET" action="{{ path('item') }}">
                     <input type="hidden" name="sectorId" value="" id="item-sector">
+                    <input type="hidden" name="type" value="{{ app.request.get('type') }}">
                     <button type="submit" class="btn bg-green" id="submit-button" disabled>Choose a type</button>
                 </form>
             {% endif %}

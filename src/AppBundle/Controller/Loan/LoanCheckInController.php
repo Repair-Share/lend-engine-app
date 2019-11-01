@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Loan;
 
+use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\InventoryLocation;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
@@ -47,8 +48,12 @@ class LoanCheckInController extends Controller
 
         /** @var \AppBundle\Entity\Site $site */
         if (!$site = $user->getActiveSite()) {
-            $site = $em->getRepository('AppBundle:Site')->find(1);
+            if (!$site = $em->getRepository('AppBundle:Site')->find(1)) {
+                $this->addFlash('error', "Site with ID 1 was not found - please contact support.");
+                return $this->redirectToRoute('public_loan', ['loanId' => $loanRow->getLoan()->getId()]);
+            }
         }
+
         $defaultCheckInLocation = $site->getDefaultCheckInLocation();
 
         // Calculate any late return fee
@@ -101,21 +106,17 @@ class LoanCheckInController extends Controller
             $loan = $loanRow->getLoan();
 
             // Perform the main action for each item
-            if ($form->get('check_in_all')->getData() == true) {
-                foreach ($loan->getLoanRows() AS $row) {
-                    /** @var $row \AppBundle\Entity\LoanRow */
-                    if (!$row->getIsReturned()) {
-                        $this->checkInItem($toLocation, $row, $userNote, $checkInFee, $assignToContact);
-                    }
-                }
-            } else {
+            $checkInItems = $request->get('check_in');
+            foreach ($checkInItems AS $rowId) {
+                $loanRow = $loanRowRepo->find($rowId);
                 $this->checkInItem($toLocation, $loanRow, $userNote, $checkInFee, $assignToContact);
             }
 
             $returnedRows = 0;
             foreach ($loan->getLoanRows() AS $row) {
                 /** @var $row \AppBundle\Entity\LoanRow */
-                if ($row->getIsReturned()) {
+                if ($row->getIsReturned() or $row->getInventoryItem()->getItemType() != InventoryItem::TYPE_LOAN) {
+                    // kits and stock items contribute to this number so we can close a loan with all loanable items returned
                     $returnedRows++;
                 }
             }

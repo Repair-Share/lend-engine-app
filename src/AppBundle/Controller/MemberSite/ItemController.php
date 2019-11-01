@@ -200,8 +200,11 @@ class ItemController extends Controller
 
         // An item in repair will prevent members (but not admins) from reserving
         // The exception is 'on loan' which does allow people to reserve in the future
-        if (!$product->getInventoryLocation()->getIsAvailable() && $product->getInventoryLocation()->getId() != 1) {
-            $product->setIsReservable(false);
+        if ($product->getInventoryLocation()) {
+            // Items without a location are kits, and we use the components to determine availability
+            if (!$product->getInventoryLocation()->getIsAvailable() && $product->getInventoryLocation()->getId() != 1) {
+                $product->setIsReservable(false);
+            }
         }
 
         return $this->render($template, array(

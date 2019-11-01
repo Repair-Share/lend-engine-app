@@ -18,6 +18,11 @@ class InventoryItemDenormalizer implements DenormalizerInterface
         $item->setName($object['name']);
         $item->setImageName($object['imageName']);
 
+        if (!isset($object['type'])) {
+            $object['type'] = 'loan';
+        }
+        $item->setItemType($object['type']);
+
         if (!isset($object['depositAmount'])) {
             $object['depositAmount'] = 0;
         }
