@@ -44,6 +44,8 @@ class ItemExportController extends Controller
                 'Components',
                 'Care information',
                 'Keywords',
+                'Owned by',
+                'Donated by',
             ];
 
             /** @var \AppBundle\Repository\ProductFieldRepository $fieldRepo */
@@ -93,6 +95,9 @@ class ItemExportController extends Controller
 
                 $description = preg_replace("/[\n\r]/", "<br>", $item->getDescription());
 
+                $ownedBy   = $item->getOwnedBy() != null ? $item->getOwnedBy()->getName() : '';
+                $donatedBy = $item->getDonatedBy() != null ? $item->getDonatedBy()->getName() : '';
+
                 $itemArray = [
                     $item->getCreatedAt()->format("Y-m-d"),
                     $item->getSku(),
@@ -113,6 +118,8 @@ class ItemExportController extends Controller
                     $item->getComponentInformation(),
                     $item->getCareInformation(),
                     $item->getKeywords(),
+                    $ownedBy,
+                    $donatedBy
                 ];
 
                 $customFieldValues = $item->getFieldValues();
