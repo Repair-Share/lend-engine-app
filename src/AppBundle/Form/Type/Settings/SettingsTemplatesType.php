@@ -292,6 +292,42 @@ class SettingsTemplatesType extends AbstractType
             )
         ));
 
+        /*  DONOR NOTIFICATION EMAIL */
+
+        $builder->add('email_donor_notification_subject', TextType::class, array(
+            'label' => 'Subject',
+            'data' => $dbData['email_donor_notification_subject'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => 'Your donated item has been lent out',
+                'data-help' => "This will override the member's language settings."
+            )
+        ));
+
+        $builder->add('email_donor_notification_head', TextareaType::class, array(
+            'label' => 'Header',
+            'data' => $dbData['email_donor_notification_head'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'data-help' => '',
+                'rows' => 4,
+                'class' => 'limited'
+            )
+        ));
+
+        $builder->add('email_donor_notification_foot', TextareaType::class, array(
+            'label' => 'Footer',
+            'data' => $dbData['email_donor_notification_foot'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'data-help' => '',
+                'rows' => 4,
+                'class' => 'limited'
+            )
+        ));
+
     }
 
     /**

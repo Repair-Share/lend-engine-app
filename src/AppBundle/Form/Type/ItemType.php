@@ -395,7 +395,8 @@ class ItemType extends AbstractType
                 'class' => 'AppBundle:Contact',
                 'choice_label' => 'name',
                 'attr' => [
-                    'class' => 'ajax-contact'
+                    'class' => 'ajax-contact',
+                    'data-help' => 'Search for existing contacts.'
                 ],
                 'required' => false,
                 'choices' => $choices,
@@ -406,7 +407,8 @@ class ItemType extends AbstractType
                 'class' => 'AppBundle:Contact',
                 'choice_label' => 'name',
                 'attr' => [
-                    'class' => 'ajax-contact'
+                    'class' => 'ajax-contact',
+                    'data-help' => 'If your library shares community items.'
                 ],
                 'required' => false,
                 'choices' => $choices,

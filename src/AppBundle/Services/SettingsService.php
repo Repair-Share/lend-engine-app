@@ -324,6 +324,10 @@ class SettingsService
             'email_welcome_head',
             'email_welcome_foot',
 
+            'email_donor_notification_subject',
+            'email_donor_notification_head',
+            'email_donor_notification_foot',
+
             'loan_terms', // terms and conditions
 
             'mailchimp_api_key',

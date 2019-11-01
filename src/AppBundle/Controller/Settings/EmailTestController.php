@@ -292,6 +292,27 @@ class EmailTestController extends Controller
 
                 break;
 
+            case "donor_notification":
+
+                if (!$subject = $this->get('settings')->getSettingValue('email_donor_notification_subject')) {
+                    $subject = "Your donated item has been lent out";
+                }
+
+                $loanRow = [
+                    'inventoryItem' => [
+                        'name' => "Example item"
+                    ]
+                ];
+
+                $message = $this->renderView(
+                    'emails/loan_donor_notify.html.twig',
+                    array(
+                        'loanRow' => $loanRow,
+                    )
+                );
+
+                break;
+
             case "reserve":
 
                 if (!$subject = $this->get('settings')->getSettingValue('email_reserve_confirmation_subject')) {

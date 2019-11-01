@@ -28,6 +28,9 @@ le_email:
     subject: Your loan information
     title: Your loan information
 
+  donor_notify:
+    subject: Your donated item has been lent out
+
   extend:
     subject: Your loan return date has been updated
     title: We've changed the return date of an item

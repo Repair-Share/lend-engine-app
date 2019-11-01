@@ -1,0 +1,28 @@
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}{{ 'le_email.donor_notify.subject'|trans() }}{% endblock %}
+
+{% block content %}
+
+    <p>{{ tenantInformation.setting('email_donor_notification_head')|raw }}</p>
+    <br>
+
+    <table width="100%" cellspacing="0" cellpadding="0">
+        <tr>
+            {% if loanRow.inventoryItem.imageName %}
+            <td valign="top" style="padding-right: 15px; width: 60px;">
+                <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ loanRow.inventoryItem.imageName }}">
+            </td>
+            {% endif %}
+            <td valign="top" >
+                <strong>{{ loanRow.inventoryItem.name }}</strong>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+    <p>{{ tenantInformation.setting('email_donor_notification_foot')|raw }}</p>
+
+{% endblock %}

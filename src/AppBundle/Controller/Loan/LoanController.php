@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Loan;
 use AppBundle\Entity\CoreLoan;
 use AppBundle\Entity\CreditCard;
 use AppBundle\Entity\Loan;
+use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\Payment;
 use AppBundle\Form\Type\LoanCheckOutType;
 use Postmark\Models\PostmarkAttachment;
@@ -220,7 +221,15 @@ class LoanController extends Controller
             if ($paymentOk == true) {
                 if ( $checkoutService->loanCheckOut($loan) ) {
                     $this->addFlash('success', "Items are now checked out.");
+
                     $this->sendCheckoutConfirmationEmail($loan);
+
+                    foreach ($loan->getLoanRows() AS $row) {
+                        if ($row->getInventoryItem()->getDonatedBy()) {
+                            $this->sendDonorEmail($row);
+                        }
+                    }
+
                     $this->addLoanToCore($loan);
                 } else {
                     $this->addFlash('error', "We can't check out this loan:");
@@ -304,6 +313,70 @@ class LoanController extends Controller
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * @param LoanRow $loanRow
+     * @return bool
+     */
+    private function sendDonorEmail(LoanRow $loanRow)
+    {
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->get('service.tenant');
+
+        $senderName     = $tenantService->getCompanyName();
+        $replyToEmail   = $tenantService->getReplyToEmail();
+        $fromEmail      = $tenantService->getSenderEmail();
+        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
+
+        // Send email confirmation
+        $toEmail = $loanRow->getInventoryItem()->getDonatedBy()->getEmail();
+
+        if ($toEmail) {
+
+            $locale = $loanRow->getInventoryItem()->getDonatedBy()->getLocale();
+
+            try {
+
+                $client = new PostmarkClient($postmarkApiKey);
+
+                // Save and switch locale for sending the email
+                $sessionLocale = $this->get('translator')->getLocale();
+                $this->get('translator')->setLocale($locale);
+
+                $message = $this->renderView(
+                    'emails/loan_donor_notify.html.twig', [
+                        'loanRow' => $loanRow
+                    ]
+                );
+
+                if (!$subject = $this->get('settings')->getSettingValue('email_donor_notification_subject')) {
+                    $subject = $this->get('translator')->trans('le_email.donor_notify.subject', [], 'emails', $locale);
+                }
+
+                $client->sendEmail(
+                    "{$senderName} <{$fromEmail}>",
+                    $toEmail,
+                    $subject,
+                    $message,
+                    null,
+                    null,
+                    null,
+                    $replyToEmail
+                );
+
+                // Revert locale for the UI
+                $this->get('translator')->setLocale($sessionLocale);
+
+                return true;
+
+            } catch (\Exception $generalException) {
+
+                return false;
+
+            }
+        }
+
     }
 
     /**

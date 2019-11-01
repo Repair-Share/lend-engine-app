@@ -114,6 +114,14 @@
             {{ form_row(form.email_membership_expiry_head) }}
             {{ form_row(form.email_membership_expiry_foot) }}
 
+            <h2>Item donor notification</h2>
+            <p>Sent to the item donor when an item donated by them is checked out.</p>
+            <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "donor_notification"}) }}">Send me a test email</a></p>
+
+            {{ form_row(form.email_donor_notification_subject) }}
+            {{ form_row(form.email_donor_notification_head) }}
+            {{ form_row(form.email_donor_notification_foot) }}
+
             <br />
 
         </div>
