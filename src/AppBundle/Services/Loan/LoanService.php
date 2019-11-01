@@ -149,6 +149,9 @@ class LoanService
             $builder->andWhere('l.contact = :contact');
             $builder->setParameter('contact', $filter['contact']);
         }
+        if (isset($filter['isOnLoan']) && $filter['isOnLoan']) {
+            $builder->andWhere('lr.checkedOutAt IS NOT NULL AND lr.checkedInAt IS NULL');
+        }
         $query = $builder->getQuery();
         if ( $results = $query->getResult() ) {
             $total = $results[0]['qty'];

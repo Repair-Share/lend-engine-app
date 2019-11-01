@@ -27,7 +27,10 @@ class SiteDataController extends Controller
     {
         $data = [];
 
-        $itemId   = $request->get('itemId');
+        if (!$itemId = $request->get('itemId')) {
+            return $this->json($data);
+        }
+
         $dateFrom = $request->get('start');
         $dateTo   = $request->get('end');
 

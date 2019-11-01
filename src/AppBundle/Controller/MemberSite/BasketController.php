@@ -243,7 +243,8 @@ class BasketController extends Controller
         if ($maxItems > 0) {
             $filter = [
                 'status' => Loan::STATUS_ACTIVE,
-                'contact' => $basket->getContact()
+                'contact' => $basket->getContact(),
+                'isOnLoan' => true // make sure we only include loanable items which are still on loan (ie no kits)
             ];
             $itemsOnLoan = $loanService->countLoanRows($filter);
             $totalQty    = $itemsOnLoan + $basket->getLoanRows()->count();
