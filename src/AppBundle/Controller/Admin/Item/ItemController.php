@@ -141,6 +141,7 @@ class ItemController extends Controller
 
         $formOptions = [
             'em' => $em,
+            'donatedBy' => $request->get('item_donated_by'),
             'customFields' => $customFields,
             'customFieldValues' => $customFieldValues,
             'itemSectorId' => $itemSectorId // manually set as it's unmapped
@@ -352,7 +353,7 @@ class ItemController extends Controller
             try {
                 $em->flush();
                 if ($request->get('submitForm') == 'saveAndNew') {
-                    $this->addFlash('success', "Item saved. Ready to add a new one!");
+                    $this->addFlash('success', "Item saved.");
                     return $this->redirectToRoute('item_sector');
                 } elseif ($request->get('numberOfCopies') > 0) {
                     return $this->redirectToRoute('item_copy', ['id' => $product->getId(), 'numberOfCopies' => $request->get('numberOfCopies')]);

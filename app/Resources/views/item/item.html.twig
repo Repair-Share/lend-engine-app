@@ -298,6 +298,12 @@
                             </div>
                         </div>
 
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6">{{ form_row(form.donatedBy) }}</div>
+                            <div class="col-md-6">{{ form_row(form.ownedBy) }}</div>
+                        </div>
+
                     </div>
 
                 </div>
@@ -478,6 +484,19 @@
     <script>
 
         $(document).ready(function () {
+
+            $('.ajax-contact').select2({
+                ajax: {
+                    url: '{{ path('ajax_contact_search') }}',
+                    dataType: 'json',
+                    placeholder: 'Search for a repository',
+                    processResults: function (data) {
+                        return {
+                            results: data
+                        };
+                    }
+                }
+            });
 
             {% if tenantInformation.setting('group_similar_items') == 1 %}
             $(document).on('blur', "#item_name", function() {

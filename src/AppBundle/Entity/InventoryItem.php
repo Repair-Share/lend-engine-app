@@ -67,6 +67,22 @@ class InventoryItem
      * @var Contact
      *
      * @ORM\ManyToOne(targetEntity="Contact")
+     * @ORM\JoinColumn(name="donated_by", referencedColumnName="id")
+     */
+    private $donatedBy;
+
+    /**
+     * @var Contact
+     *
+     * @ORM\ManyToOne(targetEntity="Contact")
+     * @ORM\JoinColumn(name="owned_by", referencedColumnName="id")
+     */
+    private $ownedBy;
+
+    /**
+     * @var Contact
+     *
+     * @ORM\ManyToOne(targetEntity="Contact")
      * @ORM\JoinColumn(name="assigned_to", referencedColumnName="id", nullable=true)
      */
     private $assignedTo;
@@ -402,6 +418,30 @@ class InventoryItem
     public function getCreatedBy()
     {
         return $this->createdBy;
+    }
+
+    public function setOwnedBy(?Contact $ownedBy)
+    {
+        $this->ownedBy = $ownedBy;
+
+        return $this;
+    }
+
+    public function getOwnedBy()
+    {
+        return $this->ownedBy;
+    }
+
+    public function setDonatedBy(?Contact $donatedBy)
+    {
+        $this->donatedBy = $donatedBy;
+
+        return $this;
+    }
+
+    public function getDonatedBy()
+    {
+        return $this->donatedBy;
     }
 
     /**

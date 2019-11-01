@@ -2,11 +2,13 @@
 // src/AppBundle/Form/Type/ItemSector.php
 namespace AppBundle\Form\Type;
 
+use AppBundle\Entity\Contact;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -21,11 +23,14 @@ class ItemType extends AbstractType
     /** @var \Doctrine\ORM\EntityManager */
     private $em;
 
-    /** @var  array */
+    /** @var array */
     private $customFields;
 
-    /** @var  array */
+    /** @var array */
     private $customFieldValues;
+
+    /** @var integer */
+    private $donatedBy;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -33,6 +38,7 @@ class ItemType extends AbstractType
         $this->em = $options['em'];
         $this->customFields = $options['customFields'];
         $this->customFieldValues = $options['customFieldValues'];
+        $this->donatedBy = $options['donatedBy'];
 
         /** @var \AppBundle\Entity\InventoryItem $product */
         $product = $builder->getData();
@@ -383,6 +389,66 @@ class ItemType extends AbstractType
 
         }
 
+        $formModifier = function (FormInterface $form, $donatedBy = null, $ownedBy = null) {
+            $choices = null == $donatedBy ? [] : [$donatedBy];
+            $form->add('donatedBy', EntityType::class, [
+                'class' => 'AppBundle:Contact',
+                'choice_label' => 'name',
+                'attr' => [
+                    'class' => 'ajax-contact'
+                ],
+                'required' => false,
+                'choices' => $choices,
+            ]);
+
+            $choices = null == $ownedBy ? [] : [$ownedBy];
+            $form->add('ownedBy', EntityType::class, [
+                'class' => 'AppBundle:Contact',
+                'choice_label' => 'name',
+                'attr' => [
+                    'class' => 'ajax-contact'
+                ],
+                'required' => false,
+                'choices' => $choices,
+            ]);
+        };
+
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) use ($formModifier) {
+                $data = $event->getData();
+                $form = $event->getForm();
+
+                /** @var $contactRepo \AppBundle\Repository\ContactRepository */
+                $contactRepo = $this->em->getRepository('AppBundle:Contact');
+
+                if (isset($data['donatedBy']) && $data['donatedBy']) {
+                    $donatedBy = $contactRepo->find($data['donatedBy']);
+                } else {
+                    $donatedBy = null;
+                }
+
+                if (isset($data['ownedBy']) && $data['ownedBy']) {
+                    $ownedBy = $contactRepo->find($data['ownedBy']);
+                } else {
+                    $ownedBy = null;
+                }
+
+                $form->remove('donatedBy');
+                $form->remove('ownedBy');
+
+                $formModifier($event->getForm(), $donatedBy, $ownedBy);
+            }
+        );
+
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) use ($formModifier) {
+                $data = $event->getData();
+                $formModifier($event->getForm(), $data->getDonatedBy(), $data->getOwnedBy());
+            }
+        );
+
     }
 
     /**
@@ -395,6 +461,7 @@ class ItemType extends AbstractType
             'data_class' => 'AppBundle\Entity\InventoryItem',
             'em' => null,
             'itemSectorId' => null,
+            'donatedBy' => null,
             'customFields' => null,
             'customFieldValues' => null
         ));
