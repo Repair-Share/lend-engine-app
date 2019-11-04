@@ -58,6 +58,17 @@
 
     <input type="hidden" name="numberOfCopies" id="numberOfCopies" value="0">
 
+    {% if item.itemType == 'kit' and not item.id %}
+    <div class="page-help">
+        <h4>About kits</h4>
+        <strong>Kits</strong> are used when you want to add multiple items to a basket in one go, and charge a single price for all the components. <br>
+        The kit item will show the price entered on this screen, and the components will be set as zero price.<br>
+        Once added to the basket, components behave just as though they had been added separately;
+        they can be removed, dates changed, prices changed and so on (subject to user permissions).<br>
+        Kits do not exist as an item in real life, so they do not have a physical location and cannot be checked in or out.
+    </div>
+    {% endif %}
+
     <div id="item-inventory-detail" {% if item.itemType == 'kit' %}style="display:none"{% endif %}>
         {% if item.id %}
             <input type="hidden" id="itemIdForTest" value="{{ item.id }}">
@@ -197,7 +208,7 @@
 
                         {{ form_row(form.keywords) }}
 
-                        <div class="row">
+                        <div class="row item-loan">
                             <div class="col-md-6">
                                 {{ form_row(form.priceCost) }}
                             </div>
