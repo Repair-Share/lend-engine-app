@@ -39,9 +39,15 @@ class PerformMaintenanceController extends Controller
                 $maintenance->setStatus(Maintenance::STATUS_IN_PROGRESS);
             } else if ($request->get('submitForm') == 'complete') {
                 $maintenance->setStatus(Maintenance::STATUS_COMPLETED);
+                $maintenance->setCompletedBy($this->getUser());
             }
 
             if ($form->get('status')->getData() == "completed") {
+
+                if (!$maintenance->getCompletedBy()) {
+                    $maintenance->setCompletedBy($this->getUser());
+                }
+
                 if ($form->get('createNext')->getData() == true) {
                     $next = new Maintenance();
                     $dueAt = clone($maintenance->getDueAt());
@@ -54,6 +60,7 @@ class PerformMaintenanceController extends Controller
 
                     $this->addFlash("success", "The next maintenance has been scheduled.");
                 }
+
             }
 
             $service->save($maintenance);

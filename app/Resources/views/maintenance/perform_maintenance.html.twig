@@ -166,7 +166,7 @@
 
         $(".content").on('change', "#maintenance_status", function() {
             console.log( $(this).val() );
-            if ($(this).val() == 'Completed') {
+            if ($(this).val() == 'completed') {
                 $("#autoCreateNext").fadeIn();
                 $("#maintenance_createNext").prop('checked', true);
             } else {
