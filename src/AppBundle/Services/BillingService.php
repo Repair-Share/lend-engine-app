@@ -108,7 +108,7 @@ class BillingService
                     'EventBooking'      => true,
                     'Kits'              => true,
                     'StockItems'        => true,
-                    'MaintenancePlan'   => false,
+                    'MaintenancePlan'   => true,
                 ];
                 break;
 
@@ -134,7 +134,7 @@ class BillingService
                     'EventBooking'      => true,
                     'Kits'              => true,
                     'StockItems'        => true,
-                    'MaintenancePlan'   => false,
+                    'MaintenancePlan'   => true,
                 ];
                 break;
 
