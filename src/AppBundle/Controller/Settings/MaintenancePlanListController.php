@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 class MaintenancePlanListController extends Controller
 {
     /**
-     * @Route("admin/maintenance-plan/list", name="maintenance_plans")
+     * @Route("admin/settings/maintenance-plans", name="maintenance_plans")
      */
     public function maintenancePlanList(Request $request)
     {

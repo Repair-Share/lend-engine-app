@@ -35,6 +35,7 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/admin/settings/member_site'],
             ['/admin/settings/templates'],
             ['/admin/settings/events'],
+            ['/admin/settings/maintenance-plans'],
 
             ['/admin/site/list'],
             ['/admin/site'],
@@ -45,6 +46,9 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/admin/location'],
 
             ['/admin/page/list'],
+
+            // Maintenance schedule
+            ['/admin/maintenance/list'],
 
             // Users
             ['/admin/users/list'],
@@ -98,6 +102,7 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/admin/dt/loan/list'],
             ['/admin/dt/item/list'],
             ['/admin/dt/contact/list'],
+            ['/admin/dt/maintenance/list'],
 
             // Admin events
             ['/admin/event/list'],
