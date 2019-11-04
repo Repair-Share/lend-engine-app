@@ -12,10 +12,12 @@
 {% endblock %}
 
 {% block primaryButton %}
-    {% if is_granted('ROLE_SUPER_USER') %}
-        <a class="btn btn-default" href="{{ path('export_items') }}" style="margin-right: 10px">Export</a>
+    {% if not app.request.get('kit') %}
+        {% if is_granted('ROLE_SUPER_USER') %}
+            <a class="btn btn-default" href="{{ path('export_items') }}" style="margin-right: 10px">Export</a>
+        {% endif %}
+        <a class="btn bg-green" href="{{ path('item_sector') }}">Add item</a>
     {% endif %}
-    <a class="btn bg-green" href="{{ path('item_sector') }}">Add item</a>
 {% endblock %}
 
 {% block header_bar %}

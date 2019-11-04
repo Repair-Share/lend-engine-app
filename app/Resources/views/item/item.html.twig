@@ -58,8 +58,7 @@
 
     <input type="hidden" name="numberOfCopies" id="numberOfCopies" value="0">
 
-    {% if item.itemType != 'kit' %}
-    <div id="item-inventory-detail">
+    <div id="item-inventory-detail" {% if item.itemType == 'kit' %}style="display:none"{% endif %}>
         {% if item.id %}
             <input type="hidden" id="itemIdForTest" value="{{ item.id }}">
             {% if item.inventoryLocation.id == 1 %}
@@ -106,7 +105,7 @@
             {{ form_row(form.inventoryLocation) }}
         {% endif %}
     </div>
-    {% endif %}
+
 
     <div class="nav-tabs-custom">
 
