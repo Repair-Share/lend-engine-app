@@ -137,9 +137,17 @@
             </li>
             {% endif %}
 
+            {% if item.itemType == 'loan' %}
+            <li>
+                <a href="#maintenance" id="set-maintenance">Maintenance</a>
+            </li>
+            {% endif %}
+
+            {#Note this tab contains form_rest to show the extra fields and thus must be the last tab in the form#}
             <li>
                 <a href="#custom_fields" id="set-custom-fields">Custom Fields</a>
             </li>
+
             {% if item.id %}
                 <li>
                     <a href="{{ path('item_history', {id: item.id}) }}" class="media_node" rel="tooltip"
@@ -361,6 +369,77 @@
                 </div>
             </div>
 
+            <div class="tab-pane" id="maintenance" style="position: relative">
+                <div class="row">
+                    <div class="col-md-3">
+                        {{ form_row(form.maintenancePlans) }}
+
+                        {% for plan in item.maintenancePlans %}
+                        <div style="margin-top: 20px">
+                            <a href="{{ path('schedule_maintenance', {itemId: item.id, planId: plan.id}) }}"
+                               class="btn btn-xs btn-primary modal-link">
+                                Schedule {{ plan.name }}
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-9">
+                        <h4>
+                            Maintenance history
+                        </h4>
+
+                        {% if item.maintenancePlans|length == 0 %}
+                        <div class="alert alert-warning">
+                            This item isn't assigned any maintenance plans.
+                        </div>
+                        {% endif %}
+
+                        {% if item.maintenances|length > 0 %}
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Due</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                {% for maintenance in item.maintenances %}
+                                    <tr>
+                                        <td>{{ maintenance.maintenancePlan.name }}</td>
+                                        <td>{{ maintenance.dueAt|date("d F Y") }}</td>
+                                        <td>
+                                            {% if maintenance.status == 'planned' %}
+                                                <label class="label label-default">Planned</label>
+                                            {% elseif maintenance.status == 'in_progress' %}
+                                                <label class="label bg-aqua">In progress</label>
+                                            {% elseif maintenance.status == 'completed' %}
+                                                <label class="label bg-green">Completed</label>
+                                            {% elseif maintenance.status == 'skipped' %}
+                                                <label class="label bg-orange">Skipped</label>
+                                            {% elseif maintenance.status == 'overdue' %}
+                                                <label class="label bg-red">Overdue</label>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if maintenance.fileAttachments|length > 0 %}
+                                            <i class="fa fa-paperclip" style="color: black"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('perform_maintenance', {id: maintenance.id}) }}">Open / view</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+            {# This tab must be last in the form due to form_rest() #}
             <div class="tab-pane" id="custom_fields" style="position: relative">
                 <div class="row">
                     <div class="col-md-6">

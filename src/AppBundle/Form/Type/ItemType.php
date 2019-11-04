@@ -241,6 +241,23 @@ class ItemType extends AbstractType
             )
         ));
 
+        /** @var $maintenancePlanRepo \AppBundle\Repository\MaintenancePlanRepository */
+        $maintenancePlanRepo = $this->em->getRepository('AppBundle:MaintenancePlan');
+        $maintenancePlans = $maintenancePlanRepo->findAllOrderedByName();
+        $builder->add('maintenancePlans', EntityType::class, array(
+            'class' => 'AppBundle:MaintenancePlan',
+            'choice_label' => 'name',
+            'label' => 'Maintenance plans',
+            'choices' => $maintenancePlans,
+            'required' => false,
+            'multiple' => true,
+            'expanded' => true,
+            'attr' => [
+                'class' => '',
+                'data-help' => '',
+            ]
+        ));
+
         /** @var $checkOutPromptRepo \AppBundle\Repository\CheckOutPromptRepository */
         $checkOutPromptRepo = $this->em->getRepository('AppBundle:CheckOutPrompt');
         $checkOutPrompts = $checkOutPromptRepo->findAllOrderedBySort();

@@ -1,0 +1,275 @@
+{% extends 'base.html.twig' %}
+
+{% block pageTitle %}
+    {{ maintenance.maintenancePlan.name }} / {{ maintenance.dueAt|date("D j F Y") }}
+{% endblock %}
+
+{% block body %}
+    {% set item = maintenance.inventoryItem %}
+
+    <div style="font-size: 22px; padding-bottom: 10px;">
+        <a href="{{ path('maintenance_list') }}">Maintenance</a> &raquo;
+        <a href="{{ path('item', {id: item.id}) }}">{{ item.name }}</a>
+    </div>
+
+    {% if maintenance.status == 'planned' %}
+        <div class="alert alert-warning">
+            <strong>{{ maintenance.maintenancePlan.name }}</strong> is not yet started.
+    {% elseif maintenance.status == 'in_progress' %}
+        <div class="alert alert-info">
+            <strong>{{ maintenance.maintenancePlan.name }}</strong> is in progress.
+    {% elseif maintenance.status == 'overdue' %}
+        <div class="alert alert-danger">
+            <strong>{{ maintenance.maintenancePlan.name }}</strong> is overdue.
+    {% elseif maintenance.status == 'skipped' %}
+        <div class="alert alert-warning">
+            <strong>{{ maintenance.maintenancePlan.name }}</strong> was skipped.
+    {% elseif maintenance.status == 'completed' %}
+        <div class="alert alert-success">
+            <strong>{{ maintenance.maintenancePlan.name }}</strong>
+            was completed on {{ maintenance.completedAt|date() }}
+            by {{ maintenance.completedBy.name }}.
+    {% endif %}
+
+        <span class="pull-right">Due : {{ maintenance.dueAt|date("D j F Y") }}</span>
+
+        <div>
+        {% if maintenance.maintenancePlan.description %}
+            {{ maintenance.maintenancePlan.description|nl2br }}
+        {% else %}
+            There is no description for this maintenance plan.
+        {% endif %}
+        </div>
+
+    </div>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    <div class="row">
+        <div class="col-md-3">
+
+            <table class="table">
+                <tr><td>Item ID</td><td>{{ item.id }}</td></tr>
+                <tr><td>Condition</td><td>{{ item.condition.name }}</td></tr>
+                <tr><td>Code</td><td>{{ item.sku }}</td></tr>
+                <tr><td>Serial number</td><td>{{ item.serial }}</td></tr>
+            </table>
+
+            <div class="help-block">
+                If you need to make changes to the item details as part of this maintenance,
+                edit the item first.
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                {% if item.images|length > 0 %}
+                    {% for key,image in item.images %}
+                        <div id="large_{{ key }}" class="img-large" style="{% if item.imageName != image.imageName %}display: none;{% endif %}">
+                            <a target="_blank" id="image-link" href="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/large/{{ image.imageName }}">
+                                <img id="large_{{ key }}"
+                                     src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/large/{{ image.imageName }}"
+                                     class="img-thumbnail img-responsive">
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="item-thumb hidden-xs no-image">No image</div>
+                {% endif %}
+                </div>
+            </div>
+
+            <div class="row" id="item-thumbnails">
+                {% if item.images | length > 1 %}
+                    <div class="col-xs-12">
+                        {% for key,image in item.images %}
+                            <div style="height:80px; width:80px; padding-top:10px; padding-right: 6px; float:left;">
+                                <img
+                                        src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ image.imageName }}"
+                                        class="img-thumbnail img-responsive img-selector"
+                                        onClick="setImage('large_{{ key }}')">
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <br>
+
+        </div>
+        <div class="col-md-9">
+
+            <div class="row">
+                <div class="col-md-4">
+                    {{ form_row(form.status) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.assignedTo) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.totalCost) }}
+                </div>
+            </div>
+
+            {{ form_row(form.notes) }}
+
+            <h4>File attachments</h4>
+            <div id="maintenance-files">
+                {{ source('partials/maintenance-file-js.html') }}
+                <div id="item-files-closer"></div>
+            </div>
+
+            <br>
+            <div id="fileUploader" class="dropzone" style="height: 20px;"></div>
+
+        </div>
+
+    </div>
+
+    <div class="page-controls">
+        <span class="pull-left" id="autoCreateNext" style="padding: 0 20px; display:none">{{ form_widget(form.createNext) }}</span>
+
+        {% if maintenance.status == 'planned' %}
+            <button type="submit" id="save-maintenance" name="submitForm" value="save" class="btn btn-default btn-loading pull-right">
+                Save
+            </button>
+            <button type="submit" id="start-maintenance" name="submitForm" value="start" class="btn btn-success btn-loading pull-right">
+                Start maintenance
+            </button>
+        {% elseif maintenance.status == 'in_progress' %}
+            <button type="submit" id="save-maintenance" name="submitForm" value="save" class="btn btn-default btn-loading pull-right">
+                Save
+            </button>
+            <button type="submit" id="start-maintenance" name="submitForm" value="complete" class="btn btn-success btn-loading pull-right">
+                Complete maintenance
+            </button>
+        {% else %}
+            <button type="submit" id="save-maintenance" name="submitForm" value="save" class="btn bg-green btn-loading pull-right">Save</button>
+        {% endif %}
+
+    </div>
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block pagejs %}
+<script>
+
+    // Set the correct thumbnail
+    function setImage(imageId) {
+        jQuery("#" + imageId).show();
+        jQuery(".img-large:not(#" + imageId + ")").hide();
+    }
+
+    $(document).ready(function () {
+
+        $(".content").on('change', "#maintenance_status", function() {
+            console.log( $(this).val() );
+            if ($(this).val() == 'Completed') {
+                $("#autoCreateNext").fadeIn();
+                $("#maintenance_createNext").prop('checked', true);
+            } else {
+                $("#autoCreateNext").hide();
+                $("#maintenance_createNext").prop('checked', false);
+            }
+        });
+
+    });
+
+    Dropzone.autoDiscover = false;
+    var maintenanceId = {{ maintenance.id }};
+
+    // Insert existing files
+    {% if maintenance.fileAttachments|length > 0 %}
+    {% for file in maintenance.fileAttachments %}
+    insertFileAttachment("{{ file.id }}", "{{ file.fileName }}", "{{ file.fileSize }}");
+    {% endfor %}
+    {% endif %}
+
+    var fileUploader = new Dropzone("div#fileUploader", {
+        method: "post",
+        paramName: "file", // The name that will be used to transfer the file
+        url: "{{ oneup_uploader_endpoint('files') }}",
+        maxFilesize: 5, // MB
+        accept: function (file, done) {
+            done();
+        },
+        init: function () {
+            this.on("sending", function (file, xhr, formData) {
+                formData.append("maintenanceId", maintenanceId);
+                formData.append("uploadType", "attachment");
+                console.log("Uploading file ... " + file.name);
+                startFilesUploading();
+            });
+            this.on("success", function (file, serverResponse) {
+                console.log(serverResponse);
+                if (file.status == "success") {
+                    console.log("Uploaded OK");
+                    insertFileAttachment(serverResponse.fileId, serverResponse.fileName, serverResponse.fileSize);
+                }
+            });
+            this.on("complete", function (file) {
+                fileUploader.removeFile(file);
+            });
+            this.on("queuecomplete", function (file) {
+                console.log("All files have finished uploading");
+                finishFilesUploading();
+            });
+            this.on("error", function(file, response) {
+                // do stuff here.
+                alert("There was an error uploading the file. More info is in the browser debug console.");
+                console.log(response);
+            });
+        }
+    });
+
+    function insertFileAttachment(fileId, fileName, fileSize) {
+        var source = $("#file-attachment-template").html();
+        var template = Handlebars.compile(source);
+        fileSize = fileSize / 1000;
+        var regex = /([a-z0-9]{13})-(.*)/;
+        var friendlyName = fileName.replace(regex, "$2");
+        var file = {
+            fileName: friendlyName,
+            fileId: fileId,
+            fileSize: fileSize.toFixed(2),
+            filePath: "/file/{{ tenantInformation.schema }}/"+fileName
+        };
+        var html = template(file);
+        $("#item-files-closer").before(html);
+    }
+
+    function startFilesUploading() {
+        $("#save-maintenance").attr('disabled', true).html("Files uploading ...");
+    }
+
+    function finishFilesUploading() {
+        $("#save-maintenance").attr('disabled', false).html("Save");
+    }
+
+    // Remove a file
+    $("#maintenance-files").on("click", ".file-delete", function () {
+        var fileId = $(this).attr('id');
+        var fileName  = $(this).data('filename');
+        var fileDiv   = $(this).parent();
+        if (window.confirm("Are you sure you want to delete this file?")) {
+            $(this).html('<img src="/images/ajax-loader.gif">');
+            $.get(
+                    "/admin/file/" + fileId + "/remove",
+                    {
+                        maintenance: "{{ maintenance.id }}"
+                    },
+                    function (data) {
+                        if (data == "ok") {
+                            console.log("removing file " + fileName);
+                            fileDiv.fadeOut(500).remove();
+                        }
+                    },
+                    "json");
+        }
+
+    });
+
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+{% block modalSubTitle %}{{ subTitle|raw }}{% endblock %}
+
+{% block modalBody %}
+    <form method="POST" action="{{ path('schedule_maintenance', {itemId: item.id, planId: plan.id}) }}">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="hidden" name="maintenance_date" id="date-picker">
+                <div id="date-picker-container"></div>
+            </div>
+            <div class="col-md-8">
+                <p>Choose a date for the next {{ plan.name }}.</p>
+                <p>When maintenance is complete, the next one will be scheduled.</p>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button type="button" class="btn bg-green pull-right modal-submit">Schedule maintenance</button>
+    <script>
+        $(document).ready(function () {
+            var dateExtendField = $("#date-picker");
+            dateExtendField.dateRangePicker({
+                format: 'ddd MMM D YYYY',
+                autoClose: true,
+                singleDate: true,
+                singleMonth: true,
+                showShortcuts: false,
+                inline: true,
+                alwaysOpen: true,
+                container: '#date-picker-container',
+                setValue: function (s) {
+                    if (!$(this).attr('readonly') && !$(this).is(':disabled') && s != $(this).val()) {
+                        console.log($(this).val(s));
+                    }
+                }
+            }).bind('datepicker-change', function (event, obj) {
+
+            });
+        });
+    </script>
+{% endblock %}
+
+

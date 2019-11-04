@@ -76,7 +76,7 @@ class ItemTagController extends Controller
         }
 
         return $this->render(
-            'modals/productTag.html.twig',
+            'modals/settings/product_tag.html.twig',
             array(
                 'title' => 'Item category',
                 'subTitle' => '',

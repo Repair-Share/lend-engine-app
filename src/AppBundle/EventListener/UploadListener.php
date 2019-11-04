@@ -108,6 +108,30 @@ class UploadListener
 
             }
 
+        } else if ($maintenanceId = $request->get('maintenanceId')) {
+
+            /** @var \AppBundle\Entity\Maintenance $maintenance */
+            $maintenance = $this->em->getRepository('AppBundle:Maintenance')->find($maintenanceId);
+
+            $fileAttachment = new FileAttachment();
+            $fileAttachment->setMaintenance($maintenance);
+            $fileAttachment->setFileName($fileName);
+            $fileAttachment->setFileSize($file->getSize());
+
+            $this->em->persist($fileAttachment);
+
+            try {
+
+                $this->em->flush();
+
+                $response['fileName'] = $file->getBasename();
+                $response['fileId']   = $fileAttachment->getId();
+                $response['fileSize'] = $fileAttachment->getFileSize();
+
+            } catch (\Exception $e) {
+                die( $e->getMessage() );
+            }
+
         } else if ($contactId = $request->get('contactId')) {
 
             /** @var \AppBundle\Entity\Contact $contact */

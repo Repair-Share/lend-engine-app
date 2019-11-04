@@ -187,6 +187,11 @@ services:
             - "@doctrine.orm.entity_manager"
             - "@service_container"
 
+    service.maintenance:
+        class: AppBundle\Services\Maintenance\MaintenanceService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
     service.payment:
         class: AppBundle\Services\Payment\PaymentService
         arguments:

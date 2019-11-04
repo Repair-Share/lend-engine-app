@@ -1,4 +1,3 @@
-{# app/Resources/views/modals/productTag.html.twig #}
 {% extends 'modal.html.twig' %}
 
 {% block modalTitle %}{{ title }}{% endblock %}
@@ -12,9 +11,13 @@
         <span class="help">{{ help }}</span>
     {% endif %}
 
-    {{ form_row(form.name) }}
+    <div class="row">
+        <div class="col-md-8">{{ form_row(form.name) }}</div>
+        <div class="col-md-4">{{ form_row(form.interval) }}</div>
+    </div>
 
-    {{ form_row(form.showOnWebsite) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.isActive) }}
 
     {{ form_end(form) }}
 
@@ -22,6 +25,6 @@
 
 {% block modalFooter %}
     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-    <button class="modal-submit btn bg-green">Save category</button>
+    <button class="modal-submit btn bg-green">Save maintenance plan</button>
 {% endblock %}
 

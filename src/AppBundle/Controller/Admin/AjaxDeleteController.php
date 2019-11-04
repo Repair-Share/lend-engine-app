@@ -64,6 +64,9 @@ class AjaxDeleteController extends Controller
                 case 'Event':
                     $msg = $this->deleteEvent($id);
                     break;
+                case 'MaintenancePlan':
+                    $msg = $this->deleteMaintenancePlan($id);
+                    break;
             }
         } else {
             $msg = 'No ID given';
@@ -368,6 +371,32 @@ class AjaxDeleteController extends Controller
 
         return $msg;
 
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    public function deleteMaintenancePlan($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var \AppBundle\Repository\MaintenancePlanRepository $repo */
+        $repo = $em->getRepository('AppBundle:MaintenancePlan');
+
+        $entity = $repo->find($id);
+        $entity->setIsActive(false);
+
+        $em->persist($entity);
+
+        try {
+            $em->flush();
+            $msg = 'OK';
+        } catch (\Exception $generalException) {
+            return $generalException->getMessage();
+        }
+
+        return $msg;
     }
 
     /**

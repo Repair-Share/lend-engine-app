@@ -6,8 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
-//use Gedmo\Mapping\Annotation as Gedmo;
-//use Gedmo\Translatable\Translatable;
 
 /**
  * InventoryItem
@@ -167,6 +165,11 @@ class InventoryItem
     private $tags;
 
     /**
+     * @ORM\ManyToMany(targetEntity="MaintenancePlan")
+     */
+    private $maintenancePlans;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Site", inversedBy="inventoryItems")
      */
     private $sites;
@@ -231,6 +234,11 @@ class InventoryItem
      * @ORM\OneToMany(targetEntity="Payment", mappedBy="inventoryItem", cascade={"remove"})
      */
     private $payments;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Maintenance", mappedBy="inventoryItem", cascade={"remove"})
+     */
+    private $maintenances;
 
     /**
      * @var string
@@ -329,6 +337,8 @@ class InventoryItem
         $this->fileAttachments = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->components = new ArrayCollection();
+        $this->maintenancePlans = new ArrayCollection();
+        $this->maintenances = new ArrayCollection();
     }
 
     /**
@@ -980,6 +990,39 @@ class InventoryItem
     }
 
     /**
+     * @param MaintenancePlan $maintenancePlan
+     * @return $this
+     */
+    public function addMaintenancePlan(MaintenancePlan $maintenancePlan)
+    {
+        foreach ($this->maintenancePlans AS $existingMaintenancePlan) {
+            /** @var $existingMaintenancePlan \AppBundle\Entity\MaintenancePlan */
+            if ($maintenancePlan->getName() == $existingMaintenancePlan->getName()) {
+                return $this;
+            }
+        }
+        $this->maintenancePlans[] = $maintenancePlan;
+
+        return $this;
+    }
+
+    /**
+     * @param \AppBundle\Entity\MaintenancePlan $maintenancePlan
+     */
+    public function removeMaintenancePlan(MaintenancePlan $maintenancePlan)
+    {
+        $this->maintenancePlans->removeElement($maintenancePlan);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getMaintenancePlans()
+    {
+        return $this->maintenancePlans;
+    }
+
+    /**
      * Add site
      *
      * @param \AppBundle\Entity\Site $site
@@ -1614,5 +1657,13 @@ class InventoryItem
         }
 
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getMaintenances()
+    {
+        return $this->maintenances;
     }
 }

@@ -52,6 +52,14 @@ class FileAttachment
     private $contact;
 
     /**
+     * @var Maintenance
+     *
+     * @ORM\ManyToOne(targetEntity="Maintenance", inversedBy="fileAttachments")
+     * @ORM\JoinColumn(name="maintenance_id", referencedColumnName="id", nullable=true)
+     */
+    private $maintenance;
+
+    /**
      * @var bool
      *
      * @ORM\Column(name="send_to_member", type="integer", length=1)
@@ -187,4 +195,33 @@ class FileAttachment
     {
         return $this->sendToMemberOnCheckout;
     }
+
+    /**
+     * @return Maintenance
+     */
+    public function getMaintenance()
+    {
+        return $this->maintenance;
+    }
+
+    /**
+     * @param Maintenance $maintenance
+     * @return $this
+     */
+    public function setMaintenance(Maintenance $maintenance)
+    {
+        $this->maintenance = $maintenance;
+
+        return $this;
+    }
+
+    /**
+     * Removes the uniqid() added when uploading
+     * @return mixed
+     */
+    public function getFriendlyName()
+    {
+        return preg_replace('/[0-9a-z]{13}-/', '', $this->fileName);
+    }
+
 }

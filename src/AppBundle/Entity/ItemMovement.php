@@ -39,7 +39,7 @@ class ItemMovement
     }
 
     /**
-     * @var integer
+     * @var Contact
      *
      * @ORM\ManyToOne(targetEntity="Contact")
      * @ORM\JoinColumn(name="created_by", referencedColumnName="id")
@@ -68,7 +68,7 @@ class ItemMovement
     private $loanRow;
 
     /**
-     * @var integer
+     * @var Contact
      *
      * @ORM\ManyToOne(targetEntity="Contact")
      * @ORM\JoinColumn(name="assigned_to_contact_id", referencedColumnName="id")

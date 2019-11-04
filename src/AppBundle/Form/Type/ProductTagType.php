@@ -1,5 +1,4 @@
 <?php
-// src/AppBundle/Form/Type/ProductTagType.php
 namespace AppBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;

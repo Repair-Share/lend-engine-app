@@ -64,6 +64,11 @@ class MenuBuilder
         if ( $this->container->get('security.authorization_checker')->isGranted("ROLE_SUPER_USER") ) {
             $this->addChildItem('Items', 'Bulk update <sup>beta</sup>', 'import_items', '');
         }
+
+        if ($this->container->get('service.tenant')->getFeature('Maintenance')) {
+            $this->addChildItem('Items', 'Maintenance <sup><label class="label bg-orange">NEW</label></sup>', 'maintenance_list');
+        }
+
         $this->addChildItem('Items', 'Add loan item', 'item_sector', '', '', ['type' => 'loan']);
 
         if ($this->container->get('service.tenant')->getFeature('Kits')) {
@@ -136,6 +141,7 @@ class MenuBuilder
         $this->menu->addChild('Item fields', array('route' => 'product_field_list'));
         $this->menu->addChild('Item conditions', array('route' => 'itemCondition_list'));
         $this->menu->addChild('Item barcode labels', array('route' => 'settings_labels'));
+        $this->menu->addChild('Maintenance plans', ['route' => 'maintenance_plans']);
 
         $this->menu->addChild('Check in prompts', array('route' => 'checkInPrompt_list'));
         $this->menu->addChild('Check out prompts', array('route' => 'checkOutPrompt_list'));

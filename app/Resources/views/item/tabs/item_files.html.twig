@@ -78,8 +78,10 @@
         } else {
             sendToMemberCheckbox = "";
         }
+        var regex = /([a-z0-9]{13})-(.*)/;
+        var friendlyName = fileName.replace(regex, "$2");
         var file = {
-            fileName: fileName,
+            fileName: friendlyName,
             fileId: fileId,
             fileSize: fileSize.toFixed(2),
             filePath: "/file/{{ tenantInformation.schema }}/"+fileName,

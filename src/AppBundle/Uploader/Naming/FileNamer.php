@@ -27,6 +27,6 @@ class FileNamer implements NamerInterface
         $newFileName = strtolower(trim($file->getClientOriginalName()));
         $newFileName = str_replace(' ', '-', $newFileName);
         $newFileName = preg_replace('/[^0-9a-zA-Z\-\.\d\s:]/', '', $newFileName);
-        return $directory.'/files/'.$newFileName;
+        return $directory.'/files/'.uniqid().'-'.$newFileName;
     }
 }

@@ -138,6 +138,12 @@ div#extend-modal .date-picker-wrapper .drp_top-bar {
     color: #a0a0a0;
 }
 
+/* alerts */
+.alert-info { background-color: #e4eef1 !important; color: #0386a7 !important; border-color: #abd4de; }
+.alert-success { background-color: #d9ecdc !important; color: #3c763d !important; border-color: #5ebb68; }
+.alert-warning { background-color: #fbf9e8 !important; color: #e2b32e !important; border-color: #ffe570; }
+.alert a { color: #0386a7 }
+
 /* Text formatting */
 .dim-info {
     color: #a0a0a0;

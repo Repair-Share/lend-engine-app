@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Maintenance{% endblock %}
+
+{% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block primaryButton %}
+    {% if is_granted('ROLE_SUPER_USER') %}
+        {#<a class="btn btn-default pull-right" href="{{ path('export_maintenance') }}" style="margin-right: 10px">Export</a>#}
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+
+    <div class="row" id="primary-filter" style="display:block">
+        <div id="primary-filter-inner">
+            <form method="GET">
+                <div class="col-md-11 filter-fields">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Maintenance plan</label>
+                            <select name="maintenancePlanId" class="form-control">
+                                <option value="">All</option>
+                                {% for plan in maintenancePlans %}
+                                    <option value="{{ plan.id }}" {% if app.request.get('maintenancePlanId') == plan.id %}selected{% endif %}>
+                                        {{ plan.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label>Status</label>
+                            <select class="form-control" id="filterStatus" name="statuses[]" multiple>
+                                <option value="">All</option>
+                                {% for status, name in maintenanceStatuses %}
+                                    <option {% if status in selectedStatuses %}SELECTED{% endif %} value="{{ status }}">{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3 form-group">
+                            <label>Assigned to</label>
+                            <select id="assignedTo" name="assignedTo" class="form-control">
+                                <option value="">Anyone</option>
+                                {% for person in team %}
+                                    <option value="{{ person.id }}" {% if app.request.get('assignedTo') == person.id %}SELECTED{% endif %}>{{ person.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn bg-green pull-right form-control">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 table-responsive">
+            <table cellspacing="0" class="table table-hover table-striped has-actions" id="data-table-maintenance">
+                <thead>
+                <th>Item</th>
+                <th>Code</th>
+                <th>Serial</th>
+                <th></th>
+                <th>Due</th>
+                <th>For</th>
+                <th>Status</th>
+                <th style="width: 20px;"></th>
+                <th></th>
+                </thead>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagejs %}
+    <script>
+
+        $(document).ready(function() {
+
+            var dataTable = $('#data-table-maintenance').DataTable({
+                ordering: false,
+                serverSide: true,
+                autoWidth: false,
+                pageLength: 50,
+                ajax: {
+                    url: "{{ path('dt_maintenance_list') }}",
+                    "data": function (d) {
+                        d.assignedTo = "{{ app.request.get('assignedTo') }}";
+                        d.maintenancePlanId = "{{ app.request.get('maintenancePlanId') }}";
+                        d.statuses = $("#filterStatus").val();
+                    }
+                },
+                "oSearch": {
+                    "sSearch": "{{ searchString }}"
+                },
+                "language": {
+                    "infoFiltered": ""
+                }
+            });
+
+            $("#data-table-maintenance_filter label input").attr("placeholder", "Item name, code or serial");
+            $("#data-table-maintenance_filter label input").css("width", "300px");
+
+        });
+    </script>
+{% endblock %}
