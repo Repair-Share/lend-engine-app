@@ -413,7 +413,7 @@ class ItemType extends AbstractType
                 'choice_label' => 'name',
                 'attr' => [
                     'class' => 'ajax-contact',
-                    'data-help' => 'Search for existing contacts.'
+                    'data-help' => 'Search for existing contacts. Donor is notified each time the item is checked out. Edit the email at Settings &raquo; Templates.'
                 ],
                 'required' => false,
                 'choices' => $choices,

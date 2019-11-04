@@ -51,7 +51,7 @@ class BillingService
             'EventBooking'      => false,
             'Kits'              => false,
             'StockItems'        => false,
-            'Maintenance'       => false,
+            'MaintenancePlan'   => false,
         ];
 
         switch ($plan) {
@@ -82,7 +82,7 @@ class BillingService
                     'EventBooking'      => true,
                     'Kits'              => true,
                     'StockItems'        => true,
-                    'Maintenance'       => false,
+                    'MaintenancePlan'   => false,
                 ];
                 break;
 
@@ -108,7 +108,7 @@ class BillingService
                     'EventBooking'      => true,
                     'Kits'              => true,
                     'StockItems'        => true,
-                    'Maintenance'       => true,
+                    'MaintenancePlan'   => false,
                 ];
                 break;
 
@@ -134,7 +134,7 @@ class BillingService
                     'EventBooking'      => true,
                     'Kits'              => true,
                     'StockItems'        => true,
-                    'Maintenance'       => true,
+                    'MaintenancePlan'   => false,
                 ];
                 break;
 

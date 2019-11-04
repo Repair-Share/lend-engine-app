@@ -75,14 +75,9 @@
                     {% if entityName == 'Site' %}
                         Your plan does not allow you to add further sites.
                     {% else %}
-                        This feature is not available on your plan.
+                        This feature is not available on your billing tier.
                     {% endif %}
                     <a href="{{ path('billing') }}">Upgrade / see plans</a>
-                    <br><br>
-                    We recently moved some features up to a higher plan.<br>
-                    If you are using these higher plan features,
-                    please <a href="http://www.lend-engine.com/contact" target="_blank">get in touch</a>
-                    and we'll arrange for you to have access.
                 </div>
             {% endif %}
 

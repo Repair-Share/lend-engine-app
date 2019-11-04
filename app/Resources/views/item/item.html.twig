@@ -137,7 +137,7 @@
             </li>
             {% endif %}
 
-            {% if item.itemType == 'loan' %}
+            {% if item.itemType == 'loan' and tenantInformation.feature('MaintenancePlan') %}
             <li>
                 <a href="#maintenance" id="set-maintenance">Maintenance</a>
             </li>
@@ -317,9 +317,10 @@
                         </div>
 
                         <br>
-                        <div class="row">
-                            <div class="col-md-6">{{ form_row(form.donatedBy) }}</div>
-                            <div class="col-md-6">{{ form_row(form.ownedBy) }}</div>
+                        {{ form_row(form.donatedBy) }}
+
+                        <div style="display: none;">
+                            {{ form_row(form.ownedBy) }}
                         </div>
 
                     </div>

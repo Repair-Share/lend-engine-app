@@ -65,7 +65,7 @@ class MenuBuilder
             $this->addChildItem('Items', 'Bulk update <sup>beta</sup>', 'import_items', '');
         }
 
-        if ($this->container->get('service.tenant')->getFeature('Maintenance')) {
+        if ($this->container->get('service.tenant')->getFeature('MaintenancePlan')) {
             $this->addChildItem('Items', 'Maintenance <sup><label class="label bg-orange">NEW</label></sup>', 'maintenance_list');
         }
 

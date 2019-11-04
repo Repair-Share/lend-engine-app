@@ -12,6 +12,12 @@
 
 {% block body %}
 
+    {% if maintenancePlans|length == 0 %}
+        <div class="alert alert-warning">
+            You don't have any maintenance plans set up. Start by adding one at <strong>Settings &raquo; Maintenance plans</strong>.
+        </div>
+    {% endif %}
+
     <div class="row" id="primary-filter" style="display:block">
         <div id="primary-filter-inner">
             <form method="GET">
