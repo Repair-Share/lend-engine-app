@@ -17,7 +17,11 @@ class ChooseMembershipController extends Controller
      */
     public function chooseMembership(Request $request)
     {
-        $user = $this->getUser();
+
+        if (!$user = $this->getUser()) {
+            $this->addFlash('error', "Please ensure you are logged in.");
+            return $this->redirectToRoute('homepage');
+        }
 
         $em = $this->getDoctrine()->getManager();
 

@@ -66,7 +66,7 @@ class InventoryItem
     /**
      * @var Contact
      *
-     * @ORM\ManyToOne(targetEntity="Contact")
+     * @ORM\ManyToOne(targetEntity="Contact", inversedBy="donatedItems")
      * @ORM\JoinColumn(name="donated_by", referencedColumnName="id")
      */
     private $donatedBy;

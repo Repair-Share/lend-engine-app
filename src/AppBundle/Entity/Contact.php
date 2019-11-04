@@ -215,6 +215,11 @@ class Contact extends BaseUser
     private $waitingListItems;
 
     /**
+     * @ORM\OneToMany(targetEntity="InventoryItem", mappedBy="donatedBy")
+     */
+    private $donatedItems;
+
+    /**
      * @var Membership
      *
      * @ORM\OneToOne(targetEntity="Membership")
@@ -322,6 +327,7 @@ class Contact extends BaseUser
         $this->creditCards  = new ArrayCollection();
         $this->fileAttachments = new ArrayCollection();
         $this->waitingListItems = new ArrayCollection();
+        $this->donatedItems = new ArrayCollection();
     }
 
     /**
@@ -1467,4 +1473,13 @@ class Contact extends BaseUser
     {
         return $this->attendees;
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getDonatedItems()
+    {
+        return $this->donatedItems;
+    }
+
 }

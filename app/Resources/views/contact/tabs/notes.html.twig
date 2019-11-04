@@ -1,12 +1,33 @@
 {% if contact.id %}
 <div class="row">
-    <div class="col-md-10">
+    <div class="col-md-6">
+        <h4>
+            Notes
+            <a href="{{ path('add_note') }}?&contactId={{ contact.id }}&goto=contact" class="modal-link btn btn-xs btn-default">Add a note</a>
+        </h4>
         {% for note in contact.notes %}
             {{ include('partials/note.html.twig') }}
         {% endfor %}
     </div>
-    <div class="col-md-2">
-        <a href="{{ path('add_note') }}?&contactId={{ contact.id }}&goto=contact" class="modal-link btn btn-default pull-right">Add note</a>
+    <div class="col-md-6">
+        <h4>Donated items</h4>
+        <style>
+            .item-fee { display: none }
+        </style>
+        {% if contact.donatedItems|length > 0 %}
+            <div class="help-block">
+                Each time these items are checked out, the donor will be sent an email.
+                <br>Edit the contents of the email at Settings > Templates.
+            </div>
+            {% for item in contact.donatedItems %}
+                <div style="clear: both; padding-bottom: 20px;"></div>
+                {{ include('item/item_mini.html.twig') }}
+            {% endfor %}
+        {% else %}
+            <div>
+                This person hasn't donated any items.
+            </div>
+        {% endif %}
     </div>
 </div>
 {% else %}
