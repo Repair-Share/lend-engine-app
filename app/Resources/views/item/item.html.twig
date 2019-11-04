@@ -337,11 +337,6 @@
                             {{ form_row(form.sites) }}
                         </div>
                     </div>
-                {% else %}
-                    {#Only has a single site, hide the feature#}
-                    {#<div style="display:none">#}
-                        {#{{ form_row(form.sites) }}#}
-                    {#</div>#}
                 {% endif %}
 
                 {% set showPrompts = '' %}
@@ -376,6 +371,9 @@
             </div>
 
             <div class="tab-pane" id="maintenance" style="position: relative">
+
+                {% if maintenancePlans|length > 0 %}
+
                 <div class="row">
                     <div class="col-md-3">
                         {{ form_row(form.maintenancePlans) }}
@@ -443,6 +441,16 @@
 
                     </div>
                 </div>
+
+                {% else %}
+
+                    <div class="page-help">
+                        You don't have any maintenance plans yet. Get started at Settings &raquo; Maintenance plans.
+                        <span style="display: none;">{{ form_row(form.maintenancePlans) }}</span>
+                    </div>
+
+                {% endif %}
+
             </div>
 
             {# This tab must be last in the form due to form_rest() #}

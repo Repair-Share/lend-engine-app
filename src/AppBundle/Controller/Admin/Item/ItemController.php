@@ -374,6 +374,10 @@ class ItemController extends Controller
             $customFieldsExist = false;
         }
 
+        /** @var \AppBundle\Repository\MaintenancePlanRepository $maintenancePlanRepo */
+        $maintenancePlanRepo = $em->getRepository('AppBundle:MaintenancePlan');
+        $maintenancePlans = $maintenancePlanRepo->findAllOrderedByName();
+
         // Get active loan or reservation information
         $loanRowDetail = $this->getLoanRowDetail($product);
 
@@ -382,6 +386,7 @@ class ItemController extends Controller
             'title' => $pageTitle,
             'countItems' => count($items),
             'customFieldsExist' => $customFieldsExist,
+            'maintenancePlans' => $maintenancePlans,
             'item' => $product,
             'isMultiSite' => $this->get('settings')->getSettingValue('multi_site'),
             'activeLoanInformation' => $loanRowDetail // for the stock info header
