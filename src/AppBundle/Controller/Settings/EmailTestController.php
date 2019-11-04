@@ -300,7 +300,8 @@ class EmailTestController extends Controller
 
                 $loanRow = [
                     'inventoryItem' => [
-                        'name' => "Example item"
+                        'name' => "Example item",
+                        'imageName' => ''
                     ]
                 ];
 
