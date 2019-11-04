@@ -332,11 +332,16 @@
             <div class="tab-pane" id="prompts" style="position: relative">
 
                 {% if isMultiSite %}
-                <div class="row" {% if not tenantInformation.feature('Site') %}style="display:none"{% endif %}>
-                    <div class="col-md-12">
+                    <div class="row" {% if not tenantInformation.feature('Site') %}style="display:none"{% endif %}>
+                        <div class="col-md-12">
+                            {{ form_row(form.sites) }}
+                        </div>
+                    </div>
+                {% else %}
+                    {#Only has a single site, hide the feature#}
+                    <div style="display:none">
                         {{ form_row(form.sites) }}
                     </div>
-                </div>
                 {% endif %}
 
                 {% set showPrompts = '' %}
