@@ -1,0 +1,12 @@
+{% if is_granted('ROLE_ADMIN') %}
+    {% if item.maintenances|length > 0 %}
+        {% for m in item.maintenances %}
+            {% if m.status == 'overdue' %}
+                <div class="alert alert-danger">
+                    This item is overdue maintenance : <strong>{{ m.maintenancePlan.name }}</strong>.
+                    <a href="{{ path('perform_maintenance', {id: m.id}) }}">Do it now</a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endif %}

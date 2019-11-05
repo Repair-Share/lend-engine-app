@@ -55,20 +55,35 @@ class MaintenanceService
         $itemRepo = $this->em->getRepository('AppBundle:InventoryItem');
         $planRepo = $this->em->getRepository('AppBundle:MaintenancePlan');
 
-        if (!$item = $itemRepo->find($itemId)) {
-            $this->errors[] = "Cannot find item with ID {$itemId}";
-            return false;
+        if (isset($data['id']) && $data['id'] != null) {
+
+            $id = $data['id'];
+            if (!$maintenance = $this->get($id)) {
+                $this->errors[] = "Cannot find maintenance with ID {$id}";
+                return false;
+            }
+
+        } else {
+
+            if (!$item = $itemRepo->find($itemId)) {
+                $this->errors[] = "Cannot find item with ID {$itemId}";
+                return false;
+            }
+
+            if (!$plan = $planRepo->find($planId)) {
+                $this->errors[] = "Cannot find maintenance plan with ID {$planId}";
+                return false;
+            }
+
+//            @todo validate the plan is OK for the item
+
+            $maintenance = new Maintenance();
+            $maintenance->setInventoryItem($item);
+            $maintenance->setMaintenancePlan($plan);
+
         }
 
-        if (!$plan = $planRepo->find($planId)) {
-            $this->errors[] = "Cannot find maintenance plan with ID {$planId}";
-            return false;
-        }
-
-        $maintenance = new Maintenance();
-        $maintenance->setInventoryItem($item);
         $maintenance->setDueAt($date);
-        $maintenance->setMaintenancePlan($plan);
 
         $this->repository->save($maintenance);
 

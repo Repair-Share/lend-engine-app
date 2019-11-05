@@ -31,7 +31,18 @@
             by {{ maintenance.completedBy.name }}.
     {% endif %}
 
-        <span class="pull-right">Due : {{ maintenance.dueAt|date("D j F Y") }}</span>
+        <span class="pull-right">
+        Due : {{ maintenance.dueAt|date("D j F Y") }}
+
+        {% if maintenance.status != 'completed' %}
+        <br>
+        <a href="{{ path('schedule_maintenance', {itemId: item.id, planId: maintenance.maintenancePlan.id, id: maintenance.id}) }}" class="modal-link">
+        Change date
+        </a>
+        {% endif %}
+
+        </span>
+
 
         <div>
         {% if maintenance.maintenancePlan.description %}
@@ -129,7 +140,7 @@
     <div class="page-controls">
         <span class="pull-left" id="autoCreateNext" style="padding: 0 20px; display:none">{{ form_widget(form.createNext) }}</span>
 
-        {% if maintenance.status == 'planned' %}
+        {% if maintenance.status == 'planned' or maintenance.status == 'overdue' %}
             <button type="submit" id="save-maintenance" name="submitForm" value="save" class="btn btn-default btn-loading pull-right">
                 Save
             </button>
@@ -169,9 +180,11 @@
             if ($(this).val() == 'completed') {
                 $("#autoCreateNext").fadeIn();
                 $("#maintenance_createNext").prop('checked', true);
+                $("#start-maintenance").hide();
             } else {
                 $("#autoCreateNext").hide();
                 $("#maintenance_createNext").prop('checked', false);
+                $("#start-maintenance").show();
             }
         });
 

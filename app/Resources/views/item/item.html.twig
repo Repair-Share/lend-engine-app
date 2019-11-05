@@ -69,6 +69,8 @@
     </div>
     {% endif %}
 
+    {{ include('item/maintenance_warning.html.twig') }}
+
     <div id="item-inventory-detail" {% if item.itemType == 'kit' %}style="display:none"{% endif %}>
         {% if item.id %}
             <input type="hidden" id="itemIdForTest" value="{{ item.id }}">
