@@ -85,6 +85,7 @@ class EmailReservationReminders
 
                 // Set the settings class to get data from the right DB
                 $this->settings->setTenant($tenant, $tenantEntityManager);
+                $tenantService->setTenant($tenant);
 
                 $senderName     = $tenantService->getCompanyName();
                 $fromEmail      = $tenantService->getSenderEmail();
