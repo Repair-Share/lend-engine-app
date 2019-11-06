@@ -41,6 +41,17 @@
         {% endfor %}
     {% endif %}
 
+    <style>
+        .checkInRow td {
+            background-color: #FFF;
+            color: #000;
+        }
+        .checkInRow.active td {
+            background-color: #ddfcff !important;
+            color: #000;
+        }
+    </style>
+
     <div class="row">
         <div class="col-md-12">
             <p>{% trans %}public_loan.select_items_to_check_in{% endtrans %}:</p>
@@ -48,7 +59,7 @@
             <table class="table borderless" id="checkInDetails">
                 {% for row in loanRow.loan.loanRows %}
                 {% if not row.isReturned and row.inventoryItem.itemType == 'loan' %}
-                    <tr {% if row.id != loanRow.id %}style="color: #ccc"{% endif %}>
+                    <tr id="loanRow{{ row.id }}" class="checkInRow {% if row.id == loanRow.id %}active{% endif %}">
                         <td style="width:100px" class="hidden-xs">
                             {% if row.inventoryItem.imageName %}
                                 <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}" class="img-thumbnail img-responsive">
@@ -68,15 +79,12 @@
                             {% endif %}
 
                             <div>Due in at {{ row.dueInAt|date("d F g:i a") }}</div>
-                            {% if row.id == loanRow.id and loanRow.loan.loanRows|length > 1 %}
-                                <span class="label bg-brown">You're checking in this item</span>
-                            {% endif %}
                         </td>
                         <td>
                             {% if canBulkCheckIn or row.id == loanRow.id %}
-                            <input type="checkbox" name="check_in[]" value="{{ loanRow.id }}" {% if row.id == loanRow.id %}checked{% endif %}>
+                            <input type="checkbox" class="checkInBox" data-row-id="{{ row.id }}" name="check_in[]" value="{{ row.id }}" {% if row.id == loanRow.id %}checked{% endif %}>
                             {% else %}
-                            <input type="checkbox" disabled>
+                            <input type="checkbox" class="checkInBox" data-row-id="{{ row.id }}" disabled>
                             {% endif %}
                         </td>
                     </tr>
@@ -221,6 +229,14 @@
                     $(".form-submit").attr("disabled", false).html("Check in item");
                 } else {
                     $(".form-submit").attr("disabled", true).html("Please complete all checks");
+                }
+            });
+            $("#checkInDetails").on("click", ".checkInBox", function () {
+                var rowId = $(this).data("row-id");
+                if ($(this).prop("checked") == true) {
+                    $("#loanRow"+rowId).addClass("active");
+                } else {
+                    $("#loanRow"+rowId).removeClass("active");
                 }
             });
         });
