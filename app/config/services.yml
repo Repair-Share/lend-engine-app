@@ -295,14 +295,54 @@ services:
             - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
             - { name: knp_menu.menu_builder, method: accountMenu, alias: accountMenu }
 
-    service.schedule_handler:
-        class: AppBundle\Services\ScheduleHandler
+    ## SCHEDULED ACTIONS
+
+    service.schedule_loan_reminders:
+        class: AppBundle\Services\Schedule\EmailLoanReminders
         arguments:
             - "@twig"
             - "@service_container"
             - "@settings"
             - "@doctrine.orm.entity_manager"
             - "@logger"
+
+    service.schedule_overdue_loans:
+        class: AppBundle\Services\Schedule\EmailOverdueLoans
+        arguments:
+            - "@twig"
+            - "@service_container"
+            - "@settings"
+            - "@doctrine.orm.entity_manager"
+            - "@logger"
+
+    service.schedule_reservation_reminders:
+        class: AppBundle\Services\Schedule\EmailReservationReminders
+        arguments:
+            - "@twig"
+            - "@service_container"
+            - "@settings"
+            - "@doctrine.orm.entity_manager"
+            - "@logger"
+
+    service.schedule_memberships:
+        class: AppBundle\Services\Schedule\ExpireMemberships
+        arguments:
+            - "@twig"
+            - "@service_container"
+            - "@settings"
+            - "@doctrine.orm.entity_manager"
+            - "@logger"
+
+    service.schedule_maintenance:
+        class: AppBundle\Services\Schedule\UpdateMaintenance
+        arguments:
+            - "@twig"
+            - "@service_container"
+            - "@settings"
+            - "@doctrine.orm.entity_manager"
+            - "@logger"
+
+    ## END SCHEDULED ACTIONS
 
     app.locale_listener:
         class: AppBundle\EventListener\LocaleListener

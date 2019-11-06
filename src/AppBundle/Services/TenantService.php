@@ -75,6 +75,7 @@ class TenantService
     public function setTenant($tenant)
     {
         $this->settings->setTenant($tenant);
+        $this->tenant = $tenant;
     }
 
     /**

@@ -1,0 +1,21 @@
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}Maintenance is due{% endblock %}
+
+{% block content %}
+    {% if assignee is defined %}
+        <p>Hi {{ assignee.firstName }},</p>
+        <p>These items require maintenance and are assigned to you.</p>
+    {% else %}
+        <p>The following items require maintenance.</p>
+    {% endif %}
+    {% for m in maintenance %}
+        <div style="padding-bottom: 10px;">
+            <strong>{{ m.inventoryItem.name }}</strong>
+            <br>{{ m.maintenancePlan.name }} due {{ m.dueAt|date('d F') }}
+        </div>
+    {% endfor %}
+    <a href="http://{{ domain }}">Click here to log in</a> and then visit Items &raquo; Maintenance.
+{% endblock %}

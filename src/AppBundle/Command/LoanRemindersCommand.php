@@ -18,7 +18,8 @@ class LoanRemindersCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $scheduleHandler = $this->getContainer()->get('service.schedule_handler');
+        /** @var \AppBundle\Services\Schedule\EmailLoanReminders $scheduleHandler */
+        $scheduleHandler = $this->getContainer()->get('service.schedule_loan_reminders');
         $results = $scheduleHandler->processLoanReminders();
         die($results);
     }

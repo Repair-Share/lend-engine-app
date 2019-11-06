@@ -18,7 +18,8 @@ class OverdueEmailCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $scheduleHandler = $this->getContainer()->get('service.schedule_handler');
+        /** @var \AppBundle\Services\Schedule\EmailOverdueLoans $scheduleHandler */
+        $scheduleHandler = $this->getContainer()->get('service.schedule_overdue_loans');
         $results = $scheduleHandler->processOverdueEmails();
         die($results);
     }

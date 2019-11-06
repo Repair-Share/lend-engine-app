@@ -22,4 +22,29 @@ class MaintenanceRepository extends \Doctrine\ORM\EntityRepository
         $this->getEntityManager()->flush($maintenance);
     }
 
+    /**
+     * @return bool|mixed
+     */
+    public function getOverdueByDate()
+    {
+        $d = new \DateTime();
+
+        $repository = $this->getEntityManager()->getRepository('AppBundle:Maintenance');
+        $qb = $repository->createQueryBuilder('m');
+
+        $qb->select('m')
+            ->where('m.dueAt < :date')
+            ->andWhere('m.status = :status')
+            ->setParameter('date', $d->format("Y-m-d"))
+            ->setParameter('status', 'planned');
+
+        $query = $qb->getQuery();
+
+        if ( $results = $query->getResult() ) {
+            return $results;
+        } else {
+            return false;
+        }
+    }
+
 }

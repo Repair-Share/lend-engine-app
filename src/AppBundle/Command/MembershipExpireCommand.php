@@ -18,7 +18,8 @@ class MembershipExpireCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $scheduleHandler = $this->getContainer()->get('service.schedule_handler');
+        /** @var \AppBundle\Services\Schedule\ExpireMemberships $scheduleHandler */
+        $scheduleHandler = $this->getContainer()->get('service.schedule_memberships');
         $output->writeln('About to process memberships ...');
         $results = $scheduleHandler->processMemberships($output);
         die($results);

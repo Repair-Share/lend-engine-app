@@ -12,11 +12,11 @@
 
     <table>
         <tr>
+            {% if loanRow.inventoryItem.imageName %}
             <td valign="top" style="padding-right: 15px; width: 60px;">
-                {% if loanRow.inventoryItem.imageName %}
-                    <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ loanRow.inventoryItem.imageName }}">
-                {% endif %}
+                <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ loanRow.inventoryItem.imageName }}">
             </td>
+            {% endif %}
             <td valign="top" >
                 "{{ loanRow.inventoryItem.name }}" {{ 'le_email.extend.due_back'|trans() }}
                 <strong>{{ loanRow.dueInAt|date('d F g:i a') }}</strong>

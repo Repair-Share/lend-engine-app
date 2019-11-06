@@ -21,11 +21,13 @@
 
         {% for item in items %}
             <tr>
+
                 <td valign="top" style="padding-right: 15px; width: 60px;">
                     {% if item.imageName %}
                         <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ item.imageName }}">
                     {% endif %}
                 </td>
+
                 <td valign="top" style="padding-right: 15px">
                     <strong>{{ item.name }}</strong>
 
@@ -61,7 +63,5 @@
     <br>
     <br>
     <p>{{ tenantInformation.getEmailLoanReminderFooter|raw }}</p>
-
-    {#{% include('emails/tenantInformationTestBlock.html.twig') %}#}
 
 {% endblock %}
