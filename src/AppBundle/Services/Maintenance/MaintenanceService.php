@@ -2,6 +2,7 @@
 
 namespace AppBundle\Services\Maintenance;
 use AppBundle\Entity\Maintenance;
+use AppBundle\Services\InventoryService;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -19,10 +20,14 @@ class MaintenanceService
     /** @var \AppBundle\Repository\MaintenanceRepository */
     private $repository;
 
-    public function __construct(EntityManager $em)
+    /** @var InventoryService */
+    private $inventoryService;
+
+    public function __construct(EntityManager $em, InventoryService $inventoryService)
     {
         $this->em = $em;
         $this->repository = $this->em->getRepository('AppBundle:Maintenance');
+        $this->inventoryService = $inventoryService;
     }
 
     /**
@@ -54,6 +59,7 @@ class MaintenanceService
 
         $itemRepo = $this->em->getRepository('AppBundle:InventoryItem');
         $planRepo = $this->em->getRepository('AppBundle:MaintenancePlan');
+        $locationRepo = $this->em->getRepository('AppBundle:InventoryLocation');
 
         if (isset($data['id']) && $data['id'] != null) {
 
@@ -86,6 +92,15 @@ class MaintenanceService
                 $maintenance->setAssignedTo($provider);
             }
 
+        }
+
+        if (isset($data['locationId']) && $data['locationId']) {
+            $location = $locationRepo->find($data['locationId']);
+            $this->inventoryService->itemMove($item, $location);
+        }
+
+        if (isset($data['note']) && $data['note']) {
+            $maintenance->setNotes($data['note']);
         }
 
         $maintenance->setDueAt($date);

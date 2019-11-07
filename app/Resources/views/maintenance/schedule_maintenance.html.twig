@@ -1,7 +1,11 @@
 {% extends 'modal.html.twig' %}
 
 {% block modalTitle %}{{ title }}{% endblock %}
-{% block modalSubTitle %}{{ subTitle|raw }}{% endblock %}
+{% block modalSubTitle %}
+    {% if plan.provider %}
+    This maintenance will be assigned to the provider <strong>{{ plan.provider.name }}</strong>
+    {% endif %}
+{% endblock %}
 
 {% block modalBody %}
     <form method="POST" action="{{ path('schedule_maintenance', {itemId: item.id, planId: plan.id}) }}">
@@ -13,7 +17,30 @@
             </div>
             <div class="col-md-8">
                 <p>Choose a date for the next <strong>{{ plan.name }}</strong>.</p>
-                <p>When maintenance is completed, the user has the option to auto-schedule the next one.</p>
+                <div class="form-group">
+                    <label>Move item to another location:</label>
+                    <select class="form-control" name="moveToLocation">
+                        <option value=""></option>
+                        {% for location in locations %}
+                            <option value="{{ location.id }}">{{ location.site.name }} : {{ location.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="help-block">
+                        Choose a repair location to prevent borrows.<br>
+                        You can only move items which are not currently on loan.
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Add a note</label>
+                    <textarea class="form-control" size="4" name="note"></textarea>
+                </div>
+                {% if plan.provider %}
+                <div class="form-group">
+                    <label style="font-weight:normal">
+                        <input type="checkbox" name="notify" value="1" checked> Send {{ plan.provider.name }} an email
+                    </label>
+                </div>
+                {% endif %}
             </div>
         </div>
     </form>
@@ -24,8 +51,8 @@
     <button type="button" class="btn bg-green pull-right modal-submit">Save</button>
     <script>
         $(document).ready(function () {
-            var dateExtendField = $("#date-picker");
-            dateExtendField.dateRangePicker({
+            var datePickerField = $("#date-picker");
+            datePickerField.dateRangePicker({
                 format: 'ddd MMM D YYYY',
                 autoClose: true,
                 singleDate: true,
@@ -39,9 +66,8 @@
                         console.log($(this).val(s));
                     }
                 }
-            }).bind('datepicker-change', function (event, obj) {
-
             });
+            datePickerField.data('dateRangePicker').setDateRange('{{ defaultDate }}', '{{ defaultDate }}', true);
         });
     </script>
 {% endblock %}

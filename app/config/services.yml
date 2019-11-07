@@ -189,6 +189,7 @@ services:
         class: AppBundle\Services\Maintenance\MaintenanceService
         arguments:
             - "@doctrine.orm.entity_manager"
+            - "@service.inventory"
 
     service.payment:
         class: AppBundle\Services\Payment\PaymentService

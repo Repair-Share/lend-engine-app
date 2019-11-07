@@ -74,6 +74,7 @@ class ItemMoveController extends Controller
             $assignedItemNames = '';
             $updatedItems = 0;
 
+            $lastItemId = null;
             foreach ($idArray AS $itemId) {
                 if (!$inventoryItem = $inventoryItemRepo->find($itemId)) {
                     $this->addFlash("error", "Item ID {$itemId} cannot be moved - it does not exist.");
@@ -92,6 +93,7 @@ class ItemMoveController extends Controller
                         }
                     }
                 }
+                $lastItemId = $itemId;
             }
 
             if ($updatedItems > 0) {
@@ -146,7 +148,12 @@ class ItemMoveController extends Controller
                 }
             }
 
-            return $this->redirectToRoute('item_list');
+            if (count($idArray) > 1) {
+                return $this->redirectToRoute('item_list');
+            } else {
+                return $this->redirectToRoute('item', ['id' => $lastItemId]);
+            }
+
         }
 
         return $this->render(
