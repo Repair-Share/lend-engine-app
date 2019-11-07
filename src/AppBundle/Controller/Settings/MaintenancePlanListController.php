@@ -55,25 +55,25 @@ class MaintenancePlanListController extends Controller
         $modalUrl = $this->generateUrl('maintenance_plan');
 
         $helpText = <<<EOT
-<h4 style="margin-top: 0px;">About maintenance plans</h4>
+<h4 style="margin-top: 0px;">About maintenance</h4>
 <p>These are used when you have to manage <strong>regular repair, cleaning or check processes</strong> for your items.</p>
 <ul>
-<li>Define a plan (such as "Annual electrical test")</li>
-<li>Edit items to assign them one or more plans.</li>
+<li>Define a type (such as "Annual electrical test" or "Ad hoc service")</li>
+<li>Edit items to assign them one or more types.</li>
 <li>Schedule the first maintenance activity.</li>
 <li>When the maintenance is completed, the next one will be automatically created.
 </ul>
 <p>Alternatively, you can automatically <strong>create a single maintenance</strong> for an item as soon as it's checked in, perhaps for a safety check.</p>
-<p>Files and notes can be added to maintenance plans for a full record of maintenance history.</p>
+<p>Files and notes can be added to maintenance activity for a full record of maintenance history.</p>
 EOT;
 
         return $this->render(
             'lists/setup_list.html.twig',
             [
-                'title'      => 'Maintenance plans',
-                'pageTitle'  => 'Maintenance plans',
+                'title'      => 'Maintenance types',
+                'pageTitle'  => 'Maintenance types',
                 'entityName' => 'MaintenancePlan',
-                'addButtonText' => 'Add a maintenance plan',
+                'addButtonText' => 'Add a maintenance type',
                 'tableRows'  => $tableRows,
                 'tableHeader' => $tableHeader,
                 'modalUrl' => $modalUrl,

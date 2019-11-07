@@ -14,7 +14,7 @@
 
     {% if maintenancePlans|length == 0 %}
         <div class="alert alert-warning">
-            You don't have any maintenance plans set up. Start by adding one at <strong>Settings &raquo; Maintenance plans</strong>.
+            You don't have any maintenance types set up. Start by adding one at <strong>Settings &raquo; Maintenance</strong>.
         </div>
     {% endif %}
 
@@ -24,7 +24,7 @@
                 <div class="col-md-11 filter-fields">
                     <div class="row">
                         <div class="col-md-3">
-                            <label>Maintenance plan</label>
+                            <label>Maintenance type</label>
                             <select name="maintenancePlanId" class="form-control">
                                 <option value="">All</option>
                                 {% for plan in maintenancePlans %}

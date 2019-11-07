@@ -25,7 +25,7 @@ class MaintenancePlanController extends Controller
                 ->find($id);
             if (!$maintenancePlan) {
                 throw $this->createNotFoundException(
-                    'No maintenance plan for id '.$id
+                    'No maintenance type for id '.$id
                 );
             }
         } else {
@@ -48,7 +48,7 @@ class MaintenancePlanController extends Controller
 
             $em->persist($maintenancePlan);
             $em->flush();
-            $this->addFlash('success', 'Plan saved.');
+            $this->addFlash('success', 'Saved.');
             return $this->redirectToRoute('maintenance_plans');
 
         }
@@ -56,7 +56,7 @@ class MaintenancePlanController extends Controller
         return $this->render(
             'modals/settings/maintenance_plan.html.twig',
             array(
-                'title' => 'Maintenance plan',
+                'title' => 'Maintenance type',
                 'subTitle' => '',
                 'form' => $form->createView()
             )

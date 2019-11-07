@@ -22,7 +22,7 @@
 
             {% if item.maintenancePlans|length == 0 %}
                 <div class="alert alert-warning">
-                    This item isn't assigned any maintenance plans.
+                    This item isn't assigned any maintenance types.
                 </div>
             {% endif %}
 
@@ -77,7 +77,7 @@
 {% else %}
 
     <div class="page-help">
-        You don't have any maintenance plans yet. Get started at Settings &raquo; Maintenance plans.
+        You don't have any maintenance types yet. Get started at Settings &raquo; Maintenance.
         <span style="display: none;">{{ form_row(form.maintenancePlans) }}</span>
     </div>
 

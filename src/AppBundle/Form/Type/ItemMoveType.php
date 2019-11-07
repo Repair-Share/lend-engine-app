@@ -37,7 +37,7 @@ class ItemMoveType extends AbstractType
             'class' => 'AppBundle:InventoryLocation',
             'choices' => $locations,
             'choice_label' => $choiceLabel,
-            'label' => 'Move to:',
+            'label' => 'Move to',
             'required' => true,
             'data' => $defaultValue,
             'attr' => [

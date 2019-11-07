@@ -78,7 +78,7 @@ class MaintenanceService
 
             /** @var $plan \AppBundle\Entity\MaintenancePlan */
             if (!$plan = $planRepo->find($planId)) {
-                $this->errors[] = "Cannot find maintenance plan with ID {$planId}";
+                $this->errors[] = "Cannot find maintenance type with ID {$planId}";
                 return false;
             }
 
