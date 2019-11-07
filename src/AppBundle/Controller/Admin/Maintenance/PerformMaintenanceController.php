@@ -48,7 +48,8 @@ class PerformMaintenanceController extends Controller
                     $maintenance->setCompletedBy($this->getUser());
                 }
 
-                if ($form->get('createNext')->getData() == true) {
+                if ($form->get('createNext')->getData() == true && $maintenance->getMaintenancePlan()->getInterval() > 0) {
+
                     $next = new Maintenance();
                     $dueAt = clone($maintenance->getDueAt());
                     $n = $maintenance->getMaintenancePlan()->getInterval();
@@ -58,7 +59,7 @@ class PerformMaintenanceController extends Controller
                     $next->setMaintenancePlan($maintenance->getMaintenancePlan());
                     $service->save($next);
 
-                    $this->addFlash("success", "The next maintenance has been scheduled.");
+                    $this->addFlash("success", "The next maintenance has been scheduled for {$n} months time.");
                 }
 
             }

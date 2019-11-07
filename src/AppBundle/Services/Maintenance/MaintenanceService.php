@@ -27,7 +27,7 @@ class MaintenanceService
 
     /**
      * @param $id
-     * @return null|object
+     * @return null|Maintenance
      */
     public function get($id)
     {
@@ -50,7 +50,7 @@ class MaintenanceService
     {
         $itemId = $data['itemId'];
         $planId = $data['planId'];
-        $date   = $data['date'];
+        $date   = $data['date']; // DateTime
 
         $itemRepo = $this->em->getRepository('AppBundle:InventoryItem');
         $planRepo = $this->em->getRepository('AppBundle:MaintenancePlan');
@@ -70,6 +70,7 @@ class MaintenanceService
                 return false;
             }
 
+            /** @var $plan \AppBundle\Entity\MaintenancePlan */
             if (!$plan = $planRepo->find($planId)) {
                 $this->errors[] = "Cannot find maintenance plan with ID {$planId}";
                 return false;
@@ -80,6 +81,10 @@ class MaintenanceService
             $maintenance = new Maintenance();
             $maintenance->setInventoryItem($item);
             $maintenance->setMaintenancePlan($plan);
+
+            if ($provider = $plan->getProvider()) {
+                $maintenance->setAssignedTo($provider);
+            }
 
         }
 

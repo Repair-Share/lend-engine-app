@@ -137,8 +137,6 @@ services:
         arguments:
             - "@doctrine.orm.entity_manager"
 
-    ## ENTITY SERVICES
-
     service.contact:
         class: AppBundle\Services\Contact\ContactService
         arguments:
@@ -209,6 +207,16 @@ services:
             - "@service.booking"
             - "@settings"
 
+    service.checkin:
+        class: AppBundle\Services\Loan\CheckInService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@service.contact"
+            - "@service.inventory"
+            - "@service.waiting_list"
+            - "@service.maintenance"
+            - "@security.token_storage"
+
     service.waiting_list:
         class: AppBundle\Services\WaitingList\WaitingListService
         arguments:
@@ -216,7 +224,9 @@ services:
             - "@service_container"
             - "@twig"
 
-    ## END ENTITY SERVICES
+
+
+
 
     service.stripe:
         class: AppBundle\Services\StripeHandler

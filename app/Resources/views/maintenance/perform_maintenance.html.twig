@@ -43,7 +43,6 @@
 
         </span>
 
-
         <div>
         {% if maintenance.maintenancePlan.description %}
             {{ maintenance.maintenancePlan.description|nl2br }}
@@ -64,7 +63,7 @@
                 <tr><td>Item ID</td><td>{{ item.id }}</td></tr>
                 <tr><td>Condition</td><td>{{ item.condition.name }}</td></tr>
                 <tr><td>Code</td><td>{{ item.sku }}</td></tr>
-                <tr><td>Serial number</td><td>{{ item.serial }}</td></tr>
+                <tr><td>Serial</td><td>{{ item.serial }}</td></tr>
             </table>
 
             <div class="help-block">
@@ -177,7 +176,7 @@
 
         $(".content").on('change', "#maintenance_status", function() {
             console.log( $(this).val() );
-            if ($(this).val() == 'completed') {
+            if ($(this).val() == 'completed' && {{ maintenance.maintenancePlan.afterEachLoan }} == 0) {
                 $("#autoCreateNext").fadeIn();
                 $("#maintenance_createNext").prop('checked', true);
                 $("#start-maintenance").hide();

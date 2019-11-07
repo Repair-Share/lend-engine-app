@@ -33,6 +33,9 @@ class LoanCheckInController extends Controller
             return $this->redirectToRoute('home');
         }
 
+        /** @var \AppBundle\Services\Loan\CheckInService $service */
+        $service = $this->get('service.checkin');
+
         /** @var \AppBundle\Entity\LoanRow $loanRow */
         $loanRowRepo = $em->getRepository('AppBundle:LoanRow');
 
@@ -107,9 +110,16 @@ class LoanCheckInController extends Controller
 
             // Perform the main action for each item
             $checkInItems = $request->get('check_in');
+
             foreach ($checkInItems AS $rowId) {
                 $loanRow = $loanRowRepo->find($rowId);
-                $this->checkInItem($toLocation, $loanRow, $userNote, $checkInFee, $assignToContact);
+                if ($service->checkInRow($toLocation, $loanRow, $userNote, $checkInFee, $assignToContact)) {
+                    $this->addFlash('success', $loanRow->getInventoryItem()->getName().' checked in to "'.$toLocation->getName().'"');
+                } else {
+                    foreach ($service->errors AS $error) {
+                        $this->addFlash("error", $error);
+                    }
+                }
             }
 
             $returnedRows = 0;
@@ -149,82 +159,5 @@ class LoanCheckInController extends Controller
 
     }
 
-    /**
-     * @param InventoryLocation $location
-     * @param LoanRow $loanRow
-     * @param string $userNote
-     * @param int $checkInFee
-     * @param null $contact
-     */
-    private function checkInItem(InventoryLocation $location,
-                                 LoanRow $loanRow,
-                                 $userNote = '',
-                                 $checkInFee = 0,
-                                 $assignToContact = null) {
-
-        // Set up
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->getUser();
-
-        /** @var \AppBundle\Services\InventoryService $inventoryService */
-        $inventoryService = $this->get('service.inventory');
-
-        /** @var \AppBundle\Services\Contact\ContactService $contactService */
-        $contactService = $this->get('service.contact');
-
-        /** @var \AppBundle\Services\WaitingList\WaitingListService $waitingListService */
-        $waitingListService = $this->get('service.waiting_list');
-
-        $loan           = $loanRow->getLoan();
-        $inventoryItem  = $loanRow->getInventoryItem();
-
-        if ( $inventoryService->itemMove($inventoryItem, $location, $loanRow, $assignToContact, $userNote) ) {
-
-            $this->addFlash('success', $inventoryItem->getName().' checked in to "'.$location->getName().'"');
-
-            $noteText = 'Checked in <strong>'.$inventoryItem->getName().'</strong>';
-            if ($userNote) {
-                $noteText .= '<br>'.$userNote;
-            }
-
-            // Add a fee
-            if ($checkInFee > 0) {
-                $payment = new Payment();
-                $payment->setAmount(-$checkInFee);
-                $payment->setContact($loanRow->getLoan()->getContact());
-                $payment->setLoan($loanRow->getLoan());
-                $payment->setNote("Check-in fee for ".$inventoryItem->getName().".");
-                $payment->setCreatedBy($user);
-                $payment->setInventoryItem($inventoryItem);
-                $em->persist($payment);
-
-                try {
-                    $em->flush();
-                    $this->addFlash('success', 'Check-in fee added to member account.');
-                    $noteText .= ' (check-in fee '.number_format($checkInFee, 2).")";
-                    $contactService->recalculateBalance($loanRow->getLoan()->getContact());
-                } catch (\Exception $generalException) {
-
-                }
-            }
-
-            // Add a note to the loan and contact
-            $note = new Note();
-            $note->setCreatedBy($user);
-            $note->setLoan($loan);
-            $note->setContact($loanRow->getLoan()->getContact());
-            $note->setText($noteText);
-            $em->persist($note);
-            try {
-                $em->flush();
-            } catch (\Exception $generalException) {
-                $this->addFlash("error", "There was an error checking in item: " . $inventoryItem->getName());
-            }
-
-            // Process items that may be on the waiting list
-            $waitingListService->process($inventoryItem);
-
-        }
-    }
 
 }

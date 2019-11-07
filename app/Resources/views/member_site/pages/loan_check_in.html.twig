@@ -71,14 +71,26 @@
                             <strong>{{ row.inventoryItem.name }}</strong>
 
                             {% if tenantInformation.setting('use_labels') %}
-                            <div>Barcode: {{ row.inventoryItem.id }}</div>
+                                <div>Barcode: {{ row.inventoryItem.id }}</div>
                             {% endif %}
 
                             {% if row.inventoryItem.serial %}
                                 <div>{% trans %}public_item.serial{% endtrans %}: {{ row.inventoryItem.serial }}</div>
                             {% endif %}
 
+                            {% if row.inventoryItem.sku %}
+                                <div>{% trans %}public_item.code{% endtrans %}: {{ row.inventoryItem.sku }}</div>
+                            {% endif %}
+
                             <div>Due in at {{ row.dueInAt|date("d F g:i a") }}</div>
+
+                            {% for plan in row.inventoryItem.maintenancePlans %}
+                                {% if plan.afterEachLoan == true %}
+                                    <div style="padding: 10px 0; color: #185fdb">
+                                        {{ plan.name }} will be scheduled upon check-in.
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
                         </td>
                         <td>
                             {% if canBulkCheckIn or row.id == loanRow.id %}

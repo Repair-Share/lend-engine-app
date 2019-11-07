@@ -33,6 +33,7 @@ class MaintenancePlanController extends Controller
         }
 
         $formOptions = [
+            'em'     => $em,
             'action' => $this->generateUrl('maintenance_plan', array('id' => $id))
         ];
         $form = $this->createForm(MaintenancePlanType::class, $maintenancePlan, $formOptions);
@@ -40,6 +41,10 @@ class MaintenancePlanController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            if ($maintenancePlan->getInterval()) {
+                $maintenancePlan->setAfterEachLoan(false);
+            }
 
             $em->persist($maintenancePlan);
             $em->flush();

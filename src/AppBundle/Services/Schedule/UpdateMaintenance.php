@@ -107,10 +107,10 @@ class UpdateMaintenance
                         foreach ($overdueMaintenance AS $m) {
 
                             // Set it as overdue
-//                            $m->setStatus(Maintenance::STATUS_OVERDUE);
-//
-//                            $tenantEntityManager->persist($m);
-//                            $tenantEntityManager->flush();
+                            $m->setStatus(Maintenance::STATUS_OVERDUE);
+
+                            $tenantEntityManager->persist($m);
+                            $tenantEntityManager->flush();
 
                             $resultString .= $m->getId().PHP_EOL;
 

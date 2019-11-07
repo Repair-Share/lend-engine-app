@@ -246,8 +246,8 @@ class ItemType extends AbstractType
         $maintenancePlans = $maintenancePlanRepo->findAllOrderedByName();
         $builder->add('maintenancePlans', EntityType::class, array(
             'class' => 'AppBundle:MaintenancePlan',
-            'choice_label' => 'name',
-            'label' => 'Maintenance plans',
+            'choice_label' => 'fullName',
+            'label' => 'Maintenance plans applicable for this item',
             'choices' => $maintenancePlans,
             'required' => false,
             'multiple' => true,

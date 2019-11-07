@@ -48,14 +48,28 @@ class MaintenancePlan
      *
      * @ORM\Column(name="interval_months", type="integer", nullable=true)
      */
-    private $interval = 12;
+    private $interval = null;
     
     /**
      * @var boolean
      *
      * @ORM\Column(name="after_each_loan", type="boolean")
      */
-    private $afterEachLoan = false;
+    private $afterEachLoan = true;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="prevent_borrows", type="boolean")
+     */
+    private $preventBorrowsIfOverdue = false;
+
+    /**
+     * @var Contact
+     * @ORM\ManyToOne(targetEntity="Contact")
+     * @ORM\JoinColumn(name="provider", referencedColumnName="id", nullable=true)
+     */
+    private $provider;
 
     /**
      * Get id
@@ -175,5 +189,52 @@ class MaintenancePlan
     public function getAfterEachLoan()
     {
         return $this->afterEachLoan;
+    }
+
+    /**
+     * @param Contact $provider
+     * @return $this
+     */
+    public function setProvider($provider)
+    {
+        $this->provider = $provider;
+
+        return $this;
+    }
+
+    /**
+     * @return Contact
+     */
+    public function getProvider()
+    {
+        return $this->provider;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPreventBorrowsIfOverdue()
+    {
+        return $this->preventBorrowsIfOverdue;
+    }
+
+    /**
+     * @param bool $val
+     * @return $this
+     */
+    public function setPreventBorrowsIfOverdue($val)
+    {
+        $this->preventBorrowsIfOverdue = $val;
+
+        return $this;
+    }
+
+    public function getFullName()
+    {
+        if ($this->interval > 0) {
+            return $this->name.' (every '.$this->interval.' months)';
+        } else {
+            return $this->name.' (after each check-in)';
+        }
     }
 }

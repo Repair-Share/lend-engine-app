@@ -1,0 +1,84 @@
+{% if maintenancePlans|length > 0 %}
+
+    <div class="row">
+        <div class="col-md-3">
+            <br>
+            {{ form_row(form.maintenancePlans) }}
+
+            <br>
+            {% for plan in item.maintenancePlans %}
+                <div style="margin-top: 10px">
+                    <a href="{{ path('schedule_maintenance', {itemId: item.id, planId: plan.id}) }}"
+                       class="btn btn-xs btn-default modal-link">
+                        Schedule {{ plan.name }}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-9">
+            <h4>
+                Maintenance history
+            </h4>
+
+            {% if item.maintenancePlans|length == 0 %}
+                <div class="alert alert-warning">
+                    This item isn't assigned any maintenance plans.
+                </div>
+            {% endif %}
+
+            {% if item.maintenances|length > 0 %}
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Due</th>
+                        <th>Status</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    {% for maintenance in item.maintenances %}
+                        <tr>
+                            <td>{{ maintenance.maintenancePlan.name }}</td>
+                            <td>{{ maintenance.dueAt|date("d F Y") }}</td>
+                            <td>
+                                {% if maintenance.status == 'planned' %}
+                                    <label class="label label-default">Planned</label>
+                                {% elseif maintenance.status == 'in_progress' %}
+                                    <label class="label bg-aqua">In progress</label>
+                                {% elseif maintenance.status == 'completed' %}
+                                    <label class="label bg-green">Completed</label>
+                                {% elseif maintenance.status == 'skipped' %}
+                                    <label class="label bg-orange">Skipped</label>
+                                {% elseif maintenance.status == 'overdue' %}
+                                    <label class="label bg-red">Overdue</label>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if maintenance.fileAttachments|length > 0 %}
+                                    <i class="fa fa-paperclip" style="color: black"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ path('perform_maintenance', {id: maintenance.id}) }}">Open / view</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <div class="page-help">
+                    No maintenance has taken place.
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% else %}
+
+    <div class="page-help">
+        You don't have any maintenance plans yet. Get started at Settings &raquo; Maintenance plans.
+        <span style="display: none;">{{ form_row(form.maintenancePlans) }}</span>
+    </div>
+
+{% endif %}
