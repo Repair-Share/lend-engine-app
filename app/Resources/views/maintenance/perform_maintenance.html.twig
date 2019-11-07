@@ -81,6 +81,12 @@
                                      src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/large/{{ image.imageName }}"
                                      class="img-thumbnail img-responsive">
                             </a>
+                            <div style="position:absolute; bottom: 10px; left: 25px;">
+                                    <a href="{{ path('item', {id: item.id}) }}" class="btn btn-xs btn-primary role-admin">Edit</a>
+                                    {% if item.inventoryLocation.id > 1 %}
+                                        <a href="{{ url('item_move', {idSet: item.id}) }}" class="btn btn-xs btn-primary modal-link">Move / service</a>
+                                    {% endif %}
+                                </div>
                         </div>
                     {% endfor %}
                 {% else %}

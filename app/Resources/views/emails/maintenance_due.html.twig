@@ -13,9 +13,12 @@
     {% endif %}
     {% for m in maintenance %}
         <div style="padding-bottom: 10px;">
-            <strong>{{ m.inventoryItem.name }}</strong>
-            <br>{{ m.maintenancePlan.name }} due {{ m.dueAt|date('d F') }}
+            <strong>{{ m.inventoryItem.name }}</strong><br>
+            Code: {{ m.inventoryItem.sku }}<br>
+            Serial: {{ m.inventoryItem.serial }}<br>
+            {{ m.maintenancePlan.name }} due {{ m.dueAt|date('d F') }}
         </div>
     {% endfor %}
+    <br><br>
     <a href="http://{{ domain }}">Click here to log in</a> and then visit Items &raquo; Maintenance.
 {% endblock %}

@@ -33,6 +33,9 @@ class ItemMoveController extends Controller
         /** @var \AppBundle\Services\WaitingList\WaitingListService $waitingListService */
         $waitingListService = $this->get('service.waiting_list');
 
+        /** @var \AppBundle\Services\Maintenance\MaintenanceService $maintenanceService */
+        $maintenanceService = $this->get('service.maintenance');
+
         /** @var \AppBundle\Services\TenantService $tenantService */
         $tenantService = $this->get('service.tenant');
 
@@ -65,16 +68,13 @@ class ItemMoveController extends Controller
 
             $toLocation = $form->get('location')->getData();
             $userNote   = $form->get('notes')->getData();
-            $cost       = $form->get('cost')->getData();
+            $maintenancePlan = $form->get('maintenancePlan')->getData();
 
-            if (!$contact = $form->get('contact')->getData()) {
-                $contact = null;
-            }
-
-            $assignedItemNames = '';
             $updatedItems = 0;
 
             $lastItemId = null;
+            $maintenanceActions = [];
+
             foreach ($idArray AS $itemId) {
                 if (!$inventoryItem = $inventoryItemRepo->find($itemId)) {
                     $this->addFlash("error", "Item ID {$itemId} cannot be moved - it does not exist.");
@@ -84,12 +84,23 @@ class ItemMoveController extends Controller
                         $this->addFlash("error", "Item ID {$itemId} cannot be moved - it is on loan.");
                         continue;
                     }
-                    if ( $inventoryService->itemMove($inventoryItem, $toLocation, null, $contact, $userNote, $cost) ) {
+                    if ( $inventoryService->itemMove($inventoryItem, $toLocation, null, null, $userNote) ) {
                         $updatedItems++;
-                        $assignedItemNames .= '<div>- '.$inventoryItem->getName().'</div>';
+
                         if ($toLocation->getIsAvailable() == true) {
-                            // Process items that may be on the waiting list
                             $waitingListService->process($inventoryItem);
+                        }
+
+                        if ($maintenancePlan) {
+                            $mData = [
+                                'itemId' => $inventoryItem->getId(),
+                                'planId' => $maintenancePlan->getId(),
+                                'note' => $userNote,
+                                'date' => new \DateTime()
+                            ];
+                            if ($m = $maintenanceService->scheduleMaintenance($mData)) {
+                                $maintenanceActions[] = $m;
+                            }
                         }
                     }
                 }
@@ -100,48 +111,38 @@ class ItemMoveController extends Controller
                 $this->addFlash('success', "{$updatedItems} item(s) updated OK.");
             }
 
-            // Send an email to the new assignee
-            if ($contact && $assignedItemNames) {
+            // Send an email to the provider of the plan
+            if ($maintenancePlan && $maintenancePlan->getProvider() && count($maintenanceActions) > 0) {
 
+                $provider       = $maintenancePlan->getProvider();
                 $senderName     = $tenantService->getCompanyName();
                 $replyToEmail   = $tenantService->getReplyToEmail();
                 $fromEmail      = $tenantService->getSenderEmail();
                 $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
-                $toEmail        = $contact->getEmail();
-                $user           = $this->getUser();
+                $toEmail        = $provider->getEmail();
 
                 try {
                     $client = new PostmarkClient($postmarkApiKey);
 
-                    // Save and switch locale for sending the email
-                    $sessionLocale = $this->get('translator')->getLocale();
-                    $this->get('translator')->setLocale($contact->getLocale());
-
                     $message = $this->renderView(
-                        'emails/item_assign.html.twig',
+                        'emails/maintenance_due.html.twig',
                         [
-                            'itemNames'       => $assignedItemNames,
-                            'newLocationName' => $toLocation->getSite()->getName().': '.$toLocation->getName(),
-                            'assignor'    => $user,
-                            'assignee'    => $contact,
-                            'notes'       => $userNote
+                            'assignee' => $provider,
+                            'maintenance' => $maintenanceActions,
+                            'domain' => $tenantService->getAccountDomain()
                         ]
                     );
 
                     $client->sendEmail(
                         "{$senderName} <{$fromEmail}>",
                         $toEmail,
-                        'You have been assigned item(s)',
+                        'You have been assigned item(s) for maintenance',
                         $message,
                         null,
                         null,
                         true,
                         $replyToEmail
                     );
-
-                    // Revert locale for the UI
-                    $this->get('translator')->setLocale($sessionLocale);
-                    $this->addFlash('success', "An email was sent to ".$contact->getName());
 
                 } catch (\Exception $generalException) {
                     $this->addFlash('error', 'Failed to send email:' . $generalException->getMessage());
