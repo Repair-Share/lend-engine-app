@@ -240,11 +240,7 @@ class ItemListController extends Controller
             $resultsTo = $totalRecords;
         }
 
-        if ($request->get('e')) {
-            $template = 'member_site/items_embedded.html.twig';
-        } else {
-            $template = 'member_site/items.html.twig';
-        }
+        $template = 'member_site/item/items.html.twig';
 
         $dateFrom = null;
         $dateTo = null;

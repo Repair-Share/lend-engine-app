@@ -10,11 +10,10 @@ class ItemMoveControllerTest extends AuthenticatedControllerTest
     public function testMoveAction()
     {
         $crawler = $this->client->request('GET', '/admin/item/move/1001');
-        $this->assertContains('Move / assign', $crawler->html());
+        $this->assertContains('Move or service item', $crawler->html());
 
         $form = $crawler->filter('form[name="item_move"]')->form(array(
             'item_move[location]' => "2",
-            'item_move[contact]'  => "2",
             'item_move[notes]'    => "Unit test's move notes",
             'item_move[cost]'     => '1.50',
         ),'POST');

@@ -381,7 +381,7 @@ class ItemController extends Controller
         // Get active loan or reservation information
         $loanRowDetail = $this->getLoanRowDetail($product);
 
-        return $this->render('item/item.html.twig', array(
+        return $this->render('admin/item/item.html.twig', array(
             'form' => $form->createView(),
             'title' => $pageTitle,
             'countItems' => count($items),

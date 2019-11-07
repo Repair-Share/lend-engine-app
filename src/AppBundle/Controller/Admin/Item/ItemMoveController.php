@@ -158,7 +158,7 @@ class ItemMoveController extends Controller
         }
 
         return $this->render(
-            'shared/modals/item_move.html.twig',
+            'admin/item/modal_item_move.html.twig',
             array(
                 'title' => $modalTitle,
                 'idSet' => $idSet,

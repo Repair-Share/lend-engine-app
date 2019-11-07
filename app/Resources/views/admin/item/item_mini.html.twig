@@ -1,12 +1,6 @@
-{% if loanId is defined %}
-    {% set itemPreviewUrl = path('public_product', {productId: item.id, loanId: loanId, modal: 'true'}) %}
-{% else %}
-    {% set itemPreviewUrl = path('public_product', {productId: item.id, modal: 'true'}) %}
-{% endif %}
-
 {% if item.images|length > 0 %}
     <div class="item-thumb hidden-xs">
-        <a href="{{ itemPreviewUrl }}" class="modal-link">
+        <a href="{{ path('item', {id: item.id}) }}">
             <img class="img-rounded img-thumbnail" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ item.imageName }}">
             {% if item.images | length > 1 %}
                 <div class="item-image-count">+{{ (item.images|length - 1) }} more</div>
@@ -26,7 +20,7 @@
     {% elseif item.itemType == 'stock' %}
         <i class="fa fa-cube" style="color:#000"></i>
     {% endif %}
-    <a href="{{ itemPreviewUrl }}" class="modal-link">{{ item.name }}</a>
+    <a href="{{ path('item', {id: item.id}) }}">{{ item.name }}</a>
 </span>
 
 {{ include('item/item_details.html.twig') }}

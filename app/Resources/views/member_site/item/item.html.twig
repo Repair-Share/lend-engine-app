@@ -33,8 +33,13 @@
         </div>
     </div>
 
+    {% if is_granted('ROLE_ADMIN') %}
+        {% set item = product %}
+        {{ include('item/maintenance_warning.html.twig') }}
+    {% endif %}
+
     <div id="item-core">
-        {{ include('member_site/cores/item_core.html.twig') }}
+        {{ include('member_site/item/item_core.html.twig') }}
     </div>
 
     {% if app.request.get('extend') %}

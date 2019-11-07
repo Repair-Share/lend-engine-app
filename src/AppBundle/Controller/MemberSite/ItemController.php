@@ -5,6 +5,7 @@ namespace AppBundle\Controller\MemberSite;
 use AppBundle\Entity\CreditCard;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
+use AppBundle\Entity\Maintenance;
 use AppBundle\Entity\Note;
 use AppBundle\Entity\Payment;
 use AppBundle\Form\Type\LoanExtendType;
@@ -129,13 +130,7 @@ class ItemController extends Controller
         }
 
         $pickupTime = new \DateTime();
-
-        if ($request->get('modal') == 'true') {
-            $template = 'shared/modals/item.html.twig';
-        } else {
-            $template = 'member_site/pages/item.html.twig';
-        }
-
+        $template = 'member_site/item/item.html.twig';
         $formView = null;
 
         $loanId = '';
@@ -207,6 +202,14 @@ class ItemController extends Controller
             }
         }
 
+        $maintenanceOverdue = false;
+        /** @var \AppBundle\Entity\Maintenance $maintenance */
+        foreach ($product->getMaintenances() AS $maintenance) {
+            if ($maintenance->getStatus() == Maintenance::STATUS_OVERDUE && $maintenance->getMaintenancePlan()->getPreventBorrowsIfOverdue()) {
+                $maintenanceOverdue = true;
+            }
+        }
+
         return $this->render($template, array(
             'product' => $product,
             'user' => $contact,
@@ -221,6 +224,8 @@ class ItemController extends Controller
             'reservationFee' => $reservationFee,
             'isMultiSite' => $isMultiSite,
             'sites' => $sites,
+
+            'maintenanceOverdue' => $maintenanceOverdue,
 
             // When extending a loan we need the existing times to check with
             'loanId' => $loanId,

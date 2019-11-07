@@ -136,7 +136,7 @@
 
             {% else %}
 
-                {#Kit item without a location#}
+                {#Kit item (without a location) #}
 
             {% endif %}
 
@@ -214,6 +214,7 @@
                     </div>
                 {% endfor %}
             </div>
+            <br>
         {% endif %}
 
         {#CUSTOM FIELDS#}
@@ -260,10 +261,18 @@
                 {#Item is reservable, or we are admin#}
                 {% if user.activeMembership is defined and user.activeMembership %}
 
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <a href="#" class="btn btn-success button-borrow" id="button-borrow">Lend / Reserve</a>
+                    {% if maintenanceOverdue == true %}
+
+                        <div class="alert alert-warning no-borrow">
+                            {% trans %}public_item.not_reservable{% endtrans %}
+                        </div>
+
                     {% else %}
-                        <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="#" class="btn btn-success button-borrow" id="button-borrow">Lend / Reserve</a>
+                        {% else %}
+                            <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>
+                        {% endif %}
                     {% endif %}
 
                     <div class="alert alert-danger" id="pickup-date-error" style="display: none;">

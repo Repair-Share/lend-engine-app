@@ -56,7 +56,7 @@ class ItemArchiveController extends Controller
         }
 
         return $this->render(
-            'shared/modals/item_archive.html.twig',
+            'admin/item/modal_item_archive.html.twig',
             array(
                 'item' => $inventoryItem,
                 'form' => $form->createView()

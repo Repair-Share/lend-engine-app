@@ -182,7 +182,7 @@
 
         $(".content").on('change', "#maintenance_status", function() {
             console.log( $(this).val() );
-            if ($(this).val() == 'completed' && {{ maintenance.maintenancePlan.afterEachLoan }} == 0) {
+            if ($(this).val() == 'completed' && {{ maintenance.maintenancePlan.afterEachLoan*1 }} == 0) {
                 $("#autoCreateNext").fadeIn();
                 $("#maintenance_createNext").prop('checked', true);
                 $("#start-maintenance").hide();

@@ -59,7 +59,7 @@ class AdminLoanListController extends Controller
         $reserved = (int)$loanService->countLoans(Loan::STATUS_RESERVED);
 
         return $this->render(
-            'loan/loan_list.html.twig',
+            'admin/loan/loan_list.html.twig',
             array(
                 'searchString'  => $searchString,
                 'statuses'      => $statuses,

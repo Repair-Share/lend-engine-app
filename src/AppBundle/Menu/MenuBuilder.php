@@ -59,8 +59,6 @@ class MenuBuilder
         $this->addMenuItem('Items', 'null', 'fa-cubes');
         $this->addChildItem('Items', 'Browse items', 'item_list', '', '', []);
 
-        $this->addChildItem('Items', 'Assigned to me', 'item_list', '', '', ['filterAssignedTo' => $user->getId()]);
-
         if ( $this->container->get('security.authorization_checker')->isGranted("ROLE_SUPER_USER") ) {
             $this->addChildItem('Items', 'Bulk update <sup>beta</sup>', 'import_items', '');
         }

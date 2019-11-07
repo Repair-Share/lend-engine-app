@@ -7,5 +7,5 @@
             <a target="_blank" href="{{ path('printable_catalogue', {category: app.request.get('tagId'), columns: 2}) }}">Print this category</a>
         </div>
     {% endif %}
-    {{ include('member_site/cores/items_core.html.twig') }}
+    {{ include('member_site/item/items_core.html.twig') }}
 {% endblock %}
