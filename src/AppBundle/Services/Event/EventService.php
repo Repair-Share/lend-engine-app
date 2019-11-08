@@ -29,12 +29,14 @@ class EventService
 
     /**
      * @param $id
-     * @return null|object
+     * @return Event|bool
      */
     public function get($id)
     {
         /** @var \AppBundle\Entity\Event $event */
-        $event = $this->em->getRepository('AppBundle:Event')->find($id);
+        if (!$event = $this->em->getRepository('AppBundle:Event')->find($id)) {
+            return false;
+        }
         $event = $this->hydrateDates($event);
         return $event;
     }
