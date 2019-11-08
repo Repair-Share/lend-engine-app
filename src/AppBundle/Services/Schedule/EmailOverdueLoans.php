@@ -102,6 +102,11 @@ class EmailOverdueLoans
 
                 try {
 
+                    // Mark loans as overdue
+                    /** @var \AppBundle\Repository\LoanRepository $repository */
+                    $repository = $tenantEntityManager->getRepository('AppBundle:Loan');
+                    $repository->setLoansOverdue();
+
                     /** @var $loanRowRepo \AppBundle\Repository\LoanRowRepository */
                     $loanRowRepo = $tenantEntityManager->getRepository('AppBundle:LoanRow');
 

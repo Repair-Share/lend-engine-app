@@ -17,7 +17,7 @@
         This item is a kit of other parts. It has no inventory level or location.
     </div>
         <style>
-            .item-loan {
+            .hide-for-kits {
                 display: none;
             }
         </style>
@@ -27,18 +27,13 @@
         This is stock item (consumable)
     </div>
         <style>
-            .item-loan {
-                display: none;
-            }
-            .hide-for-stock-items {
+            .hide-for-stock {
                 display:none;
             }
         </style>
     {% else %}
         <style>
-            .item-loan {
-                display: block;
-            }
+
         </style>
     {% endif %}
 
@@ -185,7 +180,7 @@
                             <div class="col-md-5">
                                 {{ form_row(form.sku) }}
                             </div>
-                            <div class="col-md-7 item-loan">
+                            <div class="col-md-7 hide-for-kits hide-for-stock">
                                 {{ form_row(form.serial) }}
                             </div>
                         </div>
@@ -194,7 +189,7 @@
 
                         {{ form_row(form.tags) }}
 
-                        <div class="row hide-for-stock-items">
+                        <div class="row hide-for-stock">
                             <div class="col-md-6">
                                 {{ form_row(form.loanFee) }}
                             </div>
@@ -203,7 +198,7 @@
                             </div>
                         </div>
 
-                        <div class="row item-loan" style="{% if not tenantInformation.feature('Deposits') %}display: none;{% endif %}">
+                        <div class="row hide-for-kits hide-for-stock" style="{% if not tenantInformation.feature('Deposits') %}display: none;{% endif %}">
                             <div class="col-md-6">
                                 {{ form_row(form.depositAmount) }}
                             </div>
@@ -212,13 +207,13 @@
                             </div>
                         </div>
 
-                        <div class="item-loan">
+                        <div class="hide-for-kits hide-for-stock">
                             {{ form_row(form.condition) }}
                         </div>
 
                         {{ form_row(form.keywords) }}
 
-                        <div class="row item-loan">
+                        <div class="row hide-for-kits">
                             <div class="col-md-6">
                                 {{ form_row(form.priceCost) }}
                             </div>
@@ -245,9 +240,8 @@
 
                         {{ form_row(form.description) }}
 
-                        {{ form_row(form.componentInformation) }}
-
-                        <div class="hide-for-stock-items">
+                        <div class="hide-for-stock">
+                            {{ form_row(form.componentInformation) }}
                             {{ form_row(form.careInformation) }}
                         </div>
 
@@ -286,7 +280,7 @@
 
                                 {{ form_row(form.showOnWebsite) }}
 
-                                <div class="hide-for-stock-items">
+                                <div class="hide-for-stock">
                                     {{ form_row(form.isReservable) }}
                                 </div>
 
@@ -319,7 +313,9 @@
                         </div>
 
                         <br>
-                        {{ form_row(form.donatedBy) }}
+                        <div class="hide-for-kits hide-for-stock">
+                            {{ form_row(form.donatedBy) }}
+                        </div>
 
                         <div style="display: none;">
                             {{ form_row(form.ownedBy) }}
