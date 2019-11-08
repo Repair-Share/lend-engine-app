@@ -26,13 +26,13 @@
                         </strong>
                     {% endif %}
 
-                    {% if minLoanDays %}
+                    {% if minLoanDays and not is_granted('ROLE_ADMIN') %}
                         <div style="padding-right: 20px">
                             Minimum {{ minLoanDays|number_format(0) }} {% transchoice minLoanDays %}days{% endtranschoice %}
                         </div>
                     {% endif %}
 
-                    {% if maxLoanDays %}
+                    {% if maxLoanDays and not is_granted('ROLE_ADMIN') %}
                         <div style="padding-right: 20px">
                             Maximum {{ maxLoanDays|number_format(0) }} {% transchoice maxLoanDays %}days{% endtranschoice %}
                         </div>
@@ -47,10 +47,7 @@
                     {% endif %}
 
                     {% if is_granted('ROLE_ADMIN') %}
-                        <div style="padding-top: 10px;">
-                            As an administrator you are not limited to any minimum/maximum.
-                            <input type="checkbox" id="chooseAnyDates" checked style="display:none">
-                        </div>
+                        <input type="checkbox" id="chooseAnyDates" checked style="display:none">
                     {% endif %}
                 </div>
 
@@ -67,24 +64,23 @@
                 {% endif %}
 
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <h4>{% trans %}public_item.pickup_at{% endtrans %} ...</h4>
                         <div>
                             <a href="javascript:void(0);" class="show_date_from" id="choosePickup"></a> &nbsp;
                             <a href="javascript:void(0);" class="time ui-timepicker-input show_time_from" id="time_from_picker"></a>
                         </div>
                         <div class="multi-site"><a class="site_from" href="javascript:void(0);"></a></div>
-                        <button type="button" class="btn btn-success" data-dismiss="modal" id="choosePickupButton" style="margin: 10px 0;">
-                            {% trans %}public_item.button_choose_pickup{% endtrans %}
-                        </button>
 
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <div style="margin-top: 20px;">
-                                <button type="button" class="btn btn-xs btn-default" id="set-pickup-today">Today</button>
-                            </div>
-                        {% endif %}
+                        <div>
+                            <button type="button" class="btn btn-success" id="set-pickup-today">Today</button>
+                            <button type="button" class="btn btn-success" data-dismiss="modal" id="choosePickupButton">
+                                {% trans %}public_item.button_choose_pickup{% endtrans %}
+                            </button>
+                        </div>
+
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <h4>{% trans %}public_item.return_by{% endtrans %} ...</h4>
                         <div>
                             <a href="javascript:void(0);" class="show_date_to chooseReturn" id="chooseReturn"></a> &nbsp;
@@ -95,10 +91,8 @@
                             {% trans %}public_item.button_choose_return{% endtrans %}
                         </button>
                     </div>
-                    <div class="col-md-3" style="padding-top: 10px">
-                        <div style="font-size: 20px;">
-                            <span class="count_days">0</span>
-                        </div>
+                    <div class="col-md-2">
+                        <h4 class="count_days">0</h4>
                         <div style="font-weight: bold; font-size: 20px;">
                             {{ tenantInformation.currencySymbol }} <span class="total_fee">0</span>
                         </div>

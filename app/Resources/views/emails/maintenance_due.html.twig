@@ -14,8 +14,8 @@
     {% for m in maintenance %}
         <div style="padding-bottom: 10px;">
             <strong>{{ m.inventoryItem.name }}</strong><br>
-            Code: {{ m.inventoryItem.sku }}<br>
-            Serial: {{ m.inventoryItem.serial }}<br>
+            {% if m.inventoryItem.sku %}Code: {{ m.inventoryItem.sku }}<br>{% endif %}
+            {% if m.inventoryItem.serial %}Serial: {{ m.inventoryItem.serial }}<br>{% endif %}
             {{ m.maintenancePlan.name }} due {{ m.dueAt|date('d F') }}
         </div>
     {% endfor %}

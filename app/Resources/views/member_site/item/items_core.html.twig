@@ -37,7 +37,7 @@
         <input type="hidden" name="from" id="from-date" value="{{ app.request.get('from') }}">
         <input type="hidden" name="to" id="to-date" value="{{ app.request.get('to') }}">
 
-        <div class="row item-filter-dates">
+        <div class="row item-filter-dates hidden-xs">
             <div class="col-md-10">
                 {% trans %}public_misc.show_items_from{% endtrans %}
                 <a href="javascript:void(0);" id="from-date-picker">{% if dateFrom %}{{ dateFrom|date("l j F") }}{% else %}[ choose ]{% endif %}</a>
