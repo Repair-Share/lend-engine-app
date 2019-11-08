@@ -136,8 +136,8 @@ public_item:
   add_credit: Add credit
   pickup_at: From
   return_by: To
-  button_choose_pickup: Choose
-  button_choose_return: Choose
+  button_choose_pickup: Choose date
+  button_choose_return: Choose date
   cancel: Cancel
   basket_add: Add to basket
   locations: Available locations

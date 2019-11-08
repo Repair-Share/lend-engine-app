@@ -406,7 +406,7 @@
                 $("#time_from").val('');
 
                 $(".total_fee").html('0.00');
-                $(".count_days").html('0');
+                $(".count_days").html('');
                 $(".date_to").html('');
                 $(".site_to").html('');
                 $(".date_from").html('');
@@ -721,6 +721,7 @@
 
                 // Round to nearest day
                 days = Math.round(days);
+                hours = Math.round(hours);
 
                 if (fixedFeePricing == 1) {
                     totalFee = itemFee;
@@ -753,23 +754,6 @@
                     },
                     success: function(events) {
                         setBookableDays(events);
-//                        if (autoSetPickup && !hasBasket && isAdmin && itemLoanDays > 1) {
-//                            // Try and set the pickup date based on the user time and item location
-//                            window.setTimeout(function() {
-//                                var now = moment();
-//                                var currentSlot = isValidBookingTime(now);
-//                                if (currentSlot) {
-//                                    // We're at a[ny] site during opening hours, no need to click.
-//                                    // @TODO time should be validated against the item location
-////                                    if (window.confirm("Book from today?")) {
-//                                    console.log("Auto setting pickup time as site is open now.");
-//                                    setPickup(moment(currentSlot.start), moment(currentSlot.start), moment(currentSlot.end), itemSiteId, itemSiteName);
-////                                    }
-//                                } else {
-//                                    console.log("Can't auto-set the booking: "+now.format("YYYY-MM-DD h:mm a"));
-//                                }
-//                            }, 1000);
-//                        }
                     },
                     textColor: 'black',
                     className: 'siteOpening'

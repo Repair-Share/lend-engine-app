@@ -72,8 +72,10 @@
                         </div>
                         <div class="multi-site"><a class="site_from" href="javascript:void(0);"></a></div>
 
-                        <div>
+                        <div style="padding-bottom: 10px;">
                             <button type="button" class="btn btn-success" id="set-pickup-today">Today</button>
+                        </div>
+                        <div style="padding-bottom: 20px;">
                             <button type="button" class="btn btn-success" data-dismiss="modal" id="choosePickupButton">
                                 {% trans %}public_item.button_choose_pickup{% endtrans %}
                             </button>
@@ -90,9 +92,10 @@
                         <button type="button" class="btn btn-success chooseReturnButton" data-dismiss="modal" id="chooseReturnButton" style="margin-top: 10px; display: none">
                             {% trans %}public_item.button_choose_return{% endtrans %}
                         </button>
+                        <br>
                     </div>
                     <div class="col-md-2">
-                        <h4 class="count_days">0</h4>
+                        <h4 class="count_days"></h4>
                         <div style="font-weight: bold; font-size: 20px;">
                             {{ tenantInformation.currencySymbol }} <span class="total_fee">0</span>
                         </div>
