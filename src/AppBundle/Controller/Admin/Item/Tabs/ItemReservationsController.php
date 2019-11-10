@@ -21,7 +21,7 @@ class ItemReservationsController extends Controller
         $reservations = $bookingService->getBookings($filter);
 
         return $this->render(
-            'item/tabs/item_reservations.html.twig',
+            'admin/item/tabs/item_reservations.html.twig',
             array(
                 'reservations' => $reservations,
                 'itemId' => $itemId

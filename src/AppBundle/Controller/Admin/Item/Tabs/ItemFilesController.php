@@ -25,7 +25,7 @@ class ItemFilesController extends Controller
         $item = $itemRepo->find($id);
 
         return $this->render(
-            'item/tabs/item_files.html.twig',
+            'admin/item/tabs/item_files.html.twig',
             array(
                 'product' => $item,
             )

@@ -247,7 +247,7 @@ class ItemType extends AbstractType
         $builder->add('maintenancePlans', EntityType::class, array(
             'class' => 'AppBundle:MaintenancePlan',
             'choice_label' => 'fullName',
-            'label' => 'Maintenance plans applicable for this item',
+            'label' => 'Maintenance applicable for this item',
             'choices' => $maintenancePlans,
             'required' => false,
             'multiple' => true,

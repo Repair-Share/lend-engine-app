@@ -25,7 +25,7 @@ class ItemHistoryController extends Controller
         $item = $itemRepo->find($id);
 
         return $this->render(
-            'item/tabs/item_history.html.twig',
+            'admin/item/tabs/item_history.html.twig',
             array(
                 'product' => $item,
             )
