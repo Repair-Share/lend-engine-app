@@ -525,7 +525,8 @@
             {% if tenantInformation.setting('group_similar_items') == 1 %}
             $(document).on('blur', "#item_name", function() {
                 if ($(this).val()) {
-                    $.get("{{ path('item_name_check') }}?name="+$(this).val(), function(result) {
+                    var itemId = $("#itemIdForTest").val();
+                    $.get("{{ path('item_name_check') }}?name="+$(this).val()+"&id="+itemId, function(result) {
                         if (result == 1) {
                             var msg = "An item already exists with this name.\n";
                             msg += "Saving this item will put it into a product group and ";

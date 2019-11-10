@@ -18,9 +18,15 @@ class ItemNameCheckController extends Controller
         /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
         $itemRepo = $this->getDoctrine()->getRepository('AppBundle:InventoryItem');
         $name = $request->get('name');
+        $id   = $request->get('id');
 
-        if ($itemRepo->findBy(['name' => $name])) {
-            return $this->json(1);
+        if ($items = $itemRepo->findBy(['name' => $name, 'isActive' => true])) {
+            foreach ($items AS $item) {
+                if ($item->getId() != $id) {
+                    return $this->json(1);
+                }
+            }
+            return $this->json(0);
         } else {
             return $this->json(0);
         }
