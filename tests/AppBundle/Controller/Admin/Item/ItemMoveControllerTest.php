@@ -14,8 +14,7 @@ class ItemMoveControllerTest extends AuthenticatedControllerTest
 
         $form = $crawler->filter('form[name="item_move"]')->form(array(
             'item_move[location]' => "2",
-            'item_move[notes]'    => "Unit test's move notes",
-            'item_move[cost]'     => '1.50',
+            'item_move[notes]'    => "Unit test's move notes"
         ),'POST');
 
         $this->client->submit($form);
