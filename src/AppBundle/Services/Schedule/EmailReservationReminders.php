@@ -4,6 +4,7 @@ namespace AppBundle\Services\Schedule;
 
 use AppBundle\Entity\Membership;
 use AppBundle\Entity\Note;
+use AppBundle\Services\Contact\ContactService;
 use AppBundle\Services\SettingsService;
 use Doctrine\ORM\EntityManager;
 use Postmark\PostmarkClient;
@@ -24,18 +25,27 @@ class EmailReservationReminders
     /** @var \AppBundle\Services\SettingsService */
     private $settings;
 
+    /** @var \AppBundle\Services\Contact\ContactService */
+    private $contactService;
+
     /** @var EntityManager */
     private $em;
 
+    /** @var string */
     private $serverName;
 
+    /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(\Twig_Environment $twig, Container $container, SettingsService $settings, EntityManager $em, LoggerInterface $logger)
+    public function __construct(\Twig_Environment $twig,
+                                Container $container,
+                                SettingsService $settings, ContactService $contactService,
+                                EntityManager $em, LoggerInterface $logger)
     {
         $this->twig = $twig;
         $this->container = $container;
         $this->settings = $settings;
+        $this->contactService = $contactService;
         $this->em = $em;
         $this->logger = $logger;
 
@@ -78,7 +88,7 @@ class EmailReservationReminders
 
             $resultString .= PHP_EOL;
 
-            // Connect to the tenant to get memberships that need to expire
+            // Connect to the tenant to get reservations that are due to start tomorrow
             try {
 
                 $tenantEntityManager = $this->getTenantEntityManager($tenantDbSchema);
@@ -115,6 +125,14 @@ class EmailReservationReminders
 
                             try {
                                 $toEmail = $contact->getEmail();
+
+                                $this->contactService->setTenant($tenant, $tenantEntityManager);
+                                $token = $this->contactService->generateAccessToken($contact);
+
+                                $loginUri = $tenant->getDomain(true);
+                                $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
+                                $loginUri .= '&r=/loan/'.$loan->getId();
+
                                 $client = new PostmarkClient($postmarkApiKey);
 
                                 // Save and switch locale for sending the email
@@ -127,7 +145,8 @@ class EmailReservationReminders
                                         'dueDate' => $loan->getTimeOut(),
                                         'loanId' => $loan->getId(),
                                         'loanRows' => $loan->getLoanRows(),
-                                        'schema' => $tenantDbSchema
+                                        'schema' => $tenantDbSchema,
+                                        'loginUri' => $loginUri
                                     )
                                 );
 

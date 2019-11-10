@@ -4,6 +4,7 @@ namespace AppBundle\Services\Schedule;
 
 use AppBundle\Entity\Membership;
 use AppBundle\Entity\Note;
+use AppBundle\Services\Contact\ContactService;
 use AppBundle\Services\SettingsService;
 use Doctrine\ORM\EntityManager;
 use Postmark\PostmarkClient;
@@ -24,18 +25,29 @@ class EmailLoanReminders
     /** @var \AppBundle\Services\SettingsService */
     private $settings;
 
+    /** @var \AppBundle\Services\Contact\ContactService */
+    private $contactService;
+
     /** @var EntityManager */
     private $em;
 
+    /** @var string */
     private $serverName;
 
+    /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(\Twig_Environment $twig, Container $container, SettingsService $settings, EntityManager $em, LoggerInterface $logger)
+    public function __construct(\Twig_Environment $twig,
+                                Container $container,
+                                SettingsService $settings,
+                                ContactService $contactService,
+                                EntityManager $em,
+                                LoggerInterface $logger)
     {
         $this->twig = $twig;
         $this->container = $container;
         $this->settings = $settings;
+        $this->contactService = $contactService;
         $this->em = $em;
         $this->logger = $logger;
 
@@ -81,7 +93,7 @@ class EmailLoanReminders
                 continue;
             }
 
-            // Connect to the tenant to get loans
+            // Connect to the tenant to get loan items which are due back tomorrow
             try {
 
                 $tenantEntityManager = $this->getTenantEntityManager($tenantDbSchema);
@@ -121,51 +133,61 @@ class EmailLoanReminders
 
                             $items = [$item];
 
-                            try {
-                                $toEmail = $contact->getEmail();
+                            if ($toEmail = $contact->getEmail()) {
 
-                                $client = new PostmarkClient($postmarkApiKey);
+                                $this->contactService->setTenant($tenant, $tenantEntityManager);
+                                $token = $this->contactService->generateAccessToken($contact);
 
-                                // Save and switch locale for sending the email
-                                $sessionLocale = $this->container->get('translator')->getLocale();
-                                $this->container->get('translator')->setLocale($contact->getLocale());
+                                try {
 
-                                $message = $this->twig->render(
-                                    'emails/loan_reminder.html.twig',
-                                    array(
-                                        'dueDate' => $loanRow->getDueInAt(),
-                                        'items' => $items,
-                                        'schema' => $tenantDbSchema
-                                    )
-                                );
+                                    $client = new PostmarkClient($postmarkApiKey);
 
-                                $subject = $this->container->get('translator')->trans('le_email.reminder.subject', [
-                                    'loanId' => $loan->getId()],
-                                    'emails', $contact->getLocale()
-                                );
+                                    // Save and switch locale for sending the email
+                                    $sessionLocale = $this->container->get('translator')->getLocale();
+                                    $this->container->get('translator')->setLocale($contact->getLocale());
 
-                                $client->sendEmail(
-                                    "{$senderName} <{$fromEmail}>",
-                                    $toEmail,
-                                    $subject,
-                                    $message,
-                                    null,
-                                    null,
-                                    true,
-                                    $replyToEmail
-                                );
+                                    $loginUri = $tenant->getDomain(true);
+                                    $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
+                                    $loginUri .= '&r=/loan/'.$loan->getId();
 
-                                // Revert locale for the UI
-                                $this->container->get('translator')->setLocale($sessionLocale);
+                                    $message = $this->twig->render(
+                                        'emails/loan_reminder.html.twig',
+                                        [
+                                            'dueDate' => $loanRow->getDueInAt(),
+                                            'items' => $items,
+                                            'schema' => $tenantDbSchema,
+                                            'loginUri' => $loginUri
+                                        ]
+                                    );
 
-                            } catch (\Exception $generalException) {
-                                $resultString .= "ERROR: Failed to send email : " . PHP_EOL . $generalException->getMessage();
+                                    $subject = $this->container->get('translator')->trans('le_email.reminder.subject', [
+                                        'loanId' => $loan->getId()],
+                                        'emails', $contact->getLocale()
+                                    );
+
+                                    $client->sendEmail(
+                                        "{$senderName} <{$fromEmail}>",
+                                        $toEmail,
+                                        $subject,
+                                        $message,
+                                        null,
+                                        null,
+                                        true,
+                                        $replyToEmail
+                                    );
+
+                                    // Revert locale for the UI
+                                    $this->container->get('translator')->setLocale($sessionLocale);
+
+                                } catch (\Exception $generalException) {
+                                    $resultString .= "ERROR: Failed to send email : " . PHP_EOL . $generalException->getMessage();
+                                }
+
                             }
 
                         }
                     } else {
                         $resultString .= '  No loan rows due tomorrow '.PHP_EOL;
-
                     }
 
                     $tenantEntityManager->getConnection()->close();
@@ -177,7 +199,6 @@ class EmailLoanReminders
             } catch(\PDOException $ex) {
                 echo "ERROR: Couldn't connect to database {$tenantDbSchema}" . PHP_EOL;
             }
-
 
             $timeElapsed = number_format(microtime(true) - $startTime, 4);
             $resultString .= '  T: '.$timeElapsed.PHP_EOL;

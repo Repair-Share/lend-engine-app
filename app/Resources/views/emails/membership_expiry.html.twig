@@ -14,10 +14,10 @@
     </p>
 
     {% if canSelfRenew == true %}
-        <br>
-        <p>
-            <a href="http://{{ tenant.domain }}/member/subscribe">Click here to renew</a>.
-        </p>
+        <br><br>
+        <a href="{{ loginUri }}" style="padding: 10px; text-decoration: none; background-color: #30b05c; color: #fff; border-radius: 4px;">
+            {{ 'le_email.membership_expired.renew_button'|trans() }}
+        </a>
     {% endif %}
 
     <br>

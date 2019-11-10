@@ -10,7 +10,7 @@ le_email:
   url: Login URL
   email: Email
   password: Password
-  login_to_view_this_loan: Log in to view this loan online
+  login_to_view_this_loan: View this loan online
 
   booking_confirmation:
     title: Event booking confirmation
@@ -51,6 +51,7 @@ le_email:
   membership_expired:
     subject: "Your membership has expired"
     title: "Your membership has expired"
+    renew_button: Click here to renew membership
 
   login_details:
     subject: Your login details for %accountName%

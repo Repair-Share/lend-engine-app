@@ -263,15 +263,29 @@ class Tenant
         return $this;
     }
 
-    /***
+    /**
+     * @param bool $withHttp
      * @return string
      */
-    public function getDomain()
+    public function getDomain($withHttp = false)
     {
+        $stub = '';
+        if (getenv('APP_ENV') == 'dev') {
+            if ($withHttp) {
+                $stub = 'http://';
+            }
+            return $stub.$this->stub.'.localhost:8000';
+        }
         if ($this->domain) {
-            return $this->domain;
+            if ($withHttp) {
+                $stub = 'https://';
+            }
+            return $stub.$this->domain;
         } else {
-            return $this->stub.'.lend-engine-app.com';
+            if ($withHttp) {
+                $stub = 'http://';
+            }
+            return $stub.$this->stub.'.lend-engine-app.com';
         }
     }
 

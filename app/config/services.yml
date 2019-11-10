@@ -314,6 +314,7 @@ services:
             - "@twig"
             - "@service_container"
             - "@settings"
+            - "@service.contact"
             - "@doctrine.orm.entity_manager"
             - "@logger"
 
@@ -323,6 +324,7 @@ services:
             - "@twig"
             - "@service_container"
             - "@settings"
+            - "@service.contact"
             - "@doctrine.orm.entity_manager"
             - "@logger"
 
@@ -332,6 +334,7 @@ services:
             - "@twig"
             - "@service_container"
             - "@settings"
+            - "@service.contact"
             - "@doctrine.orm.entity_manager"
             - "@logger"
 
@@ -341,6 +344,7 @@ services:
             - "@twig"
             - "@service_container"
             - "@settings"
+            - "@service.contact"
             - "@doctrine.orm.entity_manager"
             - "@logger"
 

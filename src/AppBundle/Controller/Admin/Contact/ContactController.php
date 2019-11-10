@@ -39,6 +39,9 @@ class ContactController extends Controller
         /** @var $billingService \AppBundle\Services\BillingService */
         $billingService = $this->get('billing');
 
+        /** @var $contactService \AppBundle\Services\Contact\ContactService */
+        $contactService = $this->get('service.contact');
+
         /** @var \AppBundle\Entity\Contact $contact */
 
         if ($id) {

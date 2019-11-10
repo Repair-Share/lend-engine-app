@@ -4,6 +4,7 @@ namespace AppBundle\Services\Schedule;
 
 use AppBundle\Entity\Membership;
 use AppBundle\Entity\Note;
+use AppBundle\Services\Contact\ContactService;
 use AppBundle\Services\SettingsService;
 use Doctrine\ORM\EntityManager;
 use Postmark\PostmarkClient;
@@ -24,18 +25,27 @@ class ExpireMemberships
     /** @var \AppBundle\Services\SettingsService */
     private $settings;
 
+    /** @var \AppBundle\Services\Contact\ContactService */
+    private $contactService;
+
     /** @var EntityManager */
     private $em;
 
+    /** @var string */
     private $serverName;
 
+    /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(\Twig_Environment $twig, Container $container, SettingsService $settings, EntityManager $em, LoggerInterface $logger)
+    public function __construct(\Twig_Environment $twig,
+                                Container $container,
+                                SettingsService $settings, ContactService $contactService,
+                                EntityManager $em, LoggerInterface $logger)
     {
         $this->twig = $twig;
         $this->container = $container;
         $this->settings = $settings;
+        $this->contactService = $contactService;
         $this->em = $em;
         $this->logger = $logger;
 
@@ -106,19 +116,20 @@ class ExpireMemberships
                     $membershipTypeRepo = $tenantEntityManager->getRepository('AppBundle:MembershipType');
                     $selfServeMemberships = $membershipTypeRepo->findBy(['isSelfServe' => true]);
 
-                    // determine whether this account has self-serve memberships
+                    // Determine whether this account has self-serve memberships
                     $canSelfRenew = false;
-                    if (count($selfServeMemberships) == 1) {
+                    if (count($selfServeMemberships) > 0) {
                         $canSelfRenew = true;
                     }
 
                     /** @var \AppBundle\Repository\MembershipRepository $membershipRepo */
                     $membershipRepo = $tenantEntityManager->getRepository('AppBundle:Membership');
 
+                    // Get all memberships which have an expiry date in the past but are still active
                     if ($expiredMemberships = $membershipRepo->getExpiredMemberships()) {
 
+                        /** @var $membership \AppBundle\Entity\Membership */
                         foreach ($expiredMemberships AS $membership) {
-                            /** @var $membership \AppBundle\Entity\Membership */
 
                             $resultString .= '  Contact: '.$membership->getContact()->getEmail(). PHP_EOL;
                             $resultString .= '  Expires: '.$membership->getExpiresAt()->format("Y-m-d").PHP_EOL;
@@ -134,8 +145,8 @@ class ExpireMemberships
                             $contact->setActiveMembership(null);
                             $tenantEntityManager->persist($contact);
 
-                            // Flush the Em here
-                            $tenantEntityManager->flush();
+                            // Save the contact
+                            $tenantEntityManager->flush($contact);
 
                             if ($toEmail && $sendEmailReminders == 1) {
 
@@ -147,12 +158,20 @@ class ExpireMemberships
                                     $sessionLocale = $this->container->get('translator')->getLocale();
                                     $this->container->get('translator')->setLocale($contact->getLocale());
 
+                                    $this->contactService->setTenant($tenant, $tenantEntityManager);
+                                    $token = $this->contactService->generateAccessToken($contact);
+
+                                    $loginUri = $tenant->getDomain(true);
+                                    $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
+                                    $loginUri .= '&r=/choose_membership';
+
                                     $message = $this->twig->render(
                                         'emails/membership_expiry.html.twig',
                                         [
                                             'expiresAt' => $membership->getExpiresAt(),
                                             'canSelfRenew' => $canSelfRenew,
-                                            'tenant' => $tenant
+                                            'tenant' => $tenant,
+                                            'loginUri' => $loginUri
                                         ]
                                     );
 

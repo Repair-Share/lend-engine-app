@@ -5,6 +5,7 @@ namespace AppBundle\Services\Contact;
 use AppBundle\Entity\Contact;
 use AppBundle\Entity\CreditCard;
 use AppBundle\Entity\Membership;
+use AppBundle\Entity\Tenant;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\Container;
@@ -12,30 +13,23 @@ use Symfony\Component\DependencyInjection\Container;
 class ContactService
 {
 
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager  */
     private $em;
 
-    /**
-     * @var Container
-     */
+    /** @var Container  */
     private $container;
 
-    /**
-     * @var \PDO
-     */
-    private $dbConnection;
-
-    /**
-     * @var array
-     */
+    /** @var array  */
     public $errors = [];
+
+    /** @var \AppBundle\Repository\ContactRepository */
+    private $repository;
 
     public function __construct(EntityManager $em, Container $container)
     {
-        $this->em        = $em;
-        $this->container = $container;
+        $this->em         = $em;
+        $this->container  = $container;
+        $this->repository = $this->em->getRepository('AppBundle:Contact');
     }
 
     /**
@@ -44,7 +38,37 @@ class ContactService
      */
     public function get($id)
     {
-        return $this->em->getRepository('AppBundle:Contact')->find($id);
+        return $this->repository->find($id);
+    }
+
+    /**
+     * @param Contact $contact
+     * @return mixed|string
+     */
+    public function generateAccessToken(Contact $contact)
+    {
+        if ($contact->getSecureAccessToken()) {
+            return $contact->getSecureAccessToken();
+        }
+        $token = uniqid();
+        $contact->setSecureAccessToken($token);
+        $this->em->persist($contact);
+        $this->em->flush($contact);
+        return $token;
+    }
+
+    /**
+     * Override the active tenant (used in a scheduled loop eg reminders)
+     * @param Tenant $tenant
+     * @param EntityManager $em
+     */
+    public function setTenant(Tenant $tenant, EntityManager $em = null)
+    {
+        $this->tenant = $tenant;
+        if ($em) {
+            $this->em = $em;
+            $this->db = $this->em->getConnection()->getDatabase();
+        }
     }
 
     /**
@@ -58,9 +82,8 @@ class ContactService
      */
     public function contactSearch($start, $length, $filter, $sort = [])
     {
-        $repository = $this->em->getRepository('AppBundle:Contact');
+        $builder = $this->repository->createQueryBuilder('c');
 
-        $builder = $repository->createQueryBuilder('c');
         $builder->leftJoin('c.memberships', 'm');
         $builder->select('c');
         $builder->where('c.id > 1');
@@ -132,8 +155,7 @@ class ContactService
      */
     public function countAllContacts(\DateTime $dateTo = null)
     {
-        $repository = $this->em->getRepository('AppBundle:Contact');
-        $builder = $repository->createQueryBuilder('c');
+        $builder = $this->repository->createQueryBuilder('c');
         $builder->add('select', 'COUNT(c) AS qty');
         $builder->where('c.id > 1');
         if ($dateTo) {
@@ -183,8 +205,8 @@ class ContactService
      */
     public function recalculateBalance(Contact $contact)
     {
-        $repository = $this->em->getRepository('AppBundle:Payment');
-        $builder = $repository->createQueryBuilder('p');
+        $builder = $this->em->getRepository('AppBundle:Payment')->createQueryBuilder('p');
+
         $builder->add('select', "SUM(CASE WHEN p.type = 'PAYMENT' THEN p.amount ELSE -p.amount END) AS balance");
         $builder->where('p.contact = :contact');
 

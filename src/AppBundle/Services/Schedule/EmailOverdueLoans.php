@@ -4,6 +4,7 @@ namespace AppBundle\Services\Schedule;
 
 use AppBundle\Entity\Membership;
 use AppBundle\Entity\Note;
+use AppBundle\Services\Contact\ContactService;
 use AppBundle\Services\SettingsService;
 use Doctrine\ORM\EntityManager;
 use Postmark\PostmarkClient;
@@ -24,18 +25,28 @@ class EmailOverdueLoans
     /** @var \AppBundle\Services\SettingsService */
     private $settings;
 
+    /** @var \AppBundle\Services\Contact\ContactService */
+    private $contactService;
+
     /** @var EntityManager */
     private $em;
 
+    /** @var string */
     private $serverName;
 
+    /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(\Twig_Environment $twig, Container $container, SettingsService $settings, EntityManager $em, LoggerInterface $logger)
+    public function __construct(\Twig_Environment $twig,
+                                Container $container,
+                                SettingsService $settings,
+                                ContactService $contactService,
+                                EntityManager $em, LoggerInterface $logger)
     {
         $this->twig = $twig;
         $this->container = $container;
         $this->settings = $settings;
+        $this->contactService = $contactService;
         $this->em = $em;
         $this->logger = $logger;
 
@@ -123,18 +134,27 @@ class EmailOverdueLoans
 
                             try {
                                 $toEmail = $contact->getEmail();
+
+                                $this->contactService->setTenant($tenant, $tenantEntityManager);
+                                $token = $this->contactService->generateAccessToken($contact);
+
                                 $client = new PostmarkClient($postmarkApiKey);
 
                                 // Save and switch locale for sending the email
                                 $sessionLocale = $this->container->get('translator')->getLocale();
                                 $this->container->get('translator')->setLocale($contact->getLocale());
 
+                                $loginUri = $tenant->getDomain(true).$tenantService->getAccountDomain();
+                                $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
+                                $loginUri .= '&r=/loan/'.$loan->getId();
+
                                 $message = $this->twig->render(
                                     'emails/overdue_reminder.html.twig',
                                     array(
                                         'loanId'   => $loan->getId(),
                                         'loanRows' => $loan->getLoanRows(),
-                                        'tenant'   => $tenant
+                                        'tenant'   => $tenant,
+                                        'loginUri' => $loginUri
                                     )
                                 );
 

@@ -9,6 +9,7 @@ class MaintenanceRepository extends \Doctrine\ORM\EntityRepository
 
     /**
      * @param Maintenance $maintenance
+     * @return Maintenance
      */
     public function save(Maintenance $maintenance)
     {
@@ -20,6 +21,8 @@ class MaintenanceRepository extends \Doctrine\ORM\EntityRepository
 
         $this->getEntityManager()->persist($maintenance);
         $this->getEntityManager()->flush($maintenance);
+
+        return $maintenance;
     }
 
     /**

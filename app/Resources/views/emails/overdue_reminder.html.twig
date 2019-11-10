@@ -25,10 +25,11 @@
         {% endfor %}
     </table>
 
-    <br>
-    <a style="" href="http://{{ tenant.domain }}/login">{{ 'le_email.login_to_view_this_loan'|trans() }}</a>
+    <br><br>
+    <a href="{{ loginUri }}" style="padding: 10px; text-decoration: none; background-color: #30b05c; color: #fff; border-radius: 4px;">
+        {{ 'le_email.login_to_view_this_loan'|trans() }}
+    </a>
 
-    <br>
     <br>
     <br>
     <p>{{ tenantInformation.getEmailOverdueFooter|raw }}</p>
