@@ -39,6 +39,9 @@ class ItemMoveController extends Controller
         /** @var \AppBundle\Services\TenantService $tenantService */
         $tenantService = $this->get('service.tenant');
 
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->container->get('service.contact');
+
         $em = $this->getDoctrine()->getManager();
 
         /** @var \AppBundle\Entity\InventoryItem $inventoryItem */
@@ -114,6 +117,7 @@ class ItemMoveController extends Controller
             // Send an email to the provider of the plan
             if ($maintenancePlan && $maintenancePlan->getProvider() && count($maintenanceActions) > 0) {
 
+                /** @var \AppBundle\Entity\Contact $provider */
                 $provider       = $maintenancePlan->getProvider();
                 $senderName     = $tenantService->getCompanyName();
                 $replyToEmail   = $tenantService->getReplyToEmail();
@@ -124,12 +128,19 @@ class ItemMoveController extends Controller
                 try {
                     $client = new PostmarkClient($postmarkApiKey);
 
+                    $token = $contactService->generateAccessToken($provider);
+
+                    $loginUri = $tenantService->getTenant()->getDomain(true);
+                    $loginUri .= '/access?t='.$token.'&e='.urlencode($provider->getEmail());
+                    $loginUri .= '&r=/admin/maintenance/list&assignedTo='.$provider->getId();
+
                     $message = $this->renderView(
                         'emails/maintenance_due.html.twig',
                         [
                             'assignee' => $provider,
                             'maintenance' => $maintenanceActions,
-                            'domain' => $tenantService->getAccountDomain()
+                            'domain' => $tenantService->getAccountDomain(),
+                            'loginUri' => $loginUri
                         ]
                     );
 

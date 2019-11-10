@@ -106,6 +106,9 @@ class ScheduleMaintenanceController extends Controller
         /** @var \AppBundle\Services\TenantService $tenantService */
         $tenantService = $this->get('service.tenant');
 
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->container->get('service.contact');
+
         $senderName     = $tenantService->getCompanyName();
         $replyToEmail   = $tenantService->getReplyToEmail();
         $fromEmail      = $tenantService->getSenderEmail();
@@ -117,12 +120,19 @@ class ScheduleMaintenanceController extends Controller
 
             $client = new PostmarkClient($postmarkApiKey);
 
+            $token = $contactService->generateAccessToken($provider);
+
+            $loginUri = $tenantService->getTenant()->getDomain(true);
+            $loginUri .= '/access?t='.$token.'&e='.urlencode($provider->getEmail());
+            $loginUri .= '&r=/admin/maintenance/'.$maintenance->getId();
+
             $message = $this->renderView(
                 'emails/maintenance_due.html.twig',
                 [
                     'assignee' => $provider,
                     'maintenance' => [$maintenance],
-                    'domain' => $tenantService->getAccountDomain()
+                    'domain' => $tenantService->getAccountDomain(),
+                    'loginUri' => $loginUri
                 ]
             );
 

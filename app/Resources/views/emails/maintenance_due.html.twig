@@ -19,6 +19,7 @@
             {{ m.maintenancePlan.name }} due {{ m.dueAt|date('d F') }}
         </div>
     {% endfor %}
-    <br><br>
-    <a href="http://{{ domain }}">Click here to log in</a> and then visit Items &raquo; Maintenance.
+
+    <br>
+    <a href="{{ loginUri }}" style="padding: 10px; text-decoration: none; background-color: #30b05c; color: #fff; border-radius: 4px;">Log in now</a>
 {% endblock %}
