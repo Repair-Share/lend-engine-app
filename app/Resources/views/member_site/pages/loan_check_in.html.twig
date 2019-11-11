@@ -124,8 +124,12 @@
                     {% for payment in loanRow.deposit.payments %}
                         {% if payment.type == 'DEPOSIT' %}
                         <div>
-                            {{ payment.paymentMethod.name }} payment {{ payment.pspCode }}
-                            <a href="{{ path('refund', {id: payment.id, amount: payment.amount, goToCheckInItem: loanRow.id}) }}" class="btn btn-default btn-xs modal-link">Refund</a>
+                            {% if is_granted("ROLE_ADMIN") %}
+                                {{ payment.paymentMethod.name }} payment {{ payment.pspCode }}
+                                <a href="{{ path('refund', {id: payment.id, amount: payment.amount, goToCheckInItem: loanRow.id}) }}" class="btn btn-default btn-xs modal-link">Refund</a>
+                            {% else %}
+                                Please contact us for a refund.
+                            {% endif %}
                         </div>
                             {% endif %}
                     {% endfor %}

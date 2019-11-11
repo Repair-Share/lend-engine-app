@@ -117,10 +117,12 @@
 
     <script src='/plugins/fullcalendar/core/locales/{{ app.request.locale }}.js'></script>
 
+    {% if app.request.locale != 'en' %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/{{ app.request.locale }}.js" charset="UTF-8"></script>
     <script>
         moment.locale('{{ app.request.locale }}');
     </script>
+    {% endif %}
 
     {% if tenantInformation.siteFontName %}
         <!-- Settings font //-->

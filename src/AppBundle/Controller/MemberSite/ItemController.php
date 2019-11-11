@@ -142,9 +142,6 @@ class ItemController extends Controller
 
         if ($loanRowId = $request->get('extend')) {
 
-            /** @var \AppBundle\Services\StripeHandler $stripeService */
-            $stripeService = $this->get('service.stripe');
-
             /** @var \AppBundle\Entity\LoanRow $loanRow */
             $loanRow = $em->getRepository('AppBundle:LoanRow')->find($loanRowId);
             $contact = $loanRow->getLoan()->getContact();
@@ -160,7 +157,7 @@ class ItemController extends Controller
             if ($stripeUseSavedCards) {
                 $contact = $contactService->loadCustomerCards($contact);
             }
-            
+
             // Create the form
             $form = $this->createForm(LoanExtendType::class, null, [
                 'em' => $em,
