@@ -49,6 +49,9 @@ class ItemController extends Controller
         /** @var \AppBundle\Repository\ContactRepository $contactRepo */
         $contactRepo = $em->getRepository('AppBundle:Contact');
 
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->get('service.contact');
+
         /** @var $product \AppBundle\Entity\InventoryItem */
         if (!$product = $repo->find($productId)) {
             $this->addFlash("error", "Item with ID {$productId} not found.");
@@ -154,25 +157,10 @@ class ItemController extends Controller
             $itemDueInAt = $loanRow->getDueInAt()->setTimezone($tz)->format("Y-m-d H:i:00");
 
             $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
-
-            // Get existing cards for a customer
-            $customerStripeId = $contact->getStripeCustomerId();
-            if ($customerStripeId && $stripeUseSavedCards) {
-                // retrieve their cards
-                $stripeCustomer = $stripeService->getCustomerById($customerStripeId);
-                if (isset($stripeCustomer['sources']['data'])) {
-                    foreach($stripeCustomer['sources']['data'] AS $source) {
-                        $creditCard = new CreditCard();
-                        $creditCard->setLast4($source['last4']);
-                        $creditCard->setExpMonth($source['exp_month']);
-                        $creditCard->setExpYear($source['exp_year']);
-                        $creditCard->setBrand($source['brand']);
-                        $creditCard->setCardId($source['id']);
-                        $contact->addCreditCard($creditCard);
-                    }
-                }
+            if ($stripeUseSavedCards) {
+                $contact = $contactService->loadCustomerCards($contact);
             }
-
+            
             // Create the form
             $form = $this->createForm(LoanExtendType::class, null, [
                 'em' => $em,

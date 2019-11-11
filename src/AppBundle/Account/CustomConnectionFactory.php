@@ -57,7 +57,9 @@ class CustomConnectionFactory extends ConnectionFactory
             $account_code = $d[0];
         } else {
             // We're running CLI (command console and unit tests)
-            $account_code = 'dev';
+            // This account has to exist on all servers (including production)
+            // Because it's the one used as default for cache:clear as part of deployment
+            $account_code = 'unit_test';
         }
 
         $httpHost = '';
