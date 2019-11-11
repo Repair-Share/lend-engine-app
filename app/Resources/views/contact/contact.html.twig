@@ -47,6 +47,11 @@
             <strong>{{ contact.activeMembership.membershipType.name }}</strong> member until {{ contact.activeMembership.expiresAt|date('d M Y') }}
             <!-- For functional testing //-->
             <span style="display: none;" id="active-membership-id">{{ contact.activeMembership.id }}"</span>
+
+            <a href="{{ path('switch_contact', {contactId: contact.id}) }}" class="btn btn-xs btn-primary" style="margin-left: 30px">
+                Browse / borrow as {{ contact.name }}
+            </a>
+
         {% endif %}
             <span class="pull-right">
                 Account balance:
