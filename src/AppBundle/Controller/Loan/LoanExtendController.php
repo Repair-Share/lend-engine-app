@@ -62,7 +62,10 @@ class LoanExtendController extends Controller
         /** @var \AppBundle\Services\TenantService $tenantService */
         $tenantService = $this->get('service.tenant');
 
-        $user = $this->getUser();
+        if (!$user = $this->getUser()) {
+            $this->addFlash('error', "Please log in");
+            return $this->redirectToRoute('home');
+        }
 
         if (!$newReturnDate = $request->get('new_return_date')) {
             $this->addFlash('error', "No new return date given");

@@ -57,7 +57,7 @@ class CustomConnectionFactory extends ConnectionFactory
             $account_code = $d[0];
         } else {
             // We're running CLI (command console and unit tests)
-            $account_code = 'dev';
+            $account_code = 'unit_test';
         }
 
         $httpHost = '';
