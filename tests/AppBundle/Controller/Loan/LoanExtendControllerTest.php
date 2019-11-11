@@ -33,7 +33,7 @@ class LoanExtendControllerTest extends AuthenticatedControllerTest
         $this->assertTrue($this->client->getResponse() instanceof RedirectResponse);
         $crawler = $this->client->followRedirect();
 
-        $this->assertContains("Change return date", $crawler->html());
+        $this->assertContains("Choose a new return date", $crawler->html());
         $rowId = $crawler->filter('.btn_extend')->first()->attr('data-loan-row-id');
 
         $crawler = $this->client->request('GET', '/product/1000?extend='.$rowId);
