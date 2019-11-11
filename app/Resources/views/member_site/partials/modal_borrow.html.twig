@@ -73,7 +73,9 @@
                         <div class="multi-site"><a class="site_from" href="javascript:void(0);"></a></div>
 
                         <div style="padding-bottom: 10px;">
-                            <button type="button" class="btn btn-success" id="set-pickup-today">Today</button>
+                            <button type="button" class="btn btn-success" id="set-pickup-today">
+                                {% trans %}public_item.button_today{% endtrans %}
+                            </button>
                         </div>
                         <div style="padding-bottom: 20px;">
                             <button type="button" class="btn btn-success" data-dismiss="modal" id="choosePickupButton">
@@ -103,7 +105,7 @@
                 </div>
 
                 <div class="row" id="booking-help" style="display:none">
-                    <div class="col-md-12 help-block"><br>Click a date, time or site to change your booking.</div>
+                    <div class="col-md-12 help-block"><br>{% trans %}public_item.borrow_help{% endtrans %}.</div>
                 </div>
 
             </div>

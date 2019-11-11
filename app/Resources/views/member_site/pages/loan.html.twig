@@ -166,7 +166,7 @@
                             {% if (is_granted('ROLE_ADMIN') or tenantInformation.selfExtend) and row.inventoryItem.itemType == 'loan' %}
                                 <a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id }) }}"
                                    class="btn btn-xs btn-default btn_extend" data-loan-row-id="{{ row.id }}">
-                                    Change return date
+                                    {% trans %}public_loan.choose_new_date{% endtrans %}
                                 </a>
                             {% endif %}
                         {% endif %}
@@ -520,7 +520,7 @@
 
             // Deposits
             if (paymentValue < depositsTotal) {
-                checkoutButton.attr("disabled", true).html("Deposits require payment now");
+                checkoutButton.attr("disabled", true).html("{% trans %}public_loan.button_deposits_require_payment{% endtrans %}");
                 allowCheckOut = false;
             }
 
@@ -532,14 +532,14 @@
                     }
                 });
                 if (allowCheckOut == false) {
-                    checkoutButton.attr("disabled", true).html("Please complete all checks");
+                    checkoutButton.attr("disabled", true).html("{% trans %}public_loan.button_complete_checks{% endtrans %}");
                 }
             }
 
             // Confirm user has chosen a payment method
             if (allowCheckOut == true) {
                 if (paymentValue > 0 && !$("#loan_check_out_paymentMethod").val()) {
-                    checkoutButton.attr("disabled", true).html("Select a payment method to take payment.");
+                    checkoutButton.attr("disabled", true).html("{% trans %}public_loan.button_choose_payment_method{% endtrans %}");
                     allowCheckOut = false;
                 }
             }
@@ -548,15 +548,15 @@
             $(".cannot-checkout").remove();
             $(".item-location").each(function(){
                 if (!$(this).val()) {
-                    $(this).after('<div class="cannot-checkout" style="color: #de7c34">Item cannot be checked out now.</div>');
-                    checkoutButton.attr("disabled", true).html("Item(s) are not available to check out.");
+                    $(this).after('<div class="cannot-checkout" style="color: #de7c34">{% trans %}public_loan.cannot_check_out{% endtrans %}</div>');
+                    checkoutButton.attr("disabled", true).html("{% trans %}public_loan.cannot_check_out{% endtrans %}");
                     allowCheckOut = false;
                 }
             });
 
             // All tests pass, ensure user can check out now
             if (allowCheckOut == true) {
-                checkoutButton.attr("disabled", false).html("Check out");
+                checkoutButton.attr("disabled", false).html("{% trans %}public_loan.button_check_out{% endtrans %}");
             }
         }
 
@@ -635,9 +635,9 @@
                         // No credit limit, carry on regardless of account balance
                         $("#loan_check_out_paymentAmount").val(0);
                     } else if (availableCredit < toPay && creditLimit != null) {
-                        $("#form-checkout").after('<div class="alert alert-warning">You don\'t have enough credit on account to check out.</div>').remove();
+                        $("#form-checkout").after("<div class=\"alert alert-warning\">{% trans %}public_loan.not_enough_credit{% endtrans %}</div>").remove();
                     } else {
-                        $("#form-checkout").after('<div class="alert alert-warning">No payment methods are available to check out.</div>').remove();
+                        $("#form-checkout").after("<div class=\"alert alert-warning\">{% trans %}public_loan.no_payment_methods{% endtrans %}</div>").remove();
                     }
                     {% else %}
                     $(".payment-details").hide();

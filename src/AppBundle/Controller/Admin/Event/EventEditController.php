@@ -164,13 +164,13 @@ class EventEditController extends Controller
 
         return $this->render(
             'event/event.html.twig',
-            array(
+            [
                 'title' => $title,
                 'event' => $event,
                 'label' => $label,
                 'eventDate' => $event->getDate()->format("D M d Y"),
                 'form' => $form->createView(),
-            )
+            ]
         );
     }
 

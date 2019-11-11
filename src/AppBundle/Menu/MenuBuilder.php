@@ -425,7 +425,7 @@ class MenuBuilder
         $this->menu->addChild($loanText, array('route' => 'loans'));
 
         if ($this->container->get('settings')->getSettingValue('show_events_online') == 1) {
-            $eventsText = $this->container->get('translator')->trans("Event bookings", [], 'member_site');
+            $eventsText = $this->container->get('translator')->trans("events.bookings", [], 'member_site');
             $this->menu->addChild($eventsText, array('route' => 'my_events'));
         }
 

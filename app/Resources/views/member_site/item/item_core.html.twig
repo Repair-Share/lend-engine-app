@@ -269,7 +269,7 @@
 
                     {% else %}
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a href="#" class="btn btn-success button-borrow" id="button-borrow">Lend / Reserve</a>
+                            <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>
                         {% else %}
                             <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>
                         {% endif %}

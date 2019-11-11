@@ -31,7 +31,9 @@
             <p>
                 {{ 'public_account.membership_about_to_expire'|trans({}, 'member_site') }}
                 <br><br>
-                <a href="{{ path('choose_membership') }}" class="btn btn-primary">Renew now</a>
+                <a href="{{ path('choose_membership') }}" class="btn btn-primary">
+                    {{ 'public_account.button_change_membership'|trans({}, 'member_site') }}
+                </a>
             </p>
         </div>
     {% else %}

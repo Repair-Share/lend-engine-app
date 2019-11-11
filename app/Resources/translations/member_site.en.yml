@@ -138,6 +138,7 @@ public_item:
   return_by: To
   button_choose_pickup: Choose date
   button_choose_return: Choose date
+  button_today: Today
   cancel: Cancel
   basket_add: Add to basket
   locations: Available locations
@@ -148,6 +149,7 @@ public_item:
   not_reservable: "This item is not available for reservation online. Please contact us."
   see_parts: See parts
   kit_containing: This item is a kit containing
+  borrow_help: Click a date, time or site to change your booking
 
 calendar:
   pickup_day: Pickup
@@ -184,8 +186,15 @@ public_loan:
   title: Loan
   charged: Charged to account
   check_in: Check in
+  button_check_out: Check out
   select_items_to_check_in: Select items to check in
   choose_new_date: Choose a new return date
+  button_complete_checks: Please complete all checks
+  button_choose_payment_method: Select a payment method to take payment
+  button_deposits_require_payment: Deposits require payment now
+  cannot_check_out: Item(s) cannot be checked out
+  no_payment_methods: No payment methods are available to check out
+  not_enough_credit: You don't have enough credit on account to check out.
 
 # Member site : Logged in : Menu
 public_user_menu:
@@ -232,6 +241,23 @@ public_registration:
 public_user:
   choose_membership_type: Choose a membership type
   subscription_payment: Subscription payment
+
+events:
+  event: Event
+  page_title: Events
+  bookings: Event bookings
+  no_events: There are no events this month
+  view_on_facebook: View this event on Facebook
+  location: Location
+  time: Time
+  cost: Cost
+  you_are_attending: You're attending
+  book_now_button: Book now
+  check_in_button: Check in
+  check_in_help: Checking in adds you as an attendee without sending a booking confirmation email
+  contact_us_to_book: Contact us to book
+  not_bookable: This event is not bookable online
+  log_in_to_book: Log in to book
 
 msg_success:
   payment_ok: Payment made OK. Your account balance has been amended.

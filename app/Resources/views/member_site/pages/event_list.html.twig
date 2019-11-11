@@ -7,7 +7,7 @@
 
 {% block body %}
     <h2>
-        {% trans %}Events{% endtrans %}
+        {% trans %}events.page_title{% endtrans %}
         {% if is_granted("ROLE_ADMIN") %}
             <span class="pull-right"><a href="{{ path('admin_event_list') }}" class="btn btn-sm btn-default">Go to event admin</a></span>
         {% endif %}
@@ -85,6 +85,7 @@
 {% block pagejs %}
 <script>
     $(document).ready(function() {
+
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
             plugins: ['dayGrid'],
@@ -146,7 +147,7 @@
                 HTML += '</div>';
             });
             if (HTML == '') {
-                HTML = 'There are no events this month.';
+                HTML = '{% trans %}events.no_events{% endtrans %}.';
             }
             $("#event-list").html(HTML);
         }

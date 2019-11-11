@@ -11,7 +11,7 @@
 
 {% block body %}
     <h2>
-        {% trans %}Event bookings{% endtrans %}
+        {% trans %}events.bookings{% endtrans %}
         {% if user is defined and user.id != app.user.id %}
             {{ include('member_site/partials/session_user.html.twig') }}
         {% endif %}
@@ -21,10 +21,10 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>Event</th>
-                <th>Date</th>
+                <th>{% trans %}events.event{% endtrans %}</th>
+                <th>{% trans %}th.date{% endtrans %}</th>
                 <th></th>
-                <th>Location</th>
+                <th>{% trans %}events.location{% endtrans %}</th>
             </tr>
             </thead>
             {% for attendee in user.attendees %}

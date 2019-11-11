@@ -35,7 +35,7 @@ class ChooseItemSectorController extends Controller
             return $this->redirectToRoute('item_list');
         }
 
-        return $this->render('item/item_sector.html.twig', array(
+        return $this->render('admin/item/item_sector.html.twig', array(
 
         ));
     }

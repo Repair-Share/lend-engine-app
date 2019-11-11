@@ -117,6 +117,11 @@
 
     <script src='/plugins/fullcalendar/core/locales/{{ app.request.locale }}.js'></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/{{ app.request.locale }}.js" charset="UTF-8"></script>
+    <script>
+        moment.locale('{{ app.request.locale }}');
+    </script>
+
     {% if tenantInformation.siteFontName %}
         <!-- Settings font //-->
         <link href="https://fonts.googleapis.com/css?family={{ tenantInformation.siteFontName|replace({" ": "+"}) }}" rel="stylesheet">
@@ -150,7 +155,6 @@
 
 <style type="text/css">
     {{ tenantInformation.siteCSS|raw }}
-
     {% if tenantInformation.isMultiSite != 1 %}
     .multi-site {
         display: none;

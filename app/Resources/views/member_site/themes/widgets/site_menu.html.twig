@@ -7,7 +7,9 @@
 {% endif %}
 
 {% if tenantInformation.setting('show_events_online') == 1 %}
-    <a href="{{ path('event_list') }}" style="padding: 0 10px"><i class="far fa-calendar-alt"></i><span class="hidden-xs"> {% trans %}public_misc.link_events{% endtrans %}</span></a>
+    <a href="{{ path('event_list') }}" style="padding: 0 10px">
+        <i class="far fa-calendar-alt"></i><span class="hidden-xs"> {% trans %}public_misc.link_events{% endtrans %}</span>
+    </a>
 {% endif %}
 
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}

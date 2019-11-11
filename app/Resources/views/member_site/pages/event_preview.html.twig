@@ -69,8 +69,8 @@
     {% if event.facebookUrl %}
         <div style="margin-bottom: 10px">
             <a href="{{ event.facebookUrl }}" target="_blank">
-                <img src="/images/fb.png" style="height: 20px; width: 20px; vertical-align: middle"> View this event on
-                Facebook
+                <img src="/images/fb.png" style="height: 20px; width: 20px; vertical-align: middle">
+                {% trans %}events.view_on_facebook{% endtrans %}
             </a>
         </div>
     {% endif %}
@@ -95,19 +95,19 @@
             <div id="map"></div>
         </div>
         <div class="col-md-5">
-            <div class="modal-mini-header">Location</div>
+            <div class="modal-mini-header">{% trans %}events.location{% endtrans %}</div>
             {{ event.site.name }}<br>
             {{ event.site.address|nl2br }}<br>
             {{ event.site.postcode }}<br>
             <br>
 
-            <div class="modal-mini-header">Time</div>
+            <div class="modal-mini-header">{% trans %}events.time{% endtrans %}</div>
             {{ event.date|date("l j F") }}<br>
             {{ event.friendlyTimeFrom }} - {{ event.friendlyTimeTo }}<br>
 
             <br>
 
-            <div class="modal-mini-header">Cost</div>
+            <div class="modal-mini-header">{% trans %}events.cost{% endtrans %}</div>
             {{ tenantInformation.currencySymbol }} {{ event.price|number_format(2) }}
         </div>
     </div>
@@ -132,13 +132,13 @@
                                 {% if is_granted("ROLE_ADMIN") %}
                                     {{ user.name }} is already booked on this event.
                                 {% else %}
-                                    You're attending.
+                                    {% trans %}events.you_are_attending{% endtrans %}.
                                 {% endif %}
                             </div>
                         {% else %}
                             {% if event.isBookable or is_granted("ROLE_ADMIN") %}
                                 <button type="button" class="btn btn-success btn-block btn-loading payment-submit" id="buttonBook">
-                                    Book now
+                                    {% trans %}events.book_now_button{% endtrans %}
                                 </button>
                                 {% if app.user != user %}
                                     <div class="small help-block">You are booking <strong>{{ user.name }}</strong> onto
@@ -147,7 +147,7 @@
                                 {% endif %}
                             {% else %}
                                 {#Non bookable event#}
-                                <div class="alert alert-warning">Please contact us to book</div>
+                                <div class="alert alert-warning">{% trans %}events.contact_us_to_book{% endtrans %}</div>
                             {% endif %}
                         {% endif %}
 
@@ -155,13 +155,13 @@
 
                         {% if event.isBookable %}
                             <div class="alert alert-warning">
-                                <a href="{{ path('fos_user_security_login') }}?event={{ event.id }}">Log in</a> or
-                                <a href="{{ path('fos_user_registration_register') }}?event={{ event.id }}">register</a>
-                                to book.
+                                <a href="{{ path('fos_user_security_login') }}?event={{ event.id }}">
+                                    {% trans %}events.log_in_to_book{% endtrans %}
+                                </a>
                             </div>
                         {% else %}
                             <div>
-                                This event is not bookable online.
+                                {% trans %}events.not_bookable{% endtrans %}.
                             </div>
                         {% endif %}
 
@@ -180,8 +180,9 @@
     <div class="row">
         <div class="col-md-3">
             {% if is_granted("ROLE_ADMIN") %}
-                <a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">Edit
-                    event</a>
+                <a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">
+                    Edit event
+                </a>
             {% endif %}
         </div>
 
@@ -190,14 +191,15 @@
                 <div class="col-md-6">
                     {% if alreadyBooked != true %}
                         <div class="help-block" style="font-size: 12px; text-align: left">
-                            Checking in adds you as an attendee without sending a booking confirmation email.
+                            {% trans %}events.check_in_help{% endtrans %}.
                         </div>
                     {% endif %}
                 </div>
                 <div class="col-md-3">
                     {% if alreadyBooked != true %}
-                        <a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-primary">Check
-                            in</a>
+                        <a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-primary">
+                            {% trans %}events.check_in_button{% endtrans %}
+                        </a>
                     {% endif %}
                 </div>
             {% endif %}
