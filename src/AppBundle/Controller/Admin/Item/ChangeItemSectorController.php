@@ -47,7 +47,7 @@ class ChangeItemSectorController extends Controller
             return $this->redirectToRoute('item', ['id' => $itemId]);
         }
 
-        return $this->render('item/item_sector.html.twig', [
+        return $this->render('admin/item/item_sector.html.twig', [
             'itemId' => $itemId
         ]);
     }

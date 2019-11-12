@@ -38,4 +38,10 @@ class ItemControllerTest extends AuthenticatedControllerTest
 
         $this->assertContains('Test item name', $crawler->html());
     }
+
+    public function testChangeItemSectorAction()
+    {
+        $crawler = $this->client->request('GET', '/admin/item/1000/change-sector');
+        $this->assertContains('Choose item type', $crawler->html());
+    }
 }
