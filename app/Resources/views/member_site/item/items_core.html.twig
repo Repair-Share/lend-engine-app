@@ -4,6 +4,8 @@
 <script src="/plugins/dymo/DYMO.Label.Framework.3.0.js" type="text/javascript" charset="UTF-8"></script>
 {% endif %}
 
+<h2>{{ categoryTitle|raw }}</h2>
+
 <div id="item-list-filter">
     {% if filter.sites|length > 1 %}
         <div class="multi-site">
@@ -13,6 +15,7 @@
                         <a href="{{ path('public_products',
                         {
                             tagId: app.request.get('tagId'),
+                            section: app.request.get('section'),
                             e: app.request.get('e'),
                             siteId: site.id,
                             see_variations: app.request.get('see_variations'),
@@ -31,6 +34,7 @@
 
     <form method="GET">
         <input type="hidden" name="tagId" value="{{ app.request.get('tagId') }}">
+        <input type="hidden" name="section" value="{{ app.request.get('section') }}">
         <input type="hidden" name="search" value="{{ app.request.get('search') }}">
         <input type="hidden" name="siteId" value="{{ app.request.get('siteId') }}">
         <input type="hidden" name="see_variations" value="{{ app.request.get('see_variations') }}">

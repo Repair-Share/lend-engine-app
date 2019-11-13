@@ -227,10 +227,10 @@ class ItemType extends AbstractType
 
         /** @var $tagRepo \AppBundle\Repository\ProductTagRepository */
         $tagRepo = $this->em->getRepository('AppBundle:ProductTag');
-        $tags = $tagRepo->findAllOrderedByName();
+        $tags = $tagRepo->findAllOrderedBySort();
         $builder->add('tags', EntityType::class, array(
             'class' => 'AppBundle:ProductTag',
-            'choice_label' => 'name',
+            'choice_label' => 'nameWithSection',
             'label' => 'Category',
             'choices' => $tags,
             'required' => false,

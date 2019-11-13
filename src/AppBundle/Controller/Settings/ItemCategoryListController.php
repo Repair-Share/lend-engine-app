@@ -7,42 +7,44 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ItemTagsListController extends Controller
+class ItemCategoryListController extends Controller
 {
     /**
-     * @Route("admin/tags/list", name="tags_list")
+     * @Route("admin/category/list", name="category_list")
      */
     public function listAction(Request $request)
     {
         $tableRows = array();
         $em   = $this->getDoctrine()->getManager();
 
-        /** @var \AppBundle\Repository\ProductTagRepository $tagRepo */
-        $tagRepo = $em->getRepository('AppBundle:ProductTag');
-        $tags = $tagRepo->findAllOrderedByName();
+        /** @var \AppBundle\Repository\ProductTagRepository $repo */
+        $repo = $em->getRepository('AppBundle:ProductTag');
+        $categories = $repo->findAllOrderedByName();
 
         $tableHeader = array(
+            'Section',
             'Category',
             'Show on website',
             'Number of items',
             ''
         );
 
-        foreach ($tags AS $i) {
+        foreach ($categories AS $i) {
 
             /** @var \AppBundle\Entity\ProductTag $i */
-            $countItems = $tagRepo->countProducts($i->getId());
-            $name = $i->getName();
+            $countItems = $repo->countProducts($i->getId());
 
             $tableRows[] = array(
                 'id' => $i->getId(),
-                'data' => array(
-                    $name,
+                'data' => [
+                    $i->getSection() ? $i->getSection()->getName() : '',
+                    $i->getName(),
                     $i->getShowOnWebsite() ? 'Yes' : '',
                     $countItems[0]['cnt'],
                     ''
-                )
+                ]
             );
+
         }
 
         $modalUrl = $this->generateUrl('product_tag');
@@ -57,7 +59,7 @@ EOT;
 
         return $this->render(
             'lists/setup_list.html.twig',
-            array(
+            [
                 'title'      => 'Categories',
                 'pageTitle'  => 'Categories',
                 'entityName' => 'ProductTag',
@@ -67,32 +69,8 @@ EOT;
                 'modalUrl' => $modalUrl,
                 'sortable' => true,
                 'help' => $helpText
-            )
+            ]
         );
     }
 
-    /**
-     * @Route("admin/tags/search", name="tags_search")
-     * Used to feed the Select2 AJAX tags manager
-     */
-    public function searchAction(Request $request)
-    {
-        $term = $request->get('term');
-        $data = array();
-        $em   = $this->getDoctrine()->getManager();
-        $tags = $em->getRepository('AppBundle:ProductTag')->searchByName($term);
-        /** @var \AppBundle\Entity\ProductTag $tag */
-        foreach ($tags AS $tag) {
-            $data[] = array(
-                'id'        => $tag->getId(),
-                'text'      => $tag->getName(),
-                'products'  => $tag->getInventoryItems(),
-            );
-        }
-        return new Response(
-            json_encode($data),
-            200,
-            array('Content-Type' => 'application/json')
-        );
-    }
 }

@@ -1,0 +1,36 @@
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+{% block modalSubTitle %}{{ subTitle|raw }}{% endblock %}
+
+{% block modalBody %}
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% if help is defined %}
+        <span class="help">{{ help }}</span>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_row(form.name) }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_row(form.section) }}
+        </div>
+    </div>
+
+    {{ form_row(form.showOnWebsite) }}
+
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="modal-submit btn bg-green">Save category</button>
+{% endblock %}
+

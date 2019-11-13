@@ -34,6 +34,9 @@ class TableSortController extends Controller
                 case 'ProductTag':
                     $repo = $em->getRepository('AppBundle:ProductTag');
                     break;
+                case 'ProductSection':
+                    $repo = $em->getRepository('AppBundle:ProductSection');
+                    break;
                 case 'ProductField':
                     $repo = $em->getRepository('AppBundle:ProductField');
                     break;

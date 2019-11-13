@@ -6,12 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * ProductTag
+ * ProductSection
  *
  * @ORM\Table(options={"collate"="utf8mb4_unicode_ci", "charset"="utf8mb4"})
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductTagRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductSectionRepository")
  */
-class ProductTag
+class ProductSection
 {
     /**
      * @var integer
@@ -29,12 +29,6 @@ class ProductTag
     private $name;
 
     /**
-     * @var ProductSection
-     * @ORM\ManyToOne(targetEntity="ProductSection", inversedBy="categories")
-     */
-    private $section;
-
-    /**
      * @var integer
      *
      * @ORM\Column(name="show_on_website", type="boolean", options={"default" = true})
@@ -49,16 +43,16 @@ class ProductTag
     private $sort = 0;
 
     /**
-     * @ORM\ManyToMany(targetEntity="InventoryItem", mappedBy="tags")
+     * @ORM\OneToMany(targetEntity="ProductTag", mappedBy="section")
      */
-    protected $inventoryItems;
+    protected $categories;
 
     /**
      *
      */
     public function __construct()
     {
-        $this->inventoryItems = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     /**
@@ -76,7 +70,7 @@ class ProductTag
      *
      * @param string $name
      *
-     * @return ProductTag
+     * @return ProductSection
      */
     public function setName($name)
     {
@@ -96,49 +90,28 @@ class ProductTag
     }
 
     /**
-     * @param ProductSection $section
-     * @return $this
+     * @param ProductTag $category
      */
-    public function setSection(ProductSection $section)
+    public function addCategory(ProductTag $category)
     {
-        $this->section = $section;
-
-        return $this;
+        $this->categories[] = $category;
     }
 
     /**
-     * @return ProductSection
+     * @return ArrayCollection
      */
-    public function getSection()
+    public function getCategories()
     {
-        return $this->section;
+        return $this->categories;
     }
 
     /**
-     * @param InventoryItem $inventoryItems
-     */
-    public function addInventoryItem(InventoryItem $inventoryItems)
-    {
-        $this->inventoryItems[] = $inventoryItems;
-    }
-
-    /**
-     * Get products
      *
+     * @param \AppBundle\Entity\ProductTag $category
      */
-    public function getInventoryItems()
+    public function removeInventoryItem(ProductTag $category)
     {
-        return $this->inventoryItems;
-    }
-
-    /**
-     * Remove inventory item
-     *
-     * @param \AppBundle\Entity\InventoryItem $inventoryItem
-     */
-    public function removeInventoryItem(InventoryItem $inventoryItem)
-    {
-        $this->inventoryItems->removeElement($inventoryItem);
+        $this->categories->removeElement($category);
     }
 
     /**
@@ -146,7 +119,7 @@ class ProductTag
      *
      * @param boolean $showOnWebsite
      *
-     * @return ProductTag
+     * @return ProductSection
      */
     public function setShowOnWebsite($showOnWebsite)
     {
@@ -170,7 +143,7 @@ class ProductTag
      *
      * @param integer $sort
      *
-     * @return ProductTag
+     * @return ProductSection
      */
     public function setSort($sort)
     {
@@ -187,14 +160,5 @@ class ProductTag
     public function getSort()
     {
         return $this->sort;
-    }
-
-    public function getNameWithSection()
-    {
-        if ($this->section) {
-            return $this->section->getName().' - '.$this->name;
-        } else {
-            return $this->name;
-        }
     }
 }

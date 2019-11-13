@@ -11,7 +11,11 @@
         <span class="help">{{ help }}</span>
     {% endif %}
 
-    {{ form_row(form.name) }}
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_row(form.name) }}
+        </div>
+    </div>
 
     {{ form_row(form.showOnWebsite) }}
 
@@ -21,6 +25,6 @@
 
 {% block modalFooter %}
     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
-    <button class="modal-submit btn bg-green">Save category</button>
+    <button class="modal-submit btn bg-green">Save section</button>
 {% endblock %}
 

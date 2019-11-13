@@ -35,8 +35,6 @@ class MenuBuilder
      */
     public function adminMenu()
     {
-        /** @var \AppBundle\Entity\Contact $user */
-        $user = $this->tokenStorage->getToken()->getUser();
 
         $data = [
             'childrenAttributes' => [
@@ -49,14 +47,14 @@ class MenuBuilder
         $this->addMenuItem('Dashboard', 'homepage', 'fa-bar-chart');
         $this->addMenuItem('Member site', 'home', 'fa-window-maximize');
 
-        $this->addMenuItem('Loans', 'loan_list', 'fa-shopping-bag');
+        $this->addMenuItem('Loans', 'loan_list', 'fa-shopping-bag', [], true);
         $this->addChildItem('Loans', 'All', 'loan_list', '', '');
         $this->addChildItem('Loans', 'Pending', 'loan_list', '', '', ['status' => 'PENDING']);
         $this->addChildItem('Loans', 'On loan', 'loan_list', '', '', ['status' => 'ACTIVE']);
         $this->addChildItem('Loans', 'Overdue', 'loan_list', '', '', ['status' => 'OVERDUE']);
         $this->addChildItem('Loans', 'Reservations', 'loan_list', '', '', ['status' => Loan::STATUS_RESERVED]);
 
-        $this->addMenuItem('Items', 'null', 'fa-cubes');
+        $this->addMenuItem('Items', 'null', 'fa-cubes', [], true);
         $this->addChildItem('Items', 'Browse items', 'item_list', '', '', []);
 
         if ( $this->container->get('security.authorization_checker')->isGranted("ROLE_SUPER_USER") ) {
@@ -87,7 +85,7 @@ class MenuBuilder
             $this->addMenuItem('Events', 'admin_event_list', 'fa-calendar');
         }
 
-        $this->addMenuItem('Reports', 'null', 'fa-signal');
+        $this->addMenuItem('Reports', 'null', 'fa-signal', [], true);
         $this->addChildItem('Reports', 'Loans by status/member', 'report_loans', '');
         $this->addChildItem('Reports', 'Loans by item', 'report_items', '');
         $this->addChildItem('Reports', 'Loan item detail', 'report_all_items', '');
@@ -135,7 +133,12 @@ class MenuBuilder
         }
         $this->menu->addChild('Staff / team', array('route' => 'users_list'));
 
-        $this->menu->addChild('Item categories', array('route' => 'tags_list'));
+        $this->menu->addChild('Item sections <label class="label bg-orange">New</label>',
+            [
+                'route' => 'section_list',
+                'extras' => ['safe_label' => true]
+            ]);
+        $this->menu->addChild('Item categories', array('route' => 'category_list'));
         $this->menu->addChild('Item fields', array('route' => 'product_field_list'));
         $this->menu->addChild('Item conditions', array('route' => 'itemCondition_list'));
         $this->menu->addChild('Item barcode labels', array('route' => 'settings_labels'));
@@ -149,104 +152,6 @@ class MenuBuilder
         $this->menu->addChild('Contact fields', array('route' => 'contact_field_list'));
         $this->menu->addChild('Membership types', array('route' => 'membershipType_list'));
         $this->menu->addChild('Payment methods', array('route' => 'payment_method_list'));
-
-        return $this->menu;
-    }
-
-    /**
-     * @return \Knp\Menu\ItemInterface
-     */
-    public function itemsMenuStacked()
-    {
-        return $this->itemsMenu(true);
-    }
-
-    /**
-     * @param bool $stacked
-     * @return \Knp\Menu\ItemInterface
-     * @throws \Exception
-     */
-    public function itemsMenu($stacked = false)
-    {
-
-        if ($stacked == true) {
-            $class = 'nav nav-pills nav-stacked items-nav';
-        } else {
-            $class = 'nav nav-pills items-nav';
-        }
-
-        $requestStack = $this->container->get('request_stack');
-        $request = $requestStack->getCurrentRequest();
-
-        $this->menu = $this->factory->createItem('root', array(
-            'childrenAttributes' => array(
-                'class' => $class
-            )
-        ));
-
-        if ($this->container->get('settings')->getSettingValue('site_is_private')
-            && !$this->container->get('security.authorization_checker')->isGranted('ROLE_USER')) {
-
-            $txt = "";
-            $this->menu->addChild($txt, array(
-                'route' => '',
-                'extras' => array('safe_label' => true)
-            ));
-
-            return $this->menu;
-        }
-
-        // Show recently added items
-        $parameters = [
-            'show' => 'recent',
-            'locationId' => $request->get('locationId'),
-            'e' => $request->get('e') // embed
-        ];
-        if ($request->get('show') == 'recent') {
-            $class = 'active';
-        } else {
-            $class = '';
-        }
-        $this->menu->addChild($this->container->get('translator')->trans("public_misc.link_recent_items", [], 'member_site'), array(
-            'route' => 'public_products',
-            'routeParameters' => $parameters,
-            'extras' => array('safe_label' => true)
-        ))->setAttribute('class', 'recent-items '. $class);
-
-        // Product pages by tag --------------
-
-        /** @var $repo \AppBundle\Repository\ProductTagRepository */
-        $repo = $this->container->get('doctrine')->getRepository('AppBundle:ProductTag');
-        $tags = $repo->findAllOrderedBySort();
-
-        foreach ($tags AS $tag) {
-
-            /** @var $tag \AppBundle\Entity\ProductTag */
-
-            if ($tag->getShowOnWebsite() != true) {
-                continue;
-            }
-
-            $parameters = [
-                'tagId' => $tag->getId(),
-                'locationId' => $request->get('locationId'),
-                'e' => $request->get('e') // embed
-            ];
-
-            if ($tag->getId() == $request->get('tagId')) {
-                $class = 'active';
-            } else {
-                $class = '';
-            }
-
-            $this->menu->addChild($tag->getName(), array(
-                'route' => 'public_products',
-                'routeParameters' => $parameters,
-                'class' => $class,
-                'label' => $tag->getName(),
-                'extras' => array('safe_label' => true)
-            ))->setAttribute('class', $class);
-        }
 
         return $this->menu;
     }
@@ -438,24 +343,46 @@ class MenuBuilder
      * @param $label
      * @param $route
      * @param string $icon
+     * @param array $parameters
      */
-    private function addMenuItem($label, $route, $icon = '')
+    private function addMenuItem($label, $route, $icon = '', $parameters = [], $isParent = false)
     {
+        if ($icon) {
+            // For admin
+            $l = '<i class="fa '.$icon.'"></i> <span>'.$label.'</span>';
+        } else {
+            $l = $label;
+        }
+
         $data = [
             'childrenAttributes' => [
-                'class' => 'treeview-menu'
+                'class' => 'treeview-menu collapse',
             ],
-            'label' => '<i class="fa '.$icon.'"></i> <span> '.$label.'</span>',
+            'label' => $l,
             'extras' => [
                 'safe_label' => true
             ]
         ];
-        if ($route) {
+
+        if (!strstr($route, "#")) {
             $data['route'] = $route;
+        } else if ($route) {
+            $data['uri'] = $route;
         } else {
             $data['uri'] = '#';
         }
-        $this->menu->addChild($label, $data);
+
+        if ($parameters) {
+            $data['routeParameters'] = $parameters;
+        }
+
+        $m = $this->menu->addChild($label, $data);
+
+        if ($isParent) {
+            $m->setAttribute('class', 'treeview');
+        }
+
+        return $m;
     }
 
     /**
@@ -466,15 +393,29 @@ class MenuBuilder
      * @param string $tag
      * @param array $routeParameters
      */
-    private function addChildItem($parent, $label, $route, $icon = '', $tag = '', $routeParameters = array())
+    private function addChildItem($parent, $label, $route, $icon = '', $tag = '', $routeParameters = [])
     {
-        $this->menu[$parent]->addChild('<i class="fa '.$icon.'"></i> <span>'.$label.'</span>'.$tag,
-            array(
+        if ($icon) {
+            $iconHtml = '<i class="fa '.$icon.'"></i>';
+        } else {
+            $iconHtml = '';
+        }
+
+        if ($label) {
+            $labelHtml = '<span>'.$label.'</span>';
+        } else {
+            $labelHtml = '';
+        }
+
+        $child = $this->menu[$parent]->addChild($iconHtml.$labelHtml.$tag,
+            [
                 'route' => $route,
                 'routeParameters' => $routeParameters,
-                'extras' => array('safe_label' => true),
-            ));
-        $this->menu[$parent]->setAttribute('class', 'treeview');
+                'extras' => ['safe_label' => true]
+            ]
+        );
+
+        return $child;
     }
 
 }

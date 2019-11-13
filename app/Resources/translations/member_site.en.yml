@@ -63,8 +63,6 @@ button_go: Go
 I forgot my password: I forgot my password
 Log out: Log out
 My account: My account
-Login with Facebook: Login with Facebook
-Login with Google: Login with Google
 
 # Form labels
 form:
@@ -85,7 +83,8 @@ public_misc:
   link_home: Home
   link_recent_items: Recently added
   link_all_items: All items
-  search_items: Search our items
+  search_items: Search
+  search: Search
   no_results: Nothing found
   filter_items: Filter items
   any_site: Any site

@@ -1,6 +1,7 @@
 <?php
-namespace AppBundle\Form\Type;
+namespace AppBundle\Form\Type\Settings;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,7 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ProductTagType extends AbstractType
+class ItemCategoryType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -17,15 +18,25 @@ class ProductTagType extends AbstractType
             'required' => true,
             'attr' => array(
                 'placeholder' => '',
-                'data-help' => 'You can add as many categories to an item as you like.',
+                'data-help' => '',
             )
         ]);
 
         $builder->add('showOnWebsite', CheckboxType::class, array(
-            'label' => 'Show on your Lend Engine site as a menu item.',
+            'label' => 'Show this category on your Lend Engine site as a menu item.',
             'attr' => array(
                 'data-help' => '',
             )
+        ));
+
+        $builder->add('section', EntityType::class, array(
+            'label' => 'Section (category group)',
+            'class' => 'AppBundle:ProductSection',
+            'choice_label' => 'name',
+            'required' => false,
+            'attr' => [
+                'data-help' => '<a href="/admin/section" class="modal-link">Add a new section</a>',
+            ]
         ));
     }
 

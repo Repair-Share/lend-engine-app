@@ -61,10 +61,10 @@ class ItemListController extends Controller
         /** @var \AppBundle\Repository\SiteRepository $siteRepo */
         $siteRepo = $em->getRepository('AppBundle:Site');
 
+        /** @var \AppBundle\Repository\ProductTagRepository $categoryRepo */
+        $categoryRepo = $em->getRepository('AppBundle:ProductTag');
+
         $filter = [];
-        if ($searchString = $request->get('search')) {
-            $filter['search'] = $searchString;
-        }
 
         if ($barcode = $request->get('barcode')) {
             $filter['barcode'] = $barcode;
@@ -72,6 +72,13 @@ class ItemListController extends Controller
 
         if ($tagId = $request->get('tagId')) {
             $filter['tagIds'] = [ $tagId ];
+            $category = $categoryRepo->find($tagId);
+            if ($category->getSection()) {
+                $pageTitle = $category->getSection()->getName().' &raquo; '.$category->getName();
+            } else {
+                $pageTitle = $category->getName();
+            }
+
         }
 
         if ($from = $request->get('from')) {
@@ -90,6 +97,7 @@ class ItemListController extends Controller
         if ($request->get('show') == 'recent') {
             $filter['sortBy']  = 'item.createdAt';
             $filter['sortDir'] = 'DESC';
+            $pageTitle = $this->container->get('translator')->trans("public_misc.link_recent_items", [], 'member_site');
         } else if ($request->get('sortBy')) {
             $filter['sortBy']  = $request->get('sortBy');
             if ($request->get('sortDir')) {
@@ -101,6 +109,13 @@ class ItemListController extends Controller
 
         if ($siteId = $request->get('siteId')) {
             $filter['siteId'] = $siteId;
+        }
+
+        if ($searchString = $request->get('search')) {
+            $filter['search'] = $searchString;
+
+            $searchText = $this->container->get('translator')->trans("public_misc.search", [], 'member_site');
+            $pageTitle = $searchText.': "'.$searchString.'"';
         }
 
         // If not admin, only show the public items
@@ -249,7 +264,7 @@ class ItemListController extends Controller
             $dateTo   = new \DateTime($request->get('to'));
         }
 
-        return $this->render($template, array(
+        return $this->render($template, [
             'products' => $items,
             'totalRecords' => $totalRecords,
             'from'     => $resultsFrom + 1,
@@ -259,8 +274,9 @@ class ItemListController extends Controller
             'pages'    => $pages,
             'filter'   => $itemFilter,
             'user'     => $contact,
-            'sortDir'  => $newSortDir
-        ));
+            'sortDir'  => $newSortDir,
+            'categoryTitle' => $pageTitle
+        ]);
 
     }
 

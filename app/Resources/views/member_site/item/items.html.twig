@@ -3,7 +3,7 @@
 
 {% block body %}
     {% if is_granted('ROLE_ADMIN') and app.request.get('tagId') %}
-        <div style="margin-bottom: 10px; text-align: right">
+        <div style="margin-bottom: 10px; text-align: right" class="pull-right">
             <a target="_blank" href="{{ path('printable_catalogue', {category: app.request.get('tagId'), columns: 2}) }}">Print this category</a>
         </div>
     {% endif %}

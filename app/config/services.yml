@@ -306,6 +306,16 @@ services:
             - { name: knp_menu.menu_builder, method: settingsMenu, alias: settingsMenu }
             - { name: knp_menu.menu_builder, method: accountMenu, alias: accountMenu }
 
+    service.site_nav:
+        class: \AppBundle\Services\SiteNav
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@security.authorization_checker"
+            - "@settings"
+            - "@translator.default"
+            - "@router"
+            - "@request_stack"
+
     ## SCHEDULED ACTIONS
 
     service.schedule_loan_reminders:

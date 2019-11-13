@@ -44,6 +44,7 @@ twig:
         stripe_client_id:  "%stripe_client_id%"
         rollbar_client_token : "%rollbar_client_token%"
         billing_public_key: "%billing_public_key%"
+        site_nav: "@service.site_nav"
 
 # Assetic Configuration
 assetic:

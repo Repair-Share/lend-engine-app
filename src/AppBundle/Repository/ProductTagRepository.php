@@ -54,9 +54,13 @@ class ProductTagRepository extends EntityRepository
      */
     public function findAllOrderedBySort()
     {
-        return $this->getEntityManager()
-            ->createQuery('SELECT t FROM AppBundle:ProductTag t ORDER BY t.sort, t.name ASC')
-            ->getResult();
+        $repository = $this->getEntityManager()->getRepository('AppBundle:ProductTag');
+        $builder = $repository->createQueryBuilder('t');
+        $builder->leftJoin('t.section', 's');
+        $builder->addOrderBy('s.sort, t.sort, t.name', 'ASC');
+
+        $query = $builder->getQuery();
+        return $query->getResult();
     }
 
     /**

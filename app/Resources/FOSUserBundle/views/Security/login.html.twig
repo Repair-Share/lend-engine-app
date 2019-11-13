@@ -4,54 +4,49 @@
 
 {% block fos_user_content %}
 
+    <h2>{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</h2>
+
+    {% if error %}
+        <div class="alert alert-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
     <div class="row">
-        <div class="col-md-10">
-            {% if error %}
-                <div class="alert alert-error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-            {% endif %}
 
-            <div class="row">
+        <div class="col-md-6">
 
-                <div class="col-md-6" style="padding: 20px;">
-
-                    <h2>&nbsp;</h2>
-
-                    <form action="{{ path("fos_user_security_check") }}" method="post">
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
-                        <div class="form-group has-feedback">
-                            <label for="username">{{ 'security.login.email'|trans }}</label>
-                            <input class="form-control" placeholder="Email address" type="text" id="username" name="_username" value="{{ last_username }}" required="required" />
+            <form action="{{ path("fos_user_security_check") }}" method="post">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+                <div class="form-group has-feedback">
+                    <label for="username">{{ 'security.login.email'|trans }}</label>
+                    <input class="form-control" placeholder="Email address" type="text" id="username" name="_username" value="{{ last_username }}" required="required" />
+                </div>
+                <div class="form-group has-feedback">
+                    <label for="password">{{ 'security.login.password'|trans }}</label>
+                    <input class="form-control" placeholder="Password" type="password" id="password" name="_password" required="required" />
+                </div>
+                <div class="row">
+                    <div class="col-xs-8">
+                        <div class="checkbox icheck">
+                            {#<label>#}
+                            {#<input type="checkbox" id="remember_me" name="_remember_me" value="on" />#}
+                            {#<label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>#}
+                            {#</label>#}
                         </div>
-                        <div class="form-group has-feedback">
-                            <label for="password">{{ 'security.login.password'|trans }}</label>
-                            <input class="form-control" placeholder="Password" type="password" id="password" name="_password" required="required" />
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-8">
-                                <div class="checkbox icheck">
-                                    {#<label>#}
-                                    {#<input type="checkbox" id="remember_me" name="_remember_me" value="on" />#}
-                                    {#<label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>#}
-                                    {#</label>#}
-                                </div>
-                                <a href="{{ path('fos_user_resetting_request') }}">
-                                    {{ 'security.login.forgot_password'|trans }}
-                                </a>
-                            </div>
-                            <div class="col-xs-4">
-                                <input type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" class="btn btn-primary btn-block btn-flat" />
-                            </div>
-                        </div>
-
-                        <br><br>
-
-                    </form>
-
+                        <a href="{{ path('fos_user_resetting_request') }}">
+                            {{ 'security.login.forgot_password'|trans }}
+                        </a>
+                    </div>
+                    <div class="col-xs-4">
+                        <input type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" class="btn btn-primary btn-block btn-flat" />
+                    </div>
                 </div>
 
-            </div>
+                <br><br>
+
+            </form>
 
         </div>
+
     </div>
 
 {% endblock fos_user_content %}

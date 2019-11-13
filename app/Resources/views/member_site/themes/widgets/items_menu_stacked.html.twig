@@ -1,9 +1,42 @@
-{#<style>#}
-    {#.menu-header {#}
-        {#padding: 0 15px;#}
-        {#font-size: 11px;#}
-        {#color: #aaa;#}
-    {#}#}
-{#</style>#}
-{#<div class="menu-header">ITEM CATEGORIES</div>#}
-{{ knp_menu_render('itemsMenuStacked') }}
+<style>
+    ul.menu-child {
+        padding-left: 10px;
+    }
+    ul.menu-child li {
+         list-style-type: none;
+         padding-left: 0;
+    }
+    ul.menu-child li > a {
+        padding: 6px 15px;
+        display: block;
+    }
+    ul.menu-child li > a:hover {
+        background-color: #f3f3f3;
+    }
+    ul.menu-child li.active > a {
+        background-color: #f3f3f3;
+    }
+</style>
+
+{{ site_nav.render()|raw }}
+
+<script>
+    $(document).ready(function(){
+        $("#{{ app.request.get('section') }}").collapse("show");
+        window.setTimeout(setIcons, 400);
+        $(document).on("click", ".submenu-label", function() {
+            window.setTimeout(setIcons, 400);
+        });
+    });
+
+    function setIcons() {
+        $('ul.menu-child').each(function() {
+            console.log( $(this) );
+            if ($(this).hasClass('in')) {
+                $(this).siblings('a').find('i').removeClass('fa-plus-square').addClass('fa-minus-square');
+            } else {
+                $(this).siblings('a').find('i').removeClass('fa-minus-square').addClass('fa-plus-square');
+            }
+        });
+    }
+</script>
