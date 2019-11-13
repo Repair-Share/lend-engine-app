@@ -233,8 +233,10 @@ class MaintenancePlan
     {
         if ($this->interval > 0) {
             return $this->name.' (every '.$this->interval.' months)';
-        } else {
+        } else if ($this->afterEachLoan == true) {
             return $this->name.' (after each check-in)';
+        } else {
+            return $this->name.' (ad-hoc)';
         }
     }
 }

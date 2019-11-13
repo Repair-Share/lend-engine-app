@@ -58,7 +58,7 @@ class MaintenancePlanType extends AbstractType
         $builder->add('afterEachLoan', CheckboxType::class, array(
             'label' => 'Auto-create a single maintenance directly after each check-in',
             'attr' => [
-                'data-help' => 'or set a monthly interval for regular maintenance (eg electrical tests).'
+                'data-help' => 'or set a monthly interval for regular maintenance (eg electrical tests).<br>For ad-hoc maintenance, leave both blank.'
             ]
         ));
 

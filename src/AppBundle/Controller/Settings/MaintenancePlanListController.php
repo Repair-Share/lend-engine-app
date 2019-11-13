@@ -37,6 +37,14 @@ class MaintenancePlanListController extends Controller
             $countItems = $repo->countProducts($plan->getId());
             $name = $plan->getName();
 
+            if ($plan->getInterval() > 0) {
+                $type = "Every {$plan->getInterval()} months";
+            } else if ($plan->getAfterEachLoan()) {
+                $type = "After each loan";
+            } else {
+                $type = 'Ad-hoc';
+            }
+
             $tableRows[] = [
                 'id' => $plan->getId(),
                 'class' => $plan->getIsActive() ? 'item-active' : 'item-inactive',
@@ -44,7 +52,7 @@ class MaintenancePlanListController extends Controller
                     $name,
                     $plan->getIsActive() == true ? 'Yes' : 'No',
                     $countItems[0]['cnt'],
-                    $plan->getInterval() > 0 ? "Every {$plan->getInterval()} months" : "After each loan",
+                    $type,
                     $plan->getPreventBorrowsIfOverdue() == true ? 'Yes' : 'No',
                     $plan->getProvider() ? $plan->getProvider()->getName() : '',
                     ''
@@ -64,6 +72,8 @@ class MaintenancePlanListController extends Controller
 <li>When the maintenance is completed, the next one will be automatically created.
 </ul>
 <p>Alternatively, you can automatically <strong>create a single maintenance</strong> for an item as soon as it's checked in, perhaps for a safety check.</p>
+<p>For <strong>ad-hoc maintenance</strong> that is performed only when required, create a maintenance type without and interval, and don't set it for each checkout. 
+Ad-hoc maintenance does not need to be linked to items.</p>
 <p>Files and notes can be added to maintenance activity for a full record of maintenance history.</p>
 EOT;
 
