@@ -4,8 +4,6 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-//use Gedmo\Mapping\Annotation as Gedmo;
-//use Gedmo\Translatable\Translatable;
 
 /**
  * ProductTag
