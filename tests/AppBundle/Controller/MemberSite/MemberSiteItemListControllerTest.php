@@ -13,7 +13,7 @@ class MemberSiteItemListControllerTest extends WebTestCase
         $client = static::createClient();
 
         // Website view
-        $crawler = $client->request('GET', '/products');
+        $crawler = $client->request('GET', '/products?show=recent');
 
         // Item list page shows
         $this->assertEquals(1, $crawler->filter('#site-item-list')->count());

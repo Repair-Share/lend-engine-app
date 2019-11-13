@@ -29,6 +29,7 @@ class ItemListController extends Controller
         }
 
         $pageSize = 50;
+        $pageTitle = '';
 
         if (!$resultsFrom = $request->get('f')) {
             $resultsFrom = 0;
