@@ -84,10 +84,18 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="page-help">
-                        For Stripe to work you will need to have your Lend Engine account on our secure (https) servers.
-                        Please email hello@lend-engine.com to arrange a transfer before you connect Stripe.
-                    </div>
+
+                    {% if tenantInformation.serverName == 'lend-engine-eu' %}
+                        <div class="alert alert-warning">
+                            For Stripe to work you will need to have your Lend Engine account on our secure (https) servers.<br>
+                            Please set up a custom domain at Settings &raquo; Member site, or contact us for other options.
+                        </div>
+                    {% else %}
+                        <div class="page-help">
+                            Your account is on our secure servers and Stripe can be enabled.
+                        </div>
+                    {% endif %}
+
                     <div class="form-group">
                         {% if tenantInformation.stripePublicApiKey|length == 0 %}
                             <p class="help-block">

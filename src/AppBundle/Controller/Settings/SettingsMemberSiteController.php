@@ -53,6 +53,7 @@ class SettingsMemberSiteController extends Controller
         if ($request->get('customDomain') == 'activate') {
             $tenant = $tenantService->getTenant();
             $tenant->setDomain($requestedDomain);
+            $tenant->setServer('lend-engine-eu-plus');
             $em->persist($tenant);
             $em->flush();
             $this->addFlash("success", "Your domain is now activated");
@@ -60,6 +61,7 @@ class SettingsMemberSiteController extends Controller
         } else if ($request->get('customDomain') == 'deactivate') {
             $tenant = $tenantService->getTenant();
             $tenant->setDomain(null);
+            $tenant->setServer('lend-engine-eu');
             $em->persist($tenant);
             $em->flush();
             $this->addFlash("success", "Your domain is now de-activated");
