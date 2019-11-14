@@ -139,8 +139,7 @@ class AdminLoanListDataController extends Controller
 //            $to = $loan->getTimeOut()->modify("{$offSet} hours");
 //            $loan->setTimeOut($to);
 
-            $itemUrl   = $this->generateUrl('item', ['id' => $loanRow->getInventoryItem()->getId()]);
-            $loanInfo = '<a href="'.$itemUrl.'">'.$loanRow->getInventoryItem()->getName().'</a>';
+            $loanInfo = '<a href="'.$editUrl.'">'.$loanRow->getInventoryItem()->getName().'</a>';
             $loanInfo .= '<div class="sub-text">'.$loan->getContact()->getFirstName().' '.$loan->getContact()->getLastName().' : '.$loan->getContact()->getEmail().'</div>';
 
             if ($loan->getStatus() == Loan::STATUS_RESERVED) {
