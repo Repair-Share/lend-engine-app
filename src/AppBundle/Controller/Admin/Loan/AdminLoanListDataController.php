@@ -42,8 +42,8 @@ class AdminLoanListDataController extends Controller
             $statusFilter = $request->get('status');
         }
 
-        /** @var $repo \AppBundle\Repository\LoanRepository */
-        $repo = $em->getRepository('AppBundle:Loan');
+        /** @var $repo \AppBundle\Repository\LoanRowRepository */
+        $repo = $em->getRepository('AppBundle:LoanRow');
 
         $filter = [];
         if ($searchString) {
@@ -60,6 +60,15 @@ class AdminLoanListDataController extends Controller
         }
         if ($request->get('date_type')) {
             $filter['date_type'] = $request->get('date_type');
+        }
+        if ($request->get('current_site')) {
+            $filter['current_site'] = $request->get('current_site');
+        }
+        if ($request->get('from_site')) {
+            $filter['from_site'] = $request->get('from_site');
+        }
+        if ($request->get('to_site')) {
+            $filter['to_site'] = $request->get('to_site');
         }
 
         $sort = [
@@ -85,7 +94,7 @@ class AdminLoanListDataController extends Controller
             }
         }
 
-        $loanData = $repo->findLoans($start, $length, $filter, $sort);
+        $loanData = $repo->search($start, $length, $filter, $sort);
 
         // Modify times to match local time for UI
         // Not sure why DateTime format() here is not working
@@ -94,14 +103,17 @@ class AdminLoanListDataController extends Controller
         $utc = new \DateTime('now', new \DateTimeZone("UTC"));
         $offSet = $timeZone->getOffset($utc)/3600;
 
-        foreach ($loanData['data'] AS $loan) {
+        /** @var \AppBundle\Entity\LoanRow $loanRow */
+        foreach ($loanData['data'] AS $loanRow) {
+
+            /** @var $loan \AppBundle\Entity\Loan */
+            $loan = $loanRow->getLoan();
 
             $row = [];
 
-            /** @var $loan \AppBundle\Entity\Loan */
             $editUrl   = $this->generateUrl('public_loan', array('loanId' => $loan->getId()));
 
-            if ($loan->getStatus() == Loan::STATUS_CLOSED) {
+            if ($loan->getStatus() == Loan::STATUS_CLOSED || $loanRow->getCheckedInAt()) {
                 $status = '<span class="label bg-dim">'.Loan::STATUS_CLOSED.'</span>';
             } else if ($loan->getStatus() == Loan::STATUS_PENDING) {
                 $status = '<span class="label bg-gray">'.Loan::STATUS_PENDING.'</span>';
@@ -116,38 +128,35 @@ class AdminLoanListDataController extends Controller
             }
 
             // Modify UTC database times to match local time
-            foreach ($loan->getLoanRows() AS $loanRow) {
-                /** @var $loanRow \AppBundle\Entity\LoanRow */
-                $i = $loanRow->getDueInAt()->modify("{$offSet} hours");
-                $loanRow->setDueInAt($i);
-                $o = $loanRow->getDueOutAt()->modify("{$offSet} hours");
-                $loanRow->setDueOutAt($o);
-            }
+            $i = $loanRow->getDueInAt()->modify("{$offSet} hours");
+            $loanRow->setDueInAt($i);
+            $o = $loanRow->getDueOutAt()->modify("{$offSet} hours");
+            $loanRow->setDueOutAt($o);
 
             // Timezone modify
-            $ti = $loan->getTimeIn()->modify("{$offSet} hours");
-            $loan->setTimeIn($ti);
-            $to = $loan->getTimeOut()->modify("{$offSet} hours");
-            $loan->setTimeOut($to);
+//            $ti = $loan->getTimeIn()->modify("{$offSet} hours");
+//            $loan->setTimeIn($ti);
+//            $to = $loan->getTimeOut()->modify("{$offSet} hours");
+//            $loan->setTimeOut($to);
 
-            $loanFromTime = $loan->getTimeOut();
-            $loanInfo = $loan->getContact()->getFirstName().' '.$loan->getContact()->getLastName();
+            $itemUrl   = $this->generateUrl('item', ['id' => $loanRow->getInventoryItem()->getId()]);
+            $loanInfo = '<a href="'.$itemUrl.'">'.$loanRow->getInventoryItem()->getName().'</a>';
+            $loanInfo .= '<div class="sub-text">'.$loan->getContact()->getFirstName().' '.$loan->getContact()->getLastName().' : '.$loan->getContact()->getEmail().'</div>';
 
-            foreach ($loan->getLoanRows() AS $loanRow) {
-                /** @var $loanRow \AppBundle\Entity\LoanRow */
-                $loanInfo .= '<div class="loan-row" style="font-size:11px; color: #aaa;">'.$loanRow->getInventoryItem()->getName().'</div>';
-                if ($loanRow->getDueOutAt()) {
-                    // reservations
-                    $loanFromTime = $loanRow->getDueOutAt();
+            if ($loan->getStatus() == Loan::STATUS_RESERVED) {
+                if ($loanRow->getInventoryItem()->getInventoryLocation()->getSite() != $loanRow->getSiteFrom()) {
+                    $loanInfo .= '<span style="color: #de7c34">Item needs moving from ' .$loanRow->getInventoryItem()->getInventoryLocation()->getSite()->getName().'</span>';
                 }
             }
 
             $row[] = '<a title data-original-title="Open" href="'.$editUrl.'">'.$loan->getId().'</a>';
             $row[] = $status;
             $row[] = $loanInfo;
-            $row[] = $loanFromTime->format("l d M Y").'<div style="font-size: 12px">'.$loanFromTime->format("g:i a").'</div>';
-            $row[] = $loan->getTimeIn()->format("l d M Y").'<div style="font-size: 12px">'.$loan->getTimeIn()->format("g:i a").'</div>';
-            $row[] = number_format($loan->getItemsTotal(), 2);
+
+            $row[] = $loanRow->getDueOutAt()->format("l d M Y").'<div style="font-size: 12px">'.$loanRow->getDueOutAt()->format("g:i a").'</div><div class="sub-text">'.$loanRow->getSiteFrom()->getName().'</div>';
+            $row[] = $loanRow->getDueInAt()->format("l d M Y").'<div style="font-size: 12px">'.$loanRow->getDueInAt()->format("g:i a").'</div><div class="sub-text">'.$loanRow->getSiteTo()->getName().'</div>';
+
+            $row[] = number_format($loanRow->getFee(), 2);
 
             $links = '<li><a href="'.$editUrl.'">Open</a></li>';
 

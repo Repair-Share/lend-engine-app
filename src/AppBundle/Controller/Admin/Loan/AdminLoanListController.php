@@ -58,18 +58,22 @@ class AdminLoanListController extends Controller
         $overdue  = (int)$loanService->countLoans(Loan::STATUS_OVERDUE);
         $reserved = (int)$loanService->countLoans(Loan::STATUS_RESERVED);
 
+        $siteRepo = $this->getDoctrine()->getRepository('AppBundle:Site');
+        $sites = $siteRepo->findAll();
+
         return $this->render(
             'admin/loan/loan_list.html.twig',
-            array(
+            [
                 'searchString'  => $searchString,
                 'statuses'      => $statuses,
+                'sites'         => $sites,
                 'date_from'     => $this->filterDateFrom,
                 'date_to'       => $this->filterDateTo,
                 'countPending'  => $pending,
                 'countActive'   => $active,
                 'countOverdue'  => $overdue,
                 'countReserved' => $reserved
-            )
+            ]
         );
     }
 

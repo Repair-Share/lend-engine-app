@@ -1,9 +1,6 @@
 {# app/Resources/views/loan/loan_list.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block pageCss %}
-{% endblock %}
-
 {% block title %}Loans{% endblock %}
 
 {% block pageTitle %}Loans{% endblock %}
@@ -50,17 +47,17 @@
 
 {% block body %}
 
-    <div class="row" id="primary-filter" {% if app.request.get('filtered') == 1 %}style="display:block"{% endif %}>
+    <div class="row no-print" id="primary-filter" style="display:block">
         <div id="primary-filter-inner">
             <form method="GET">
                 <input type="hidden" name="filtered" value="1">
                 <div class="col-md-11 filter-fields">
-                    <div class="row">
-                        <div class="col-md-2">
+                    <div class="row" style="margin-bottom: 10px;">
+                        <div class="col-md-3">
                             <label>Date type</label>
                             <select name="date_type" id="date_type" class="form-control">
-                                <option value="date_in" {% if app.request.get('date_type') == 'date_in' %}SELECTED{% endif %}>Return due</option>
-                                <option value="date_out" {% if app.request.get('date_type') == 'date_out' %}SELECTED{% endif %}>Loan start</option>
+                                <option value="date_out" {% if app.request.get('date_type') == 'date_out' %}SELECTED{% endif %}>Due out (from)</option>
+                                <option value="date_in" {% if app.request.get('date_type') == 'date_in' %}SELECTED{% endif %}>Due in (to)</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -70,7 +67,7 @@
                             <input type="hidden" name="date_to" id="date_to" value="{{ date_to }}">
                         </div>
                         <div class="col-md-3">
-                            <label>Status</label>
+                            <label>Loan status</label>
                             <select class="form-control" id="status" name="status">
                                 <option value=""></option>
                                 {% for status in statuses %}
@@ -79,6 +76,39 @@
                             </select>
                         </div>
                     </div>
+
+                    {% if tenantInformation.isMultiSite == 1 %}
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Item current site</label>
+                            <select class="form-control" id="current_site" name="current_site">
+                                <option value=""></option>
+                                {% for site in sites %}
+                                    <option value="{{ site.id }}" {% if app.request.get('current_site') == site.id %}SELECTED{% endif %}>{{ site.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Pickup site</label>
+                            <select class="form-control" id="from_site" name="from_site">
+                                <option value=""></option>
+                                {% for site in sites %}
+                                    <option value="{{ site.id }}" {% if app.request.get('from_site') == site.id %}SELECTED{% endif %}>{{ site.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Return site</label>
+                            <select class="form-control" id="to_site" name="to_site">
+                                <option value=""></option>
+                                {% for site in sites %}
+                                    <option value="{{ site.id }}" {% if app.request.get('to_site') == site.id %}SELECTED{% endif %}>{{ site.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    {% endif %}
+
                 </div>
                 <div class="col-md-1">
                     <label>&nbsp;</label>
@@ -156,7 +186,10 @@
                             "status": "{{ app.request.get('status') }}",
                             "date_type": "{{ app.request.get('date_type') }}",
                             "date_from": "{{ app.request.get('date_from') }}",
-                            "date_to": "{{ app.request.get('date_to') }}"
+                            "date_to": "{{ app.request.get('date_to') }}",
+                            "from_site": "{{ app.request.get('from_site') }}",
+                            "to_site": "{{ app.request.get('to_site') }}",
+                            "current_site": "{{ app.request.get('current_site') }}"
                         });
                     }
                 },
@@ -179,10 +212,6 @@
             });
 
             dataTable.buttons().container().appendTo('#data-table-loans_length').css('padding-right', '20px');
-
-            {% if app.request.get('filtered') != 1 %}
-            $("#data-table-loans_filter label").after('<a href="#" style="padding-left:10px;" id="show-filters">more filters</a>');
-            {% endif %}
 
             $("#data-table-loans_filter label input").css("height", "34px");
             $("#data-table-loans_filter label input").attr("placeholder", "Contact, item or loan ID");

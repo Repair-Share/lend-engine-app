@@ -13114,6 +13114,11 @@ div#extend-modal .date-picker-wrapper .drp_top-bar {
     color: #a0a0a0;
 }
 
+.sub-text {
+    font-size: 13px;
+    color: #a0a0a0;
+}
+
 /* alerts */
 .alert-info { background-color: #e4eef1 !important; color: #0386a7 !important; border-color: #abd4de; }
 .alert-success { background-color: #d9ecdc !important; color: #3c763d !important; border-color: #5ebb68; }
