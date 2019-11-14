@@ -158,6 +158,16 @@ then the user will also be shown a button to continue to choose a membership.',
             )
         ));
 
+        $builder->add('print_css', TextareaType::class, array(
+            'label' => 'CSS for printed catalogue',
+            'data' => $dbData['print_css'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => 'To style the printable version of the member site (for admins only)',
+                'rows' => 6
+            )
+        ));
+
         $builder->add('site_domain', TextType::class, [
             'label' => 'Set a new custom URL',
             'data' => $dbData['site_domain'],

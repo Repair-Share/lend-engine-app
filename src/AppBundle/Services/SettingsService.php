@@ -278,6 +278,7 @@ class SettingsService
             'site_welcome',
             'site_welcome_user',
             'site_css',
+            'print_css',
             'site_js',
             'site_google_login',
             'site_facebook_login',
