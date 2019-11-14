@@ -43,29 +43,30 @@
                         <a href="{{ tenantInformation.accountDomain(true) }}" target="_blank">{{ tenantInformation.accountDomain(true) }}</a>
                     </p>
                     <p class="help-block">
-                        From the Plus plan you can have your own dedicated domain, such as https://items.my-library.com.
+                        On the Plus or Business plan you can have your own dedicated domain, such as https://items.my-library.com.
                     </p>
                 </div>
 
-                {{ form_row(form.site_domain) }}
-
-                <div class="row">
-                    <div class="col-md-4">
-                        <label>Step 1</label>
-                        <div class="help-block">
-                            Enter your custom domain and save settings.
+                <div style="display: {% if tenantInformation.feature('CustomDomain') %}block{% else %}none{% endif %}">
+                    {{ form_row(form.site_domain) }}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Step 1</label>
+                            <div class="help-block">
+                                Enter your custom domain and save settings.
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label>Step 2</label>
-                        <div class="help-block">
-                            Create a CNAME record in your domain control panel.
+                        <div class="col-md-4">
+                            <label>Step 2</label>
+                            <div class="help-block">
+                                Create a CNAME record in your domain control panel.
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <label>Step 3</label>
-                        <div class="help-block">
-                            Switch to the new domain.
+                        <div class="col-md-4">
+                            <label>Step 3</label>
+                            <div class="help-block">
+                                Switch to the new domain.
+                            </div>
                         </div>
                     </div>
                 </div>

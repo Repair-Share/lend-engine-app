@@ -44,6 +44,7 @@ class BillingService
             'PrivateSite'       => false,
             'CustomStyle'       => false,
             'CustomTheme'       => false,
+            'CustomDomain'      => false,
             'MultipleLanguages' => false,
             'EmailAutomation'   => false,
             'Labels'            => false,
@@ -52,6 +53,7 @@ class BillingService
             'Kits'              => false,
             'StockItems'        => false,
             'MaintenancePlan'   => false,
+
         ];
 
         switch ($plan) {
@@ -75,6 +77,7 @@ class BillingService
                     'PrivateSite'       => true,
                     'CustomStyle'       => true,
                     'CustomTheme'       => false,
+                    'CustomDomain'      => false,
                     'MultipleLanguages' => true,
                     'EmailAutomation'   => true,
                     'Labels'            => false,
@@ -101,6 +104,7 @@ class BillingService
                     'PrivateSite'       => true,
                     'CustomStyle'       => true,
                     'CustomTheme'       => true,
+                    'CustomDomain'      => true,
                     'MultipleLanguages' => false,
                     'EmailAutomation'   => true,
                     'Labels'            => true,
@@ -127,6 +131,7 @@ class BillingService
                     'PrivateSite'       => true,
                     'CustomStyle'       => true,
                     'CustomTheme'       => true,
+                    'CustomDomain'      => true,
                     'MultipleLanguages' => true,
                     'EmailAutomation'   => true,
                     'Labels'            => true,
