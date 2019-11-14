@@ -231,7 +231,10 @@ class LoanExtendController extends Controller
 
                     $message = $this->renderView(
                         'emails/loan_extend.html.twig',
-                        ['loanRow' => $loanRow]
+                        [
+                            'loanRow' => $loanRow,
+                            'message'  => null
+                        ]
                     );
 
                     $client->sendEmail(
@@ -244,6 +247,32 @@ class LoanExtendController extends Controller
                         null,
                         $replyToEmail
                     );
+
+                    // And a copy for admin
+                    if ($replyToEmail != 'email@demo.com') {
+
+                        $toName = $loan->getContact()->getName();
+                        $msg = "This is a copy of the email sent to {$toName} ({$toEmail}).";
+                        $message = $this->renderView(
+                            'emails/loan_extend.html.twig',
+                            [
+                                'loanRow' => $loanRow,
+                                'message'  => $msg
+                            ]
+                        );
+
+                        $client->sendEmail(
+                            "{$senderName} <{$fromEmail}>",
+                            $replyToEmail,
+                            $subject.' | '.$loanRow->getLoan()->getId(),
+                            $message,
+                            null,
+                            null,
+                            null,
+                            $replyToEmail
+                        );
+
+                    }
 
                     // Revert locale for the UI
                     $this->get('translator')->setLocale($sessionLocale);

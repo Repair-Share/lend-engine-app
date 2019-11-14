@@ -8,7 +8,7 @@
             {% trans %}public_item.account_balance_is{% endtrans %}
             {{ tenantInformation.currencySymbol }}
             {{ user.balance|number_format(2) }} ...
-            <a class="add-credit" href="{{ path('add_credit', {c: user.id}) }}">{% trans %}public_item.add_credit{% endtrans %}</a>
+            <a class="add-credit-button" href="{{ path('add_credit', {c: user.id}) }}">{% trans %}public_item.add_credit{% endtrans %}</a>
         </div>
     {% endif %}
 

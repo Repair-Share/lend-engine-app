@@ -87,7 +87,7 @@
                     <a href="{{ path('loan_search', {'loan-search': user.name|trim }) }}"><i class="fa fa-shopping-bag"></i> Loans</a>&nbsp;&nbsp;
                     <a href="{{ path('my_events') }}" class="event-bookings"><i class="far fa-calendar-alt"></i> Bookings</a>&nbsp;&nbsp;
                     <a href="{{ path('payments') }}" class="payment-list"><i class="fa fa-credit-card"></i> Payments</a>&nbsp;&nbsp;
-                    <a href="{{ path('add_credit') }}?c={{ user.id }}" class="add-credit"><i class="fa fa-plus-circle"></i> Add credit</a>
+                    <a href="{{ path('add_credit') }}?c={{ user.id }}" class="add-credit-button"><i class="fa fa-plus-circle"></i> Add credit</a>
                 </div>
 
             {% else %}
