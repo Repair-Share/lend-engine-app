@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use HerokuClient\Client as HerokuClient;
 
 class SettingsMemberSiteController extends Controller
 {
@@ -22,11 +23,48 @@ class SettingsMemberSiteController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        $heroku = new HerokuClient();
+
         /** @var $tenantService \AppBundle\Services\TenantService */
         $tenantService = $this->get('service.tenant');
 
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
+
+        $herokuResult = null;
+        $domainParts = [];
+
+        if ($requestedDomain = $settingsService->getSettingValue('site_domain')) {
+            $domainParts = explode('.', $requestedDomain);
+            try {
+                $herokuResult = $heroku->get('apps/lend-engine-eu-plus/domains/'.$requestedDomain);
+                dump($herokuResult);
+                if ($herokuResult->hostname == $requestedDomain) {
+                    $this->addFlash('success', "Domain is set up ok");
+                }
+            } catch (\Exception $e) {
+                if (strstr($e->getMessage(), 'HTTP code 404')) {
+                    $this->addFlash('success', "Setting up");
+                    $this->createDomain($requestedDomain);
+                }
+            }
+        }
+
+        if ($request->get('customDomain') == 'activate') {
+            $tenant = $tenantService->getTenant();
+            $tenant->setDomain($requestedDomain);
+            $em->persist($tenant);
+            $em->flush();
+            $this->addFlash("success", "Your domain is now activated");
+            return $this->redirectToRoute('settings_member_site');
+        } else if ($request->get('customDomain') == 'deactivate') {
+            $tenant = $tenantService->getTenant();
+            $tenant->setDomain(null);
+            $em->persist($tenant);
+            $em->flush();
+            $this->addFlash("success", "Your domain is now de-activated");
+            return $this->redirectToRoute('settings_member_site');
+        }
 
         // Pass tenant info in so we can control settings based on pay plan
         $options = [
@@ -64,6 +102,10 @@ class SettingsMemberSiteController extends Controller
                         $this->setLanguageForAllUsers($setup_data);
                     }
 
+                    if ($setup_key == 'site_domain') {
+                        $setup_data = $this->cleanDomain($setup_data);
+                    }
+
                     $setting->setSetupValue($setup_data);
                     $em->persist($setting);
                 }
@@ -77,9 +119,11 @@ class SettingsMemberSiteController extends Controller
             return $this->redirectToRoute('settings_member_site');
         }
 
-        return $this->render('settings/settings_member_site.html.twig', array(
-            'form' => $form->createView()
-        ));
+        return $this->render('settings/settings_member_site.html.twig', [
+            'form' => $form->createView(),
+            'domainStatus' => $herokuResult,
+            'domainParts' => $domainParts
+        ]);
     }
 
     /**
@@ -91,6 +135,40 @@ class SettingsMemberSiteController extends Controller
         $db = $this->get('database_connection');
         $db->executeQuery("UPDATE contact SET locale = '{$locale}'");
         return true;
+    }
+
+    /**
+     * @param $uri
+     * @return mixed|null
+     */
+    private function cleanDomain($uri)
+    {
+        $uri = strtolower($uri);
+        if ($domain = parse_url($uri)) {
+            if (isset($domain['host'])) {
+                return $domain['host'];
+            } else {
+                return $uri;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @param $domain
+     * @return bool
+     */
+    private function createDomain($domain)
+    {
+        $heroku = new HerokuClient();
+        $data = ['hostname' => $domain];
+        try {
+            $heroku->post('apps/lend-engine-eu-plus/domains/', $data);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
 }
