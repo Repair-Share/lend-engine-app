@@ -8,7 +8,7 @@
 
         {% if path(app.request.attributes.get('_route')) != '/member/add-credit' %}
             {% if tenantInformation.getStripePublicApiKey %}
-                <a href="{{ path('add_credit', {'c': user.id}) }}" class="btn btn-primary btn-xs pull-right">{% trans %}button_add_credit{% endtrans %}</a>
+                <a href="{{ path('add_credit', {'c': user.id}) }}" class="btn btn-primary btn-xs pull-right add-credit">{% trans %}button_add_credit{% endtrans %}</a>
             {% endif %}
         {% endif %}
     </div>
