@@ -38,7 +38,6 @@ class SettingsMemberSiteController extends Controller
             $domainParts = explode('.', $requestedDomain);
             try {
                 $herokuResult = $heroku->get('apps/lend-engine-eu-plus/domains/'.$requestedDomain);
-                dump($herokuResult);
                 if ($herokuResult->hostname == $requestedDomain) {
                     $this->addFlash('success', "Domain is set up ok");
                 }
