@@ -158,6 +158,16 @@ then the user will also be shown a button to continue to choose a membership.',
             )
         ));
 
+        $builder->add('site_domain', TextType::class, [
+            'label' => 'Set a new custom URL',
+            'data' => $dbData['site_domain'],
+            'required' => false,
+            'attr' => [
+                'placeholder' => 'eg "hire.mylibrary.com"',
+                'data-help' => '',
+            ]
+        ]);
+
         $builder->add('group_similar_items', ToggleType::class, array(
             'expanded' => true,
             'label' => 'Group items with the same name into one search result',

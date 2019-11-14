@@ -41,6 +41,7 @@ class MaintenanceService
 
     /**
      * @param Maintenance $maintenance
+     * @return Maintenance
      */
     public function save(Maintenance $maintenance)
     {
@@ -103,6 +104,11 @@ class MaintenanceService
             $maintenance->setNotes($data['note']);
         }
 
+        $today = new \DateTime();
+        if ($date < $today) {
+            $maintenance->setStatus(Maintenance::STATUS_OVERDUE);
+        }
+        
         $maintenance->setDueAt($date);
 
         $this->repository->save($maintenance);

@@ -133,12 +133,13 @@ class CheckInService
 
             // If maintenance is required, schedule it now
             /** @var \AppBundle\Entity\MaintenancePlan $plan */
+            $maintenanceTime = new \DateTime();
             foreach ($inventoryItem->getMaintenancePlans() AS $plan) {
                 if ($plan->getAfterEachLoan() == true) {
                     $data = [
                         'itemId' => $inventoryItem->getId(),
                         'planId' => $plan->getId(),
-                        'date' => new \DateTime()
+                        'date' => $maintenanceTime->modify("-1 hour") // so that it's created overdue
                     ];
                     $this->maintenanceService->scheduleMaintenance($data);
                 }

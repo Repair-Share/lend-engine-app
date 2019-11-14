@@ -144,9 +144,9 @@ class TenantService
         return $this->tenant->getServer();
     }
 
-    public function getAccountDomain()
+    public function getAccountDomain($withHttp = false)
     {
-        return $this->tenant->getDomain();
+        return $this->tenant->getDomain($withHttp);
     }
 
     public function getCurrency()

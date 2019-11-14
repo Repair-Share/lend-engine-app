@@ -36,19 +36,23 @@
 
             <h2>Member site settings</h2>
 
-            <div class="form-group">
-                <label>Your URL is:</label>
-
-                <p>
-                    <a href="http://{{ tenantInformation.accountCode }}.lend-engine-app.com"
-                       target="_blank">http://<strong>{{ tenantInformation.accountCode }}</strong>.lend-engine-app.com</a>
-                </p>
-
-                <p class="help-block">
-                    <a href="http://www.lend-engine.com/contact" target="_blank">Contact us</a> if you want to change this.
-                    On the Plus plan you can have your own dedicated domain and SSL (such as https://items.my-library.com)
-                </p>
+            <div style="padding: 20px; border-radius: 4px; background-color: #efefef;">
+                <div class="form-group">
+                    <label>Your current URL is:</label>
+                    <p>
+                        <a href="{{ tenantInformation.accountDomain(true) }}" target="_blank">{{ tenantInformation.accountDomain(true) }}</a>
+                    </p>
+                    <p class="help-block">
+                        On the Plus plan you can have your own dedicated domain and SSL (such as https://items.my-library.com)
+                    </p>
+                </div>
+                {{ form_row(form.site_domain) }}
+                {% if tenantInformation.accountDomain() != tenantInformation.setting('site_domain') %}
+                not ready
+                {% else %}
+                {% endif %}
             </div>
+            <br>
 
             {{ form_row(form.org_locale) }}
             {{ form_row(form.org_languages) }}

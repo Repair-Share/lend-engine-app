@@ -273,6 +273,7 @@ class SettingsService
             'stripe_fee',
             'stripe_use_saved_cards',
 
+            'site_domain',
             'site_is_private',
             'site_welcome',
             'site_welcome_user',
