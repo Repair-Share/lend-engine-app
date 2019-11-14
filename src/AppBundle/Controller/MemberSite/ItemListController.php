@@ -73,13 +73,14 @@ class ItemListController extends Controller
 
         if ($tagId = $request->get('tagId')) {
             $filter['tagIds'] = [ $tagId ];
-            $category = $categoryRepo->find($tagId);
+            if (!$category = $categoryRepo->find($tagId)) {
+                return $this->redirectToRoute('home');
+            }
             if ($category->getSection()) {
                 $pageTitle = $category->getSection()->getName().' &raquo; '.$category->getName();
             } else {
                 $pageTitle = $category->getName();
             }
-
         }
 
         if ($from = $request->get('from')) {
