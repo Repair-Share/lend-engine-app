@@ -46,11 +46,13 @@
                         On the Plus plan you can have your own dedicated domain and SSL (such as https://items.my-library.com)
                     </p>
                 </div>
-                {{ form_row(form.site_domain) }}
-                {% if tenantInformation.accountDomain() != tenantInformation.setting('site_domain') %}
-                not ready
-                {% else %}
-                {% endif %}
+                <div style="display: none;">
+                    {{ form_row(form.site_domain) }}
+                    {% if tenantInformation.accountDomain() != tenantInformation.setting('site_domain') %}
+                        not ready
+                    {% else %}
+                    {% endif %}
+                </div>
             </div>
             <br>
 
