@@ -32,6 +32,7 @@ class SettingsMemberSiteController extends Controller
         $settingsService = $this->get('settings');
 
         $herokuResult = null;
+        $domainOk = false;
         $domainParts = [];
 
         if ($requestedDomain = $settingsService->getSettingValue('site_domain')) {
@@ -39,7 +40,7 @@ class SettingsMemberSiteController extends Controller
             try {
                 $herokuResult = $heroku->get('apps/lend-engine-eu-plus/domains/'.$requestedDomain);
                 if ($herokuResult->hostname == $requestedDomain) {
-                    $this->addFlash('success', "Domain is set up ok");
+                    $domainOk = true;
                 }
             } catch (\Exception $e) {
                 if (strstr($e->getMessage(), 'HTTP code 404')) {
@@ -121,7 +122,8 @@ class SettingsMemberSiteController extends Controller
         return $this->render('settings/settings_member_site.html.twig', [
             'form' => $form->createView(),
             'domainStatus' => $herokuResult,
-            'domainParts' => $domainParts
+            'domainParts' => $domainParts,
+            'domainOk' => $domainOk
         ]);
     }
 

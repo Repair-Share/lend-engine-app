@@ -49,6 +49,10 @@
 
                 <div style="display: {% if tenantInformation.feature('CustomDomain') %}block{% else %}none{% endif %}">
                     {{ form_row(form.site_domain) }}
+
+                    {% if domainOk == true  %}
+                        <i class="fa fa-check"></i> Domain is set up OK.
+                    {% else %}
                     <div class="row">
                         <div class="col-md-4">
                             <label>Step 1</label>
@@ -69,6 +73,8 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
+
                 </div>
 
                 {% if tenantInformation.setting('site_domain') and tenantInformation.accountDomain() != tenantInformation.setting('site_domain') %}

@@ -169,7 +169,7 @@ then the user will also be shown a button to continue to choose a membership.',
         ));
 
         $builder->add('site_domain', TextType::class, [
-            'label' => 'Set a new custom domain',
+            'label' => 'Custom domain',
             'data' => $dbData['site_domain'],
             'required' => false,
             'attr' => [
