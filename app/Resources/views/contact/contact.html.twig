@@ -1,7 +1,12 @@
 {# app/Resources/views/contact/contact.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block pageTitle %}{{ title }}{% endblock %}
+{% block pageTitle %}
+    {{ title }}
+    <a href="{{ path('send_email', {contactId: contact.id}) }}" class="modal-link btn btn-xs btn-default">
+        <i class="fa fa-envelope-o"></i> Send email
+    </a>
+{% endblock %}
 
 {% block pageCss %}
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>

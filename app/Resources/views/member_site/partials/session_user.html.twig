@@ -1,3 +1,12 @@
 <span class="session-user">
-    for {{ user.name }}
+    {{ user.name }}
+    {% if loan is defined %}
+        <a href="{{ path('send_email', {contactId: user.id, loan_id: loan.id}) }}" class="modal-link btn btn-xs btn-default">
+            <i class="far fa-envelope"></i> Send email
+        </a>
+    {% else %}
+        <a href="{{ path('send_email', {contactId: user.id}) }}" class="modal-link btn btn-xs btn-default">
+            <i class="far fa-envelope"></i> Send email
+        </a>
+    {% endif %}
 </span>

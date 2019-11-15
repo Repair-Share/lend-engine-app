@@ -124,6 +124,11 @@
                         {% block content %}{{ message|nl2br }}{% endblock %}
 
                         <br><br>
+
+                        {% if includeButton is defined and includeButton == true %}
+                        <a href="{{ loginUri }}" style="padding: 10px; text-decoration: none; background-color: #30b05c; color: #fff; border-radius: 4px;">Log in now</a>
+                        <br><br><br>
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>

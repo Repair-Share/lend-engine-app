@@ -1,0 +1,49 @@
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ pageTitle }}{% endblock %}
+
+{% block modalBody %}
+
+    {% if tenantInformation.feature('SendEmail') == true %}
+        <form method="POST" action="{{ path('send_email', {contactId: contactId}) }}">
+            <input type="hidden" name="loan_id" value="{{ loanId }}">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="subject" name="email_subject" placeholder="Subject">
+                    </div>
+                    <div class="form-group">
+                        <textarea name="email_body" id="email_body" rows="10" class=form-control placeholder="Email content"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="include_button" value="1" checked> Include a button to log in to the member site
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    {% else %}
+        <div class="alert alert-warning">
+            Sending emails is not available on the free plan.<br>
+            <a href="{{ path('billing') }}">Upgrade on the billing screen</a>
+        </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    {% if tenantInformation.feature('SendEmail') == true %}
+        <span class="help-block pull-left" style="padding: 0 20px; text-align: left">
+            From: {{ tenantInformation.setting('org_name') }}<br>
+            Reply-to: {{ replyTo }} (your library email)
+        </span>
+        <button class="modal-submit btn bg-green pull-right">Send email</button>
+        <script>
+            $("#subject").focus();
+        </script>
+    {% endif %}
+{% endblock %}
+

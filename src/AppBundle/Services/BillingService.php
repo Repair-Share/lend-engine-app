@@ -31,6 +31,7 @@ class BillingService
         }
 
         $enabled = [
+            'SendEmail'         => false,
             'CheckInPrompt'     => false,
             'CheckOutPrompt'    => false,
             'ProductField'      => false,
@@ -64,6 +65,7 @@ class BillingService
 
             case 'starter':
                 $enabled = [
+                    'SendEmail'         => true,
                     'CheckInPrompt'     => false,
                     'CheckOutPrompt'    => false,
                     'ProductField'      => false,
@@ -91,6 +93,7 @@ class BillingService
 
             case 'plus':
                 $enabled = [
+                    'SendEmail'         => true,
                     'CheckInPrompt'     => true,
                     'CheckOutPrompt'    => true,
                     'ProductField'      => true,
@@ -118,6 +121,7 @@ class BillingService
 
             case 'business':
                 $enabled = [
+                    'SendEmail'         => true,
                     'CheckInPrompt'     => true,
                     'CheckOutPrompt'    => true,
                     'ProductField'      => true,
