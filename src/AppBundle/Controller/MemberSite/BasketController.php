@@ -619,37 +619,6 @@ class BasketController extends Controller
     }
 
     /**
-     * @param $id
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     * @Route("member/booking/{id}/cancel", requirements={"id": "\d+"}, name="reservation_cancel")
-     */
-    public function reservationCancelAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        /** @var $loanRepo \AppBundle\Repository\LoanRepository */
-        $loanRepo = $this->getDoctrine()->getRepository('AppBundle:Loan');
-
-        if (!$loan = $loanRepo->find($id)) {
-            $this->addFlash('error', 'We could not find that reservation.');
-        }
-
-        $loan->setStatus(Loan::STATUS_CANCELLED);
-        $em->persist($loan);
-
-        try {
-            $em->flush();
-            $msg = $this->get('translator')->trans('msg_success.reservation_cancel', [], 'member_site');
-            $this->addFlash('success', $msg);
-        } catch (\Exception $generalException) {
-            $msg = $this->get('translator')->trans('msg_fail.reservation_cancel', [], 'member_site');
-            $this->addFlash('error', $msg);
-        }
-
-        return $this->redirectToRoute('loans');
-    }
-
-    /**
      * Update prices
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @Route("basket/save", name="basket_save")

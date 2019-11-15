@@ -269,8 +269,17 @@ class ContactService
         return true;
     }
 
+    /**
+     * @param Contact $contact
+     * @return array|bool
+     */
     public function checkRequiredCustomFields(Contact $contact)
     {
+        // Required fields are only for active members
+        if (!$contact->getActiveMembership()) {
+            return true;
+        }
+
         /** @var \AppBundle\Repository\ContactFieldRepository $fieldRepo */
         $fieldRepo = $this->em->getRepository('AppBundle:ContactField');
         $customFields = $fieldRepo->findAllOrderedBySort();

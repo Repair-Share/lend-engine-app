@@ -161,7 +161,7 @@ class ContactListDataController extends Controller
                         $row[] = $contactFieldValue->getFieldValue();
                     }
                 } else {
-                    if ($field->getRequired()) {
+                    if ($field->getRequired() && $contact->getActiveMembership()) {
                         $row[] = '<label class="label bg-red">Missing</label>';
                     } else {
                         $row[] = '';

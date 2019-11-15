@@ -183,10 +183,12 @@ class ContactType extends AbstractType
                 $defaultData = '';
             }
 
-            if ($field->getRequired()) {
+            if ($field->getRequired() && $contact->getActiveMembership()) {
                 $required = ' (required)';
+                $fieldIsRequired = true;
             } else {
                 $required = '';
+                $fieldIsRequired = false;
             }
 
             if ($field->getType() == 'select' || $field->getType() == 'choice') {
@@ -198,7 +200,7 @@ class ContactType extends AbstractType
                 $builder->add('fieldValue' . $fieldId, ChoiceType::class, array(
                     'label' => $field->getName().$required,
                     'placeholder' => '',
-                    'required' => $field->getRequired(),
+                    'required' => $fieldIsRequired,
                     'choices' => $choiceArray,
                     'data' => $defaultData,
                     'mapped' => false
@@ -212,7 +214,7 @@ class ContactType extends AbstractType
                 $defaultData = explode(',', $defaultData);
                 $builder->add('fieldValue' . $fieldId, ChoiceType::class, array(
                     'label' => $field->getName().$required,
-                    'required' => $field->getRequired(),
+                    'required' => $fieldIsRequired,
                     'choices' => $choiceArray,
                     'data' => $defaultData,
                     'mapped' => false,
@@ -226,21 +228,21 @@ class ContactType extends AbstractType
                 }
                 $builder->add('fieldValue'.$fieldId, CheckboxType::class, array(
                     'label' => $field->getName().$required,
-                    'required' => $field->getRequired(),
+                    'required' => $fieldIsRequired,
                     'data' => $defaultData,
                     'mapped' => false
                 ));
             } else if ($field->getType() == 'text') {
                 $builder->add('fieldValue'.$fieldId, TextType::class, array(
                     'label' => $field->getName().$required,
-                    'required' => $field->getRequired(),
+                    'required' => $fieldIsRequired,
                     'data' => $defaultData,
                     'mapped' => false
                 ));
             } else if ($field->getType() == 'textarea') {
                 $builder->add('fieldValue'.$fieldId, TextareaType::class, array(
                     'label' => $field->getName().$required,
-                    'required' => $field->getRequired(),
+                    'required' => $fieldIsRequired,
                     'data' => $defaultData,
                     'mapped' => false
                 ));
