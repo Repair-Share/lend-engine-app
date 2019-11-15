@@ -90,7 +90,7 @@ class LoanController extends Controller
             if ($user->hasRole("ROLE_ADMIN")) {
                 $canCheckOut = false;
             }
-            $this->addFlash('error', "This contact is missing required data:");
+            $this->addFlash('error', $loan->getContact()->getName()." is missing required data:");
             foreach ($missingFields AS $fieldName) {
                 $this->addFlash('error', "- {$fieldName}");
             }

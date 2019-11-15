@@ -5,7 +5,11 @@
 
 {% block pageTitle %}Memberships{% endblock %}
 
-{% block primaryButton %}{% endblock %}
+{% block primaryButton %}
+    {% if is_granted('ROLE_SUPER_USER') %}
+        <a class="btn btn-default pull-right" href="{{ path('export_memberships') }}" style="margin-right: 10px">Export all memberships</a>
+    {% endif %}
+{% endblock %}
 
 {% block body %}
     <div class="row">
