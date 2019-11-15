@@ -133,12 +133,6 @@ class AdminLoanListDataController extends Controller
             $o = $loanRow->getDueOutAt()->modify("{$offSet} hours");
             $loanRow->setDueOutAt($o);
 
-            // Timezone modify
-//            $ti = $loan->getTimeIn()->modify("{$offSet} hours");
-//            $loan->setTimeIn($ti);
-//            $to = $loan->getTimeOut()->modify("{$offSet} hours");
-//            $loan->setTimeOut($to);
-
             $loanInfo = '<a href="'.$editUrl.'">'.$loanRow->getInventoryItem()->getName().'</a>';
             $loanInfo .= '<div class="sub-text">'.$loan->getContact()->getFirstName().' '.$loan->getContact()->getLastName().' : '.$loan->getContact()->getEmail().'</div>';
 
@@ -152,8 +146,17 @@ class AdminLoanListDataController extends Controller
             $row[] = $status;
             $row[] = $loanInfo;
 
-            $row[] = $loanRow->getDueOutAt()->format("l d M Y").'<div style="font-size: 12px">'.$loanRow->getDueOutAt()->format("g:i a").'</div><div class="sub-text">'.$loanRow->getSiteFrom()->getName().'</div>';
-            $row[] = $loanRow->getDueInAt()->format("l d M Y").'<div style="font-size: 12px">'.$loanRow->getDueInAt()->format("g:i a").'</div><div class="sub-text">'.$loanRow->getSiteTo()->getName().'</div>';
+            $fromSite = '';
+            if ($settingsService->getSettingValue('multi_site')) {
+                $fromSite = '<div class="sub-text">'.$loanRow->getSiteFrom()->getName().'</div>';
+            }
+            $row[] = $loanRow->getDueOutAt()->format("l d M Y").'<div style="font-size: 12px">'.$loanRow->getDueOutAt()->format("g:i a").'</div>'.$fromSite;
+
+            $toSite = '';
+            if ($settingsService->getSettingValue('multi_site')) {
+                $toSite = '<div class="sub-text">'.$loanRow->getSiteTo()->getName().'</div>';
+            }
+            $row[] = $loanRow->getDueInAt()->format("l d M Y").'<div style="font-size: 12px">'.$loanRow->getDueInAt()->format("g:i a").'</div><div class="sub-text">'.$toSite;
 
             $row[] = number_format($loanRow->getFee(), 2);
 
