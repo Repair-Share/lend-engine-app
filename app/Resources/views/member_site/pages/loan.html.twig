@@ -369,7 +369,7 @@
 
     <div class="row" id="checkoutButtonRow">
         <div class="col-md-12">
-            {% if tenantInformation.selfCheckout %}
+            {% if tenantInformation.selfCheckout and canCheckOut == true %}
                 {% if loan.status in ['RESERVED', 'PENDING'] %}
                     <button type="button" id="form-checkout" data-text="Check out" class="btn btn-success pull-right checkout submit-action payment-submit" {% if promptsExist == 1 %}disabled{% endif %}>
                         {% if promptsExist == 1 %}
@@ -380,6 +380,8 @@
                     </button>
                     <button type="button" id="form-save" class="btn btn-success pull-right submit-action action-save" style="display: none;">Save changes</button>
                 {% endif %}
+            {% elseif canCheckOut == false %}
+                <div class="alert alert-warning" style="text-align: center">Please complete required contact data before checking out</div>
             {% endif %}
         </div>
     </div>

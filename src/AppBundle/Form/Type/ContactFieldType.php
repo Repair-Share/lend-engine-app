@@ -54,6 +54,13 @@ class ContactFieldType extends AbstractType
             )
         ));
 
+        $builder->add('required', CheckboxType::class, array(
+            'label' => 'Value must be entered before contact can be saved or items checked out.',
+            'attr' => [
+                'data-help' => '',
+            ]
+        ));
+
     }
 
 }

@@ -83,6 +83,20 @@ class LoanController extends Controller
 
         $contactBalance = $loan->getContact()->getBalance();
 
+        // Check mandatory custom fields
+        $canCheckOut = true;
+        $missingFields = $contactService->checkRequiredCustomFields($loan->getContact());
+        if ($missingFields !== true) {
+            if ($user->hasRole("ROLE_ADMIN")) {
+                $canCheckOut = false;
+            }
+            $this->addFlash('error', "This contact is missing required data:");
+            foreach ($missingFields AS $fieldName) {
+                $this->addFlash('error', "- {$fieldName}");
+            }
+            $this->addFlash('error', '<br><a class="btn btn-primary" href="/admin/contact/'.$loan->getContact()->getId().'">Edit contact</a>');
+        }
+
         // Don't handle overdue accounts in this process
         if ($contactBalance < 0) {
             $contactBalance = 0;
@@ -254,7 +268,8 @@ class LoanController extends Controller
                 'loan' => $loan,
                 'user' => $loan->getContact(),
                 'subtotal' => $subtotal,
-                'payment_due' => $paymentDue
+                'payment_due' => $paymentDue,
+                'canCheckOut' => $canCheckOut
             ]
         );
     }

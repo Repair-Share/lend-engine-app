@@ -269,4 +269,28 @@ class ContactService
         return true;
     }
 
+    public function checkRequiredCustomFields(Contact $contact)
+    {
+        /** @var \AppBundle\Repository\ContactFieldRepository $fieldRepo */
+        $fieldRepo = $this->em->getRepository('AppBundle:ContactField');
+        $customFields = $fieldRepo->findAllOrderedBySort();
+
+        $missing = [];
+        $customFieldValues = $contact->getFieldValues();
+
+        foreach ($customFields AS $field) {
+            /** @var $field \AppBundle\Entity\ContactField */
+            $fieldId = $field->getId();
+            if (!isset($customFieldValues[$fieldId]) && $field->getRequired()) {
+                $missing[] = $field->getName();
+            }
+        }
+
+        if (count($missing) > 0) {
+            return $missing;
+        } else {
+            return true;
+        }
+    }
+
 }

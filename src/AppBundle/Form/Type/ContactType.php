@@ -44,9 +44,9 @@ class ContactType extends AbstractType
         $builder->add('email', TextType::class, array(
             'label' => 'Email address',
             'required' => false,
-            'attr' => array(
+            'attr' => [
                 "autocomplete" => "off"
-            )
+            ]
         ));
 
         $languages = [
@@ -183,14 +183,21 @@ class ContactType extends AbstractType
                 $defaultData = '';
             }
 
+            if ($field->getRequired()) {
+                $required = ' (required)';
+            } else {
+                $required = '';
+            }
+
             if ($field->getType() == 'select' || $field->getType() == 'choice') {
                 $choices = $field->getChoices();
-                $choiceArray = array();
+                $choiceArray = [];
                 foreach ($choices AS $choice) {
                     $choiceArray[$choice->getOptionName()] = $choice->getId();
                 }
                 $builder->add('fieldValue' . $fieldId, ChoiceType::class, array(
-                    'label' => $field->getName(),
+                    'label' => $field->getName().$required,
+                    'placeholder' => '',
                     'required' => $field->getRequired(),
                     'choices' => $choiceArray,
                     'data' => $defaultData,
@@ -198,13 +205,13 @@ class ContactType extends AbstractType
                 ));
             } else if ($field->getType() == 'multiselect') {
                 $choices = $field->getChoices();
-                $choiceArray = array();
+                $choiceArray = [];
                 foreach ($choices AS $choice) {
                     $choiceArray[$choice->getOptionName()] = $choice->getId();
                 }
                 $defaultData = explode(',', $defaultData);
                 $builder->add('fieldValue' . $fieldId, ChoiceType::class, array(
-                    'label' => $field->getName(),
+                    'label' => $field->getName().$required,
                     'required' => $field->getRequired(),
                     'choices' => $choiceArray,
                     'data' => $defaultData,
@@ -218,21 +225,21 @@ class ContactType extends AbstractType
                     $defaultData = true;
                 }
                 $builder->add('fieldValue'.$fieldId, CheckboxType::class, array(
-                    'label' => $field->getName(),
+                    'label' => $field->getName().$required,
                     'required' => $field->getRequired(),
                     'data' => $defaultData,
                     'mapped' => false
                 ));
             } else if ($field->getType() == 'text') {
                 $builder->add('fieldValue'.$fieldId, TextType::class, array(
-                    'label' => $field->getName(),
+                    'label' => $field->getName().$required,
                     'required' => $field->getRequired(),
                     'data' => $defaultData,
                     'mapped' => false
                 ));
             } else if ($field->getType() == 'textarea') {
                 $builder->add('fieldValue'.$fieldId, TextareaType::class, array(
-                    'label' => $field->getName(),
+                    'label' => $field->getName().$required,
                     'required' => $field->getRequired(),
                     'data' => $defaultData,
                     'mapped' => false

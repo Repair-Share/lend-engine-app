@@ -12,13 +12,15 @@
             address = address + ',' + $("#contact_addressLine2").val();
             address = address + ',' + $("#contact_addressLine3").val();
             address = address + ',' + $("#contact_addressLine4").val();
-            geocoder.geocode({'address': address}, function(results, status)
-            {
+            geocoder.geocode({'address': address}, function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
                     var lat = results[0].geometry.location.lat();
                     var lng = results[0].geometry.location.lng();
                     $("#contact_latitude").val(lat);
                     $("#contact_longitude").val(lng);
+                    console.log("getLatLong success");
+                } else {
+                    console.log("getLatLong failed");
                 }
             });
         }
@@ -234,14 +236,12 @@
         <input type="hidden" name="form_action" id="form_action" value="save">
         {% if app.request.get('next') == 'membership' %}
             <button type="button" onClick="save('saveAndAddMembership');" class="btn bg-green btn-loading">Save contact</button>
-        {% elseif app.request.get('next') == 'loan' %}
-            <button type="button" onClick="save('saveAndAddLoan');" class="btn bg-green btn-loading">Save and add loan</button>
         {% else %}
             {% if contact.id and is_granted('ROLE_SUPER_USER') %}
                 <a id="contact_archive" class="btn btn-default" href="{{ path('contact_archive', {id: contact.id}) }}">Archive</a>
             {% else %}
             {% endif %}
-            <button type="button" onClick="save('save');" class="btn btn-success btn-loading">Save contact</button>
+            <button type="submit" class="btn btn-success btn-loading">Save contact</button>
         {% endif %}
     </div>
 
@@ -303,15 +303,10 @@
             });
         }
 
-        function save(form_action) {
+        $("#tab_1").on('change', "#contact_addressLine1, #contact_addressLine2, #contact_addressLine3, #contact_addressLine4", function() {
+            console.log("Getting location from Google ...");
             getLatLong();
-            $("#form_action").val(form_action);
-            window.setTimeout(submitForm, 500);
-        }
+        });
 
-        function submitForm() {
-            $("form[name='contact']").submit();
-            waitButton($('.btn-loading'));
-        }
     </script>
 {% endblock %}

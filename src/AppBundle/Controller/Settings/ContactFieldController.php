@@ -54,11 +54,11 @@ class ContactFieldController extends Controller
 
         return $this->render(
             'modals/contactField.html.twig',
-            array(
+            [
                 'title' => 'Contact custom field',
                 'subTitle' => '',
                 'form' => $form->createView()
-            )
+            ]
         );
 
     }
@@ -68,17 +68,18 @@ class ContactFieldController extends Controller
      */
     public function listAction(Request $request)
     {
-        $tableRows = array();
+        $tableRows = [];
         $em   = $this->getDoctrine()->getManager();
         $fields = $em->getRepository('AppBundle:ContactField')->findAllOrderedBySort();
 
-        $tableHeader = array(
+        $tableHeader = [
             'Field',
             'Type',
             'Show on contact list',
+            'Value required',
             '',
             ''
-        );
+        ];
 
         foreach ($fields AS $i) {
 
@@ -108,18 +109,13 @@ class ContactFieldController extends Controller
                     break;
             }
 
-            if ($i->getShowOnContactList()) {
-                $show = 'Yes';
-            } else {
-                $show = '';
-            }
-
             $tableRows[] = array(
                 'id' => $i->getId(),
                 'data' => array(
                     $i->getName(),
                     $typeName,
-                    $show,
+                    $i->getShowOnContactList() == true ? 'Yes' : '',
+                    $i->getRequired() == true ? 'Yes' : '',
                     $optionsLink,
                     ''
                 )
