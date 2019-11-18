@@ -15,18 +15,11 @@ class ItemCategoryType extends AbstractType
     {
         $builder->add('name', TextType::class, [
             'label' => 'Name',
-            'required' => true,
-            'attr' => array(
-                'placeholder' => '',
-                'data-help' => '',
-            )
+            'required' => true
         ]);
 
         $builder->add('showOnWebsite', CheckboxType::class, array(
-            'label' => 'Show this category on your Lend Engine site as a menu item.',
-            'attr' => array(
-                'data-help' => '',
-            )
+            'label' => 'Show this category on your Lend Engine site as a menu item.'
         ));
 
         $builder->add('section', EntityType::class, array(

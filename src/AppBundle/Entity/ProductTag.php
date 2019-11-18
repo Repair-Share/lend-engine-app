@@ -99,7 +99,7 @@ class ProductTag
      * @param ProductSection $section
      * @return $this
      */
-    public function setSection(ProductSection $section)
+    public function setSection($section)
     {
         $this->section = $section;
 
