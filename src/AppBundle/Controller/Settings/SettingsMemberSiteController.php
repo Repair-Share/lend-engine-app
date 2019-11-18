@@ -46,6 +46,8 @@ class SettingsMemberSiteController extends Controller
                 if (strstr($e->getMessage(), 'HTTP code 404')) {
                     $this->addFlash('success', "Setting up");
                     $this->createDomain($requestedDomain);
+                } else {
+                    $this->addFlash('error', $e->getMessage());
                 }
             }
         }
