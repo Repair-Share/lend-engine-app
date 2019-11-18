@@ -49,11 +49,11 @@ class ContactArchiveController extends Controller
             $contact->setAddressLine2("-");
             $contact->setAddressLine3("-");
             $contact->setAddressLine4("-");
-            $contact->setEmail("");
-
             $this->addFlash('success', "Contact personal data was removed");
         }
 
+        $contact->setEmail("");
+        $contact->setUsername("");
         $contact->setIsActive(false);
         $contact->setEnabled(false);
         $em->persist($contact);
