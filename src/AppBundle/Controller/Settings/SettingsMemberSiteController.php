@@ -39,7 +39,7 @@ class SettingsMemberSiteController extends Controller
             $domainParts = explode('.', $requestedDomain);
             try {
                 $herokuResult = $heroku->get('apps/lend-engine-eu-plus/domains/'.$requestedDomain);
-                if ($herokuResult->hostname == $requestedDomain) {
+                if ($herokuResult->hostname == $requestedDomain && $domainParts->acm_status == 'cert issued') {
                     $domainOk = true;
                 }
             } catch (\Exception $e) {
@@ -47,7 +47,7 @@ class SettingsMemberSiteController extends Controller
                     $this->addFlash('success', "Setting up");
                     $this->createDomain($requestedDomain);
                 } else {
-                    $this->addFlash('error', $e->getMessage());
+                    $this->addFlash('debug', $e->getMessage());
                 }
             }
         }
