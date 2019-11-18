@@ -3,9 +3,11 @@
 
 {% block pageTitle %}
     {{ title }}
+    {% if contact.id %}
     <a href="{{ path('send_email', {contactId: contact.id}) }}" class="modal-link btn btn-xs btn-default">
         <i class="fa fa-envelope-o"></i> Send email
     </a>
+    {% endif %}
 {% endblock %}
 
 {% block pageCss %}
