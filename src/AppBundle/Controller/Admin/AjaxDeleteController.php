@@ -28,6 +28,9 @@ class AjaxDeleteController extends Controller
                 case 'ProductTag':
                     $msg = $this->deleteProductTag($id);
                     break;
+                case 'ProductSection':
+                    $msg = $this->deleteProductSection($id);
+                    break;
                 case 'ProductField':
                     $msg = $this->deleteProductField($id);
                     break;
@@ -86,6 +89,35 @@ class AjaxDeleteController extends Controller
         $repo = $em->getRepository('AppBundle:ProductTag');
 
         $entity = $repo->find($id);
+        $em->remove($entity);
+
+        try {
+            $em->flush();
+            return 'OK';
+        } catch (\Exception $generalException) {
+            return $generalException->getMessage();
+        }
+
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    private function deleteProductSection($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var $repo \AppBundle\Repository\ProductSectionRepository */
+        $repo = $em->getRepository('AppBundle:ProductSection');
+
+        /** @var \AppBundle\Entity\ProductSection $entity */
+        $entity = $repo->find($id);
+
+        if ($entity->getCategories()->count() > 0) {
+            return "This section has categories assigned. Please reassign them before deleting.";
+        }
+
         $em->remove($entity);
 
         try {

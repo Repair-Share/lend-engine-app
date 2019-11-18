@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Handles all the pages on the static marketing site
  * Class SiteController
  * @package AppBundle\Controller
  */
@@ -25,12 +24,12 @@ class MemberSiteController extends Controller
         /** @var \AppBundle\Repository\ContactRepository $contactRepo */
         $contactRepo = $em->getRepository('AppBundle:Contact');
 
-        $user = $this->getUser();
-
-        $sessionUserId = $this->get('session')->get('sessionUserId');
-        if ($sessionUserId && $user->getId() != $sessionUserId) {
-            // Get the member
-            $user = $contactRepo->find($sessionUserId);
+        if ($user = $this->getUser()) {
+            $sessionUserId = $this->get('session')->get('sessionUserId');
+            if ($sessionUserId && $user->getId() != $sessionUserId) {
+                // Get the member
+                $user = $contactRepo->find($sessionUserId);
+            }
         }
 
         return $this->render('member_site/pages/home.html.twig', [
