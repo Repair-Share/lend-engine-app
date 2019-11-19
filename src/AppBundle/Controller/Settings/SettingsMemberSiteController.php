@@ -41,8 +41,10 @@ class SettingsMemberSiteController extends Controller
             $domainParts = explode('.', $requestedDomain);
             try {
                 $herokuResult = $heroku->get('apps/lend-engine-eu-plus/domains/'.$requestedDomain);
-                if ($herokuResult->hostname == $requestedDomain && $domainParts->acm_status == 'cert issued') {
+                if ($herokuResult->hostname == $requestedDomain && $herokuResult->acm_status == 'cert issued') {
                     $domainOk = true;
+                } else {
+                    $this->addFlash('debug', 'Domain status : '.$herokuResult->acm_status);
                 }
             } catch (\Exception $e) {
                 if (strstr($e->getMessage(), 'HTTP code 404')) {
