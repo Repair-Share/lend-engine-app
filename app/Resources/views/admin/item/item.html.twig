@@ -802,8 +802,8 @@
                 {% if tenantInformation.setting('group_similar_items') %}
                 prompt = "You have 'group similar items' setting ON. The SAME images will be shared on the copied item. " +
                                 "If you change or edit images on the new item, images for the original item will also be changed. \n\n" +
-                                "If you want to manage images separately on the new item, turn OFF the grouping setting temporarily " +
-                                "at Settings > Member site." +
+                                "If you want to manage images separately on the new item, turn OFF the grouping setting " +
+                                "at Settings > Member site, and then ensure your new item has a unique name." +
                                 "\n\nEnter how many copies you want:";
                 {% else %}
                 prompt = "You have 'group similar items' setting OFF. Images or attachments will not be copied to the new item." +
