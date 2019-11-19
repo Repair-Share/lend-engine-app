@@ -23,7 +23,9 @@ class SettingsMemberSiteController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $heroku = new HerokuClient();
+        $heroku = new HerokuClient([
+            'apiKey' => getenv('H_API_KEY')
+        ]);
 
         /** @var $tenantService \AppBundle\Services\TenantService */
         $tenantService = $this->get('service.tenant');
@@ -166,7 +168,9 @@ class SettingsMemberSiteController extends Controller
      */
     private function createDomain($domain)
     {
-        $heroku = new HerokuClient();
+        $heroku = new HerokuClient([
+            'apiKey' => getenv('H_API_KEY')
+        ]);
         $data = ['hostname' => $domain];
         try {
             $heroku->post('apps/lend-engine-eu-plus/domains/', $data);
