@@ -55,6 +55,9 @@ class ItemCopyController extends Controller
         $user = $this->getUser();
         $em   = $this->getDoctrine()->getManager();
 
+        /** @var \AppBundle\Services\SettingsService $settings */
+        $settings = $this->get('settings');
+
         try {
 
             /** @var $newProduct \AppBundle\Entity\InventoryItem */
@@ -99,24 +102,29 @@ class ItemCopyController extends Controller
 
             // Copy all images (referencing the same file on S3)
             $newProduct->setImages(new ArrayCollection());
-            foreach($oldProduct->getImages() AS $image) {
-                /** @var $image \AppBundle\Entity\Image */
-                $newImage = new Image();
-                $newImage->setImageName($image->getImageName());
-                $newImage->setInventoryItem($newProduct);
-                // Images are set to cascade persist when we save an item
-                $newProduct->addImage($newImage);
-            }
 
-            // Copy all attachments (referencing the same file on S3)
-            foreach($oldProduct->getFileAttachments() AS $file) {
-                /** @var $image \AppBundle\Entity\FileAttachment */
-                $newFileAttachment = new FileAttachment();
-                $newFileAttachment->setInventoryItem($newProduct);
-                $newFileAttachment->setFileName($file->getFileName());
-                $newFileAttachment->setFileSize($file->getFileSize());
-                $newFileAttachment->setSendToMemberOnCheckout($file->getSendToMemberOnCheckout());
-                $newProduct->addFileAttachment($newFileAttachment);
+            if ($settings->getSettingValue('group_similar_items')) {
+
+                foreach($oldProduct->getImages() AS $image) {
+                    /** @var $image \AppBundle\Entity\Image */
+                    $newImage = new Image();
+                    $newImage->setImageName($image->getImageName());
+                    $newImage->setInventoryItem($newProduct);
+                    // Images are set to cascade persist when we save an item
+                    $newProduct->addImage($newImage);
+                }
+
+                // Copy all attachments (referencing the same file on S3)
+                foreach($oldProduct->getFileAttachments() AS $file) {
+                    /** @var $image \AppBundle\Entity\FileAttachment */
+                    $newFileAttachment = new FileAttachment();
+                    $newFileAttachment->setInventoryItem($newProduct);
+                    $newFileAttachment->setFileName($file->getFileName());
+                    $newFileAttachment->setFileSize($file->getFileSize());
+                    $newFileAttachment->setSendToMemberOnCheckout($file->getSendToMemberOnCheckout());
+                    $newProduct->addFileAttachment($newFileAttachment);
+                }
+
             }
 
             /** @var \AppBundle\Entity\ProductFieldValue $fieldValue */
