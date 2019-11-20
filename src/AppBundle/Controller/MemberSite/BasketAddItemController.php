@@ -1,0 +1,237 @@
+<?php
+
+namespace AppBundle\Controller\MemberSite;
+
+use AppBundle\Entity\InventoryItem;
+use AppBundle\Entity\Loan;
+use AppBundle\Entity\LoanRow;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ * @package AppBundle\Controller\MemberSite
+ */
+class BasketAddItemController extends Controller
+{
+    /**
+     * @Route("basket/add/{itemId}", requirements={"itemId": "\d+"}, name="basket_add_item")
+     */
+    public function basketAddItem($itemId, Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
+        $itemRepo = $em->getRepository('AppBundle:InventoryItem');
+
+        /** @var \AppBundle\Repository\SiteRepository $siteRepo */
+        $siteRepo = $em->getRepository('AppBundle:Site');
+
+        /** @var \AppBundle\Services\Loan\CheckoutService $checkoutService */
+        $checkoutService = $this->get("service.checkout");
+
+        /** @var \AppBundle\Services\Loan\LoanService $loanService */
+        $loanService = $this->get("service.loan");
+
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->get("service.contact");
+
+        /** @var \AppBundle\Services\BasketService $basketService */
+        $basketService = $this->get('service.basket');
+
+        // FIND THE ITEM
+        /** @var \AppBundle\Entity\InventoryItem $product */
+        $product = $itemRepo->find($itemId);
+
+        // Validate sites
+        if (!$request->get('from_site') || !$request->get('to_site')) {
+            $this->addFlash('error', "There was an error trying to find the site you chose. Please log out/in and try again.");
+            return $this->redirectToRoute('home');
+        }
+
+        if (!$request->get('date_from') || !$request->get('date_to')) {
+            $this->addFlash('error', "Sorry, we couldn't determine loan dates. Please log out/in and try again.");
+            return $this->redirectToRoute('home');
+        }
+
+        if (!$this->getUser()) {
+            $this->addFlash('error', "You're not logged in. Please log in and try again.");
+            return $this->redirectToRoute('home');
+        }
+
+        // Create them a basket if there isn't one yet
+        if (!$basket = $basketService->getBasket()) {
+            if ($request->get('contactId')) {
+                $basketContactId = $request->get('contactId');
+            } else if ($this->get('session')->get('sessionUserId')) {
+                $basketContactId = $this->get('session')->get('sessionUserId');
+            } else {
+                $basketContactId = $this->getUser()->getId();
+            }
+
+            if (!$basket = $basketService->createBasket($basketContactId)) {
+                $this->addFlash('error', "You don't have an active membership. Please check your account.");
+                return $this->redirectToRoute('home');
+            }
+        }
+
+        // The basket only stores partial [serialized] contact info so get the full contact
+        $contact = $contactService->get($basket->getContact()->getId());
+        if (!$contact->getActiveMembership()) {
+            $this->addFlash('error', "You don't have an active membership. Please check your account.");
+            return $this->redirectToRoute('home');
+        }
+
+        // Verify user can borrow more items, if there's a limit on their membership type
+        $maxItems = $contact->getActiveMembership()->getMembershipType()->getMaxItems();
+        if ($maxItems > 0) {
+            $filter = [
+                'status' => Loan::STATUS_ACTIVE,
+                'contact' => $basket->getContact(),
+                'isOnLoan' => true // make sure we only include loanable items which are still on loan (ie no kits)
+            ];
+            $itemsOnLoan = $loanService->countLoanRows($filter);
+            $totalQty    = $itemsOnLoan + $basket->getLoanRows()->count();
+            if ($totalQty >= $maxItems) {
+                $this->addFlash('error', "You've already got {$totalQty} items on loan and in basket. The maximum for your membership is {$maxItems}.");
+                return $this->redirectToRoute('home');
+            }
+        }
+
+        if (!$basket) {
+            $this->addFlash('error', "There was an error trying to create you a basket, sorry. Please check you have an active membership.");
+            return $this->redirectToRoute('home');
+        }
+
+        // Catch-all if no qty is given
+        if (!$qtyRequired = $request->get('qty')) {
+            $qtyRequired = 1;
+        }
+
+        // Prevent user from adding the same item again
+        foreach ($basket->getLoanRows() AS $row) {
+            if ($row->getInventoryItem()->getId() == $itemId) {
+                $msg = $this->get('translator')->trans('msg_success.basket_item_exists', [], 'member_site');
+                $this->addFlash('success', $product->getName().' '.$msg);
+                if ($qtyRequired > 1) {
+                    $this->addFlash("error", "Please remove this item from basket before adding multiple quantities.");
+                }
+                return $this->redirectToRoute('basket_show');
+            }
+        }
+
+        $fee = $request->get('item_fee');
+
+        $reservationFee = $request->get('booking_fee');
+        $basket->setReservationFee($reservationFee);
+
+        if (!$siteFrom = $siteRepo->find($request->get('from_site'))) {
+            throw new \Exception("Cannot find site ".$request->get('from_site'));
+        }
+
+        if (!$siteTo   = $siteRepo->find($request->get('to_site'))) {
+            throw new \Exception("Cannot find site ".$request->get('to_site'));
+        }
+
+        $dFrom = new \DateTime($request->get('date_from').' '.$request->get('time_from'));
+        $dTo   = new \DateTime($request->get('date_to').' '.$request->get('time_to'));
+
+        if ($checkoutService->isItemReserved($product, $dFrom, $dTo, null)) {
+            $this->addFlash('error', "This item is reserved or on loan for your selected dates");
+            foreach ($checkoutService->errors AS $error) {
+                $this->addFlash('error', $error);
+            }
+            return $this->redirectToRoute('public_product', ['productId' => $product->getId()]);
+        }
+
+        $row = new LoanRow();
+        $row->setLoan($basket);
+        $row->setInventoryItem($product);
+        $row->setSiteFrom($siteFrom);
+        $row->setSiteTo($siteTo);
+        $row->setDueOutAt($dFrom);
+        $row->setDueInAt($dTo);
+        $row->setFee($fee);
+        $basket->addLoanRow($row);
+
+        if ($product->getItemType() == InventoryItem::TYPE_KIT) {
+            /** @var \AppBundle\Entity\KitComponent $kitComponent */
+            foreach ($product->getComponents() AS $kitComponent) {
+
+                if ($checkoutService->isItemReserved($kitComponent->getComponent(), $dFrom, $dTo, null)) {
+                    $this->addFlash("error", "Cannot add ".$kitComponent->getComponent()->getName());
+                    foreach ($checkoutService->errors AS $error) {
+                        $this->addFlash('error', $error);
+                    }
+                } else {
+                    $row = new LoanRow();
+                    $row->setLoan($basket);
+                    $row->setInventoryItem($kitComponent->getComponent());
+                    $row->setSiteFrom($siteFrom);
+                    $row->setSiteTo($siteTo);
+                    $row->setDueOutAt($dFrom);
+                    $row->setDueInAt($dTo);
+                    $row->setFee(0);
+                    $row->setProductQuantity($kitComponent->getQuantity());
+                    $basket->addLoanRow($row);
+                }
+
+            }
+        }
+
+        $qtyFulfilled = 1;
+
+        // If we're bulk adding, run through a loop for more rows
+        if ($qtyRequired > 1) {
+
+            // get other items with the same name, and find others which are available
+            /** @var \AppBundle\Entity\InventoryItem $item */
+            foreach ($itemRepo->findBy(['name' => $product->getName()]) AS $item) {
+
+                if ($item->getId() == $product->getId()) {
+                    continue;
+                }
+
+                if ($qtyFulfilled == $qtyRequired) {
+                    continue;
+                }
+
+                if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null)) {
+
+                    $row = new LoanRow();
+                    $row->setLoan($basket);
+                    $row->setInventoryItem($item);
+                    $row->setSiteFrom($siteFrom);
+                    $row->setSiteTo($siteTo);
+                    $row->setDueOutAt($dFrom);
+                    $row->setDueInAt($dTo);
+                    $row->setFee($fee);
+                    $basket->addLoanRow($row);
+
+                    $qtyFulfilled++;
+
+                }
+
+            }
+
+        }
+
+        if ($qtyFulfilled < $qtyRequired) {
+            $deficit = $qtyRequired - $qtyFulfilled;
+            $this->addFlash("error", "{$deficit} not added :");
+            foreach ($checkoutService->errors AS $e) {
+                $this->addFlash("error", $e);
+            }
+        }
+
+        $msg = $this->get('translator')->trans('msg_success.basket_item_added', [], 'member_site');
+        $this->addFlash('success', $qtyFulfilled. ' x ' .$product->getName().' '.$msg);
+
+        $basketService->setBasket($basket);
+
+        return $this->redirectToRoute('basket_show');
+
+    }
+}

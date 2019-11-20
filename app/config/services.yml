@@ -132,6 +132,24 @@ services:
             - '%env(SYMFONY__POSTMARK_API_KEY)%'
             - "@session"
 
+    service.email:
+        class: AppBundle\Services\EmailService
+        arguments:
+            - "@service.tenant"
+
+    service.basket:
+        class: AppBundle\Services\BasketService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@settings"
+            - "@session"
+            - "@service.contact"
+            - "@serializer"
+            - "@security.token_storage"
+            - "@service.email"
+            - "@translator.default"
+            - "@twig"
+
     settings:
         class: AppBundle\Services\SettingsService
         arguments:
@@ -224,10 +242,6 @@ services:
             - "@doctrine.orm.entity_manager"
             - "@service_container"
             - "@twig"
-
-
-
-
 
     service.stripe:
         class: AppBundle\Services\StripeHandler

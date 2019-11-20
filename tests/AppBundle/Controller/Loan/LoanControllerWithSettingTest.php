@@ -20,7 +20,7 @@ class LoanControllerWithSettingTest extends AuthenticatedControllerTest
     {
         $this->helpers->setSettingValue('charge_daily_fee', 1);
 
-        // Create an item with a deposit amount
+        // Create an item
         $itemId = $this->helpers->createItem($this->client);
 
         // Create a contact
