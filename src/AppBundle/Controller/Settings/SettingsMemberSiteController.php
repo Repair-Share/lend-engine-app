@@ -23,8 +23,13 @@ class SettingsMemberSiteController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        if (!$apiKey = getenv('H_API_KEY')) {
+            $this->addFlash('debug', "We can't connect to the custom domain provider.");
+            $apiKey = 'none';
+        }
+
         $heroku = new HerokuClient([
-            'apiKey' => getenv('H_API_KEY')
+            'apiKey' => $apiKey
         ]);
 
         /** @var $tenantService \AppBundle\Services\TenantService */

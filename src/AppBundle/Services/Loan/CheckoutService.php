@@ -21,32 +21,22 @@ use Symfony\Component\HttpFoundation\Request;
 class CheckoutService
 {
 
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager  */
     private $em;
 
-    /**
-     * @var Container
-     */
+    /** @var Container  */
     private $container;
 
-    /**
-     * @var ContactService
-     */
+    /** @var ContactService  */
     private $contactService;
 
-    /**
-     * @var BookingService
-     */
+    /** @var BookingService  */
     private $reservationService;
 
     /** @var SettingsService  */
     private $settings;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     public $errors = [];
 
     /**

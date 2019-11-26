@@ -62,6 +62,9 @@ class LoanExtendController extends Controller
         /** @var \AppBundle\Services\TenantService $tenantService */
         $tenantService = $this->get('service.tenant');
 
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
+
         if (!$user = $this->getUser()) {
             $this->addFlash('error', "Please log in");
             return $this->redirectToRoute('home');
@@ -208,78 +211,32 @@ class LoanExtendController extends Controller
 
             $this->addFlash('success','Loan return date was updated OK.');
             $toEmail = $loanRow->getLoan()->getContact()->getEmail();
+            $toName  = $loanRow->getLoan()->getContact()->getName();
             $locale  = $loanRow->getLoan()->getContact()->getLocale();
 
             // Send an email
             if ($toEmail && $loanRow->getLoan()->getStatus() != Loan::STATUS_PENDING) {
-
                 if (!$subject = $this->get('settings')->getSettingValue('email_loan_extension_subject')) {
                     $subject = $this->get('translator')->trans('le_email.extend.subject', [], 'emails', $locale);
                 }
 
-                $senderName     = $tenantService->getCompanyName();
-                $replyToEmail   = $tenantService->getReplyToEmail();
-                $fromEmail      = $tenantService->getSenderEmail();
-                $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
+                // Save and switch locale for sending the email
+                $sessionLocale = $this->get('translator')->getLocale();
+                $this->get('translator')->setLocale($locale);
 
-                try {
-                    $client = new PostmarkClient($postmarkApiKey);
+                $message = $this->renderView(
+                    'emails/loan_extend.html.twig',
+                    [
+                        'loanRow' => $loanRow,
+                        'message'  => null
+                    ]
+                );
 
-                    // Save and switch locale for sending the email
-                    $sessionLocale = $this->get('translator')->getLocale();
-                    $this->get('translator')->setLocale($locale);
+                // Send the email
+                $emailService->send($toEmail, $toName, $subject.' | '.$loanRow->getLoan()->getId(), $message, true);
 
-                    $message = $this->renderView(
-                        'emails/loan_extend.html.twig',
-                        [
-                            'loanRow' => $loanRow,
-                            'message'  => null
-                        ]
-                    );
-
-                    $client->sendEmail(
-                        "{$senderName} <{$fromEmail}>",
-                        $toEmail,
-                        $subject.' | '.$loanRow->getLoan()->getId(),
-                        $message,
-                        null,
-                        null,
-                        null,
-                        $replyToEmail
-                    );
-
-                    // And a copy for admin
-                    if ($replyToEmail != 'email@demo.com') {
-
-                        $toName = $loan->getContact()->getName();
-                        $msg = "This is a copy of the email sent to {$toName} ({$toEmail}).";
-                        $message = $this->renderView(
-                            'emails/loan_extend.html.twig',
-                            [
-                                'loanRow' => $loanRow,
-                                'message'  => $msg
-                            ]
-                        );
-
-                        $client->sendEmail(
-                            "{$senderName} <{$fromEmail}>",
-                            $replyToEmail,
-                            $subject.' | '.$loanRow->getLoan()->getId(),
-                            $message,
-                            null,
-                            null,
-                            null,
-                            $replyToEmail
-                        );
-
-                    }
-
-                    // Revert locale for the UI
-                    $this->get('translator')->setLocale($sessionLocale);
-
-                } catch (\Exception $generalException) {
-                    $this->addFlash('error', 'Failed to send email to '.$toEmail.': ' . $generalException->getMessage());
-                }
+                // Revert locale for the UI
+                $this->get('translator')->setLocale($sessionLocale);
             }
 
         } catch (\Exception $generalException) {
