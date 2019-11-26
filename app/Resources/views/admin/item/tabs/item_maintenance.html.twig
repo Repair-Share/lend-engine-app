@@ -33,6 +33,7 @@
                         <th></th>
                         <th>Due</th>
                         <th>Status</th>
+                        <th>Cost</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -53,6 +54,9 @@
                                 {% elseif maintenance.status == 'overdue' %}
                                     <label class="label bg-red">Overdue</label>
                                 {% endif %}
+                            </td>
+                            <td>
+                                {{ maintenance.totalCost }}
                             </td>
                             <td>
                                 {% if maintenance.fileAttachments|length > 0 %}

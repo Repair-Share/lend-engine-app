@@ -98,6 +98,8 @@ class MaintenanceListDataController extends Controller
                 $row[] = '';
             }
 
+            $row[] = number_format($maintenance->getTotalCost(), 2);
+
             $row[] = '<a href="'.$editUrl.'" class="btn btn-xs btn-default">Open</a>';
 
             $data[] = $row;

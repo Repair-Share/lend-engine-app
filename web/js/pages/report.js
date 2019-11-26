@@ -89,78 +89,8 @@ $(document).ready(function(){
     });
     paymentsTable.buttons().container().appendTo('#payment-report-table_length').css('padding-right', '20px');
 
-    // Sum cost columns
-    var costsTable = $('#costs-report-table').DataTable({
-        dom: 'lfBrtip',
-        ordering: true,
-        autoWidth: false,
-        "bLengthChange": false,
-        "bPaginate": false,
-        "columns": [
-            null,
-            null,
-            null,
-            null,
-            { className: "sum" },
-            null
-        ],
-        buttons: [
-            {
-                extend: 'csv',
-                text: 'Export CSV'
-            }
-        ]
-    });
-    costsTable.columns('.sum').every( function () {
-        if ( $("#costs-report-table").find('tr').size() > 3 ) {
-            var sum = this
-                .data()
-                .reduce( function (a,b) {
-                    return a*1 + b*1;
-                } );
-            $(this.footer()).html(sum.toFixed(2));
-        }
-    } );
-
-    // Sum cost columns when grouped by item
-    var costsTableGrouped = $('#costs-report-table-grouped').DataTable({
-        dom: 'lfBrtip',
-        ordering: true,
-        autoWidth: false,
-        "bLengthChange": false,
-        "bPaginate": false,
-        "columns": [
-            null,
-            null,
-            null,
-            { className: "sum" }
-        ],
-        buttons: [
-            {
-                extend: 'csv',
-                text: 'Export CSV'
-            },
-            {
-                extend: 'print',
-                text: 'Print',
-                message: 'From '+dateFrom+" to "+dateTo
-            }
-        ]
-    });
-    costsTableGrouped.columns('.sum').every( function () {
-        if ( $("#costs-report-table-grouped").find('tr').size() > 3 ) {
-            var sum = this
-                .data()
-                .reduce( function (a,b) {
-                    return a*1 + b*1;
-                } );
-            $(this.footer()).html(sum.toFixed(2));
-        }
-    } );
-
-
     // Sum item loans columns
-    var loanedItemsTable = $('#report-items-table').DataTable({
+    var loanedItemsTable = $('#report-items-by-custom-field').DataTable({
         dom: 'lfBrtip',
         ordering: true,
         autoWidth: false,
@@ -179,7 +109,7 @@ $(document).ready(function(){
         ]
     });
     loanedItemsTable.columns('.sum').every( function () {
-        if ( $("#report-items-table").find('tr').size() > 3 ) {
+        if ( $("#report-items-by-custom-field").find('tr').size() > 3 ) {
             var sum = this
                 .data()
                 .reduce( function (a,b) {
@@ -188,6 +118,77 @@ $(document).ready(function(){
             $(this.footer()).html(sum.toFixed(2));
         }
     } );
+
+    var loanedItemsTableByName = $('#report-items-by-name').DataTable({
+        dom: 'lfBrtip',
+        ordering: true,
+        autoWidth: false,
+        "bLengthChange": false,
+        "bPaginate": false,
+        "columns": [
+            null,
+            { className: "sum" },
+            { className: "sum" },
+            { className: "sum" },
+            { className: "sum" },
+            { className: "sum" },
+            { className: "sum" }
+        ],
+        buttons: [
+            {
+                extend: 'csv',
+                text: 'Export CSV'
+            }
+        ]
+    });
+    loanedItemsTableByName.columns('.sum').every( function () {
+        if ( $("#report-items-by-name").find('tr').size() > 3 ) {
+            var sum = this
+                .data()
+                .reduce( function (a,b) {
+                    return a*1 + b*1;
+                } );
+            $(this.footer()).html(sum.toFixed(2));
+        }
+    } );
+
+    var loanedItemsTableById = $('#report-items-by-id').DataTable({
+        dom: 'lfBrtip',
+        ordering: true,
+        autoWidth: false,
+        "bLengthChange": false,
+        "bPaginate": false,
+        "columns": [
+            null,
+            null,
+            null,
+            null,
+            { className: "sum" },
+            { className: "sum" },
+            { className: "sum" },
+            { className: "sum" },
+            { className: "sum" },
+            { className: "sum" }
+        ],
+        buttons: [
+            {
+                extend: 'csv',
+                text: 'Export CSV'
+            }
+        ]
+    });
+    loanedItemsTableById.columns('.sum').every( function () {
+        if ( $("#report-items-by-id").find('tr').size() > 3 ) {
+            var sum = this
+                .data()
+                .reduce( function (a,b) {
+                    return a*1 + b*1;
+                } );
+            $(this.footer()).html(sum.toFixed(2));
+        }
+    } );
+
+
 
     var nonLoanedItemsTable = $('#report-non-loaned-items-table').DataTable({
         dom: 'lfBrtip',

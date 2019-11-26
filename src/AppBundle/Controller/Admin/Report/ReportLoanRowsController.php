@@ -43,9 +43,6 @@ class ReportLoanRowsController extends Controller
         $fieldRepo = $this->getDoctrine()->getRepository('AppBundle:ProductField');
         $customFields = $fieldRepo->findAllOrderedBySort();
 
-        /** @var \AppBundle\Repository\ProductFieldSelectOptionRepository $fieldSelectOptionRepo */
-        $fieldSelectOptionRepo = $this->getDoctrine()->getRepository('AppBundle:ProductFieldSelectOption');
-
         $tableRows = array();
 
         $tableHeader = array(
@@ -59,6 +56,7 @@ class ReportLoanRowsController extends Controller
             'Checked out',
             'Checked in',
             'Fee',
+            'Value',
             'Deposit',
         );
 
@@ -112,6 +110,7 @@ class ReportLoanRowsController extends Controller
                     $checkedOutAt,
                     $checkedInAt,
                     $reportRow->getFee(),
+                    $reportRow->getInventoryItem()->getPriceSell(),
                     $depositAmount,
                 )
             );

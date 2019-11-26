@@ -40,7 +40,7 @@
     {% if countItems > 1 and tenantInformation.setting('group_similar_items') == 1 %}
         <div class="header-bar">
             There are <a href="{{ path('item_list') }}?search={{ item.name }}">{{ countItems }} items in this group</a>.
-            All fields apart from <strong>code</strong>, <strong>serial number</strong> and <strong>condition</strong>
+            All fields apart from <strong>price paid</strong>, <strong>code</strong>, <strong>serial number</strong> and <strong>condition</strong>
             will also be updated for other items in the group.
         </div>
     {% endif %}

@@ -9,15 +9,14 @@ use Symfony\Component\DependencyInjection\Container;
 
 class ItemService
 {
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager  */
     private $em;
 
-    /**
-     * @var Container
-     */
+    /** @var Container  */
     private $container;
+
+    /** @var \Doctrine\Common\Persistence\ObjectRepository|\Doctrine\ORM\EntityRepository  */
+    private $repo;
 
     /**
      * @var array
@@ -28,6 +27,17 @@ class ItemService
     {
         $this->em        = $em;
         $this->container = $container;
+
+        $this->repo = $this->em->getRepository('AppBundle:InventoryItem');
+    }
+
+    /**
+     * @param $id
+     * @return null|object
+     */
+    public function find($id)
+    {
+        return $this->repo->find($id);
     }
 
     /**
@@ -43,10 +53,8 @@ class ItemService
             );
         }
 
-        $repo = $this->em->getRepository('AppBundle:InventoryItem');
-
         /** @var \AppBundle\Entity\InventoryItem $item */
-        if (!$item = $repo->find($id)) {
+        if (!$item = $this->repo->find($id)) {
             $this->errors[] = "Could not find item with ID ".$id;
             return false;
         }
@@ -126,8 +134,7 @@ class ItemService
      */
     public function countAllItems(\DateTime $dateTo = null)
     {
-        $repository = $this->em->getRepository('AppBundle:InventoryItem');
-        $builder = $repository->createQueryBuilder('i');
+        $builder = $this->repo->createQueryBuilder('i');
         $builder->add('select', 'COUNT(i) AS qty');
         $builder->where('i.isActive = 1');
         if ($dateTo) {
@@ -141,6 +148,30 @@ class ItemService
             $total = 0;
         }
         return $total;
+    }
+
+    /**
+     * @param $filter
+     * @return mixed
+     */
+    public function getCosts($filter = [])
+    {
+        $builder = $this->repo->createQueryBuilder('i');
+        $builder->select('SUM(i.priceCost) AS cost, SUM(i.priceSell) AS value');
+
+        if (isset($filter['item_id']) && $filter['item_id']) {
+            $builder->andWhere('i.id = '.$filter['item_id']);
+        }
+
+        if (isset($filter['item_name']) && $filter['item_name']) {
+            $builder->andWhere('i.name =  :itemName');
+            $builder->setParameter('itemName', $filter['item_name']);
+        }
+
+        $builder->groupBy('i.name');
+
+        $query = $builder->getQuery();
+        return $query->getSingleResult();
     }
 
 }

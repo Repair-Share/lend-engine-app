@@ -10,9 +10,11 @@
     <div class="row">
         <div class="col-md-12">
             <div class="page-help">
-                This report shows you all items loaned between two dates, grouped by item name, or one of your item custom fields.
+                This report shows you all items loaned between two dates, grouped by item name, or one of your item custom fields.<br>
                 To change the grouping, select from 'report by' in the filters. If multiple items exist with the same name,
-                they will be grouped into the same item row.
+                they can be grouped into the same item row.<br>
+                Maintenance costs <em>for the selected date range</em> will be shown for item reports.
+                If there are maintenance costs for items which are not loaned out, they will not be included. Use the maintenance list for full cost details.
             </div>
         </div>
     </div>
@@ -25,7 +27,8 @@
                         <div class="col-md-4 form-group">
                             <label for="group_by">Report by</label>
                             <select id="group_by" name="group_by" class="form-control">
-                                <option value="product" {% if app.request.get('group_by') == 'product' %}SELECTED{% endif %}>Item name</option>
+                                <option value="item_name" {% if app.request.get('group_by') == 'item_name' %}SELECTED{% endif %}>Item name</option>
+                                <option value="item" {% if app.request.get('group_by') == 'item' %}SELECTED{% endif %}>Individual item</option>
                                 {% for field in productFields %}
                                     <option value="customField{{ field.id }}" {% if app.request.get('group_by') == "customField#{field.id}" %}SELECTED{% endif %}>{{ field.name }}</option>
                                 {% endfor %}
@@ -58,11 +61,7 @@
                             </select>
                         </div>
                         <div class="col-md-4 form-group">
-                            <label for="include_other_fees">Include extension/other fees</label>
-                            <select id="include_other_fees" name="include_other_fees" class="form-control">
-                                <option value="no" {% if app.request.get('include_other_fees') == 'no' %}SELECTED{% endif %}>No</option>
-                                <option value="yes" {% if app.request.get('include_other_fees') == 'yes' %}SELECTED{% endif %}>Yes</option>
-                            </select>
+
                         </div>
                     </div>
                 </div>
@@ -78,7 +77,7 @@
     <div class="row">
 
         <div class="col-sm-12 table-responsive">
-            <table cellspacing="0" class="table table-hover table-striped" id="report-items-table">
+            <table cellspacing="0" class="table table-hover table-striped" id="{{ tableId }}">
                 <thead>
                 {% for column in tableHeader %}
                     <th>{{ column }}</th>
@@ -88,7 +87,7 @@
                 {% for row in tableRows %}
                     <tr id="tr{{ row.id }}">
                         {% for column in row.data %}
-                            <td>{{ column }}</td>
+                            <td>{{ column|raw }}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}

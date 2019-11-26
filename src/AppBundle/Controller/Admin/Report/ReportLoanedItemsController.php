@@ -45,53 +45,74 @@ class ReportLoanedItemsController extends Controller
         /** @var \AppBundle\Repository\ProductFieldSelectOptionRepository $fieldSelectOptionRepo */
         $fieldSelectOptionRepo = $this->getDoctrine()->getRepository('AppBundle:ProductFieldSelectOption');
 
+        /** @var \AppBundle\Services\Maintenance\MaintenanceService $maintenanceService */
+        $maintenanceService = $this->get('service.maintenance');
+
+        /** @var \AppBundle\Services\Item\ItemService $itemService */
+        $itemService = $this->get('service.item');
+
+        if (!$groupBy = $request->get('group_by')) {
+            $groupBy = 'item_name';
+        }
+
         $tableRows = array();
 
-        $tableHeader = array(
-            'Name',
-            'Total times loaned',
-            'Total fees'
-        );
+        if ($groupBy == 'item_name') {
+            $tableHeader = array(
+                'Name',
+                'Times loaned',
+                'Loan fees',
+                'Other fees',
+                'Price paid',
+                'Value/RRP',
+                'Maintenance'
+            );
+            $tableId = 'report-items-by-name';
+        } else if ($groupBy == 'item') {
+            $tableHeader = array(
+                'ID',
+                'Name',
+                'Code',
+                'Serial',
+                'Times loaned',
+                'Loan fees',
+                'Other fees',
+                'Price paid',
+                'Value/RRP',
+                'Maintenance'
+            );
+            $tableId = 'report-items-by-id';
+        } else {
+            $tableHeader = array(
+                'Name',
+                'Times loaned',
+                'Loan fees'
+            );
+            $tableId = 'report-items-by-custom-field';
+        }
 
         /** @var \AppBundle\Services\Report\ReportLoanedItems $report */
         $report = $this->get('report.items');
         $this->setDateRange($request);
 
         // Set up filters
-        // @TODO remove direct dependency on REQUEST here
-        $filter = array(
+        $filter = [
             'search'    => $request->get('search'),
             'group_by'  => $request->get('group_by'),
             'tagIds'    => $request->get('tag_ids'),
             'statuses'  => $request->get('statuses'),
             'date_from' => $this->dateFrom,
             'date_to'   => $this->dateTo,
-        );
+        ];
 
         // Main report data
         $data = $report->run($filter);
 
         // Get the extra fees for the same dates
         $itemFeesByItemName = [];
-        $itemFeesCaptured = false;
-        if ($request->get('include_other_fees') == 'yes') {
-            if ($request->get('group_by') == 'product') {
-                /** @var \AppBundle\Services\Report\ReportPayments $paymentReport */
-                $paymentReport = $this->get('report.payments');
-                $payments = $paymentReport->run($filter);
-                foreach ($payments AS $payment) {
-                    if (!isset($itemFeesByItemName[$payment['itemName']])) {
-                        $itemFeesByItemName[$payment['itemName']] = 0;
-                    }
-                    if ($payment['type'] == 'FEE' && $payment['note'] != null) {
-                        $itemFeesByItemName[$payment['itemName']] += $payment['amount'];
-                    }
-                }
-                $itemFeesCaptured = true;
-            } else {
-                $this->addFlash("info", "Extra fees are only included when you report by item name.");
-            }
-        }
+
+        /** @var \AppBundle\Services\Report\ReportPayments $paymentReport */
+        $paymentReport = $this->get('report.payments');
 
         $n = 0;
         foreach ($data AS $reportRow) {
@@ -107,22 +128,103 @@ class ReportLoanedItemsController extends Controller
                 }
             }
 
-            $itemName = $reportRow['group_name'];
+            $loanFees = $reportRow['fees'];
+            $otherFees = 0;
 
-            $fees = $reportRow['fees'];
-            if ($itemFeesCaptured == true && isset($itemFeesByItemName[$itemName])) {
-                $fees += $itemFeesByItemName[$itemName];
+            if ($groupBy == 'item_name') {
+
+                $itemName = $reportRow['group_name'];
+                $filter['item_name'] = $itemName;
+
+                // Extension and other fees
+                if (isset($itemFeesByItemName[$itemName])) {
+                    $otherFees = $itemFeesByItemName[$itemName];
+                }
+
+                // The costs incurred in repairing the item
+                $costData = $maintenanceService->getTotalCosts($filter);
+                $maintenanceCost = $costData['maintenanceCost'];
+
+                $costData = $itemService->getCosts($filter);
+                $itemCost = $costData['cost'];
+                $itemValue = $costData['value'];
+
+                // Get the other fees (income) - extensions, late fees
+                $payments = $paymentReport->run($filter);
+                foreach ($payments AS $payment) {
+                    if ($payment['type'] == 'FEE' && $payment['note'] != null) {
+                        $otherFees += $payment['amount'];
+                    }
+                }
+
+                $tableRows[] = array(
+                    'id' => $n,
+                    'data' => array(
+                        $reportRow['group_name'],
+                        $reportRow['qty'],
+                        number_format($loanFees, 2),
+                        number_format($otherFees, 2),
+                        number_format($itemCost, 2),
+                        number_format($itemValue, 2),
+                        number_format($maintenanceCost, 2)
+                    )
+                );
+
+            } else if ($groupBy == 'item') {
+
+                $itemId   = $reportRow['item_id'];
+
+                // Get the other fees (income) - extensions, late fees
+                $filter['item_id'] = $itemId;
+                $payments = $paymentReport->run($filter);
+                foreach ($payments AS $payment) {
+                    if ($payment['type'] == 'FEE' && $payment['note'] != null) {
+                        $otherFees += $payment['amount'];
+                    }
+                }
+
+                // The costs incurred in repairing the item
+                $costData = $maintenanceService->getTotalCosts($filter);
+                $maintenanceCost = $costData['maintenanceCost'];
+
+                $costData = $itemService->getCosts($filter);
+                $itemCost = $costData['cost'];
+                $itemValue = $costData['value'];
+
+                $itemUrl = $this->generateUrl('item', ['id' => $itemId]);
+
+                $tableRows[] = array(
+                    'id' => $n,
+                    'data' => array(
+                        $reportRow['item_id'],
+                        '<a href="'.$itemUrl.'">'.$reportRow['group_name'].'</a>',
+                        $reportRow['code'],
+                        $reportRow['serial'],
+                        $reportRow['qty'],
+                        number_format($loanFees, 2),
+                        number_format($otherFees, 2),
+                        number_format($itemCost, 2),
+                        number_format($itemValue, 2),
+                        number_format($maintenanceCost, 2)
+                    )
+                );
+
+
+            } else {
+
+                $tableRows[] = array(
+                    'id' => $n,
+                    'data' => array(
+                        $reportRow['group_name'],
+                        $reportRow['qty'],
+                        number_format($loanFees, 2)
+                    )
+                );
+
             }
 
-            $tableRows[] = array(
-                'id' => $n,
-                'data' => array(
-                    $reportRow['group_name'],
-                    $reportRow['qty'],
-                    number_format($fees, 2)
-                )
-            );
             $n++;
+
         }
 
         return $this->render('report/report_items.html.twig', array(
@@ -134,6 +236,7 @@ class ReportLoanedItemsController extends Controller
             'statuses' => $this->loanStatuses,
             'date_from' => $this->dateFrom,
             'date_to' => $this->dateTo,
+            'tableId' => $tableId
         ));
     }
 

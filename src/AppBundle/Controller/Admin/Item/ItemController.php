@@ -262,6 +262,7 @@ class ItemController extends Controller
 
             // update the other items in the group
             $groupSimilarItems = $this->get('settings')->getSettingValue('group_similar_items');
+
             if (count($items) > 1 && $groupSimilarItems) {
                 /** @var \AppBundle\Entity\InventoryItem $copyItem */
                 foreach($items AS $copyItem) {
@@ -282,7 +283,6 @@ class ItemController extends Controller
                     $copyItem->setCareInformation($product->getCareInformation());
                     $copyItem->setDescription($product->getDescription());
                     $copyItem->setComponentInformation($product->getComponentInformation());
-                    $copyItem->setPriceCost($product->getPriceCost());
                     $copyItem->setPriceSell($product->getPriceSell());
                     $copyItem->setDepositAmount($product->getDepositAmount());
                     $copyItem->setNote($product->getNote());

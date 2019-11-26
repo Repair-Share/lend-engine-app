@@ -283,11 +283,6 @@ services:
         arguments:
             - "@doctrine.orm.entity_manager"
 
-    report.costs:
-        class: AppBundle\Services\Report\ReportCosts
-        arguments:
-            - "@doctrine.orm.entity_manager"
-
     report.children:
         class: AppBundle\Services\Report\ReportChildren
         arguments:

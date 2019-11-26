@@ -37,7 +37,7 @@ class ReportLoanedItems
         $length = 1000;
 
         if (!isset($filter['group_by'])) {
-            $filter['group_by'] = 'product';
+            $filter['group_by'] = 'item_name';
         }
 
         $builder = $repository->createQueryBuilder('lr');
@@ -86,7 +86,12 @@ class ReportLoanedItems
         $builder->setMaxResults($length);
 
         switch ($filter['group_by']) {
-            case "product":
+            case "item":
+                $builder->addSelect('i.name AS group_name');
+                $builder->addGroupBy("i.id");
+                $builder->addSelect("i.id AS item_id, i.sku AS code, i.serial AS serial, i.priceSell as item_value");
+                break;
+            case "item_name":
                 $builder->addSelect('i.name AS group_name');
                 $builder->addGroupBy("i.name");
                 break;

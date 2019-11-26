@@ -90,6 +90,15 @@ class ReportPayments
             $builder->setParameter('dateTo', $filter['date_to'].' 23:59:59');
         }
 
+        if (isset($filter['item_id']) && $filter['item_id']) {
+            $builder->andWhere('i.id = '.$filter['item_id']);
+        }
+
+        if (isset($filter['item_name']) && $filter['item_name']) {
+            $builder->andWhere('i.name =  :itemName');
+            $builder->setParameter('itemName', $filter['item_name']);
+        }
+
         $builder->setFirstResult($start);
         $builder->setMaxResults($length);
 

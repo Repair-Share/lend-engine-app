@@ -92,10 +92,11 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             // Reports
             ['/admin/report/report_loans'],
             ['/admin/report/report_items'],
+            ['/admin/report/report_items?group_by=item'],
+            ['/admin/report/report_items?group_by=item_name'],
             ['/admin/report/all_items'],
             ['/admin/report/non_loaned_items'],
             ['/admin/report/report_payments'],
-            ['/admin/report/report_costs'],
             ['/admin/report/report_memberships'],
 
             // Admin datatables JSON

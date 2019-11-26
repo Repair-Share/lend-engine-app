@@ -169,4 +169,34 @@ class MaintenanceService
         ];
 
     }
+
+    public function getTotalCosts($filter = [])
+    {
+        $builder = $this->repository->createQueryBuilder('m');
+        $builder->select('SUM(m.totalCost) AS maintenanceCost, SUM(i.priceCost) AS itemCost');
+
+        $builder->join('m.inventoryItem', 'i');
+
+        if (isset($filter['date_from']) && $filter['date_from']) {
+            $builder->andWhere('m.createdAt >= :dateFrom');
+            $builder->setParameter('dateFrom', $filter['date_from'].' 00:00:00');
+        }
+
+        if (isset($filter['date_to']) && $filter['date_to']) {
+            $builder->andWhere('m.createdAt <= :dateTo');
+            $builder->setParameter('dateTo', $filter['date_to'].' 23:59:59');
+        }
+
+        if (isset($filter['item_id']) && $filter['item_id']) {
+            $builder->andWhere('i.id = '.$filter['item_id']);
+        }
+
+        if (isset($filter['item_name']) && $filter['item_name']) {
+            $builder->andWhere('i.name =  :itemName');
+            $builder->setParameter('itemName', $filter['item_name']);
+        }
+
+        $query = $builder->getQuery();
+        return $query->getSingleResult();
+    }
 }

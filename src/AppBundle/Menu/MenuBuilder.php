@@ -91,7 +91,6 @@ class MenuBuilder
         $this->addChildItem('Reports', 'Loan item detail', 'report_all_items', '');
         $this->addChildItem('Reports', 'Non-loaned items', 'non_loaned_items', '');
         $this->addChildItem('Reports', 'Payments', 'report_payments', '');
-        $this->addChildItem('Reports', 'Item costs', 'report_costs', '');
         $this->addChildItem('Reports', 'Memberships', 'membership_list', '');
 
         if ($this->container->get('service.tenant')->getIndustry() == "toys") {
