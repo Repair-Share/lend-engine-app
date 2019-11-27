@@ -3,8 +3,9 @@
 # Release: Working copy
 # Locale: de-DE, German (Germany)
 # Tagged: Emails
+# Status: Translated
 # Exported by: Chris
-# Exported at: Mon, 15 Apr 2019 20:05:20 +0100
+# Exported at: Wed, 27 Nov 2019 10:07:11 +0000
 ---
 le_email.item_description: Beschreibung
 le_email.item_contains: Enthält
@@ -16,11 +17,11 @@ le_email.th_due_back: Fällg am
 le_email.url: Anmelde URL
 le_email.email: E-Mail
 le_email.password: Passwort
-le_email.assign.title: You've been assigned an item
+le_email.assign.title: Dir wurde ein Gegenstand zugewiesen
 le_email.assign.message: '%firstName%, Ihnen wurde vom Element "%itemName%" der Befehl "%iassignorName%" zugewiesen.'
 le_email.assign.added_note: fügte eine Notiz hinzu
 le_email.assign.all_items: Alle Artikel anzeigen, die Ihnen zugewiesen wurden
-le_email.assign.current_location: Current location
+le_email.assign.current_location: Aktueller Standort
 le_email.checkout.subject: Ihre Darlehensinformationen
 le_email.checkout.title: Ihre Darlehensinformationen
 le_email.extend.subject: Ihr Rückgabedatum für ihre Ausleihe wurde aktualisiert
@@ -41,4 +42,5 @@ le_email.reservation_confirm.subject: Deine Reservierungsbestätigung
 le_email.reservation_confirm.title: Reservierungsbestätigung
 le_email.site_welcome.subject: Willkommen bei %accountName%
 le_email.site_welcome.title: Willkommen
+le_email.login_to_view_this_loan: Leihe online anschauen
 ...

@@ -3,8 +3,9 @@
 # Release: Working copy
 # Locale: de-DE, German (Germany)
 # Tagged: Member site
+# Status: Translated
 # Exported by: Chris
-# Exported at: Mon, 15 Apr 2019 20:04:14 +0100
+# Exported at: Wed, 27 Nov 2019 10:07:28 +0000
 ---
 Loan: Darlehen
 Loans: Kredite
@@ -40,12 +41,9 @@ STATUS_OVERDUE: Überfällig
 STATUS_RESERVED: Reserviert
 STATUS_CANCELLED: Abgebrechen
 STATUS_CLOSED: Geschlossen
-days: '{1}day|[2,Inf[days'
 per_day: pro Tag
-per_n_days: for %count% days
 button_cancel: Abbruch
 button_cancel_reservation: Reservierung abbrechen
-button_add_credit: Add credit
 button_go: Los
 I forgot my password: Ich habe mein Passwort vergessen.
 Log out: Abmelden
@@ -79,7 +77,7 @@ public_account.contact_subtitle: Kontaktdaten
 public_account.membership_subtitle: Mitgliedschaftsdaten
 public_account.button_edit_details: Meine Daten bearbeiten
 public_account.button_change_password: Mein Passwort ändern
-public_item_list.pages: Showing %x% to %y% of %z% items
+public_item_list.pages: Zeigt %x% bis %y% von %z% Gegenstände/n
 public_item.location: Ort
 public_item.brand: Marke
 public_item.code: Code
@@ -93,7 +91,6 @@ public_item.borrow_now: Ausleihen/reservieren
 public_item.not_available: Nicht verfügbar
 public_item.available: Erhältlich
 public_item.on_loan: Verliehen
-public_item.pickup_date_error: Items in your basket define a pickup date that clashes with the bookings for this item. You won't be able to borrow this item on the same loan.
 public_item.pickup_site_error: Dieser Artikel ist nicht auf der Website verfügbar, von der die anderen Artikel in Ihrem Korb abgeholt werden sollen.
 public_item.basket_exists: Sie haben bereits Artikel in Ihrem Warenkorb. <br>Sie müssen sie zusammen abholen, daher haben wir das Abholdatum für Sie festgelegt.
 public_item.account_balance_is: Verfügbarer Saldo ist
@@ -118,8 +115,7 @@ calendar.text_clash_date: Ihr ausgewählter Zeitraum stößt mit einer bestehend
 calendar.text_return_after_pickup: Bitte wähle ein Rückgabedatum nach deinem Abholungsdatum aus.
 calendar.alert_already_booked: Aufgrund einer anderen Buchung kannst du dieses Datum nicht auswählen.
 calendar.alert_not_your_booking: Du kannst nur Details deiner eigenen Buchung einsehen.
-calendar.alert_day_warning: This item can only be loaned for multiples of itemLoanDays days. \nPlease choose another return date.
-calendar.alert_min_loan_days: You must borrow this item for at least minLoanDays days.
+calendar.alert_min_loan_days: Du musst diesen Gegenstand für mindestens minLeihdauer in Tagen ausleihen.
 calendar.alert_max_loan_days: 'Du kannst diesen Gegenstand für bis zu maxLeihdauer Tage entleihen. '
 public_basket.title: Korb
 public_basket.name: Korb
@@ -127,34 +123,33 @@ public_basket.due_at: 'Fällig am '
 public_basket.return_to: Zurück an
 public_basket.pickup_after: Abholen nach
 public_basket.from: von
-public_basket.add_credit_message: Please add credit first.
+public_basket.add_credit_message: Bitte lade erst Guthaben auf.
 public_basket.empty: Leerer Korb
 public_basket.confirm_reservation: Reservieren
 public_basket.remove_item: Entfernen
 public_basket.total: Gesamt
 public_basket.balance: Gegen Gebühr
 public_basket.no_items: <h3 Keine Artikel im Korb</ h3> Suchen Sie nach einem Artikel, den Sie hinzufügen möchten.
-public_basket.full_charge: will be charged to your account
+public_basket.full_charge: wird dein Konto mit belastet
 public_basket.delay_charge: wird jetzt Ihrem Konto belastet, der Rest wird bei Abholung der Artikel fällig
 public_loan.title: Ausleihen
 public_user_menu.contact_info: Profil
 text_borrow_with_membership: Bei voller Mitgliedschaft können Sie diesen Artikel online ausleihen und reservieren.
 text_no_membership: 'Wir haben keine aktive Mitgliedschaft für dich. '
 public_add_credit.title: Guthaben hinzufügen
-public_add_credit.choose_card: Choose an existing card above, or just continue adding credit to below to use a new card
 public_add_credit.use_this_card: Verwenden Sie diese Karte
-public_add_credit.amount_to_add: Amount to add
+public_add_credit.amount_to_add: Hinzuzufügende Menge
 public_add_credit.payment_method: Zahlweise
-public_add_credit.min_amount: Minimum card amount
-public_add_credit.processing_fee: processing fee will be added for card transactions
+public_add_credit.min_amount: Minimale Kartensumme
+public_add_credit.processing_fee: Bearbeitungsgebühr wird für Kartentransaktionen erhoben
 public_loans.no_loans: Du hast noch nichts ausgeliehen.
-public_payments.no_payment: No payments or fees yet
-public_payments.title: Fees and Payments
+public_payments.no_payment: Noch keine Entgelte oder Gebühren.
+public_payments.title: Gebühren und Entgelte
 public_registration.newsletter: Melde dich für unseren Newsletter an.
 public_registration.terms_link: Lies unsere Leihbedingungen.
 public_registration.terms_label: Ich stimme den Leihbedingungen zu.
 public_become_member.title: Werde Mitglied
-msg_success.payment_ok: Payment made OK. Your account balance has been amended.
+msg_success.payment_ok: Bezahlung ist erfolgt. Dein Kontostand wurde berichtigt.
 msg_success.reservation_create: Reserviert! Wir haben dir gerade eine Bestätigungsemail zugeschickt.
 msg_success.reservation_cancel: Deine Reservierung wurde storniert.
 msg_success.basket_item_removed: Artikel wurde aus Ihrem Korb entfernt.
@@ -163,4 +158,6 @@ msg_success.basket_item_exists: ist bereits in Ihrem Warenkorb.
 msg_fail.general_fail: Entschuldige! Etwas ist schief gelaufen. Bitte versuch es noch einmal oder wende dich an uns.
 msg_fail.reservation_create: 'Etwas ist schief gelaufen, wir konnten deine Reservierung nicht erstellen. '
 msg_fail.reservation_cancel: Wir konnten deine Reservierung nicht stornieren. Bitte kontaktiere uns.
+per-borrow: pro Ausleihe
+public_misc.show_items_from: Verfügbare Gegenstände anzeigen von
 ...
