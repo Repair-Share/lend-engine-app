@@ -392,86 +392,74 @@ class LoanController extends Controller
         /** @var \AppBundle\Services\TenantService $tenantService */
         $tenantService = $this->get('service.tenant');
 
-        $senderName     = $tenantService->getCompanyName();
-        $replyToEmail   = $tenantService->getReplyToEmail();
-        $fromEmail      = $tenantService->getSenderEmail();
-        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->get('service.contact');
+
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
+
+        $token = $contactService->generateAccessToken($loan->getContact());
+
+        $loginUri = $tenantService->getTenant()->getDomain(true);
+        $loginUri .= '/access?t='.$token.'&e='.urlencode($loan->getContact()->getEmail());
+        $loginUri .= '&r=/loan/'.$loan->getId();
 
         // Send email confirmation
         $toEmail = $loan->getContact()->getEmail();
+        $toName = $loan->getContact()->getName();
 
         if ($toEmail) {
 
             $locale = $loan->getContact()->getLocale();
 
-            try {
+            // Save and switch locale for sending the email
+            $sessionLocale = $this->get('translator')->getLocale();
+            $this->get('translator')->setLocale($locale);
 
-                $client = new PostmarkClient($postmarkApiKey);
+            $message = $this->renderView(
+                'emails/loan_checkout.html.twig',
+                [
+                    'loanRows' => $loan->getLoanRows(),
+                    'includeButton' => true,
+                    'loginUri' => $loginUri
+                ]
+            );
 
-                // Save and switch locale for sending the email
-                $sessionLocale = $this->get('translator')->getLocale();
-                $this->get('translator')->setLocale($locale);
+            // Send any attachments relating to the items being checked out
+            $attachments = [];
+            $accountCode = $this->get('service.tenant')->getAccountCode();
+            $filePathStub = 'https://s3-us-west-2.amazonaws.com/lend-engine/'.$accountCode.'/files/';
 
-                $message = $this->renderView(
-                    'emails/loan_checkout.html.twig',
-                    array(
-                        'loanRows'    => $loan->getLoanRows()
-                    )
-                );
+            foreach ($loan->getLoanRows() AS $row) {
 
-                // Send any attachments relating to the items being checked out
-                $attachments = [];
-                $accountCode = $this->get('service.tenant')->getAccountCode();
-                $filePathStub = 'https://s3-us-west-2.amazonaws.com/lend-engine/'.$accountCode.'/files/';
-
-                foreach ($loan->getLoanRows() AS $row) {
-
-                    /** @var $row \AppBundle\Entity\LoanRow */
-                    if ( count($row->getInventoryItem()->getFileAttachments()) > 0 ) {
-                        foreach ( $row->getInventoryItem()->getFileAttachments() AS $file ) {
-                            /** @var $file \AppBundle\Entity\FileAttachment */
-                            if ($file->getSendToMemberOnCheckout()) {
-                                $filePath = $filePathStub.urlencode($file->getFileName());
-                                $attachments[] = PostmarkAttachment::fromFile($filePath, $file->getFileName());
-                            }
+                /** @var $row \AppBundle\Entity\LoanRow */
+                if ( count($row->getInventoryItem()->getFileAttachments()) > 0 ) {
+                    foreach ( $row->getInventoryItem()->getFileAttachments() AS $file ) {
+                        /** @var $file \AppBundle\Entity\FileAttachment */
+                        if ($file->getSendToMemberOnCheckout()) {
+                            $filePath = $filePathStub.urlencode($file->getFileName());
+                            $attachments[] = PostmarkAttachment::fromFile($filePath, $file->getFileName());
                         }
                     }
                 }
-
-                if (!$subject = $this->get('settings')->getSettingValue('email_loan_confirmation_subject')) {
-                    $subject = $this->get('translator')->trans('le_email.checkout.subject', [], 'emails', $locale);
-                }
-
-                $client->sendEmail(
-                    "{$senderName} <{$fromEmail}>",
-                    $toEmail,
-                    $subject." (Ref ".$loan->getId().")",
-                    $message,
-                    null,
-                    null,
-                    null,
-                    $replyToEmail,
-                    null,
-                    null,
-                    null,
-                    $attachments
-                );
-
-                // Revert locale for the UI
-                $this->get('translator')->setLocale($sessionLocale);
-
-                return true;
-
-            } catch (\Exception $generalException) {
-
-                return false;
-
             }
+
+            if (!$subject = $this->get('settings')->getSettingValue('email_loan_confirmation_subject')) {
+                $subject = $this->get('translator')->trans('le_email.checkout.subject', [], 'emails', $locale);
+            }
+
+            $subject .= " (Ref ".$loan->getId().")";
+
+            $emailService->send($toEmail, $toName, $subject, $message, true, $attachments);
+
+            // Revert locale for the UI
+            $this->get('translator')->setLocale($sessionLocale);
+
+            return true;
 
         }
 
         return true;
     }
-
 
 }

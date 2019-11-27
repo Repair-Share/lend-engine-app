@@ -18,7 +18,7 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 
-class CheckoutService
+class CheckOutService
 {
 
     /** @var EntityManager  */

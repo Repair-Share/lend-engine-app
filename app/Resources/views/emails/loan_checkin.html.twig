@@ -1,0 +1,43 @@
+{% extends 'emails/template.html.twig' %}
+
+{% trans_default_domain 'emails' %}
+
+{% block heading %}{{ 'le_email.checkin.title'|trans() }}{% endblock %}
+
+{% block content %}
+
+    {% if message is defined and message != '' %}
+        <div style="padding: 10px; background-color: #d5f996; border-radius: 4px; margin-bottom: 10px;">
+            {{ message }}
+        </div>
+    {% endif %}
+
+    <p>{{ tenantInformation.setting('email_loan_checkin_head')|raw }}</p>
+
+    <table width="100%" cellspacing="0" cellpadding="0">
+        <tr style="margin-bottom:20px;">
+            <td valign="top" style="padding-right: 15px; width: 60px;">
+                {% if row.inventoryItem.imageName %}
+                    <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}">
+                {% endif %}
+            </td>
+            <td valign="top">
+                <strong>{{ row.inventoryItem.name }}</strong>
+                <div>
+                    {{ row.dueOutAt|date('d F g:i a') }} - {{ row.dueInAt|date('d F g:i a') }}<br>
+                    Loan #{{ row.loan.id }} : {{ row.loan.contact.name }}
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+    <div>
+        {{ 'le_email.checkin.checked_in_at'|trans() }} {{ row.checkedInAt|date('g:i a, d F') }}<br>
+        {{ 'le_email.checkin.checked_in_by'|trans() }} {{ checkedInBy }}
+    </div>
+
+    <br>
+    <p>{{ tenantInformation.setting('email_loan_checkin_foot')|raw }}</p>
+
+{% endblock %}

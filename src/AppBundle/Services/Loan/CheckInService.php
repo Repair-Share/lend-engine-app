@@ -13,9 +13,11 @@ use AppBundle\Entity\Payment;
 use AppBundle\Repository\SettingRepository;
 use AppBundle\Services\Contact\ContactService;
 use AppBundle\Services\Booking\BookingService;
+use AppBundle\Services\EmailService;
 use AppBundle\Services\InventoryService;
 use AppBundle\Services\Maintenance\MaintenanceService;
 use AppBundle\Services\SettingsService;
+use AppBundle\Services\TenantService;
 use AppBundle\Services\WaitingList\WaitingListService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
@@ -23,6 +25,7 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Security;
+use Twig\Environment;
 
 class CheckInService
 {
@@ -45,6 +48,15 @@ class CheckInService
     /** @var TokenStorageInterface  */
     private $tokenStorage;
 
+    /** @var Environment  */
+    private $twig;
+
+    /** @var EmailService */
+    private $emailService;
+
+    /** @var TenantService  */
+    private $tenantService;
+
     /** @var array  */
     public $errors = [];
 
@@ -63,7 +75,10 @@ class CheckInService
         InventoryService $inventoryService,
         WaitingListService $waitingListService,
         MaintenanceService $maintenanceService,
-        TokenStorageInterface $tokenStorage)
+        TokenStorageInterface $tokenStorage,
+        EmailService $emailService,
+        Environment $twig,
+        TenantService $tenantService)
     {
         $this->em        = $em;
         $this->contactService = $contactService;
@@ -71,6 +86,11 @@ class CheckInService
         $this->waitingListService = $waitingListService;
         $this->maintenanceService = $maintenanceService;
         $this->tokenStorage = $tokenStorage;
+        $this->twig = $twig;
+        $this->emailService = $emailService;
+        $this->tenantService = $tenantService;
+
+        $this->user = $this->tokenStorage->getToken()->getUser();
     }
 
     /**
@@ -148,6 +168,8 @@ class CheckInService
             // Process items that may be on the waiting list
             $this->waitingListService->process($inventoryItem);
 
+            $this->sendCheckInConfirmation($loanRow);
+
             return true;
         }
 
@@ -155,5 +177,34 @@ class CheckInService
 
     }
 
+    /**
+     * @param LoanRow $loanRow
+     */
+    private function sendCheckInConfirmation(LoanRow $loanRow)
+    {
+        $contact = $loanRow->getLoan()->getContact();
+        $token = $this->contactService->generateAccessToken($contact);
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        $loginUri = $this->tenantService->getTenant()->getDomain(true);
+        $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
+        $loginUri .= '&r=/loan/'.$loanRow->getLoan()->getId();
+
+        $message = $this->twig->render(
+            'emails/loan_checkin.html.twig',
+            [
+                'row' => $loanRow,
+                'checkedInBy' => $user->getName(),
+                'includeButton' => true,
+                'loginUri' => $loginUri
+            ]
+        );
+
+        $subject = "Check in confirmation : ".$loanRow->getLoan()->getId();
+        $toEmail = $loanRow->getLoan()->getContact()->getEmail();
+        $toName  = $loanRow->getLoan()->getContact()->getName();
+
+        $this->emailService->send($toEmail, $toName, $subject, $message, true);
+    }
 
 }

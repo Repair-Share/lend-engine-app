@@ -147,6 +147,7 @@ services:
             - "@serializer"
             - "@security.token_storage"
             - "@service.email"
+            - "@service.tenant"
             - "@translator.default"
             - "@twig"
 
@@ -218,7 +219,7 @@ services:
             - "@service.contact"
 
     service.checkout:
-        class: AppBundle\Services\Loan\CheckoutService
+        class: AppBundle\Services\Loan\CheckOutService
         arguments:
             - "@doctrine.orm.entity_manager"
             - "@service_container"
@@ -235,6 +236,9 @@ services:
             - "@service.waiting_list"
             - "@service.maintenance"
             - "@security.token_storage"
+            - "@service.email"
+            - "@twig"
+            - "@service.tenant"
 
     service.waiting_list:
         class: AppBundle\Services\WaitingList\WaitingListService

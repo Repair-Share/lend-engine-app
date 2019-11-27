@@ -14,7 +14,6 @@
         <tr>
             <th align="left" style="padding-right: 15px">&nbsp;</th>
             <th align="left" style="padding-right: 15px">&nbsp;</th>
-            <th align="right">{{ 'le_email.th_fee'|trans() }}</th>
         </tr>
         </thead>
         {% for row in loanRows %}
@@ -23,12 +22,14 @@
                     {% if row.inventoryItem.imageName %}
                         <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}">
                     {% endif %}
+                    <br>
                 </td>
                 <td valign="top" style="padding-right: 15px">
                     <strong>{{ row.inventoryItem.name }}</strong>
 
                     <div>
-                        {{ row.dueOutAt|date('d F g:i a') }} - {{ row.dueInAt|date('d F g:i a') }}
+                        {{ row.dueOutAt|date('d F g:i a') }} - {{ row.dueInAt|date('d F g:i a') }}<br>
+                        {{ 'le_email.th_fee'|trans() }}: {{ row.fee|number_format(2) }}
                     </div>
 
                     {% if row.inventoryItem.description|length > 0 %}
@@ -67,12 +68,10 @@
                     {% endif %}
 
                 </td>
-                <td align="right" valign="top">{{ row.fee|number_format(2) }}</td>
             </tr>
         {% endfor %}
     </table>
 
-    <br>
     <br>
     <p>{{ tenantInformation.getEmailLoanConfirmationFooter|raw }}</p>
 

@@ -16,15 +16,15 @@ class EmailService
 
     /**
      * Intentionally soaks up the exceptions silently
-     *
      * @param $toEmail
      * @param $toName
      * @param $subject
      * @param $message
      * @param bool $ccAdmin
+     * @param array $attachments
      * @return bool
      */
-    public function send($toEmail, $toName, $subject, $message, $ccAdmin = false)
+    public function send($toEmail, $toName, $subject, $message, $ccAdmin = false, $attachments = [])
     {
 
         if (!$toEmail) {
@@ -47,7 +47,11 @@ class EmailService
                 null,
                 null,
                 true,
-                $replyToEmail
+                $replyToEmail,
+                null,
+                null,
+                null,
+                $attachments
             );
         } catch (\Exception $e) {
 
@@ -56,6 +60,9 @@ class EmailService
         if ($ccAdmin == true) {
             // Insert a green box at the top of the content
             $message = preg_replace('/<!--\/\/-->/', $this->addAdminInfo($toName, $toEmail), $message);
+
+            // Remove the login button
+            $message = preg_replace('/\<a id="loginButton".*?<\/a>/', '', $message);
 
             try {
                 $client->sendEmail(
@@ -85,6 +92,6 @@ class EmailService
     private function addAdminInfo($toName, $toEmail)
     {
         $msg = "This is a copy of the email sent to {$toName} ({$toEmail}).";
-        return '<div style="padding: 10px; background-color: #d5f996; border-radius: 4px; margin-bottom: 10px;">'.$msg.'</div>';
+        return '<br><div style="padding: 10px; background-color: #d5f996; border-radius: 4px; margin-bottom: 10px;">'.$msg.'</div>';
     }
 }

@@ -44,6 +44,9 @@ class BasketService
     /** @var EmailService */
     private $emailService;
 
+    /** @var TenantService */
+    private $tenantService;
+
     /** @var Translator */
     private $translator;
 
@@ -69,6 +72,7 @@ class BasketService
                                 Serializer $serializer,
                                 TokenStorageInterface $tokenStorage,
                                 EmailService $emailService,
+                                TenantService $tenantService,
                                 Translator $translator,
                                 Environment $twig)
     {
@@ -79,6 +83,7 @@ class BasketService
         $this->serializer = $serializer;
         $this->tokenStorage = $tokenStorage;
         $this->emailService = $emailService;
+        $this->tenantService = $tenantService;
         $this->translator = $translator;
         $this->twig = $twig;
 
@@ -390,10 +395,17 @@ class BasketService
             return false;
         }
 
+        $contact = $loan->getContact();
+        $token = $this->contactService->generateAccessToken($contact);
+
+        $loginUri = $this->tenantService->getTenant()->getDomain(true);
+        $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
+        $loginUri .= '&r=/loan/'.$loan->getId();
+
         $locale = $loan->getContact()->getLocale();
 
         // Send email confirmation to the member
-        if ($toEmail = $loan->getContact()->getEmail()) {
+        if ($toEmail = $contact->getEmail()) {
 
             $toName = $loan->getContact()->getName();
 
@@ -410,7 +422,9 @@ class BasketService
                 'emails/reservation_confirm.html.twig',
                 [
                     'loan' => $loan,
-                    'loanRows' => $loan->getLoanRows()
+                    'loanRows' => $loan->getLoanRows(),
+                    'loginUri' => $loginUri,
+                    'includeButton' => true
                 ]
             );
 

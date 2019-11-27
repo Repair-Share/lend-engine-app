@@ -256,6 +256,42 @@ class SettingsTemplatesType extends AbstractType
             )
         ));
 
+        /*  LOAN CHECK IN */
+
+        $builder->add('email_loan_checkin_subject', TextType::class, array(
+            'label' => 'Subject',
+            'data' => $dbData['email_loan_checkin_subject'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => 'Your item has been checked in',
+                'data-help' => "This will override the member's language settings."
+            )
+        ));
+
+        $builder->add('email_loan_checkin_head', TextareaType::class, array(
+            'label' => 'Header',
+            'data' => $dbData['email_loan_checkin_head'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'data-help' => '',
+                'rows' => 4,
+                'class' => 'limited'
+            )
+        ));
+
+        $builder->add('email_loan_checkin_foot', TextareaType::class, array(
+            'label' => 'Footer',
+            'data' => $dbData['email_loan_checkin_foot'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'data-help' => '',
+                'rows' => 4,
+                'class' => 'limited'
+            )
+        ));
+
         /*  LOAN EXTENSION */
 
         $builder->add('email_loan_extension_subject', TextType::class, array(

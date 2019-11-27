@@ -71,6 +71,38 @@ class EmailTestController extends Controller
                 );
                 break;
 
+            case "checkin":
+
+                if (!$subject = $this->get('settings')->getSettingValue('email_loan_checkin_subject')) {
+                    $subject = "Item has been checked in";
+                }
+
+                $row = [
+                    'inventoryItem' => [
+                        'name' => 'Carpet cleaner',
+                        'imageName' => '',
+                    ],
+                    'loan' => [
+                        'contact' => [
+                            'name' => 'Emily Parker'
+                        ]
+                    ],
+                    'dueInAt' => new \DateTime(),
+                    'dueOutAt' => new \DateTime(),
+                    'checkedInAt' => new \DateTime()
+                ];
+
+                $message = $this->renderView(
+                    'emails/loan_checkin.html.twig',
+                    [
+                        'row' => $row,
+                        'includeButton' => false,
+                        'message' => '',
+                        'checkedInBy' => "John Doe"
+                    ]
+                );
+                break;
+
             case "event_booking":
 
                 if (!$subject = $this->get('settings')->getSettingValue('email_booking_confirmation_subject')) {

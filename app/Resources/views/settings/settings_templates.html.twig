@@ -104,6 +104,14 @@
             {{ form_row(form.email_reservation_reminder_head) }}
             {{ form_row(form.email_reservation_reminder_foot) }}
 
+            <h2>Item check in</h2>
+            <p>Sent when an item is checked in.</p>
+            <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "checkin"}) }}">Send me a test email</a></p>
+
+            {{ form_row(form.email_loan_checkin_subject) }}
+            {{ form_row(form.email_loan_checkin_head) }}
+            {{ form_row(form.email_loan_checkin_foot) }}
+
             <h2>Membership expired notification</h2>
             <p>Sent on the day a membership has expired.</p>
             <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "expired"}) }}">Send me a test email</a></p>

@@ -314,6 +314,10 @@ class SettingsService
             'email_loan_confirmation_head',
             'email_loan_confirmation_foot',
 
+            'email_loan_checkin_subject',
+            'email_loan_checkin_head',
+            'email_loan_checkin_foot',
+
             'email_reserve_confirmation_subject',
             'email_reserve_confirmation_head',
             'email_reserve_confirmation_foot',

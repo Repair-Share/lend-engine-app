@@ -4,7 +4,10 @@
 
 {% trans_default_domain 'emails' %}
 
-{% block heading %}{{ 'le_email.reservation_confirm.title'|trans() }}{% endblock %}
+{% block heading %}
+    {{ 'le_email.reservation_confirm.title'|trans() }}<br>
+    Loan #{{ row.loan.id }} : {{ row.loan.contact.name }}
+{% endblock %}
 
 {% block content %}
 
@@ -28,7 +31,7 @@
                 <td valign="top">
                     <strong>{{ row.inventoryItem.name }}</strong>
 
-                    <div style="padding: 4px;">
+                    <div>
                         {{ row.dueOutAt|date('d F g:i a') }} - {{ row.dueInAt|date('d F g:i a') }}
                     </div>
 
@@ -57,15 +60,15 @@
         {% endfor %}
     </table>
 
-    <br><br>
+    <br>
     <p>
         Reserved for : <strong>{{ loan.contact.name }}</strong><br>
-        {{ loan.contact.addressLine1 }}<br>
-        {{ loan.contact.addressLine2 }}<br>
-        {{ loan.contact.addressLine3 }}<br>
-        {{ loan.contact.addressLine4 }}<br>
+        {% if loan.contact.addressLine1 %}{{ loan.contact.addressLine1 }}<br>{% endif %}
+        {% if loan.contact.addressLine2 %}{{ loan.contact.addressLine2 }}<br>{% endif %}
+        {% if loan.contact.addressLine3 %}{{ loan.contact.addressLine3 }}<br>{% endif %}
+        {% if loan.contact.addressLine4 %}{{ loan.contact.addressLine4 }}<br>{% endif %}
     </p>
-    <br><br>
+    <br>
     <p>{{ tenantInformation.getEmailReservationFooter|raw }}</p>
 
 {% endblock %}

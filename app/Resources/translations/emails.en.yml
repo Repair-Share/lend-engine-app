@@ -11,6 +11,7 @@ le_email:
   email: Email
   password: Password
   login_to_view_this_loan: View this loan online
+  login_now_button: Log in now
 
   booking_confirmation:
     title: Event booking confirmation
@@ -27,6 +28,12 @@ le_email:
   checkout: # when a loan is checked out
     subject: Your loan information
     title: Your loan information
+
+  checkin:
+    subject: Your item has been checked in
+    title: Your item has been checked in
+    checked_in_at: Checked in at
+    checked_in_by: Checked in by
 
   donor_notify:
     subject: Your donated item has been lent out
