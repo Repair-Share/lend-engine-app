@@ -116,9 +116,8 @@
 
                             {% for slot in site.openTimes %}
                                 <div style="padding-bottom: 3px">
-                                    {{ slot.date|date("l d F") }},<br>
-                                    {{ slot.friendlyTimeFrom }} -
-                                    {{ slot.friendlyTimeTo }}
+                                    {{ slot.date|date("l d F", "Europe/London") }}, <br>
+                                    {{ slot.friendlyTimeFrom }} - {{ slot.friendlyTimeTo }}
                                 </div>
                             {% endfor %}
 
