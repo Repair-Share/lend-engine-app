@@ -109,6 +109,7 @@ class SettingsService
         // For new as-yet-unset values
         $defaultSettings = [
             'group_similar_items' => 1,
+            'email_cc_admin' => 1,
             'org_locale' => 'en',
             'label_type' => '11355',
             'org_timezone' => 'Europe/London'
@@ -317,6 +318,8 @@ class SettingsService
             'email_loan_checkin_subject',
             'email_loan_checkin_head',
             'email_loan_checkin_foot',
+
+            'email_cc_admin',
 
             'email_reserve_confirmation_subject',
             'email_reserve_confirmation_head',

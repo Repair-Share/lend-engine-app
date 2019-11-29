@@ -136,6 +136,7 @@ services:
         class: AppBundle\Services\EmailService
         arguments:
             - "@service.tenant"
+            - "@settings"
 
     service.basket:
         class: AppBundle\Services\BasketService

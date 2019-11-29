@@ -2,7 +2,7 @@
 le_email:
   item_description: Description
   item_contains: Contains
-  see_attachment: See attachment
+  see_attachment: See file
   return_sites: Please return this item to the following location(s)
   th_item: Item
   th_fee: Fee

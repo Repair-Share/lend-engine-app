@@ -230,6 +230,17 @@ EOT;
             ]
         ));
 
+        $builder->add('email_cc_admin', ToggleType::class, array(
+            'expanded' => true,
+            'choices' => $choices,
+            'label' => 'Send a copy of customer emails to my organisation email',
+            'data' => (int)$dbData['email_cc_admin'],
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => 'Send a copy of customer emails (such as check out, check in and extension confirmations) to '.$dbData['org_email']
+            ]
+        ));
+
         $builder->add('automate_email_reservation_reminder', ToggleType::class, array(
             'expanded' => true,
             'choices' => $choices,

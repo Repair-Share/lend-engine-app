@@ -6,12 +6,16 @@ use Postmark\PostmarkClient;
 
 class EmailService
 {
-    /** @var TenantService  */
+    /** @var TenantService */
     private $tenantService;
 
-    public function __construct(TenantService $tenantService)
+    /** @var SettingsService */
+    private $settingsService;
+
+    public function __construct(TenantService $tenantService, SettingsService $settings)
     {
         $this->tenantService = $tenantService;
+        $this->settingsService = $settings;
     }
 
     /**
@@ -57,7 +61,7 @@ class EmailService
 
         }
 
-        if ($ccAdmin == true) {
+        if ($ccAdmin == true && $this->settingsService->getSettingValue('email_cc_admin')) {
             // Insert a green box at the top of the content
             $message = preg_replace('/<!--\/\/-->/', $this->addAdminInfo($toName, $toEmail), $message);
 

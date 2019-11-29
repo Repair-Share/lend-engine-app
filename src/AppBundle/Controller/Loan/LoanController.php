@@ -425,32 +425,13 @@ class LoanController extends Controller
                 ]
             );
 
-            // Send any attachments relating to the items being checked out
-            $attachments = [];
-            $accountCode = $this->get('service.tenant')->getAccountCode();
-            $filePathStub = 'https://s3-us-west-2.amazonaws.com/lend-engine/'.$accountCode.'/files/';
-
-            foreach ($loan->getLoanRows() AS $row) {
-
-                /** @var $row \AppBundle\Entity\LoanRow */
-                if ( count($row->getInventoryItem()->getFileAttachments()) > 0 ) {
-                    foreach ( $row->getInventoryItem()->getFileAttachments() AS $file ) {
-                        /** @var $file \AppBundle\Entity\FileAttachment */
-                        if ($file->getSendToMemberOnCheckout()) {
-                            $filePath = $filePathStub.urlencode($file->getFileName());
-                            $attachments[] = PostmarkAttachment::fromFile($filePath, $file->getFileName());
-                        }
-                    }
-                }
-            }
-
             if (!$subject = $this->get('settings')->getSettingValue('email_loan_confirmation_subject')) {
                 $subject = $this->get('translator')->trans('le_email.checkout.subject', [], 'emails', $locale);
             }
 
             $subject .= " (Ref ".$loan->getId().")";
 
-            $emailService->send($toEmail, $toName, $subject, $message, true, $attachments);
+            $emailService->send($toEmail, $toName, $subject, $message, true);
 
             // Revert locale for the UI
             $this->get('translator')->setLocale($sessionLocale);

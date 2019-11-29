@@ -47,7 +47,10 @@
                     {% if row.inventoryItem.fileAttachments|length > 0 %}
                         {% for file in row.inventoryItem.fileAttachments %}
                             {% if file.sendToMemberOnCheckout == true %}
-                                <div style="padding: 6px 0; font-size: 12px">{{ 'le_email.see_attachment'|trans() }} {{ file.fileName }}</div>
+                                <div style="padding: 6px 0; font-size: 12px">
+                                    {{ 'le_email.see_attachment'|trans() }}
+                                    <a href="{{ tenantInformation.accountDomain(true) }}/file/{{ tenantInformation.schema }}/{{ file.fileName }}">{{ file.fileName }}</a>
+                                </div>
                             {% endif %}
                         {% endfor %}
                     {% endif %}
