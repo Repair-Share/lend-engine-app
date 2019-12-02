@@ -1,5 +1,7 @@
 /* PAYMENT PROCESSING */
 
+var paymentInitiated = false;
+
 if (stripePublicApiKey) {
     var stripe = Stripe(stripePublicApiKey);
     var elements = stripe.elements();
@@ -87,6 +89,14 @@ function processPaymentForm(e) {
 
 function createPaymentIntent(paymentMethodId, paymentAmount) {
     waitButton($('.payment-submit'));
+    if (paymentInitiated != false) {
+        // We've already initiated a payment for this page load
+        var msg = "Payment processing has started, please wait for it to complete.\n";
+        msg += "If payment does not complete, check Stripe before refreshing this page to try again.";
+        alert(msg);
+        return false;
+    }
+    paymentInitiated = true;
     // Send paymentMethod.id to server to create a payment intent
     fetch('/stripe/payment-intent', {
         method: 'POST',
