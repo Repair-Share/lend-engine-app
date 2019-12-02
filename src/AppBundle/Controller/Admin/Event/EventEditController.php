@@ -62,6 +62,10 @@ class EventEditController extends Controller
                 break;
         }
 
+        if (!$event->getStatus()) {
+            $event->setStatus(Event::STATUS_DRAFT);
+        }
+
         $options = [
             'tenantService' => $tenantService
         ];

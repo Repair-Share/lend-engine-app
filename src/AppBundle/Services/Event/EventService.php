@@ -51,11 +51,11 @@ class EventService
         $offset = $this->timezone->getOffset(new \DateTime());
 
         $timeFrom = new \DateTime($event->getDate()->format("Y-m-d") . ' ' . $event->getTimeFrom(), $this->timezone);
-        $timeFrom->modify("- {$offset} seconds");
+        $timeFrom->modify("{$offset} seconds");
         $event->setUTCFrom($timeFrom);
 
         $timeTo = new \DateTime($event->getDate()->format("Y-m-d") . ' ' . $event->getTimeTo(), $this->timezone);
-        $timeTo->modify("- {$offset} seconds");
+        $timeTo->modify("{$offset} seconds");
         $event->setUTCTo($timeTo);
 
         return $event;
