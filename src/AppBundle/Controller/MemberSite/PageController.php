@@ -15,7 +15,7 @@ class PageController extends Controller
 {
 
     /**
-     * @Route("/{slug}-{pageId}", requirements={"slug": "[a-z\-_]+", "pageId": "\d+"}, name="public_page_by_slug")
+     * @Route("/{slug}-{pageId}", requirements={"slug": "[A-Za-z\-_]+", "pageId": "\d+"}, name="public_page_by_slug")
      */
     public function showPage($pageId, $slug)
     {
