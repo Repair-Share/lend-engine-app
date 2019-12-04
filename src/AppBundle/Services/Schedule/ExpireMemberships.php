@@ -111,25 +111,26 @@ class ExpireMemberships
 
                 $sendEmailReminders = $this->settings->getSettingValue('automate_email_membership');
 
-                try {
+                $membershipTypeRepo = $tenantEntityManager->getRepository('AppBundle:MembershipType');
+                $selfServeMemberships = $membershipTypeRepo->findBy(['isSelfServe' => true]);
 
-                    $membershipTypeRepo = $tenantEntityManager->getRepository('AppBundle:MembershipType');
-                    $selfServeMemberships = $membershipTypeRepo->findBy(['isSelfServe' => true]);
+                // Determine whether this account has self-serve memberships
+                $canSelfRenew = false;
+                if (count($selfServeMemberships) > 0) {
+                    $canSelfRenew = true;
+                }
 
-                    // Determine whether this account has self-serve memberships
-                    $canSelfRenew = false;
-                    if (count($selfServeMemberships) > 0) {
-                        $canSelfRenew = true;
-                    }
+                /** @var \AppBundle\Repository\MembershipRepository $membershipRepo */
+                $membershipRepo = $tenantEntityManager->getRepository('AppBundle:Membership');
 
-                    /** @var \AppBundle\Repository\MembershipRepository $membershipRepo */
-                    $membershipRepo = $tenantEntityManager->getRepository('AppBundle:Membership');
+                // Get all memberships which have an expiry date in the past but are still active
+                if ($expiredMemberships = $membershipRepo->getExpiredMemberships()) {
 
-                    // Get all memberships which have an expiry date in the past but are still active
-                    if ($expiredMemberships = $membershipRepo->getExpiredMemberships()) {
+                    /** @var $membership \AppBundle\Entity\Membership */
+                    foreach ($expiredMemberships AS $membership) {
 
-                        /** @var $membership \AppBundle\Entity\Membership */
-                        foreach ($expiredMemberships AS $membership) {
+                        // Save the contact
+                        try {
 
                             $resultString .= '  Contact: '.$membership->getContact()->getEmail(). PHP_EOL;
                             $resultString .= '  Expires: '.$membership->getExpiresAt()->format("Y-m-d").PHP_EOL;
@@ -145,10 +146,11 @@ class ExpireMemberships
                             $contact->setActiveMembership(null);
                             $tenantEntityManager->persist($contact);
 
-                            // Save the contact
+                            $resultString .= '  Expired membership for '.$membership->getContact()->getEmail(). PHP_EOL;
+
                             $tenantEntityManager->flush($contact);
 
-                            if ($toEmail && $sendEmailReminders == 1) {
+                            if ($toEmail && $sendEmailReminders == 1 && 0) {
 
                                 try {
 
@@ -195,14 +197,11 @@ class ExpireMemberships
                                     $resultString .= "ERROR: Failed to send email : " . $generalException->getMessage();
                                 }
                             }
-
+                        } catch (\Exception $e2) {
+                            $resultString .= "ERROR 235: ".$e2->getMessage().PHP_EOL;
                         }
+
                     }
-
-                } catch(\PDOException $ex) {
-                    $resultString .= "ERROR: Failed to query" . PHP_EOL;
-                    $this->logger->error("ERROR: Failed to query");
-
                 }
 
                 $tenantEntityManager->getConnection()->close();

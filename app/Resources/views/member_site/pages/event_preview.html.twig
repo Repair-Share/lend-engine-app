@@ -82,7 +82,7 @@
         <span class="help">{{ help }}</span>
     {% endif %}
 
-    <div class="row">
+    <div class="row" id="event-info">
         <div class="col-md-7" id="map-column">
             <style type="text/css">
                 #map {
@@ -114,7 +114,7 @@
 
     {% if tenantInformation.feature('EventBooking') %}
         {#BOOKING FORM#}
-        <div class="row">
+        <div class="row" id="event-booking">
             <div class="col-md-12">
 
                 <div id="paymentBlock" style="display:{% if event.price > 0 %}block{% else %}none{% endif %}">
@@ -177,7 +177,7 @@
 {% endblock %}
 
 {% block modalFooter %}
-    <div class="row">
+    <div class="row" id="event-footer">
         <div class="col-md-3">
             {% if is_granted("ROLE_ADMIN") %}
                 <a href="{{ path('event_admin', {eventId: event.id}) }}" class="btn btn-default pull-left">
