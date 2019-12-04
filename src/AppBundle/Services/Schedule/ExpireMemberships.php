@@ -149,6 +149,7 @@ class ExpireMemberships
                             $resultString .= '  Expired membership for '.$membership->getContact()->getEmail(). PHP_EOL;
 
                             $tenantEntityManager->flush($contact);
+                            $tenantEntityManager->flush($membership);
 
                             if ($toEmail && $sendEmailReminders == 1 && 0) {
 
