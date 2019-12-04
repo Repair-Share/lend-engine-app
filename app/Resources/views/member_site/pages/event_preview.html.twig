@@ -83,7 +83,7 @@
     {% endif %}
 
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-7" id="map-column">
             <style type="text/css">
                 #map {
                     height: 300px;
@@ -94,7 +94,7 @@
             </style>
             <div id="map"></div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-5" id="info-column">
             <div class="modal-mini-header">{% trans %}events.location{% endtrans %}</div>
             {{ event.site.name }}<br>
             {{ event.site.address|nl2br }}<br>
@@ -190,12 +190,12 @@
             {% if (event.price == 0 and is_granted("IS_AUTHENTICATED_REMEMBERED")) or is_granted("ROLE_ADMIN") %}
                 <div class="col-md-6">
                     {% if alreadyBooked != true %}
-                        <div class="help-block" style="font-size: 12px; text-align: left">
+                        <div class="help-block" style="font-size: 12px; text-align: left" id="check-in-help">
                             {% trans %}events.check_in_help{% endtrans %}.
                         </div>
                     {% endif %}
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3" id="check-in-column">
                     {% if alreadyBooked != true %}
                         <a href="{{ path('event_book', {eventId: event.id}) }}?check_in=true" class="btn btn-primary">
                             {% trans %}events.check_in_button{% endtrans %}
