@@ -151,7 +151,7 @@ class ExpireMemberships
                             $tenantEntityManager->flush($contact);
                             $tenantEntityManager->flush($membership);
 
-                            if ($toEmail && $sendEmailReminders == 1 && 0) {
+                            if ($toEmail && $sendEmailReminders == 1) {
 
                                 try {
 
