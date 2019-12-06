@@ -32,8 +32,12 @@
                     {#{{ form_row(form.captchaCode) }}#}
                     {% endif %}
 
-                    {{ form_row(form.subscriber) }}
+                    <div style="display:{% if tenantInformation.setting('mailchimp_api_key') %}block{% else %}none{% endif %}">
+                        {{ form_row(form.subscriber) }}
+                    </div>
+
                     {{ form_row(form.terms) }}
+
                     <input type="submit" value="{{ 'registration.submit'|trans({}, 'FOSUserBundle') }}" class="btn btn-primary btn-block btn-flat pull-right" />
                 </div>
 
