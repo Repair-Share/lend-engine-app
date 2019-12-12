@@ -3,7 +3,6 @@
 namespace AppBundle\Controller\Admin\Contact;
 
 use AppBundle\Entity\Note;
-use Postmark\PostmarkClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,9 +24,10 @@ class SendEmailController extends Controller
         /** @var \AppBundle\Services\TenantService $tenantService */
         $tenantService = $this->get('service.tenant');
 
-        $em = $this->getDoctrine()->getManager();
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
 
-        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
+        $em = $this->getDoctrine()->getManager();
 
         if (!$user = $this->getUser()) {
             return $this->redirectToRoute('contact', ['id' => $contactId]);
@@ -56,11 +56,6 @@ class SendEmailController extends Controller
 //            $em->persist($note);
 //            $em->flush();
 
-            $client = new PostmarkClient($postmarkApiKey);
-
-            $senderName     = $tenantService->getCompanyName();
-            $fromEmail      = $tenantService->getSenderEmail();
-
             $token = $contactService->generateAccessToken($contact);
             $loginUri = $tenantService->getTenant()->getDomain(true);
             $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
@@ -76,20 +71,9 @@ class SendEmailController extends Controller
                 ]
             );
 
-            try {
-                $client->sendEmail(
-                    "{$senderName} <{$fromEmail}>",
-                    $contact->getEmail(),
-                    $messageSubject,
-                    $message,
-                    null,
-                    null,
-                    true,
-                    $replyToEmail
-                );
+            if ($emailService->send($contact->getEmail(), $contact->getName(), $messageSubject, $message, true)) {
                 $this->addFlash('success', "Sent email to ".$contact->getEmail());
-            } catch (\Exception $e) {
-                $this->addFlash('debug', $e->getMessage());
+            } else {
                 $this->addFlash('error', 'Failed to send email to '.$contact->getEmail());
             }
 
