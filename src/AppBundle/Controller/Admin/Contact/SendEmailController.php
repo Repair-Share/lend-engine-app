@@ -48,14 +48,6 @@ class SendEmailController extends Controller
             $messageText = $request->get('email_body');
             $messageSubject = $request->get('email_subject');
 
-            /** @var \AppBundle\Entity\Note $note */
-//        $note = new Note();
-//        $note->setCreatedBy($user);
-//            $note->setContact($contact);
-//            $note->setText($noteText);
-//            $em->persist($note);
-//            $em->flush();
-
             $token = $contactService->generateAccessToken($contact);
             $loginUri = $tenantService->getTenant()->getDomain(true);
             $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
@@ -71,7 +63,15 @@ class SendEmailController extends Controller
                 ]
             );
 
-            if ($emailService->send($contact->getEmail(), $contact->getName(), $messageSubject, $message, true)) {
+            /** @var \AppBundle\Entity\Note $note */
+            $note = new Note();
+            $note->setCreatedBy($user);
+            $note->setContact($contact);
+            $note->setText("Sent email '{$messageSubject}'.");
+            $em->persist($note);
+            $em->flush();
+
+            if ($emailService->send($contact->getEmail(), $contact->getName(), $messageSubject, $message, 'always')) {
                 $this->addFlash('success', "Sent email to ".$contact->getEmail());
             } else {
                 $this->addFlash('error', 'Failed to send email to '.$contact->getEmail());

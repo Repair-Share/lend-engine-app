@@ -61,7 +61,15 @@ class EmailService
 
         }
 
+        $sendToAdmin = false;
         if ($ccAdmin == true && $this->settingsService->getSettingValue('email_cc_admin')) {
+            $sendToAdmin = true;
+        }
+        if ($ccAdmin == 'always') {
+            $sendToAdmin = true;
+        }
+
+        if ($sendToAdmin == true) {
             // Insert a green box at the top of the content
             $message = preg_replace('/<!--\/\/-->/', $this->addAdminInfo($toName, $toEmail), $message);
 
