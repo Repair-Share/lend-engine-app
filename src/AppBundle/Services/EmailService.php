@@ -65,7 +65,7 @@ class EmailService
         if ($ccAdmin == true && $this->settingsService->getSettingValue('email_cc_admin') == 1) {
             $sendToAdmin = true;
         }
-        if ($ccAdmin == 'always') {
+        if ($ccAdmin === 'always') {
             $sendToAdmin = true;
         }
 

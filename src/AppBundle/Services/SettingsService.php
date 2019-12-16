@@ -109,7 +109,6 @@ class SettingsService
         // For new as-yet-unset values
         $defaultSettings = [
             'group_similar_items' => 1,
-            'email_cc_admin' => 1,
             'org_locale' => 'en',
             'label_type' => '11355',
             'org_timezone' => 'Europe/London'
