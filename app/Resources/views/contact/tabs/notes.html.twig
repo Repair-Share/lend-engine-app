@@ -1,6 +1,6 @@
 {% if contact.id %}
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <h4>
             Notes
             <a href="{{ path('add_note') }}?&contactId={{ contact.id }}&goto=contact" class="modal-link btn btn-xs btn-default">Add a note</a>
@@ -9,7 +9,7 @@
             {{ include('partials/note.html.twig') }}
         {% endfor %}
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
         <h4>Donated items</h4>
         <style>
             .item-fee { display: none }
