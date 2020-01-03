@@ -148,25 +148,23 @@ class ItemImportController extends Controller
                 }
 
                 // Clean the data
+                $conditionName = null;
                 $setters = $this->getHeaderKeys();
                 foreach ($columnMap AS $colName => $colKey) {
-                    if (isset($item[$colKey]) && $colName != "Code") {
+                    if ($colName == "Condition") {
+                        $conditionName = $item[$colKey];
+                    } else if (isset($item[$colKey]) && $colName != "Code") {
                         $d = $item[$colKey];
-//                        $this->addFlash('report', "Setting {$colName} to '{$d}' for item '{$code}'");
                         $colSetter = $setters[$colName];
                         $product->$colSetter($d);
                     }
                 }
 
-//                $location = null;
-//                if ($locationName) {
-//                    $location = $this->getOrCreateLocation($locationName);
-//                }
-//
-//                if ($condition = $this->getConditionId($conditionName)) {
-//                    $product->setCondition($condition);
-//                }
-//
+                // Set the item condition
+                if ($condition = $this->getCondition($conditionName)) {
+                    $product->setCondition($condition);
+                }
+
 //                $tags = explode(",", $tagString);
 //                foreach ($tags as $tagName) {
 //                    $tagName = strtoupper(trim($tagName));
@@ -179,13 +177,7 @@ class ItemImportController extends Controller
 
                 $em->persist($product);
 
-                if ($action == 'update') {
-//                    if ($product->getInventoryLocation()->getId() == 1) {
-//                        $this->errors[] = "Could not move {$product->getName()} as it's on loan. ";
-//                        $this->abortImportWithErrors();
-//                    }
-                } else {
-                    // Creating a new item
+                if ($action == 'create') {
                     $transactionRow = new ItemMovement();
                     $transactionRow->setInventoryItem($product);
                     $transactionRow->setInventoryLocation($defaultLocation);
@@ -276,10 +268,11 @@ class ItemImportController extends Controller
     }
 
     /**
+     * Get the item condition (don't create a new one if none found)
      * @param $name
-     * @return ItemCondition|bool|null|object
+     * @return bool|null|object
      */
-    private function getConditionId($name)
+    private function getCondition($name)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -289,16 +282,7 @@ class ItemImportController extends Controller
         if ($condition = $repo->findOneBy(['name' => $name])) {
             return $condition;
         } else {
-            $condition = new ItemCondition();
-            $condition->setName($name);
-            $em->persist($condition);
-            try {
-                $em->flush();
-                return $condition;
-            } catch (\Exception $generalException) {
-                $this->addFlash('error', $generalException->getMessage());
-                return false;
-            }
+            return false;
         }
     }
 
@@ -472,6 +456,10 @@ class ItemImportController extends Controller
         return null;
     }
 
+    /**
+     * @param $k
+     * @return mixed
+     */
     private function getCellType($k)
     {
         $validations = [
@@ -480,6 +468,7 @@ class ItemImportController extends Controller
             'Short description' => 'text',
             'Long description' => 'html',
             'Components' => 'html',
+            'Condition' => 'html',
             'Care information' => 'html',
             'Serial' => 'text',
             'Brand' => 'text',
@@ -508,7 +497,7 @@ class ItemImportController extends Controller
             'Components' => 'setComponentInformation',
             'Care information' => 'setCareInformation',
             'Serial' => 'setSerial',
-//            'Condition' => 'setCondition',
+            'Condition' => 'setCondition',
             'Category' => 'addTag',
             'Brand' => 'setBrand',
             'Price paid' => 'setPriceCost',
