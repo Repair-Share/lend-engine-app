@@ -27,6 +27,8 @@ class AppKernel extends Kernel
             new Hype\MailchimpBundle\HypeMailchimpBundle(),
             new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
             new Captcha\Bundle\CaptchaBundle\CaptchaBundle(),
+            new JMS\SerializerBundle\JMSSerializerBundle(),
+            new FOS\RestBundle\FOSRestBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
