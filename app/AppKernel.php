@@ -29,6 +29,7 @@ class AppKernel extends Kernel
             new Captcha\Bundle\CaptchaBundle\CaptchaBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle(),
             new FOS\RestBundle\FOSRestBundle(),
+            new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

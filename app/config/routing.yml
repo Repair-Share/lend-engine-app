@@ -11,3 +11,6 @@ captcha_routing:
 oneup_uploader:
     resource: .
     type: uploader
+
+fos_oauth_server_token:
+    resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"

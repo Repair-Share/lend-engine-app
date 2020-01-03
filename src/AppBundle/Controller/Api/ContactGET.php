@@ -2,26 +2,18 @@
 
 namespace AppBundle\Controller\Api;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\EntityRepository;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Controller\Annotations\Route;
 
-class ContactGET extends Controller
+class ContactGET extends AbstractFOSRestController
 {
-
     /**
-     * @param Request $request
-     * @param int $id
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
-     * @Route("admin/contact/{id}", name="contact", defaults={"id" = 0}, requirements={"id": "\d+"})
+     * @Route("/api/contact/1")
      */
-    public function contactAction(Request $request, $id = 0)
+    public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
-
-        return false;
+        $data = array("hello" => "world");
+        $view = $this->view($data);
+        return $this->handleView($view);
     }
-
 }

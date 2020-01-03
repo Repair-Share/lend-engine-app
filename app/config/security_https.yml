@@ -12,6 +12,14 @@ security:
             id: fos_user.user_provider.username
 
     firewalls:
+        oauth_token:                                   # Everyone can access the access token URL.
+            pattern: ^/oauth/v2/token
+            security: false
+        api:
+            pattern: ^/api/                            # All api URLs are protected
+            fos_oauth: true                            # OAuth2 protected resource
+            stateless: true                            # Do no set session cookies
+            anonymous: false                           # Anonymous access is not allowed
         main:
             pattern: ^/
             form_login:
