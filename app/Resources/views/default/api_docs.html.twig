@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+
+{% block pageTitle %}API Docs{% endblock %}
+
+{% block body %}
+    <p>Copy this JSON spec into https://editor.swagger.io/  ... we'll have full API docs up soon.</p>
+    <pre>
+    {{ docs }}
+    </pre>
+{% endblock %}

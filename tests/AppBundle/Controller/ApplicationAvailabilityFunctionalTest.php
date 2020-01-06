@@ -28,6 +28,10 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
     public function urlProvider()
     {
         return [
+            // API
+            ['/admin/api-docs'], // Tests that Swagger can generate JSON API docs
+//            ['/api/contact/1'],
+
             // Admin : settings
             ['/admin/settings/general'],
             ['/admin/billing'],

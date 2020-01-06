@@ -6,11 +6,7 @@
  *         version="1.0.0",
  *         title="Lend Engine API",
  *         @OA\License(name="MIT")
- *     ),
- *     @OA\Server(
- *         description="API server",
- *         url="petstore.swagger.io",
- *     ),
+ *     )
  * )
  */
 
