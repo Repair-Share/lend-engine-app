@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Captcha\Bundle\CaptchaBundle\Validator\Constraints as CaptchaAssert;
+use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity
@@ -47,6 +48,7 @@ use Captcha\Bundle\CaptchaBundle\Validator\Constraints as CaptchaAssert;
  * })
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ContactRepository")
  * @ORM\HasLifecycleCallbacks
+ * @OA\Schema(required={"id"})
  */
 class Contact extends BaseUser
 {
@@ -55,6 +57,7 @@ class Contact extends BaseUser
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      * @Groups({"basket"})
+     * @OA\Property(type="integer", format="int64")
      */
     protected $id;
 
@@ -68,6 +71,7 @@ class Contact extends BaseUser
      *
      * @ORM\Column(name="first_name", type="string", length=32, nullable=true)
      * @Groups({"basket"})
+     * @OA\Property()
      */
     protected $firstName;
 
