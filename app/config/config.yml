@@ -177,7 +177,9 @@ fos_rest:
         rules:
             - { priorities: ['json', 'xml', 'html'], fallback_format: json, prefer_extension: false }
     view:
-        view_response_listener: true
+        view_response_listener: force
+    serializer:
+        serialize_null: true
 
 fos_oauth_server:
     db_driver:           orm
@@ -187,14 +189,8 @@ fos_oauth_server:
     auth_code_class:     AppBundle\Entity\AuthCode
     service:
         user_provider: fos_user.user_provider.username_email
-        # This property will be used when valid credentials are given to load the user upon access token creation
-
-jms_serializer:
-    metadata:
-        auto_detection: true
-    handlers:
-        datetime:
-            default_format: c
+        options:
+            access_token_lifetime: 36000
 
 old_sound_rabbit_mq:
     connections:

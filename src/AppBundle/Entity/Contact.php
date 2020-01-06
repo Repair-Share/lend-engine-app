@@ -56,10 +56,16 @@ class Contact extends BaseUser
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @Groups({"basket"})
+     * @Groups({"basket", "api"})
      * @OA\Property(type="integer", format="int64")
      */
     protected $id;
+
+    /**
+     * @Groups({"api"})
+     * @OA\Property()
+     */
+    protected $email;
 
     /**
      * @ORM\Column(name="secure_access_token", type="string", length=255, nullable=true)
@@ -70,7 +76,7 @@ class Contact extends BaseUser
      * @var string
      *
      * @ORM\Column(name="first_name", type="string", length=32, nullable=true)
-     * @Groups({"basket"})
+     * @Groups({"basket", "api"})
      * @OA\Property()
      */
     protected $firstName;
@@ -79,12 +85,15 @@ class Contact extends BaseUser
      * @var string
      *
      * @ORM\Column(name="last_name", type="string", length=32, nullable=true)
-     * @Groups({"basket"})
+     * @Groups({"basket", "api"})
+     * @OA\Property()
      */
     protected $lastName;
 
     /**
      * @ORM\Column(name="is_active", type="boolean", options={"default" = true})
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $isActive = true;
 
@@ -92,6 +101,8 @@ class Contact extends BaseUser
      * @var string
      *
      * @ORM\Column(name="telephone", type="string", length=64, nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $telephone;
 
@@ -99,6 +110,8 @@ class Contact extends BaseUser
      * @var string
      *
      * @ORM\Column(name="membership_number", type="string", length=64, nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $membershipNumber;
 
@@ -106,6 +119,8 @@ class Contact extends BaseUser
      * @var string
      *
      * @ORM\Column(name="address_line_1", type="string", length=255, nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $addressLine1;
 
@@ -113,6 +128,8 @@ class Contact extends BaseUser
      * @var string
      *
      * @ORM\Column(name="address_line_2", type="string", length=255, nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $addressLine2;
 
@@ -120,6 +137,8 @@ class Contact extends BaseUser
      * @var string
      *
      * @ORM\Column(name="address_line_3", type="string", length=255, nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $addressLine3;
 
@@ -127,6 +146,8 @@ class Contact extends BaseUser
      * @var string
      *
      * @ORM\Column(name="address_line_4", type="string", length=255, nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $addressLine4;
 
@@ -134,6 +155,8 @@ class Contact extends BaseUser
      * @var string
      *
      * @ORM\Column(name="country_iso_code", type="string", length=3, nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $countryIsoCode;
 
@@ -170,6 +193,8 @@ class Contact extends BaseUser
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $createdAt;
 
@@ -198,6 +223,8 @@ class Contact extends BaseUser
      *
      * @ORM\OneToOne(targetEntity="Membership")
      * @ORM\JoinColumn(name="active_membership", referencedColumnName="id", nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $activeMembership;
 
@@ -256,6 +283,8 @@ class Contact extends BaseUser
      * Cache the sum of fees and payments
      * @var float
      * @ORM\Column(name="balance", type="decimal", scale=2)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $balance = 0;
 
@@ -283,7 +312,6 @@ class Contact extends BaseUser
      * @ORM\Column(name="subscriber", type="boolean")
      */
     private $subscriber = false;
-
 
     // * @CaptchaAssert\ValidCaptcha(message = "CAPTCHA validation failed, try again.", groups={"AppBundleSiteRegistration"})
 

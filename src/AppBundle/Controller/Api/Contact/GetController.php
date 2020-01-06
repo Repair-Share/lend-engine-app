@@ -5,11 +5,11 @@ namespace AppBundle\Controller\Api\Contact;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations\Route;
 use OpenApi\Annotations as OA;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
-class get extends AbstractFOSRestController
+class GetController extends AbstractFOSRestController
 {
     /**
-     * @Route("/api/contact/{id}", defaults={"id" = 0}, requirements={"id": "\d+"})
      * @OA\Get(
      *     path="/contact/{id}",
      *     summary="Get a contact details",
@@ -33,23 +33,35 @@ class get extends AbstractFOSRestController
      *         @OA\Schema(ref="#/components/schemas/Error")
      *     )
      * )
+     * @Rest\Get("/api/contact/{id}")
+     * @Rest\View(
+     *  serializerGroups={"api"}
+     * )
      */
     public function getContactById($id)
     {
         /** @var $contactService \AppBundle\Services\Contact\ContactService */
         $contactService = $this->get('service.contact');
 
+        /** @var \Symfony\Component\Serializer\Serializer $serializer */
+        $serializer = $this->get('serializer');
+
         if ($contact = $contactService->get($id)) {
-            $data = [
-                'id' => $contact->getId(),
-                'firstName' => $contact->getFirstName()
-            ];
+
+//            $data = $serializer->serialize(
+//                $contact,
+//                'json', ['groups' => ['api']]
+//            );
+
+            return $this->view($contact);
+
         } else {
             throw $this->createNotFoundException();
         }
 
-        $view = $this->view($data);
+        $view = $this->view($contact)->setStatusCode(201);
 
+//
         return $this->handleView($view);
     }
 }

@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use OpenApi\Annotations as OA;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Membership
@@ -11,6 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Table(options={"collate"="utf8mb4_unicode_ci", "charset"="utf8mb4"})
  * @ORM\Entity(repositoryClass="AppBundle\Repository\MembershipRepository")
  * @ORM\HasLifecycleCallbacks
+ * @OA\Schema(required={"id"})
  */
 class Membership
 {
@@ -26,6 +29,8 @@ class Membership
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups({"api"})
+     * @OA\Property(type="integer", format="int64")
      */
     private $id;
 
@@ -34,6 +39,8 @@ class Membership
      *
      * @ORM\ManyToOne(targetEntity="MembershipType")
      * @ORM\JoinColumn(name="subscription_id", referencedColumnName="id")
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $membershipType;
 
@@ -56,6 +63,8 @@ class Membership
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $createdAt;
 
@@ -71,6 +80,8 @@ class Membership
      * @var \DateTime
      *
      * @ORM\Column(name="starts_at", type="datetime")
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $startsAt;
 
@@ -78,6 +89,8 @@ class Membership
      * @var \DateTime
      *
      * @ORM\Column(name="expires_at", type="datetime")
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $expiresAt;
 
@@ -85,6 +98,8 @@ class Membership
      * @var \DateTime
      *
      * @ORM\Column(name="status", type="string", length=32)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $status = self::SUBS_STATUS_ACTIVE;
 

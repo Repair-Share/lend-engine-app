@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use OpenApi\Annotations as OA;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * MembershipType
@@ -10,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(options={"collate"="utf8mb4_unicode_ci", "charset"="utf8mb4"})
  * @ORM\Entity(repositoryClass="AppBundle\Repository\MembershipTypeRepository")
  * @ORM\HasLifecycleCallbacks
+ * @OA\Schema(required={"id", "name"})
  */
 class MembershipType
 {
@@ -19,6 +22,8 @@ class MembershipType
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $id;
 
@@ -26,6 +31,8 @@ class MembershipType
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=64)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $name;
 
@@ -40,6 +47,8 @@ class MembershipType
      * @var float
      *
      * @ORM\Column(name="price", type="decimal", scale=2)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $price = 0.00;
 
@@ -47,6 +56,8 @@ class MembershipType
      * @var integer
      *
      * @ORM\Column(name="duration", type="integer")
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $duration = 1;
 
@@ -54,6 +65,8 @@ class MembershipType
      * @var float
      *
      * @ORM\Column(name="discount", type="decimal", scale=2, nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $discount = 0.00;
 
@@ -61,6 +74,8 @@ class MembershipType
      * @var float
      *
      * @ORM\Column(name="credit_limit", type="decimal", scale=2, nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $creditLimit = 0.00;
 
@@ -68,6 +83,8 @@ class MembershipType
      * @var integer
      *
      * @ORM\Column(name="max_items", type="integer", nullable=true)
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $maxItems = 0;
 
@@ -89,6 +106,8 @@ class MembershipType
     /**
      * @var bool
      * @ORM\Column(name="self_serve", type="integer")
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $isSelfServe = 0;
 
@@ -96,6 +115,8 @@ class MembershipType
      * @var boolean
      *
      * @ORM\Column(name="is_active", type="boolean")
+     * @Groups({"api"})
+     * @OA\Property()
      */
     private $isActive = true;
 

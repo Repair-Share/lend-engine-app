@@ -27,7 +27,6 @@ class AppKernel extends Kernel
             new Hype\MailchimpBundle\HypeMailchimpBundle(),
             new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
             new Captcha\Bundle\CaptchaBundle\CaptchaBundle(),
-            new JMS\SerializerBundle\JMSSerializerBundle(),
             new FOS\RestBundle\FOSRestBundle(),
             new FOS\OAuthServerBundle\FOSOAuthServerBundle(),
         );
