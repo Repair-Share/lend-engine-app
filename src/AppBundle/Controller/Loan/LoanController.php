@@ -86,10 +86,8 @@ class LoanController extends Controller
         // Check mandatory custom fields
         $canCheckOut = true;
         $missingFields = $contactService->checkRequiredCustomFields($loan->getContact());
-        if ($missingFields !== true) {
-            if ($user->hasRole("ROLE_ADMIN")) {
-                $canCheckOut = false;
-            }
+        if ($missingFields !== true && $user->hasRole("ROLE_ADMIN")) {
+            $canCheckOut = false;
             $this->addFlash('error', $loan->getContact()->getName()." is missing required data:");
             foreach ($missingFields AS $fieldName) {
                 $this->addFlash('error', "- {$fieldName}");
