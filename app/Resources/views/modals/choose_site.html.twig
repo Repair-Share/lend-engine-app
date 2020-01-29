@@ -6,15 +6,27 @@
 {% block modalBody %}
     <div class="row">
         <div class="col-md-12">
-
             {% for site in sites %}
-            <div style="padding: 10px">
+            <div style="padding: 5px">
                 <a href="{{ path('choose_site', {id: site.id}) }}" style="font-size: 18px">
                     {{ site.name }}
                 </a>
             </div>
             {% endfor %}
 
+            {% if app.user.activeSite %}
+                <hr size="1" noshade>
+                <div style="padding: 5px">
+                    <a href="{{ path('choose_site', {id: -1}) }}" style="font-size: 18px">
+                        Clear working site
+                    </a>
+                </div>
+            {% else %}
+                <br>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    Don't set a working site
+                </button>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

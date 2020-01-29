@@ -322,6 +322,11 @@
                 setPickup(moment(), null, null, itemSiteId, itemSiteName);
             });
 
+            {% if app.user.activeSite %}
+            resetDates();
+            setPickup(moment(), null, null, itemSiteId, itemSiteName);
+            {% endif %}
+
             borrowModal.on('click', '.site_from', function () {
                 if (hasBasket == true) {
                     alert("You can't change the pickup time as you have other items in your basket.");

@@ -18,6 +18,7 @@ class ChooseSiteController extends Controller
     {
 
         if ($siteId = $request->get('id')) {
+
             $em = $this->getDoctrine()->getManager();
             $site = $this->getDoctrine()->getRepository('AppBundle:Site')->find($siteId);
 

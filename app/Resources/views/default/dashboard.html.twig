@@ -60,12 +60,12 @@
         <div class="row">
             <div class="col-md-12">
                 {% if activeSite %}
-                    <div class="alert bg-brown">
+                    <div class="alert alert-info">
                         <h4>You're currently working at <strong>{{ activeSite.name }}</strong></h4>
-                        <p>
-                            This will define your default check-in location.
-                        </p>
-                        <a href="{{ path('choose_site') }}" class="modal-link" id="change-site-link">Change site</a>
+                        <div style="overflow: hidden">
+                            This will define your default check-in location, and the check-out location when creating new loans.
+                            <a href="{{ path('choose_site') }}" class="btn btn-primary pull-right modal-link" id="change-site-link" style="color:#fff">Change site</a>
+                        </div>
                     </div>
                 {% else %}
                     <a href="{{ path('choose_site') }}" class="modal-link" id="choose-site-link" style="display: none;">Choose the site you are working at today</a>
@@ -78,6 +78,11 @@
         <div class="col-md-8">
             <div class="well" style="height:300px; overflow: scroll">
                 <h4>Latest features and updates</h4>
+
+                <p>28th January 2020</p>
+                <ul>
+                    <li>If you choose a 'working at' site, then when creating a new loan, the start date is chosen for you to save a little time.</li>
+                </ul>
 
                 <p>6th December 2019</p>
                 <ul>

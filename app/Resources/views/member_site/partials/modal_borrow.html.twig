@@ -71,7 +71,6 @@
                             <a href="javascript:void(0);" class="time ui-timepicker-input show_time_from" id="time_from_picker"></a>
                         </div>
                         <div class="multi-site"><a class="site_from" href="javascript:void(0);"></a></div>
-
                         <div style="padding-bottom: 10px;">
                             <button type="button" class="btn btn-success" id="set-pickup-today">
                                 {% trans %}public_item.button_today{% endtrans %}
@@ -82,18 +81,18 @@
                                 {% trans %}public_item.button_choose_pickup{% endtrans %}
                             </button>
                         </div>
-
                     </div>
                     <div class="col-md-5">
                         <h4>{% trans %}public_item.return_by{% endtrans %} ...</h4>
+                        <button type="button" class="btn btn-success chooseReturnButton" data-dismiss="modal" id="chooseReturnButton" style="margin-top: 10px; display: none">
+                            {% trans %}public_item.button_choose_return{% endtrans %}
+                        </button>
                         <div>
                             <a href="javascript:void(0);" class="show_date_to chooseReturn" id="chooseReturn"></a> &nbsp;
                             <a href="javascript:void(0);" class="time ui-timepicker-input show_time_to" id="time_to_picker"></a>
                         </div>
                         <div class="multi-site"><a class="site_to" href="javascript:void(0);"></a></div>
-                        <button type="button" class="btn btn-success chooseReturnButton" data-dismiss="modal" id="chooseReturnButton" style="margin-top: 10px; display: none">
-                            {% trans %}public_item.button_choose_return{% endtrans %}
-                        </button>
+
                         <br>
                     </div>
                     <div class="col-md-2">
@@ -107,6 +106,13 @@
                 <div class="row" id="booking-help" style="display:none">
                     <div class="col-md-12 help-block"><br>{% trans %}public_item.borrow_help{% endtrans %}.</div>
                 </div>
+
+                {% if app.user.activeSite %}
+                    <div class="help-block small">
+                        You're working at <strong>{{ app.user.activeSite.name }}</strong> so we've set the pickup location for you.
+                        <br>Change your working site on the admin dashboard.
+                    </div>
+                {% endif %}
 
             </div>
 
