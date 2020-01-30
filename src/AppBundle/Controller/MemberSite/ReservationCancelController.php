@@ -34,12 +34,18 @@ class ReservationCancelController extends Controller
         /** @var \AppBundle\Services\EmailService $emailService */
         $emailService = $this->get('service.email');
 
+        /** @var $loan \AppBundle\Entity\Loan */
         if (!$loan = $loanRepo->find($id)) {
             $this->addFlash('error', 'We could not find that reservation.');
         }
 
         if (!$user = $this->getUser()) {
             $this->addFlash('error', 'Please log in first.');
+            return $this->redirectToRoute('loans');
+        }
+
+        if (!in_array($loan->getStatus(), [Loan::STATUS_PENDING, Loan::STATUS_RESERVED])) {
+            $this->addFlash('error', 'You can only cancel pending or reserved loans');
             return $this->redirectToRoute('loans');
         }
 
