@@ -324,8 +324,9 @@
             });
 
             {% if app.user.activeSite and product.itemType != 'stock' %}
-            resetDates();
-            setPickup(moment(), null, null, itemSiteId, itemSiteName);
+//            This causes clashes when opening an item that's on loan so we won't do it yet
+//            resetDates();
+//            setPickup(moment(), null, null, itemSiteId, itemSiteName);
             {% endif %}
 
             borrowModal.on('click', '.site_from', function () {
