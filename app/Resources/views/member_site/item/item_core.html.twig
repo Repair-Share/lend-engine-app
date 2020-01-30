@@ -268,7 +268,6 @@
 
                 {% if user.activeMembership is defined and user.activeMembership %}
 
-
                     {% if inventory|length > 0 %}
                         <form method="POST" action="{{ path('basket_add_stock', {itemId: product.id}) }}">
                         <table class="table">
@@ -283,7 +282,7 @@
                                 <tr>
                                     <td>{{ i.siteName }}<br>{{ i.locationName }}</td>
                                     <td>{{ i.qty }}</td>
-                                    <td>
+                                    <td style="width:80px">
                                         <input type="text" class="form-control" name="add_qty[{{ i.locationId }}]">
                                     </td>
                                 </tr>
@@ -299,7 +298,6 @@
                             No stock available
                         </div>
                     {% endif %}
-
 
                 {% else %}
                     {% if is_granted('ROLE_ADMIN') %}

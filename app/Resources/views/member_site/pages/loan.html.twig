@@ -107,12 +107,6 @@
                     {% else %}
                         <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" alt="" class="img-responsive">
                     {% endif %}
-
-                    {% if loan.loanRows|length > 1 and not row.isCheckedOut and loan.status in ['RESERVED', 'PENDING'] %}
-                    <a href="{{ path('loan_item_remove', {rowId: row.id}) }}" class="btn btn-xs btn-danger" style="margin-top: 4px;">
-                        {% trans %}public_basket.remove_item{% endtrans %}
-                    </a>
-                    {% endif %}
                 </td>
                 <td>
                     <div>
@@ -250,6 +244,11 @@
                         {% endfor %}
                     </div>
 
+                    {% if loan.loanRows|length > 1 and not row.isCheckedOut and loan.status in ['RESERVED', 'PENDING'] %}
+                        <a href="{{ path('loan_item_remove', {rowId: row.id}) }}" style="margin-top: 4px; display: block">
+                            {% trans %}public_basket.remove_item{% endtrans %}
+                        </a>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
