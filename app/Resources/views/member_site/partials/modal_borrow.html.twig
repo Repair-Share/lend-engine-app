@@ -56,9 +56,6 @@
                 and tenantInformation.basket
                 and tenantInformation.basket.loanRows|length > 0 %}
                     <div class="alert alert-info">
-                        <span class="pull-left" style="font-size: 34px; padding-right: 20px; margin-top: -5px">
-                            <i class="fa fa-info-circle"></i>
-                        </span>
                         {% trans %}public_item.basket_exists{% endtrans %}
                     </div>
                 {% endif %}
@@ -107,12 +104,12 @@
                     <div class="col-md-12 help-block"><br>{% trans %}public_item.borrow_help{% endtrans %}.</div>
                 </div>
 
-                {% if app.user.activeSite %}
-                    <div class="help-block small">
-                        You're working at <strong>{{ app.user.activeSite.name }}</strong> so we've set the pickup location for you.
-                        <br>Change your working site on the admin dashboard.
-                    </div>
-                {% endif %}
+                {#{% if app.user.activeSite %}#}
+                    {#<div class="help-block small">#}
+                        {#You're working at <strong>{{ app.user.activeSite.name }}</strong> so we've set the pickup location for you.#}
+                        {#<br>Change your working site on the admin dashboard.#}
+                    {#</div>#}
+                {#{% endif %}#}
 
             </div>
 
