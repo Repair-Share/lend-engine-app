@@ -123,7 +123,7 @@ class ItemListDataController extends Controller
             } else if ($item->getInventoryLocation() && $item->getInventoryLocation()->getId() == 1 && isset($activeLoans[$itemId])) {
                 $available = '<div class="label bg-teal">On loan</div>';
 
-                $statusHtml = 'On loan to ';
+                $statusHtml = '<br><br>';
                 $loanRow = $activeLoans[$itemId];
                 $onLoanFromDate = $loanRow->getCheckedOutAt()->format("d M");
                 $onLoanToDate   = $loanRow->getDueInAt()->format("d M");
@@ -237,9 +237,7 @@ class ItemListDataController extends Controller
             if ($item->getAssignedTo()) {
                 $locationHtml .= '<div class="item-location">Assigned to: <br />'.$item->getAssignedTo()->getName().'</div>';
             }
-            $columns[] = $locationHtml;
-
-            $columns[] = $statusHtml;
+            $columns[] = $locationHtml.$statusHtml;
 
             // Add extra columns for selected custom fields
             $customFieldValues = $item->getFieldValues();
