@@ -5,7 +5,7 @@
             Notes
             <a href="{{ path('add_note') }}?&contactId={{ contact.id }}&goto=contact" class="modal-link btn btn-xs btn-default">Add a note</a>
         </h4>
-        {% for note in contact.notes %}
+        {% for note in contact.notes|reverse %}
             {{ include('partials/note.html.twig') }}
         {% endfor %}
     </div>

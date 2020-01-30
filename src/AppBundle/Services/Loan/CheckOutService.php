@@ -145,7 +145,6 @@ class CheckOutService
                 $note = new Note();
                 $note->setInventoryItem($inventoryItem);
                 $note->setCreatedBy($user);
-
                 $locationName = $row->getItemLocation()->getSite()->getName().' / '.$row->getItemLocation()->getName();
                 $note->setText("Sold ".$row->getProductQuantity()." from <strong>".$locationName."</strong> to <strong>".$loan->getContact()->getName().'</strong> on loan <strong>'.$loan->getId().'</strong>');
                 $this->em->persist($note);
@@ -154,7 +153,8 @@ class CheckOutService
                 $note = new Note();
                 $note->setInventoryItem($inventoryItem);
                 $note->setCreatedBy($user);
-                $note->setText("Loaned to <strong>".$loan->getContact()->getName().'</strong> on loan <strong>'.$loan->getId().'</strong>');
+                $note->setLoan($loan);
+                $note->setText("Loaned to <strong>".$loan->getContact()->getName().'</strong>');
                 $this->em->persist($note);
             }
 

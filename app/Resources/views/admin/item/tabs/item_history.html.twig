@@ -1,7 +1,25 @@
 {% if product.notes|length > 0 %}
-    {% for note in product.notes|reverse %}
-        {{ include('partials/note.html.twig') }}
-    {% endfor %}
+    <table class="table">
+        {% for note in product.notes|reverse %}
+            <tr>
+
+                <td>
+                    {{ note.createdAt|date('d M Y g:i a') }}
+                </td>
+                <td class="note-body">
+                    {{ note.text | raw | nl2br }}
+                </td>
+                <td>
+                    {% if note.loan %}
+                        <a href="{{ path('public_loan', {loanId: note.loan.id}) }}">Loan {{ note.loan.id }}</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {{ note.createdBy.firstName }} {{ note.createdBy.lastName }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% else %}
     No notes for this item
 {% endif %}

@@ -49,7 +49,6 @@ class InventoryEditController extends Controller
         $noteText = $request->get('add_note');
 
         // POSTed data
-        $qty = $request->get('add_qty');
         $addLocationId = $request->get('add_location');
         $quantities = $request->get('quantity');
 
@@ -101,6 +100,7 @@ class InventoryEditController extends Controller
         }
 
         // Adding stock to a new location
+        $qty = $request->get('add_qty');
         if ($qty > 0 && is_numeric($qty) && $addLocationId > 0) {
             $location = $inventoryLocationRepo->find($addLocationId);
 

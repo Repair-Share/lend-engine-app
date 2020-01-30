@@ -216,17 +216,23 @@ class InventoryService
 
         $oldLocation = $inventoryItem->getInventoryLocation();
 
+        $note = new Note();
+        $note->setCreatedBy($user);
+        $note->setInventoryItem($inventoryItem);
+
         // If it's for a loan row, set the row as returned
         if ($loanRow) {
             $loanRow->setCheckedInAt(new \DateTime("now"));
             $this->em->persist($loanRow);
-            $noteText = 'Checked in to <strong>'.$toLocation->getSite()->getName().' / '.$toLocation->getName().'</strong> from loan '.$loanRow->getLoan()->getId().'. ';
+            $noteText = 'Checked in to <strong>'.$toLocation->getSite()->getName().' / '.$toLocation->getName().'</strong>.';
+            $note->setLoan($loanRow->getLoan());
         } else if ($oldLocation == $toLocation) {
             // not moving
             $noteText = '';
         } else {
             $noteText = 'Moved to <strong>'.$toLocation->getSite()->getName().' / '.$toLocation->getName().'</strong>. ';
         }
+
 
         if ($contact) {
             $transactionRow->setAssignedTo($contact);
@@ -240,9 +246,6 @@ class InventoryService
         // Update the item itself
         $inventoryItem->setInventoryLocation($toLocation);
 
-        $note = new Note();
-        $note->setCreatedBy($user);
-        $note->setInventoryItem($inventoryItem);
         if ($userNote != '') {
             if ($noteText != '') {
                 $noteText .= "\n";

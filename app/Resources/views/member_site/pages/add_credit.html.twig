@@ -26,6 +26,9 @@
     {{ include('cores/payment_core.html.twig') }}
 
     <button type="button" class="btn btn-success payment-submit" data-text="Add credit">{% trans %}button_add_credit{% endtrans %}</button>
+    <div class="help-block">
+        {% trans %}public_add_credit.text_info{% endtrans %}
+    </div>
 
     {{ form_end(form) }}
 

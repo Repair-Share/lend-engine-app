@@ -113,10 +113,7 @@ class CheckInService
 
         if ( $this->inventoryService->itemMove($inventoryItem, $location, $loanRow, $assignToContact, $userNote) ) {
 
-            $noteText = 'Checked in <strong>'.$inventoryItem->getName().'</strong>';
-            if ($userNote) {
-                $noteText .= '<br>'.$userNote;
-            }
+            $noteText = '';
 
             // Add a fee
             if ($checkInFee > 0) {
@@ -131,7 +128,7 @@ class CheckInService
 
                 try {
                     $this->em->flush();
-                    $noteText .= ' (check-in fee '.number_format($checkInFee, 2).")";
+                    $noteText = 'Check-in fee '.number_format($checkInFee, 2)." ";
                     $this->contactService->recalculateBalance($loanRow->getLoan()->getContact());
                 } catch (\Exception $generalException) {
 
@@ -139,12 +136,16 @@ class CheckInService
             }
 
             // Add a note to the loan and contact
-            $note = new Note();
-            $note->setCreatedBy($user);
-            $note->setLoan($loan);
-            $note->setContact($loanRow->getLoan()->getContact());
-            $note->setText($noteText);
-            $this->em->persist($note);
+            if ($noteText || $checkInFee > 0) {
+                $note = new Note();
+                $note->setCreatedBy($user);
+                $note->setLoan($loan);
+                $note->setContact($loanRow->getLoan()->getContact());
+                $note->setText($noteText);
+                $note->setInventoryItem($inventoryItem);
+                $this->em->persist($note);
+            }
+
             try {
                 $this->em->flush();
             } catch (\Exception $generalException) {

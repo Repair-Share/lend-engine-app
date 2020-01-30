@@ -9,13 +9,14 @@
             : loan {{ note.loan.id }}
         {% endif %}
     </div>
-    <div class="pull-right">
-        {% if app.user.id == note.createdBy.id %}
-            {#<a href="#" class="note-delete" data-id="{{ note.id }}"><i class="fa fa-remove"></i></a>#}
-        {% endif %}
-    </div>
     <div class="clearfix"></div>
+    {% if note.inventoryItem %}
+    <div class="note-item">
+        <a href="{{ path('public_product', {productId: note.inventoryItem.id}) }}">{{ note.inventoryItem.name }}</a>
+    </div>
+    {% endif %}
     <div class="note-body">
         {{ note.text | raw | nl2br }}
     </div>
+
 </div>

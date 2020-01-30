@@ -56,7 +56,7 @@ per_n_days: for %count% days
 # Actions
 button_cancel: Cancel
 button_cancel_reservation: Cancel
-button_add_credit: Add credit
+button_add_credit: Add money
 button_go: Go
 
 # Security / access
@@ -208,7 +208,7 @@ text_no_membership: We don't have an active membership for you.
 
 # Member site : Logged in : Add credit page
 public_add_credit:
-  title: Add credit
+  title: Add money
   choose_card: Choose an existing card above, or just continue below to use a new card
   use_this_card: Use this card
   remove_card: Remove
@@ -216,6 +216,7 @@ public_add_credit:
   payment_method: Payment method
   min_amount: Minimum card amount
   processing_fee: processing fee will be added for card transactions
+  text_info: The amount will be added to your account balance.
 
 # Member site : Logged in : Loans list
 public_loans:
