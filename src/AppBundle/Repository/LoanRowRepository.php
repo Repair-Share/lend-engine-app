@@ -106,6 +106,10 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             $builder->setParameter('string', '%'.$filter['search'].'%');
         }
 
+        if (isset($filter['excludeStockItems']) && $filter['excludeStockItems'] == true) {
+            $builder->andWhere("i.itemType != 'stock'");
+        }
+
         if (isset($filter['status']) && $filter['status'] != '' && $filter['status'] != 'ALL') {
             $builder->andWhere('l.status = :status');
             $builder->setParameter('status', $filter['status']);

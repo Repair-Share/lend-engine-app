@@ -24,7 +24,7 @@
     {% elseif item.itemType == 'stock' %}
         <div class="header-bar">
             <i class="fa fa-cube" style="color:#000"></i>
-            This is stock item (consumable)
+            This is a stock item (consumable)
             {% set inventoryLevel = 0 %}
             {% for i in inventory %}
                 {% set inventoryLevel = inventoryLevel + i.qty %}
@@ -84,7 +84,10 @@
     <div id="item-inventory-detail" {% if item.itemType != 'loan' %}style="display:none"{% endif %}>
         {% if item.id %}
             <input type="hidden" id="itemIdForTest" value="{{ item.id }}">
-            {% if item.inventoryLocation.id == 1 %}
+
+            {% if item.inventoryLocation is null %}
+                {#An archived or sold item#}
+            {% elseif item.inventoryLocation.id == 1 %}
                 <div class="label bg-teal pull-left">On loan</div>
                 <span class="item-inventory-detail-span">
                 to {{ activeLoanInformation.contactName }} on loan
@@ -103,6 +106,7 @@
                 <div class="label bg-yellow">On hold</div>
             {% endif %}
 
+            {% if item.inventoryLocation %}
             <span class="item-inventory-detail-span">Location:</span>
             <span class="item-inventory-detail-span">
                 <strong>
@@ -113,15 +117,17 @@
                 </strong>
             </span>
 
-            {% if item.assignedTo %}
-                <span class="item-inventory-detail-span">Assigned to:</span>
-                <span class="item-inventory-detail-span"><strong>{{ item.assignedTo.Name }}</strong></span>
-            {% endif %}
+
+            {#{% if item.assignedTo %}#}
+                {#<span class="item-inventory-detail-span">Assigned to:</span>#}
+                {#<span class="item-inventory-detail-span"><strong>{{ item.assignedTo.Name }}</strong></span>#}
+            {#{% endif %}#}
 
             {% if item.inventoryLocation.id != 1 %}
                 <span class="item-inventory-detail-span">
                     <a class="modal-link" href="{{ path('item_move', {idSet: item.id}) }}">Move / Service</a>
                 </span>
+            {% endif %}
             {% endif %}
 
         {% else %}

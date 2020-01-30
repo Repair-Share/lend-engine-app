@@ -285,21 +285,15 @@ class InventoryService
     {
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
 
-        $fromLocation = $inventoryItem->getInventoryLocation();
-
-        $transactionRow = new ItemMovement();
-        $transactionRow->setInventoryLocation($fromLocation);
-        $transactionRow->setInventoryItem($inventoryItem);
-        $transactionRow->setCreatedBy($user);
-
         // Deactivate the item
         $inventoryItem->setIsActive(false);
         $inventoryItem->setAssignedTo(null);
+        $inventoryItem->setInventoryLocation(null);
 
         $note = new Note();
         $note->setCreatedBy($user);
         $note->setInventoryItem($inventoryItem);
-        $noteText = 'Removed from "'.$fromLocation->getSite()->getName().' / '.$fromLocation->getName().'"';
+        $noteText = 'Archived.';
         if ($userNote != '') {
             $noteText .= " with note:\n".$userNote;
         }
@@ -307,7 +301,6 @@ class InventoryService
 
         $this->em->persist($note);
         $this->em->persist($inventoryItem);
-        $this->em->persist($transactionRow);
 
         try {
             $this->em->flush();

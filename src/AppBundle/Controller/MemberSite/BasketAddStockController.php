@@ -29,12 +29,6 @@ class BasketAddStockController extends Controller
         /** @var \AppBundle\Repository\InventoryLocationRepository $locationRepo */
         $locationRepo = $em->getRepository('AppBundle:InventoryLocation');
 
-        /** @var \AppBundle\Repository\SiteRepository $siteRepo */
-        $siteRepo = $em->getRepository('AppBundle:Site');
-
-        /** @var \AppBundle\Services\Loan\CheckoutService $checkoutService */
-        $checkoutService = $this->get("service.checkout");
-
         /** @var \AppBundle\Services\Loan\LoanService $loanService */
         $loanService = $this->get("service.loan");
 

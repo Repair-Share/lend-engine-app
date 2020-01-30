@@ -94,6 +94,8 @@ class AdminLoanListDataController extends Controller
             }
         }
 
+        $filter['excludeStockItems'] = true;
+
         $loanData = $repo->search($start, $length, $filter, $sort);
 
         // Modify times to match local time for UI

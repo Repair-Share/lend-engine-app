@@ -169,16 +169,13 @@ class ItemListDataController extends Controller
                 $links .= '<li><a href="'.$reserveItemUrl.'">Reserve</a></li>';
             }
 
-            if ($item->getInventoryLocation() && $item->getInventoryLocation()->getId() > 1) {
-
+            if (!$item->getInventoryLocation() || ($item->getInventoryLocation() && $item->getInventoryLocation()->getId() > 1)) {
                 if ($item->getItemType() == InventoryItem::TYPE_LOAN) {
                     $moveUrl = $this->generateUrl('item_move', ['idSet' => $itemId,]);
                     $links .= '<li><a class="modal-link" href="' . $moveUrl . '">Move / Assign</a></li>';
                 }
-
                 $removeUrl = $this->generateUrl('item_archive', ['id' => $itemId]);
                 $links .= '<li><a class="modal-link" href="'.$removeUrl.'">Delete</a></li>';
-
             }
 
             $linkHtml = '

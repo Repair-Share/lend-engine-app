@@ -223,12 +223,13 @@
                 <td style="text-align: right">
                     {% if is_granted('ROLE_ADMIN') and loan.status in ['RESERVED', 'PENDING'] %}
                         <input type="text" class="basket-amount row-calc" name="row_fee[{{ row.id }}]" data-id="qty-{{ row.id }}" value="{{ row.fee|number_format(2) }}">
-                        {% if row.inventoryItem.itemType == 'stock' %}
-                        <br>{% trans %}public_item.each{% endtrans %}
-                        {% endif %}
                     {% else %}
                         {{ tenantInformation.currencySymbol }} {{ row.fee|number_format(2) }}
                         <input type="hidden" class="row-calc" value="{{ row.fee }}" data-id="qty-{{ row.id }}">
+                    {% endif %}
+
+                    {% if row.inventoryItem.itemType == 'stock' %}
+                        <br>{% trans %}public_item.each{% endtrans %}
                     {% endif %}
 
                     <div class="row-charge">
@@ -597,7 +598,11 @@
 
             $(".row-calc").each(function() {
                 var qtyId = $(this).data('id');
-                var qty = $("#"+qtyId).val();
+                var qty = 1;
+                if (qtyId) {
+                    qty = $("#"+qtyId).val();
+                }
+
                 basketTotal += $(this).val() * qty;
             });
 

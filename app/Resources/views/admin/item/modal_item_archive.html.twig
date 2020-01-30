@@ -30,7 +30,10 @@
 
     <input type="hidden" name="form_action" value="item_move">
     <input type="hidden" name="item_id" value="{{ item.id }}">
-    <input type="hidden" name="from_location_id" value="{{ item.inventoryLocation.id }}">
+
+    {% if item.inventoryLocation %}
+        <input type="hidden" name="from_location_id" value="{{ item.inventoryLocation.id }}">
+    {% endif %}
 
     {{ form_end(form) }}
 
