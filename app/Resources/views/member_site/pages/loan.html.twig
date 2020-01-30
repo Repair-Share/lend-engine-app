@@ -280,6 +280,16 @@
             {% endif %}
         {% endfor %}
 
+        {% if tenantInformation.feature('StockItems') and loan.status in ['RESERVED', 'PENDING']%}
+            <tr>
+                <td class="hidden-xs"></td>
+                <td>
+                    <a class="btn btn-xs btn-primary" href="{{ path('add_stock_item', {loanId: loan.id}) }}">Add stock item</a>
+                </td>
+                <td></td>
+            </tr>
+        {% endif %}
+
         <tr>
             <td class="hidden-xs"></td>
             <td class="basket-total">

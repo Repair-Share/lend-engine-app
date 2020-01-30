@@ -54,7 +54,6 @@ class BillingService
             'Kits'              => false,
             'StockItems'        => false,
             'MaintenancePlan'   => false,
-
         ];
 
         switch ($plan) {
@@ -86,7 +85,7 @@ class BillingService
                     'WhiteLabel'        => false,
                     'EventBooking'      => true,
                     'Kits'              => true,
-                    'StockItems'        => true,
+                    'StockItems'        => false,
                     'MaintenancePlan'   => false,
                 ];
                 break;

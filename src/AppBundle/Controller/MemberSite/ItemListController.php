@@ -115,9 +115,12 @@ class ItemListController extends Controller
 
         if ($searchString = $request->get('search')) {
             $filter['search'] = $searchString;
-
             $searchText = $this->container->get('translator')->trans("public_misc.search", [], 'member_site');
             $pageTitle = $searchText.': "'.$searchString.'"';
+        }
+
+        if ($stock = $request->get('stock')) {
+            $filter['stock'] = $stock;
         }
 
         // If not admin, only show the public items

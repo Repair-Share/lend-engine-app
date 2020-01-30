@@ -30,6 +30,16 @@ class LoanService
     }
 
     /**
+     * @param $loanId
+     * @return \AppBundle\Entity\Loan|null
+     */
+    public function get($loanId)
+    {
+        $repo = $this->em->getRepository('AppBundle:Loan');
+        return $repo->find($loanId);
+    }
+
+    /**
      * @param $id int
      * @return bool
      */

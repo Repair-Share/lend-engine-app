@@ -267,7 +267,10 @@
             {% if product.itemType == 'stock' %}
 
                 {% if user.activeMembership is defined and user.activeMembership %}
-                    <form method="POST" action="{{ path('basket_add_stock', {itemId: product.id}) }}">
+
+
+                    {% if inventory|length > 0 %}
+                        <form method="POST" action="{{ path('basket_add_stock', {itemId: product.id}) }}">
                         <table class="table">
                             <thead>
                             <tr>
@@ -286,9 +289,18 @@
                                 </tr>
                             {% endfor %}
                         </table>
+                        {% if app.session.get('active-loan') %}
+                            <button type="submit" name="add-to-loan" value="loan" class="btn btn-success">Add to loan {{ app.session.get('active-loan') }}</button>
+                        {% endif %}
+                        <button type="submit" name="add-to-basket" value="basket" class="btn btn-success">{% trans %}public_item.basket_add{% endtrans %}</button>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            No stock available
+                        </div>
+                    {% endif %}
 
-                        <button type="submit" class="btn btn-success">{% trans %}public_item.basket_add{% endtrans %}</button>
-                    </form>
+
                 {% else %}
                     {% if is_granted('ROLE_ADMIN') %}
                         <div class="alert alert-warning">
