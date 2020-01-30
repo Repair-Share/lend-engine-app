@@ -23,9 +23,11 @@ class LoanSaveControllerTest extends AuthenticatedControllerTest
         $loanId = $this->helpers->createLoan($this->client, $contactId);
         $crawler = $this->client->request('GET', '/loan/'.$loanId);
 
+        $loanRowId = (int)$crawler->filter('.loanRow')->attr('id');
+
         // Change the item amount
         $form = $crawler->filter('form[name="loan_check_out"]')->form(array(
-            'row_fee[1000]' => 2.99,
+            'row_fee['.$loanRowId.']' => 2.99,
         ),'POST');
 
         // Change the form action to save rather than check out

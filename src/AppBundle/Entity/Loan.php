@@ -555,8 +555,9 @@ class Loan
                 }
             }
         }
+        /** @var \AppBundle\Entity\LoanRow $loanRow */
         foreach ($this->getLoanRows() AS $loanRow) {
-            $totalFee += $loanRow->getFee();
+            $totalFee += $loanRow->getFee() * $loanRow->getProductQuantity();
         }
         $this->totalFee = $totalFee;
         return $this->totalFee;
@@ -594,7 +595,7 @@ class Loan
         $total = 0.00;
         /** @var \AppBundle\Entity\LoanRow $loanRow */
         foreach ($this->getLoanRows() AS $loanRow) {
-            $total += $loanRow->getFee();
+            $total += $loanRow->getFee() * $loanRow->getProductQuantity();
         }
 
         return $total;

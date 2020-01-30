@@ -6,6 +6,7 @@ le_email:
   return_sites: Please return this item to the following location(s)
   th_item: Item
   th_fee: Fee
+  th_cost: Cost
   th_due_back: Due back
   url: Login URL
   email: Email

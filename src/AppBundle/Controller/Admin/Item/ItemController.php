@@ -28,12 +28,16 @@ class ItemController extends Controller
         /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
         $itemRepo = $this->getDoctrine()->getRepository('AppBundle:InventoryItem');
 
+        /** @var \AppBundle\Services\Item\ItemService $itemService */
+        $itemService = $this->get('service.item');
+
         $em = $this->getDoctrine()->getManager();
 
         $user = $this->getUser();
 
         $skuStub = $this->get('service.tenant')->getCodeStub();
         $itemSectorId = null;
+        $inventory = null;
 
         if ($id) {
 
@@ -53,6 +57,8 @@ class ItemController extends Controller
             if ($itemSector = $product->getItemSector()) {
                 $itemSectorId = $itemSector->getId();
             }
+
+            $inventory = $itemService->getInventory($product);
 
         } else {
 
@@ -210,9 +216,9 @@ class ItemController extends Controller
             }
             $product->setFieldValues($productFieldValues);
 
-            // Add inventory if it's a new item
+            // Add inventory of 1 if it's a new loan item
             // @todo this is copied in item_copy route
-            if (!$id) {
+            if (!$id && $product->getItemType() == InventoryItem::TYPE_LOAN) {
 
                 /** @var \AppBundle\Entity\InventoryLocation $location */
                 $locationRepo = $em->getRepository('AppBundle:InventoryLocation');
@@ -231,19 +237,9 @@ class ItemController extends Controller
 
                 $note = new Note();
                 $note->setCreatedBy($user);
-                $note->setText('Added item to <strong>'.$location->getSite()->getName().' / '.$location->getName().'</strong>');
+                $note->setText('Added 1 x item to <strong>'.$location->getSite()->getName().' / '.$location->getName().'</strong>');
                 $note->setInventoryItem($product);
                 $em->persist($note);
-
-                // Save the last item type used
-                /** @var $repo \AppBundle\Repository\SettingRepository */
-                $settingRepo =  $em->getRepository('AppBundle:Setting');
-                if (!$setting = $settingRepo->findOneBy(['setupKey' => 'last_item_type'])) {
-                    $setting = new Setting();
-                    $setting->setSetupKey('last_item_type');
-                }
-                $setting->setSetupValue($form->get('itemSector')->getData());
-                $em->persist($setting);
             }
 
             // If no main image, use the first
@@ -388,6 +384,7 @@ class ItemController extends Controller
             'customFieldsExist' => $customFieldsExist,
             'maintenancePlans' => $maintenancePlans,
             'item' => $product,
+            'inventory' => $inventory,
             'isMultiSite' => $this->get('settings')->getSettingValue('multi_site'),
             'activeLoanInformation' => $loanRowDetail // for the stock info header
         ));

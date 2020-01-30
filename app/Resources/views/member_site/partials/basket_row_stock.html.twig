@@ -1,0 +1,33 @@
+{% trans_default_domain 'member_site' %}
+<tr>
+    <td style="width:100px" class="hidden-xs">
+        {% if row.inventoryItem.imageName %}
+            <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}" class="img-thumbnail img-responsive">
+        {% else %}
+            <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" alt="" class="img-responsive">
+        {% endif %}
+    </td>
+    <td>
+        <div>
+            <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a>
+        </div>
+        <div>
+            {% trans %}public_loan.quantity{% endtrans %} : {{ row.productQuantity }}
+            {% trans %}public_basket.from{% endtrans %} {{ row.siteFrom.name }} / {{ row.itemLocation.name }}
+            <div class="small">To change quantity, remove and re-add.</div>
+        </div>
+        <a href="{{ path('basket_item_remove', {itemId: row.inventoryItem.id}) }}" class="btn btn-xs btn-danger" style="margin-top: 4px;">
+            {% trans %}public_basket.remove_item{% endtrans %}
+        </a>
+    </td>
+    <td style="text-align: right">
+        {% if is_granted('ROLE_ADMIN') %}
+            <input type="text" class="basket-amount row-total save-on-change"
+                   name="row_fee[{{ row.inventoryItem.id }}]" value="{{ row.fee|number_format(2) }}"
+            data-qty="{{ row.productQuantity }}">
+        {% else %}
+            {{ row.fee|number_format(2) }}
+            <input type="hidden" class="row-total" value="{{ row.fee|number_format(2) }}">
+        {% endif %}
+    </td>
+</tr>

@@ -1,7 +1,5 @@
 <?php
 
-// tests/AppBundle/Controller/Website/SiteControllerTest.php
-
 namespace Tests\AppBundle\Controller\MemberSite;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

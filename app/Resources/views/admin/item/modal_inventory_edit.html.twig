@@ -1,0 +1,85 @@
+{% extends 'shared/modal.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block subTitle %}
+    {#Move or service item:#}
+{% endblock %}
+
+{% block title %}
+    <strong>Inventory for {{ item.name }}</strong>
+{% endblock %}
+
+{% block body %}
+
+    <form method="POST" action="{{ path('inventory_edit', {id: item.id}) }}">
+
+        {% if inventory|length > 0 %}
+        <label>Edit quantities</label>
+        <table class="table table-hover">
+            {% for i in inventory %}
+                <tr>
+                    <td>{{ i.siteName }} / {{ i.locationName }}</td>
+                    <td style="width: 160px;">
+                        <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                    <button type="button" class="btn btn-sm btn-danger qty-change qty-down" data-id="qty-{{ i.locationId }}">-</button>
+                </span>
+                        <input type="text" name="quantity[{{ i.locationId }}]"
+                               class="form-control input-sm" value="{{ i.qty }}"
+                               style="text-align: center" id="qty-{{ i.locationId }}">
+                        <span class="input-group-btn">
+                    <button type="button" class="btn btn-sm btn-success qty-change qty-up" data-id="qty-{{ i.locationId }}">+</button>
+                </span>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+
+        <label>Add inventory</label>
+        <div class="row">
+            <div class="col-md-9">
+                <select name="add_location" class="form-control">
+                    <option>Choose a location</option>
+                    {% for location in locations %}
+                        <option value="{{ location.id }}">{{ location.site.name }} / {{ location.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="add_qty" class="form-control" style="text-align: center">
+            </div>
+        </div>
+
+        <br>
+        <div class="form-group">
+            <label>Add a note</label>
+            <textarea class="form-control" name="add_note" rows="3"></textarea>
+        </div>
+
+    </form>
+
+{% endblock %}
+
+{% block footer %}
+
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="modal-submit btn btn-success pull-right">Update inventory</button>
+
+    <script>
+        $("#modal-wrapper").on("click", '.qty-change', function() {
+            var id = $(this).data('id');
+            var qty = $("#"+id).val()*1;
+            if ($(this).hasClass('qty-up')) {
+                qty = qty +1;
+            } else {
+                qty = qty -1;
+                if (qty < 0) {
+                    qty = 0;
+                }
+            }
+            $("#"+id).val(qty);
+        });
+    </script>
+
+{% endblock %}

@@ -52,6 +52,7 @@ class LoanRow
      * @var integer
      *
      * @ORM\Column(name="product_quantity", type="integer")
+     * @Groups({"basket"})
      */
     private $productQuantity;
 
@@ -93,6 +94,16 @@ class LoanRow
      * @Groups({"basket"})
      */
     private $siteFrom;
+
+    /**
+     * @var InventoryLocation
+     * Used to determine the location to remove stock items from
+     *
+     * @ORM\ManyToOne(targetEntity="InventoryLocation")
+     * @ORM\JoinColumn(name="item_location", referencedColumnName="id")
+     * @Groups({"basket"})
+     */
+    private $itemLocation;
 
     /**
      * @var Site
@@ -461,6 +472,25 @@ class LoanRow
     public function getDeposit()
     {
         return $this->deposit;
+    }
+
+    /**
+     * @return InventoryLocation
+     */
+    public function getItemLocation()
+    {
+        return $this->itemLocation;
+    }
+
+    /**
+     * @param $itemLocation
+     * @return $this
+     */
+    public function setItemLocation($itemLocation)
+    {
+        $this->itemLocation = $itemLocation;
+
+        return $this;
     }
 
 }

@@ -22,15 +22,22 @@
                     {% if row.inventoryItem.imageName %}
                         <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}">
                     {% endif %}
-                    <br>
+                    <br><br>
                 </td>
                 <td valign="top" style="padding-right: 15px">
                     <strong>{{ row.inventoryItem.name }}</strong>
 
-                    <div>
-                        {{ row.dueOutAt|date('d F g:i a') }} - {{ row.dueInAt|date('d F g:i a') }}<br>
-                        {{ 'le_email.th_fee'|trans() }}: {{ row.fee|number_format(2) }}
-                    </div>
+                    {% if row.inventoryItem.itemType == 'stock' %}
+                        <div>
+                            Qty: {{ row.productQuantity }}<br>
+                            {{ 'le_email.th_cost'|trans() }}: {{ row.fee|number_format(2) }}
+                        </div>
+                    {% else %}
+                        <div>
+                            {{ row.dueOutAt|date('d F g:i a') }} - {{ row.dueInAt|date('d F g:i a') }}<br>
+                            {{ 'le_email.th_fee'|trans() }}: {{ row.fee|number_format(2) }}
+                        </div>
+                    {% endif %}
 
                     {% if row.inventoryItem.description|length > 0 %}
                         <div style="padding: 6px 0; font-size: 12px;">
@@ -55,7 +62,7 @@
                         {% endfor %}
                     {% endif %}
 
-                    {% if row.inventoryItem.sites|length > 0 %}
+                    {% if row.inventoryItem.sites|length > 0 and row.inventoryItem.itemType == 'loan' %}
                         <div style="padding: 6px 0; font-size: 12px; color: #CC0000;">
                             {{ 'le_email.return_sites'|trans() }}:
                             <ul style="padding-left: 0">

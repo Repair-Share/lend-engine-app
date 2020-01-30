@@ -6952,6 +6952,11 @@ div#item-list-filter ul li.active a {
     font-size: 12px;
     color: #aaa;
 }
+.item-list-price {
+    padding-left: 10px;
+    font-size: 12px;
+    color: #aaa;
+}
 .item-list-fee {
     padding-left: 10px;
     font-size: 12px;

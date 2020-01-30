@@ -2,6 +2,7 @@
 
 namespace AppBundle\Serializer\Denormalizer;
 
+use AppBundle\Entity\InventoryLocation;
 use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\Site;
@@ -25,6 +26,11 @@ class LoanRowDenormalizer implements DenormalizerInterface
         $loanRow->setDueOutAt($dFrom);
         $loanRow->setDueInAt($dTo);
         $loanRow->setDuration($object['duration']);
+
+        if (!isset($object['productQuantity'])) {
+            $object['productQuantity'] = 1;
+        }
+        $loanRow->setProductQuantity($object['productQuantity']);
 
         $siteDenormalizer = new SiteDenormalizer();
         /** @var Site $site */
@@ -54,6 +60,19 @@ class LoanRowDenormalizer implements DenormalizerInterface
                 $context
             );
             $loanRow->setInventoryItem($item);
+        }
+
+        // Required for stock items
+        if (isset($object['itemLocation'])) {
+            $inventoryLocationDenormalizer = new InventoryLocationDenormalizer();
+            /** @var InventoryLocation $location */
+            $location = $inventoryLocationDenormalizer->denormalize(
+                $object['itemLocation'],
+                InventoryLocation::class,
+                $format,
+                $context
+            );
+            $loanRow->setItemLocation($location);
         }
 
         return $loanRow;

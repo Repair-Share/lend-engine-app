@@ -1,8 +1,12 @@
 <div class="item-info item-fee">
-    <span class="item-info-label">Fee:</span> {{ item.loanFee }} for {{ item.maxLoanDays }} days
+    {% if item.itemType == 'stock' %}
+        <span class="item-info-label">Cost:</span> {{ item.priceSell }} each
+    {% else %}
+        <span class="item-info-label">Fee:</span> {{ item.loanFee }} for {{ item.maxLoanDays }} days
+    {% endif %}
 </div>
 
-{% if item.condition %}
+{% if item.condition and item.itemType == 'loan' %}
     <div class="item-info item-code">
         <span class="item-info-label">Condition:</span> {{ item.condition.name }}
     </div>
@@ -14,7 +18,7 @@
     </div>
 {% endif %}
 
-{% if item.serial %}
+{% if item.serial and item.itemType == 'loan' %}
     <div class="item-info item-serial">
         <span class="item-info-label">Serial:</span> {{ item.serial }}
     </div>

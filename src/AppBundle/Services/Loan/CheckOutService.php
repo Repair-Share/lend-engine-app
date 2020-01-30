@@ -12,6 +12,7 @@ use AppBundle\Entity\Payment;
 use AppBundle\Repository\SettingRepository;
 use AppBundle\Services\Contact\ContactService;
 use AppBundle\Services\Booking\BookingService;
+use AppBundle\Services\Item\ItemService;
 use AppBundle\Services\SettingsService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
@@ -33,6 +34,9 @@ class CheckOutService
     /** @var BookingService  */
     private $reservationService;
 
+    /** @var ItemService  */
+    private $itemService;
+
     /** @var SettingsService  */
     private $settings;
 
@@ -40,22 +44,27 @@ class CheckOutService
     public $errors = [];
 
     /**
+     * CheckOutService constructor.
      * @param EntityManager $em
      * @param Container $container
      * @param ContactService $contactService
      * @param BookingService $reservationService
+     * @param ItemService $itemService
+     * @param SettingsService $settings
      */
     public function __construct(
         EntityManager $em,
         Container $container,
         ContactService $contactService,
         BookingService $reservationService,
+        ItemService $itemService,
         SettingsService $settings)
     {
         $this->em        = $em;
         $this->container = $container;
         $this->contactService = $contactService;
         $this->reservationService = $reservationService;
+        $this->itemService = $itemService;
         $this->settings = $settings;
     }
 
@@ -84,6 +93,8 @@ class CheckOutService
             }
         }
 
+        $loanContainsLoanItems = false;
+
         foreach ($loan->getLoanRows() AS $row) {
 
             // Move item to on-loan
@@ -98,8 +109,7 @@ class CheckOutService
 
             if ($inventoryItem->getItemType() == InventoryItem::TYPE_LOAN) {
                 // Kits and stock items are not checked out in this way
-
-                // set row as checked out
+                // Set row as checked out
                 $row->setCheckedOutAt(new \DateTime());
                 $this->em->persist($row);
 
@@ -112,14 +122,41 @@ class CheckOutService
                 $transactionRow->setInventoryItem($inventoryItem);
                 $transactionRow->setLoanRow($row);
                 $this->em->persist($transactionRow);
+
+            } else if ($inventoryItem->getItemType() == InventoryItem::TYPE_STOCK) {
+
+                // Check out the row to mark as sold
+                $row->setCheckedOutAt(new \DateTime());
+                $this->em->persist($row);
+
+                // Create a negative stock movement for the items sold from this location
+                $transactionRow = new ItemMovement();
+                $transactionRow->setInventoryLocation($row->getItemLocation());
+                $transactionRow->setCreatedBy($user);
+                $transactionRow->setInventoryItem($inventoryItem);
+                $transactionRow->setLoanRow($row);
+                $transactionRow->setQuantity(-$row->getProductQuantity());
+                $this->em->persist($transactionRow);
+
             }
 
             // Add some item history
-            $note = new Note();
-            $note->setInventoryItem($inventoryItem);
-            $note->setCreatedBy($user);
-            $note->setText("Loaned to <strong>".$loan->getContact()->getName().'</strong> on loan <strong>'.$loan->getId().'</strong>');
-            $this->em->persist($note);
+            if ($inventoryItem->getItemType() == InventoryItem::TYPE_STOCK) {
+                $note = new Note();
+                $note->setInventoryItem($inventoryItem);
+                $note->setCreatedBy($user);
+
+                $locationName = $row->getItemLocation()->getSite()->getName().' / '.$row->getItemLocation()->getName();
+                $note->setText("Sold ".$row->getProductQuantity()." from <strong>".$locationName."</strong> to <strong>".$loan->getContact()->getName().'</strong> on loan <strong>'.$loan->getId().'</strong>');
+                $this->em->persist($note);
+            } else {
+                $loanContainsLoanItems = true;
+                $note = new Note();
+                $note->setInventoryItem($inventoryItem);
+                $note->setCreatedBy($user);
+                $note->setText("Loaned to <strong>".$loan->getContact()->getName().'</strong> on loan <strong>'.$loan->getId().'</strong>');
+                $this->em->persist($note);
+            }
 
             $itemFee = $row->getFee();
 
@@ -129,9 +166,11 @@ class CheckOutService
             }
 
             if ($itemFee > 0) {
+                $totalRowFee = round($itemFee * $row->getProductQuantity(), 2);
+
                 $fee = new Payment();
                 $fee->setCreatedBy($user);
-                $fee->setAmount($itemFee);
+                $fee->setAmount($totalRowFee);
                 $fee->setType(Payment::PAYMENT_TYPE_FEE);
                 $fee->setContact($loan->getContact());
                 $fee->setLoan($loan);
@@ -142,16 +181,21 @@ class CheckOutService
         }
 
         // Mark the loan as checked out
-        $loan->setStatus(Loan::STATUS_ACTIVE);
+        if ($loanContainsLoanItems == true) {
+            $loan->setStatus(Loan::STATUS_ACTIVE);
+            $loan->setTimeOut(new \DateTime());
+            $loan->setReturnDate();
+            $checkoutNoteText = "Checked out loan. ";
+        } else {
+            // Only contains stock items
+            $loan->setStatus(Loan::STATUS_CLOSED);
+            $checkoutNoteText = "Completed sale. ";
+        }
 
-        $loan->setTimeOut(new \DateTime());
         $loan->setTotalFee();
-        $loan->setReturnDate();
 
         // Save any changes to the loan
         $this->em->persist($loan);
-
-        $checkoutNoteText = "Checked out loan. ";
 
         // Add a note
         $note = new Note();
@@ -189,30 +233,51 @@ class CheckOutService
             $this->errors[] = "No items on the loan.";
             return false;
         }
+
         foreach ($loan->getLoanRows() AS $loanRow) {
+
             /** @var $loanRow \AppBundle\Entity\LoanRow */
+
             $item   = $loanRow->getInventoryItem();
             $from   = $loanRow->getDueOutAt();
             $to     = $loanRow->getDueInAt();
             $loanId = $loan->getId();
 
-            if ($this->isItemReserved($item, $from, $to, $loanId)) {
-                return false;
-            }
+            if ($item->getItemType() == InventoryItem::TYPE_STOCK) {
 
-            if ($loanRow->getInventoryItem()->getInventoryLocation()) {
-                // Kits don't have a location
-                if ($loanRow->getInventoryItem()->getInventoryLocation()->getId() == 1) {
-                    $this->errors[] = 'Item "'.$loanRow->getInventoryItem()->getName().'" is already on loan.';
+                // validate that the qty requested is actually in stock
+                $inventory = $this->itemService->getInventory($item);
+                foreach ($inventory AS $i) {
+                    if ($i['locationId'] == $loanRow->getItemLocation()->getId()) {
+                        if ($i['qty'] < $loanRow->getProductQuantity()) {
+                            $this->errors[] = 'Not enough stock of "'.$item->getName().'" in '.$i['locationName'];
+                            return false;
+                        }
+                    }
+                }
+
+            } else {
+
+                if ($this->isItemReserved($item, $from, $to, $loanId)) {
                     return false;
                 }
-                if ($loanRow->getInventoryItem()->getInventoryLocation()->getIsAvailable() != true) {
-                    $this->errors[] = 'Item "'.$loanRow->getInventoryItem()->getName().'" is in a reserved location ('.$loanRow->getInventoryItem()->getInventoryLocation()->getName().').';
-                    return false;
+
+                if ($item->getInventoryLocation()) {
+                    // Kits don't have a location
+                    if ($item->getInventoryLocation()->getId() == 1) {
+                        $this->errors[] = 'Item "'.$item->getName().'" is already on loan.';
+                        return false;
+                    }
+                    if ($item->getInventoryLocation()->getIsAvailable() != true) {
+                        $this->errors[] = 'Item "'.$item->getName().'" is in a reserved location ('.$item->getInventoryLocation()->getName().').';
+                        return false;
+                    }
                 }
+
             }
 
         }
+
         return true;
     }
 

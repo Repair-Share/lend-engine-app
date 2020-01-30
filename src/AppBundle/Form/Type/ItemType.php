@@ -167,7 +167,7 @@ class ItemType extends AbstractType
         ));
 
         $builder->add('priceSell', TextType::class, array(
-            'label' => 'Value / RRP',
+            'label' => 'Value / Sell price',
             'required' => false,
             'attr' => array(
                 'placeholder' => ""

@@ -174,4 +174,39 @@ class ItemService
         return $query->getSingleResult();
     }
 
+    /**
+     * @param InventoryItem $inventoryItem
+     * @return array|int|mixed
+     */
+    public function getInventory(InventoryItem $inventoryItem)
+    {
+        // Loan items and kits just have 1 since they are unique items
+        if ($inventoryItem->getItemType() != 'stock') {
+            return [];
+        }
+
+        $repo = $this->em->getRepository('AppBundle:ItemMovement');
+        $builder = $repo->createQueryBuilder('im');
+
+        $builder->join('im.inventoryItem', 'i');
+        $builder->join('im.inventoryLocation', 'l');
+        $builder->join('l.site', 's');
+
+        $builder->add('select', 's.id AS siteId, s.name AS siteName, l.id AS locationId, l.name AS locationName, SUM(im.quantity) AS qty');
+
+        $builder->where('i.id = '.$inventoryItem->getId());
+        $builder->having('qty > 0');
+
+        $builder->groupBy('im.inventoryLocation');
+
+        $query = $builder->getQuery();
+
+        if ( $results = $query->getResult() ) {
+            return $results;
+        } else {
+            return [];
+        }
+
+    }
+
 }

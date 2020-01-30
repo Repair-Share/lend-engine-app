@@ -197,6 +197,7 @@ class ItemController extends Controller
 
         return $this->render($template, array(
             'product' => $product,
+            'inventory' => $itemService->getInventory($product),
             'user' => $contact,
             'similarItemCount' => count($items),
             'contactBalance' => $contactBalance,

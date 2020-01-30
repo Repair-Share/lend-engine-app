@@ -128,6 +128,7 @@ public_item:
   not_available: Not available
   available: Available
   on_loan: On loan
+  stock_item: Stock item
   pickup_date_error: Items in your basket define a pickup date that clashes with the bookings for this item. You won't be able to borrow this item on the same loan.
   pickup_site_error: This item is not available from the site that the other items in your basket are due to be collected from. You won't be able to borrow this item on the same loan.
   basket_exists: You already have items in your basket, so we've set the start date for you.
@@ -149,6 +150,7 @@ public_item:
   see_parts: See parts
   kit_containing: This item is a kit containing
   borrow_help: Click a date, time or site to change your booking
+  each: each
 
 calendar:
   pickup_day: Pickup
@@ -194,6 +196,7 @@ public_loan:
   cannot_check_out: Item(s) cannot be checked out
   no_payment_methods: No payment methods are available to check out
   not_enough_credit: You don't have enough credit on account to check out.
+  quantity: Quantity
 
 # Member site : Logged in : Menu
 public_user_menu:

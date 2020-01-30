@@ -38,6 +38,9 @@ class ItemListDataController extends Controller
         /** @var \AppBundle\Services\InventoryService $inventoryService */
         $inventoryService = $this->get('service.inventory');
 
+        /** @var \AppBundle\Services\Item\ItemService $itemService */
+        $itemService = $this->get('service.item');
+
         $filter = [];
         if ($searchString) {
             $filter['search'] = $searchString;
@@ -114,7 +117,10 @@ class ItemListDataController extends Controller
             $statusHtml = '';
             $itemId = $item->getId();
 
-            if ($item->getInventoryLocation() && $item->getInventoryLocation()->getId() == 1 && isset($activeLoans[$itemId])) {
+            if ($item->getItemType() == InventoryItem::TYPE_STOCK) {
+                $available = '<div class="label bg-gray">Stock item</div>';
+                $statusHtml = '';
+            } else if ($item->getInventoryLocation() && $item->getInventoryLocation()->getId() == 1 && isset($activeLoans[$itemId])) {
                 $available = '<div class="label bg-teal">On loan</div>';
 
                 $statusHtml = 'On loan to ';
@@ -158,15 +164,21 @@ class ItemListDataController extends Controller
             }
 
             // Reservations
-            $reserveItemUrl = $this->generateUrl('member_search', array('itemId' => $itemId, 'new' => 'reservation'));
-            $links .= '<li><a href="'.$reserveItemUrl.'">Reserve</a></li>';
+            if ($item->getItemType() == InventoryItem::TYPE_LOAN) {
+                $reserveItemUrl = $this->generateUrl('member_search', array('itemId' => $itemId, 'new' => 'reservation'));
+                $links .= '<li><a href="'.$reserveItemUrl.'">Reserve</a></li>';
+            }
 
             if ($item->getInventoryLocation() && $item->getInventoryLocation()->getId() > 1) {
-                $moveUrl = $this->generateUrl('item_move', ['idSet' => $itemId,]);
-                $links .= '<li><a class="modal-link" href="'.$moveUrl.'">Move / Assign</a></li>';
+
+                if ($item->getItemType() == InventoryItem::TYPE_LOAN) {
+                    $moveUrl = $this->generateUrl('item_move', ['idSet' => $itemId,]);
+                    $links .= '<li><a class="modal-link" href="' . $moveUrl . '">Move / Assign</a></li>';
+                }
 
                 $removeUrl = $this->generateUrl('item_archive', ['id' => $itemId]);
                 $links .= '<li><a class="modal-link" href="'.$removeUrl.'">Delete</a></li>';
+
             }
 
             $linkHtml = '
@@ -199,7 +211,19 @@ class ItemListDataController extends Controller
             $columns[] = $itemHtml;
 
             // Location / assignment
-            if ($item->getInventoryLocation()) {
+            if ($item->getItemType() == InventoryItem::TYPE_STOCK) {
+
+                $locationHtml = $available;
+                $inventory = $itemService->getInventory($item);
+                $totalStock = 0;
+                foreach ($inventory AS $line) {
+                    $totalStock += $line['qty'];
+                }
+
+                $stockUrl = $this->generateUrl('inventory_edit', ['id' => $itemId]);
+                $locationHtml .= '<br><br><a href="'.$stockUrl.'" class="modal-link">'.$totalStock.' in stock</a>';
+
+            } else if ($item->getInventoryLocation()) {
                 $locationName = preg_replace("/ /", '&nbsp;', $item->getInventoryLocation()->getName());
                 if ($item->getInventoryLocation()->getId() == 1) {
                     $locationHtml = $available;

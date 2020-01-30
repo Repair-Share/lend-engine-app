@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * InventoryLocation
@@ -18,6 +19,7 @@ class InventoryLocation
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups({"basket"})
      */
     private $id;
 
@@ -25,6 +27,7 @@ class InventoryLocation
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=32)
+     * @Groups({"basket"})
      */
     private $name;
 
@@ -33,6 +36,7 @@ class InventoryLocation
      *
      * @ORM\ManyToOne(targetEntity="Site", inversedBy="inventoryLocations")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", nullable=true)
+     * @Groups({"basket"})
      */
     private $site;
 

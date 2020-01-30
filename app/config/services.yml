@@ -226,6 +226,7 @@ services:
             - "@service_container"
             - "@service.contact"
             - "@service.booking"
+            - "@service.item"
             - "@settings"
 
     service.checkin:

@@ -12,7 +12,7 @@ class MemberSiteItemControllerTest extends WebTestCase
 
         $crawler = $client->request('GET', '/product/1000');
 
-        // Item page shows
-        $this->assertEquals(1, $crawler->filter('#item-core')->count());
+        // Test that the item page shows
+        $this->assertContains('Test item', $crawler->html());
     }
 }

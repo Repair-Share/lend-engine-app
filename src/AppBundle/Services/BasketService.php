@@ -3,6 +3,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Entity\Contact;
+use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\Note;
 use AppBundle\Entity\Payment;
@@ -150,6 +151,10 @@ class BasketService
         $offSet = -$timeZone->getOffset($utc)/3600;
         foreach ($basket->getLoanRows() AS $row) {
             /** @var $row \AppBundle\Entity\LoanRow */
+            if ($row->getInventoryItem()->getItemType() == InventoryItem::TYPE_STOCK) {
+                // No dates for stock items
+                continue;
+            }
             $i = $row->getDueInAt()->modify("{$offSet} hours");
             $row->setDueInAt($i);
             $o = $row->getDueOutAt()->modify("{$offSet} hours");
@@ -222,6 +227,9 @@ class BasketService
         /** @var \AppBundle\Repository\SiteRepository $siteRepo */
         $siteRepo = $this->em->getRepository('AppBundle:Site');
 
+        /** @var \AppBundle\Repository\InventoryLocationRepository $locationRepo */
+        $locationRepo = $this->em->getRepository('AppBundle:InventoryLocation');
+
         if (!$user = $this->user) {
             $this->errors[] = "You're not logged in. Please log in and try again.";
             return false;
@@ -281,11 +289,23 @@ class BasketService
             $siteFrom = $siteRepo->find($siteFromId);
             $row->setSiteFrom($siteFrom);
 
-            $siteToId = $row->getSiteTo()->getId();
-            $siteTo = $siteRepo->find($siteToId);
-            $row->setSiteTo($siteTo);
+            if ($siteToId = $row->getSiteTo()->getId()) {
+                $siteTo = $siteRepo->find($siteToId);
+                $row->setSiteTo($siteTo);
+            } else {
+                $row->setSiteTo(null);
+            }
 
-            $row->setProductQuantity(1);
+            // Stock items are given the current location on the loan row so we can remove stock
+            if ($row->getItemLocation()) {
+                $itemLocationId = $row->getItemLocation()->getId();
+                $itemLocation = $locationRepo->find($itemLocationId);
+                $row->setItemLocation($itemLocation);
+            } else {
+                $row->setItemLocation(null);
+            }
+
+            $row->setProductQuantity($row->getProductQuantity());
 
             if ($this->user->hasRole('ROLE_ADMIN')) {
                 // Allow admins to edit the row fees in the basket UI
@@ -295,7 +315,7 @@ class BasketService
                 // Fee will have been set when creating the basket
             }
 
-            // Connect the detached rows from basket
+            // Connect the detached rows [from basket] to the real loan row
             $row->setLoan($basket);
             $this->em->persist($row);
 
@@ -363,6 +383,7 @@ class BasketService
             $msg = $this->translator->trans('msg_fail.reservation_create', [], 'member_site');
             $this->errors[] = $msg;
             $this->errors[] = $generalException->getMessage();
+            return false;
         }
 
         try {

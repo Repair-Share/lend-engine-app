@@ -22,10 +22,25 @@
             }
         </style>
     {% elseif item.itemType == 'stock' %}
-    <div class="header-bar">
-        <i class="fa fa-cube" style="color:#000"></i>
-        This is stock item (consumable)
-    </div>
+        <div class="header-bar">
+            <i class="fa fa-cube" style="color:#000"></i>
+            This is stock item (consumable)
+            {% set inventoryLevel = 0 %}
+            {% for i in inventory %}
+                {% set inventoryLevel = inventoryLevel + i.qty %}
+            {% endfor %}
+
+            {% if item.id %}
+            <span class="">
+                <span style="padding: 0 30px">{{ inventoryLevel }} in stock </span>
+                <a href="{{ path('inventory_edit', {id: item.id}) }}" class="btn btn-xs btn-primary modal-link">Manage inventory</a>
+            </span>
+            {% else %}
+                <span class="pull-right">
+                    Once you have created the item, you will be able to add inventory.
+                </span>
+            {% endif %}
+        </div>
         <style>
             .hide-for-stock {
                 display:none;
@@ -66,7 +81,7 @@
 
     {{ include('item/maintenance_warning.html.twig') }}
 
-    <div id="item-inventory-detail" {% if item.itemType == 'kit' %}style="display:none"{% endif %}>
+    <div id="item-inventory-detail" {% if item.itemType != 'loan' %}style="display:none"{% endif %}>
         {% if item.id %}
             <input type="hidden" id="itemIdForTest" value="{{ item.id }}">
             {% if item.inventoryLocation.id == 1 %}

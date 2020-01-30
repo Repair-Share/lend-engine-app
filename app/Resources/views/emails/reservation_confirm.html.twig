@@ -1,12 +1,10 @@
 {# app/Resources/views/emails/reservation_confirm.html.twig #}
-
 {% extends 'emails/template.html.twig' %}
-
 {% trans_default_domain 'emails' %}
 
 {% block heading %}
     {{ 'le_email.reservation_confirm.title'|trans() }}<br>
-    Loan #{{ row.loan.id }} : {{ row.loan.contact.name }}
+    Loan #{{ loan.id }} : {{ loan.contact.name }}
 {% endblock %}
 
 {% block content %}
@@ -31,9 +29,15 @@
                 <td valign="top">
                     <strong>{{ row.inventoryItem.name }}</strong>
 
+                    {% if row.inventoryItem.itemType == 'stock' %}
+                    <div>
+                        Qty: {{ row.productQuantity }}
+                    </div>
+                    {% else %}
                     <div>
                         {{ row.dueOutAt|date('d F g:i a') }} - {{ row.dueInAt|date('d F g:i a') }}
                     </div>
+                    {% endif %}
 
                     {% if row.inventoryItem.description|length > 0 %}
                         <div style="padding: 4px; font-size: 12px;">
@@ -62,7 +66,7 @@
 
     <br>
     <p>
-        Reserved for : <strong>{{ loan.contact.name }}</strong><br>
+        <strong>{{ loan.contact.name }}</strong><br>
         {% if loan.contact.addressLine1 %}{{ loan.contact.addressLine1 }}<br>{% endif %}
         {% if loan.contact.addressLine2 %}{{ loan.contact.addressLine2 }}<br>{% endif %}
         {% if loan.contact.addressLine3 %}{{ loan.contact.addressLine3 }}<br>{% endif %}

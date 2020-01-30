@@ -1,0 +1,54 @@
+{% trans_default_domain 'member_site' %}
+
+<tr>
+    <td style="width:100px" class="hidden-xs">
+        {% if row.inventoryItem.imageName %}
+            <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}" class="img-thumbnail img-responsive">
+        {% else %}
+            <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" alt="" class="img-responsive">
+        {% endif %}
+    </td>
+    <td>
+        <div>
+            <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a>
+        </div>
+        {% if row.inventoryItem.serial %}
+            <div class="basket-serial">{% trans %}public_item.serial{% endtrans %}: <strong>{{ row.inventoryItem.serial }}</strong></div>
+        {% endif %}
+
+        <i class="far fa-clock"></i> {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("l j F g:i a") }}</strong>
+        ({{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %})
+
+        {#CHANGE RETURN DATE#}
+        {# @todo update the basket, this will allow easier changes after one-click lending #}
+        {#<a href="{{ path('public_product', {productId: row.inventoryItem.id, extend: row.id, from: row.dueInAt|date("Y-m-d H:i:s") }) }}" class="">Change return date</a>#}
+
+        <br>
+        <div class="multi-site">
+            <i class="far fa-hospital"></i> {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
+        </div>
+
+        {% if row.inventoryItem.depositAmount > 0 %}
+            <br>
+            <div class="alert alert-warning">
+                A deposit of {{ tenantInformation.currencySymbol }} {{ row.inventoryItem.depositAmount }} is required for this item.
+                <br>Payment is taken when items are checked out.
+                <input type="hidden" name="deposit[]" class="deposit-amount" value="{{ row.inventoryItem.depositAmount }}">
+            </div>
+        {% endif %}
+
+        <a href="{{ path('basket_item_remove', {itemId: row.inventoryItem.id}) }}" class="btn btn-xs btn-danger" style="margin-top: 4px;">
+            {% trans %}public_basket.remove_item{% endtrans %}
+        </a>
+    </td>
+    <td style="text-align: right">
+        {% if is_granted('ROLE_ADMIN') %}
+            <input type="text" class="basket-amount row-total save-on-change"
+                   name="row_fee[{{ row.inventoryItem.id }}]" value="{{ row.fee|number_format(2) }}"
+                   data-qty="1">
+        {% else %}
+            {{ row.fee|number_format(2) }}
+            <input type="hidden" class="row-total" value="{{ row.fee|number_format(2) }}">
+        {% endif %}
+    </td>
+</tr>

@@ -76,6 +76,13 @@ class ItemMovement
     private $assignedTo;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="quantity", type="integer", nullable=true)
+     */
+    private $quantity;
+
+    /**
      * Get id
      *
      * @return integer
@@ -228,5 +235,24 @@ class ItemMovement
     public function getAssignedTo()
     {
         return $this->assignedTo;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * @param $quantity
+     * @return $this
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+
+        return $this;
     }
 }

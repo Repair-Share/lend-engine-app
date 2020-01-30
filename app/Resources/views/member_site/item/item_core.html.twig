@@ -16,7 +16,7 @@
                             {% if is_granted('ROLE_ADMIN') %}
                                 <div style="position:absolute; bottom: 10px; left: 25px;">
                                     <a href="{{ path('item', {id: product.id}) }}" class="btn btn-xs btn-primary role-admin">Edit</a>
-                                    {% if product.inventoryLocation.id > 1 %}
+                                    {% if product.inventoryLocation.id > 1 and product.itemType == 'loan' %}
                                         <a href="{{ url('item_move', {idSet: product.id}) }}" class="btn btn-xs btn-primary modal-link">Move / service</a>
                                         <a href="{{ url('item_archive', {id: product.id}) }}" class="btn btn-xs btn-primary modal-link">Delete</a>
                                     {% endif %}
@@ -48,15 +48,12 @@
 
                     {% if is_granted('ROLE_ADMIN') %}
                         <div style="position:absolute; bottom: 10px; left: 25px;">
-
                             <div class="admin-tools-title">
                                 <i class="fa fa-wrench"></i>
                                 Admin tools:
                             </div>
-
                             <a href="{{ path('item', {id: product.id}) }}" class="btn btn-xs btn-primary role-admin">Edit</a>
-
-                            {% if product.inventoryLocation and product.inventoryLocation.id > 1 %}
+                            {% if product.inventoryLocation and product.inventoryLocation.id > 1 and product.itemType == 'loan' %}
                                 <a href="{{ url('item_move', {idSet: product.id}) }}" class="btn btn-xs btn-primary modal-link">Move / service</a>
                                 <a href="{{ url('item_archive', {id: product.id}) }}" class="btn btn-xs btn-primary modal-link">Delete</a>
                             {% endif %}
@@ -82,22 +79,26 @@
 
         <div style="padding: 10px 0">
 
-            <p class="item-fee">
-                <strong class="fee-title">{% trans %}Fee{% endtrans %}:</strong>
-
-                {{ tenantInformation.currencySymbol }} {{ product.loanFee|number_format(2) }}
-
-                {% if tenantInformation.fixedFeePricing %}
-                    {% trans %}per_borrow{% endtrans %}
-                {% else %}
-                    {% if product.maxLoanDays == 1 %}
-                        {% trans %}per_day{% endtrans %}
+            {% if product.itemType == 'stock' %}
+                <p class="item-price">
+                    {{ tenantInformation.currencySymbol }} {{ product.priceSell|number_format(2) }}
+                    {% trans %}public_item.each{% endtrans %}
+                </p>
+            {% else %}
+                <p class="item-fee">
+                    <strong class="fee-title">{% trans %}Fee{% endtrans %}:</strong>
+                    {{ tenantInformation.currencySymbol }} {{ product.loanFee|number_format(2) }}
+                    {% if tenantInformation.fixedFeePricing %}
+                        {% trans %}per_borrow{% endtrans %}
                     {% else %}
-                        {% trans with {'%count%': product.maxLoanDays } %}per_n_days{% endtrans %}
+                        {% if product.maxLoanDays == 1 %}
+                            {% trans %}per_day{% endtrans %}
+                        {% else %}
+                            {% trans with {'%count%': product.maxLoanDays } %}per_n_days{% endtrans %}
+                        {% endif %}
                     {% endif %}
-                {% endif %}
-
-            </p>
+                </p>
+            {% endif %}
 
             {% if product.depositAmount > 0 %}
             <p class="item-deposit">
@@ -106,7 +107,14 @@
             {% endif %}
 
             {#Item status#}
-            {% if product.inventoryLocation and product.inventoryLocation.id == 1 %}
+            {% if product.itemType == 'stock' %}
+
+                <span class="label label-default">
+                    {% trans %}public_item.stock_item{% endtrans %}
+                </span>
+                <div class="clearfix" style="padding-bottom:10px;"></div>
+
+            {% elseif product.inventoryLocation and product.inventoryLocation.id == 1 %}
 
                 <span class="label label-info">
                     {% trans %}public_item.on_loan{% endtrans %}
@@ -144,7 +152,7 @@
 
             {#Item details#}
 
-            {% if product.inventoryLocation and product.inventoryLocation.id > 1 %}
+            {% if product.inventoryLocation and product.inventoryLocation.id > 1 and product.itemType == 'loan'%}
                 {% if isMultiSite == true or is_granted('ROLE_ADMIN') %}
                     <div class="item-info item-site">
                         <span class="item-info-label">{% trans %}public_item.location{% endtrans %}:</span>
@@ -156,7 +164,7 @@
                 {% endif %}
             {% endif %}
 
-            {% if product.condition %}
+            {% if product.condition and product.itemType == 'loan' %}
                 <div class="item-info item-condition">
                     <span class="item-info-label">{% trans %}public_item.condition{% endtrans %}:</span> {{ product.condition.name }}
                 </div>
@@ -256,7 +264,52 @@
         {#Main controls#}
         {% if user.id is defined %}
 
-            {% if product.isReservable != false or is_granted('ROLE_ADMIN') %}
+            {% if product.itemType == 'stock' %}
+
+                {% if user.activeMembership is defined and user.activeMembership %}
+                    <form method="POST" action="{{ path('basket_add_stock', {itemId: product.id}) }}">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Available</th>
+                                <th>Add</th>
+                            </tr>
+                            </thead>
+                            {% for i in inventory %}
+                                <tr>
+                                    <td>{{ i.siteName }}<br>{{ i.locationName }}</td>
+                                    <td>{{ i.qty }}</td>
+                                    <td>
+                                        <input type="text" class="form-control" name="add_qty[{{ i.locationId }}]">
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+
+                        <button type="submit" class="btn btn-success">{% trans %}public_item.basket_add{% endtrans %}</button>
+                    </form>
+                {% else %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="alert alert-warning">
+                            {{ user.name }} does not have an active membership.<br>
+                            <a href="{{ path('choose_membership', {c: user.id, itemId: product.id}) }}">Subscribe now</a>,
+                            or <a href="{{ path('member_search', {itemId: product.id}) }}">change user</a>.
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            An active membership is required to buy this item.
+                            {#{{ 'text_borrow_with_membership'|trans({}, 'member_site') }}#}
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                <style>
+                    #calendar { display:none }
+                    #calendar-key { display:none }
+                </style>
+
+            {% elseif (product.isReservable != false or is_granted('ROLE_ADMIN'))  %}
 
                 {#Item is reservable, or we are admin#}
                 {% if user.activeMembership is defined and user.activeMembership %}

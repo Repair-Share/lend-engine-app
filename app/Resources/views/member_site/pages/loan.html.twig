@@ -100,7 +100,7 @@
         {% set promptsExist = 0 %}
 
         {% for row in loan.loanRows %}
-            <tr>
+            <tr class="loanRow" id="{{ row.id }}">
                 <td style="width:100px" class="hidden-xs">
                     {% if row.inventoryItem.imageName %}
                         <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}" class="img-thumbnail img-responsive">
@@ -135,14 +135,30 @@
                     {% endif %}
 
                     {% if row.inventoryItem.itemType == 'loan' %}
-                    <div>
-                        <i class="far fa-clock"></i>
-                        {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
-                        ( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
-                    </div>
-                    <div class="multi-site">
-                        <i class="far fa-hospital"></i> {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
-                    </div>
+                        <div>
+                            <i class="far fa-clock"></i>
+                            {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
+                            ( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
+                        </div>
+                        <div class="multi-site">
+                            <i class="far fa-hospital"></i> {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
+                        </div>
+                        <input type="hidden" name="row_qty[{{ row.id }}]" id="qty-{{ row.id }}" value="1">
+                    {% elseif row.inventoryItem.itemType == 'stock' %}
+                        {% trans %}public_loan.quantity{% endtrans %} :
+
+                        {% if is_granted('ROLE_ADMIN') and loan.status in ['RESERVED', 'PENDING'] %}
+                            <input type="text" name="row_qty[{{ row.id }}]" id="qty-{{ row.id }}"
+                                   value="{{ row.productQuantity }}"
+                                   class="basket-amount save-on-change" style="text-align:center">
+                        {% else %}
+                            <input type="hidden" name="row_qty[{{ row.id }}]" id="qty-{{ row.id }}"
+                                   value="{{ row.productQuantity }}"
+                                   class="basket-amount save-on-change" style="text-align:center">
+                            {{ row.productQuantity }}
+                        {% endif %}
+
+                        {% trans %}public_basket.from{% endtrans %} {{ row.siteFrom.name }} / {{ row.itemLocation.name }}
                     {% endif %}
 
                     {# Checked in #}
@@ -212,10 +228,13 @@
                 </td>
                 <td style="text-align: right">
                     {% if is_granted('ROLE_ADMIN') and loan.status in ['RESERVED', 'PENDING'] %}
-                        <input type="text" class="basket-amount row-calc" name="row_fee[{{ row.inventoryItem.id }}]" value="{{ row.fee|number_format(2) }}">
+                        <input type="text" class="basket-amount row-calc" name="row_fee[{{ row.id }}]" data-id="qty-{{ row.id }}" value="{{ row.fee|number_format(2) }}">
+                        {% if row.inventoryItem.itemType == 'stock' %}
+                        <br>{% trans %}public_item.each{% endtrans %}
+                        {% endif %}
                     {% else %}
                         {{ tenantInformation.currencySymbol }} {{ row.fee|number_format(2) }}
-                        <input type="hidden" class="row-calc" value="{{ row.fee }}">
+                        <input type="hidden" class="row-calc" value="{{ row.fee }}" data-id="qty-{{ row.id }}">
                     {% endif %}
 
                     <div class="row-charge">
@@ -568,7 +587,9 @@
             depositsTotal = 0.00;
 
             $(".row-calc").each(function() {
-                basketTotal += $(this).val() * 1;
+                var qtyId = $(this).data('id');
+                var qty = $("#"+qtyId).val();
+                basketTotal += $(this).val() * qty;
             });
 
             console.log('basketTotal: '+basketTotal);
@@ -658,6 +679,12 @@
 
             validateCheckout();
         }
+
+        $("#paymentForm").on('keyup', '.save-on-change', function() {
+            $(".hideOnFormChange").attr('disabled', true);
+            $(".action-save").show();
+            $(".checkout").hide();
+        });
 
     </script>
 {% endblock %}
