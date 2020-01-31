@@ -170,14 +170,7 @@
                 <div class="alert alert-warning">
                     This item is {{ daysLate }} days late.
                     {% if tenantInformation.lateFee > 0 %}
-                        {% set lateFee = tenantInformation.lateFee %}
-                        {% if loanRow.loan.contact.activeMembership and loanRow.loan.contact.activeMembership.MembershipType.discount > 0 %}
-                            {% set lateFee = lateFee * loanRow.loan.contact.activeMembership.MembershipType.discount/100 %}
-                        {% endif %}
-                        ({{ tenantInformation.currencySymbol }}{{ lateFee|number_format(2) }} per day)
-                        {% if loanRow.loan.contact.activeMembership and loanRow.loan.contact.activeMembership.MembershipType.discount > 0 %}
-                            <br>Member discount of <strong>{{ loanRow.loan.contact.activeMembership.MembershipType.discount|number_format(0) }}%</strong> applied.
-                        {% endif %}
+                        ({{ tenantInformation.currencySymbol }}{{ tenantInformation.lateFee|number_format(2) }} per day)
                     {% endif %}
                 </div>
             {% endif %}

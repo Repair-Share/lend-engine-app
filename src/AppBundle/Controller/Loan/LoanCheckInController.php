@@ -68,15 +68,6 @@ class LoanCheckInController extends Controller
         }
 
         $dailyOverdueFee = (float)$this->get('settings')->getSettingValue('daily_overdue_fee');
-
-        // Apply customer discount
-        if ($activeMembership = $loanRow->getLoan()->getContact()->getActiveMembership()) {
-            if ($activeMembership->getMembershipType()->getDiscount() > 0) {
-                $discount = $activeMembership->getMembershipType()->getDiscount();
-                $dailyOverdueFee = $dailyOverdueFee - round($dailyOverdueFee * $discount/100,2);
-            }
-        }
-
         $lateFee = number_format($dailyOverdueFee * $daysLate, 2);
 
         $formOptions = array(
@@ -150,7 +141,7 @@ class LoanCheckInController extends Controller
 
         }
 
-        return $this->render('member_site/pages/loan_check_in.html.twig', array(
+        return $this->render('member_site/loan/loan_check_in.html.twig', array(
             'loanRow' => $loanRow,
             'form' => $form->createView(),
             'daysLate' => $daysLate,

@@ -261,7 +261,7 @@ class LoanController extends Controller
         $contact = $contactService->loadCustomerCards($loan->getContact());
         $loan->setContact($contact);
 
-        return $this->render('member_site/pages/loan.html.twig', [
+        return $this->render('member_site/loan/loan.html.twig', [
                 'form' => $form->createView(),
                 'loan' => $loan,
                 'user' => $loan->getContact(),

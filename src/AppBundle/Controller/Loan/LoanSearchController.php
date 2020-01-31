@@ -39,10 +39,6 @@ class LoanSearchController extends Controller
             $user = $contactRepo->find($sessionUserId);
         }
 
-        // Modify times to match local time for calendar
-//        $tz = $settingsService->getSettingValue('org_timezone');
-//        $timeZone = new \DateTimeZone($tz);
-
         // Get the data
         $loans = [];
         if ($string = $request->get('loan-search')) {
@@ -57,7 +53,7 @@ class LoanSearchController extends Controller
             }
         }
 
-        return $this->render('member_site/pages/loan_search.html.twig', [
+        return $this->render('member_site/loan/loan_search.html.twig', [
             'user'  => $user,
             'loans' => $loans
         ]);
