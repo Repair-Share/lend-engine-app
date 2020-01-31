@@ -62,9 +62,14 @@ class SubscribeController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
 
             // Inputs allow admins to update the amount paid for a subscription
-            $amountPaid     = $form->get('paymentAmount')->getData();
-            $price          = $form->get('price')->getData();
-            $paymentMethod  = $form->get('paymentMethod')->getData();
+            if (!$amountPaid = $form->get('paymentAmount')->getData()) {
+                $amountPaid = 0;
+            }
+            if (!$price = $form->get('price')->getData()) {
+                $price = 0;
+            }
+
+            $paymentMethod = $form->get('paymentMethod')->getData();
 
             if (!$membershipType = $form->get('membershipType')->getData()) {
                 $this->addFlash("error", "Please choose a membership type");
