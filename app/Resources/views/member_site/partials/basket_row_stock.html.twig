@@ -27,7 +27,7 @@
             data-qty="{{ row.productQuantity }}">
         {% else %}
             {{ row.fee|number_format(2) }}
-            <input type="hidden" data-qty="1" class="row-total" value="{{ row.fee|number_format(2) }}">
+            <input type="hidden" data-qty="{{ row.productQuantity }}" class="row-total" value="{{ row.fee|number_format(2) }}">
         {% endif %}
     </td>
 </tr>
