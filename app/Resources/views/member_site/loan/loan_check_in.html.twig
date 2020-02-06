@@ -93,7 +93,7 @@
 
                             {% if tenantInformation.feature('StockItems') %}
                             <div>
-                                <a href="{{ path('sell_loan_item', {rowId: row.id}) }}" class="btn btn-xs btn-default convert-to-stock">Convert to stock item</a>
+                                <a href="{{ path('sell_loan_item', {rowId: row.id}) }}" class="btn btn-xs btn-default convert-to-stock">Convert to stock item (sell it)</a>
                             </div>
                             {% endif %}
                         </td>
@@ -254,7 +254,7 @@
                 }
             });
             $("#checkInDetails").on("click", ".convert-to-stock", function () {
-                if (window.confirm("Are you sure?/nThis is not reversible.")) {
+                if (window.confirm("Are you sure you want to sell this item? /n This is not reversible.")) {
                     return true;
                 } else {
                     return false
