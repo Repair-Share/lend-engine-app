@@ -90,7 +90,7 @@ class LoanCheckInController extends Controller
 
             if (!$toLocation) {
                 $this->addFlash('error', "No check-in location found, please check your selections.");
-                $this->redirectToRoute('loan_check_in', ['loanRowId' => $loanRowId]);
+                return $this->redirectToRoute('loan_check_in', ['loanRowId' => $loanRowId]);
             }
 
             if (!$assignToContact = $form->get('contact')->getData()) {
