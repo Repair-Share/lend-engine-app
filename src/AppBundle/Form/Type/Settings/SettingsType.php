@@ -230,9 +230,10 @@ EOT;
             ]
         ));
 
+        $ccAdminChoices = ['Yes' => '1', 'No'  => '0',];
         $builder->add('email_cc_admin', ToggleType::class, array(
             'expanded' => true,
-            'choices' => $choices,
+            'choices' => $ccAdminChoices,
             'label' => 'Send a copy of customer emails to my organisation email',
             'data' => (int)$dbData['email_cc_admin'],
             'attr' => [
