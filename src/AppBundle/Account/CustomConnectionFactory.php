@@ -134,7 +134,8 @@ class CustomConnectionFactory extends ConnectionFactory
               time_zone,
               subscription_id
               FROM account
-              WHERE stub = '{$account_code}' OR domain = '{$domain}'
+              WHERE (stub = '{$account_code}' AND domain IS NULL) 
+                OR domain = '{$domain}'
               AND server_name = '{$leServerName}'
               ORDER BY domain DESC
               LIMIT 1

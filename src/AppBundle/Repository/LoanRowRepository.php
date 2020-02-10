@@ -10,6 +10,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 {
 
     /**
+     * For the nightly scheduled reminders
      * @return array|bool
      * For scheduled loan reminders
      */
@@ -22,12 +23,15 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
         $qb = $repository->createQueryBuilder('lr');
         $qb->select('lr')
             ->leftJoin('lr.loan', 'l')
+            ->leftJoin('lr.inventoryItem', 'i')
             ->where('lr.dueInAt > :dateStart')
             ->andWhere('lr.dueInAt < :dateEnd')
             ->andWhere('l.status = :statusActive')
+            ->andWhere('i.itemType = :itemType')
             ->andWhere('lr.checkedInAt IS NULL')
             ->setParameter('dateStart', $tomorrow->format("Y-m-d 00:00:00"))
             ->setParameter('dateEnd', $tomorrow->format("Y-m-d 23:59:59"))
+            ->setParameter('itemType', 'stock')
             ->setParameter('statusActive', 'ACTIVE');
 
         $query = $qb->getQuery();
@@ -40,6 +44,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
     }
 
     /**
+     * For the nightly scheduled reminders
      * @param $daysOverdue
      * @return bool|mixed
      */
@@ -52,13 +57,16 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
         $qb = $repository->createQueryBuilder('lr');
         $qb->select('lr')
             ->leftJoin('lr.loan', 'l')
+            ->leftJoin('lr.inventoryItem', 'i')
             ->where('lr.dueInAt > :dateStart')
             ->andWhere('lr.dueInAt < :dateEnd')
             ->andWhere('lr.checkedInAt IS NULL')
             ->andWhere('lr.checkedOutAt IS NOT NULL')
             ->andWhere('l.status != :statusReserved')
+            ->andWhere('i.itemType = :itemType')
             ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
             ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"))
+            ->setParameter('itemType', 'stock')
             ->setParameter('statusReserved', 'RESERVED')
         ;
 
