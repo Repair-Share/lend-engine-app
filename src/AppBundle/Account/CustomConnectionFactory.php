@@ -72,11 +72,6 @@ class CustomConnectionFactory extends ConnectionFactory
             $dbName         = $result[0]['db_schema'];
             $account_status = $result[0]['status'];
             $customDomain   = $result[0]['domain'];
-
-            if ($result[0]['server_name'] != getenv('LE_SERVER_NAME')) {
-//                throw new \Exception("{$account_code} You are trying to access a {$server_name} account from server ".getenv('LE_SERVER_NAME'));
-            }
-
             if ($account_status == 'ARCHIVED' || $account_status == 'DELETED') {
                 die("The account '{$account_code}' has expired.");
             }
@@ -141,6 +136,7 @@ class CustomConnectionFactory extends ConnectionFactory
               FROM account
               WHERE stub = '{$account_code}' OR domain = '{$domain}'
               AND server_name = '{$leServerName}'
+              ORDER BY domain DESC
               LIMIT 1
               ") ){
                 return $stmt->fetchAll(\PDO::FETCH_ASSOC);
