@@ -326,7 +326,7 @@
 
                     {% if maintenanceOverdue == true %}
 
-                        <div class="alert alert-warning no-borrow">
+                        <div class="alert alert-warning no-borrow" id="warning-maintenance-due">
                             {% trans %}public_item.not_reservable{% endtrans %}
                         </div>
 
@@ -348,7 +348,7 @@
                 {% else %}
 
                     {% if is_granted('ROLE_ADMIN') %}
-                        <div class="alert alert-warning">
+                        <div class="alert alert-warning" id="warning-no-membership">
                             {{ user.name }} does not have an active membership.<br>
                             <a href="{{ path('choose_membership', {c: user.id, itemId: product.id}) }}">Subscribe now</a>,
                             or <a href="{{ path('member_search', {itemId: product.id}) }}">change user</a>.
@@ -363,7 +363,7 @@
 
             {% else %}
 
-                <div class="alert alert-warning no-borrow">
+                <div class="alert alert-warning no-borrow" id="warning-item-not-reservable">
                     {% trans %}public_item.not_reservable{% endtrans %}
                 </div>
 
