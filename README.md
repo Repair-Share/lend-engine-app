@@ -6,8 +6,9 @@ The Lend Engine is a platform for lending libraries to handle their items, membe
 Feature suggestions and pull requests are welcome (with the caveat that we need extra unit tests for existing code too, so please help with that alongside any additional contributions).
 
 **Requirements**
-- PHP 7.2
-- MySql 5.xxx
+- PHP 7.2.x
+- MySql 5.7.x
+- An AWS S3 account for file uploads
 
 **Getting started**
 1. Download the repo from https://github.com/lend-engine/lend-engine-app
@@ -33,22 +34,22 @@ Credentials are stored in ENV variables.
 
 **Environment variables required**
 
-SYNFONY_ENV=dev
-LE_SERVER_NAME=dev|staging|plus|prod etc
-SYMFONY__POSTMARK_API_KEY=xxx
-DEV_DB_USER=xxx
-DEV_DB_PASS=xxx
+- SYNFONY_ENV=dev
+- LE_SERVER_NAME=dev/staging/prod etc
+- SYMFONY__POSTMARK_API_KEY=xxx
+- DEV_DB_USER=xxx
+- DEV_DB_PASS=xxx
 
-** Required to upload images to an Amazon AWS bucket **
+**Required to upload images to an Amazon AWS bucket**
 
-SYMFONY__AWS_KEY=xxx
-SYMFONY__AWS_SECRET=xxx
+- SYMFONY__AWS_KEY=xxx
+- SYMFONY__AWS_SECRET=xxx
 
 **ENV variables required if you are testing with Stripe**
 
-SYMFONY__STRIPE_CLIENT=xxx
-SYMFONY__STRIPE_SECRET=xxx
-STRIPE_PUBLIC_KEY_TEST=xxx
-STRIPE_PRIVATE_KEY_TEST=xxx
-STRIPE_SUBS_KEY_SECRET=xxx
-STRIPE_SUBS_KEY_PUBLIC=xxx
+- SYMFONY__STRIPE_CLIENT=xxx
+- SYMFONY__STRIPE_SECRET=xxx
+- STRIPE_PUBLIC_KEY_TEST=xxx
+- STRIPE_PRIVATE_KEY_TEST=xxx
+- STRIPE_SUBS_KEY_SECRET=xxx
+- STRIPE_SUBS_KEY_PUBLIC=xxx
