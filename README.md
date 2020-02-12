@@ -6,24 +6,38 @@ The Lend Engine is a platform for lending libraries to handle their items, membe
 Feature suggestions and pull requests are welcome (with the caveat that we need extra unit tests for existing code too, so please help with that alongside any additional contributions).
 
 **Requirements**
+
 - PHP 7.2.x
 - MySql 5.7.x
 - An AWS S3 account for file uploads
+- A Postmark account for outgoing emails
 
 **Getting started**
+
 1. Download the repo from https://github.com/lend-engine/lend-engine-app
-2. Run the tenant_setup.sql - this adds a development account into the tenant list. Set your email.
+2. Run tenant_setup.sql - this adds a development account into the tenant list. Set your email.
 3. Add your environment variables
 4. If your dev server is running at localhost:8001, add that as the stub for the account.
-5. CREATE DATABASE unit_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
-6. UPDATE _core.account SET status = 'DEPLOYING';
-7. Visit the deployment URL to create a new account : http://localhost:8001/deploy
+5. ``CREATE DATABASE unit_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;``
+6. ``UPDATE _core.account SET status = 'DEPLOYING';``
+7. Set owner_name and owner_email to yours.
+8. Lastly, visit the deployment URL to create a new account 
+``http://localhost:8001/deploy``
 
-**Unit / functional testing**
+So that all tenants share the same item types, for network-level reporting, we use 
+a shared table: `_core.item_type`. Run 
+
+``/web/plugins/type/itemTypes.sql``
+
+to insert the latest set. These are taken from a Google product taxonomy.
+
+**Functional testing**
 
 Create an empty database called unit_test.
 DB setup is in ContactController which runs first.
 Fixtures are loaded for contact and item.
+
+Run ``phpunit``
 
 **Server deployment**
 
@@ -32,24 +46,41 @@ In production, we use Heroku.
 AWS for DB (mySQL 5.7), S3 for hosting images and uploaded files, and PostMark for emails. 
 Credentials are stored in ENV variables.
 
+**Tenant management**
+
+Lend Engine is multi-tenanted. The routing to the relevant tenant is determined by the URL. 
+`CustomConnectionFactory.php` looks for a matching account; where the account stub 
+or the account domain matches the URL host.
+
+Tenants are added to the `_core.account` table.
+
 **Environment variables required**
 
-- SYNFONY_ENV=dev
-- LE_SERVER_NAME=dev/staging/prod etc
-- SYMFONY__POSTMARK_API_KEY=xxx
-- DEV_DB_USER=xxx
-- DEV_DB_PASS=xxx
+```
+SYNFONY_ENV=dev
+LE_SERVER_NAME=dev/staging/prod etc
+SYMFONY__POSTMARK_API_KEY=xxx
+DEV_DB_USER=xxx
+DEV_DB_PASS=xxx
+```
 
 **Required to upload images to an Amazon AWS bucket**
 
-- SYMFONY__AWS_KEY=xxx
-- SYMFONY__AWS_SECRET=xxx
+```
+SYMFONY__AWS_KEY=xxx
+SYMFONY__AWS_SECRET=xxx
+```
 
 **ENV variables required if you are testing with Stripe**
 
-- SYMFONY__STRIPE_CLIENT=xxx
-- SYMFONY__STRIPE_SECRET=xxx
-- STRIPE_PUBLIC_KEY_TEST=xxx
-- STRIPE_PRIVATE_KEY_TEST=xxx
-- STRIPE_SUBS_KEY_SECRET=xxx
-- STRIPE_SUBS_KEY_PUBLIC=xxx
+It's likely that Stripe connection will only work using Lend Engine Stripe client credentials, 
+as users are linked to the Lend Engine billing Stripe account as 'connected accounts'.
+
+```
+SYMFONY__STRIPE_CLIENT=xxx
+SYMFONY__STRIPE_SECRET=xxx
+STRIPE_PUBLIC_KEY_TEST=xxx
+STRIPE_PRIVATE_KEY_TEST=xxx
+STRIPE_SUBS_KEY_SECRET=xxx
+STRIPE_SUBS_KEY_PUBLIC=xxx
+```

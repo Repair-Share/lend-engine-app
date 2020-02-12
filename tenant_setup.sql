@@ -30,7 +30,7 @@ LOCK TABLES `account` WRITE;
 
 INSERT INTO `account` (`id`, `stub`, `name`, `db_schema`, `created_at`, `trial_expires_at`, `last_access_at`, `owner_name`, `owner_email`, `status`, `subscription_id`, `plan`, `domain`, `server_name`, `schema_version`, `stripe_customer_id`, `time_zone`, `industry`, `org_email`)
 VALUES
-	(3,'unit_test','Organisation name','unit_test','2015-11-28 09:07:08','2019-05-20 00:00:00','2019-06-28 08:52:15','Chris Tanner','chris@lend-engine.com','LIVE',NULL,'plus',NULL,'dev','20190416101346',NULL,'Europe/London','other','email@demo.com');
+	(3,'unit_test','Organisation name','unit_test','2015-11-28 09:07:08','2019-05-20 00:00:00','2019-06-28 08:52:15','Account owner','your@email.com','DEPLOYING',NULL,'plus',NULL,'dev','20190416101346',NULL,'Europe/London','other','email@demo.com');
 
 /*!40000 ALTER TABLE `account` ENABLE KEYS */;
 UNLOCK TABLES;
