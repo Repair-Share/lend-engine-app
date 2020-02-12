@@ -41,7 +41,7 @@ class CustomConnectionFactory extends ConnectionFactory
         }
 
         if (!$this->server || !$this->username || !$this->password) {
-            throw new \Exception("Could not get database details.");
+            throw new \Exception("Could not get database details. Please ensure ENV variables are set.");
         }
     }
 
