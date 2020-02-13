@@ -80,9 +80,15 @@
         var selfCheckout = "{{ tenantInformation.selfCheckout }}";
 
         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+            {% if user is defined %}
+        var currentUserId  = {{ user.id }};
+        var accountBalance = {{ user.balance|number_format(2) }};
+        var creditLimit    = "{% if user.activeMembership %}{{ user.activeMembership.membershipType.creditLimit }}{% else %}{% endif %}";
+            {% else %}
         var currentUserId  = {{ app.user.id }};
         var accountBalance = {{ app.user.balance|number_format(2) }};
         var creditLimit    = "{% if app.user.activeMembership %}{{ app.user.activeMembership.membershipType.creditLimit }}{% else %}{% endif %}";
+            {% endif %}
         {% else %}
         var currentUserId  = 0;
         var accountBalance = 0;

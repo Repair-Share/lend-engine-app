@@ -14,13 +14,14 @@ Feature suggestions and pull requests are welcome (with the caveat that we need 
 
 **Getting started**
 
-1. Download the repo from https://github.com/lend-engine/lend-engine-app
-2. Run tenant_setup.sql - this adds a development account into the tenant list. Set your email.
+1. Download the repo from https://github.com/lend-engine/lend-engine-app 
+and then run `composer install` to add dependencies.
+2. Run `tenant_setup.sql` - this adds a development account into the tenant list. Set your email.
 3. Add your environment variables
 4. If your dev server is running at localhost:8001, add that as the stub for the account.
 5. ``CREATE DATABASE unit_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;``
-6. ``UPDATE _core.account SET status = 'DEPLOYING';``
-7. Set owner_name and owner_email to yours.
+6. ``UPDATE _core.account SET status = 'DEPLOYING' where stub = 'unit_test';``
+7. Set `account.owner_name` and `account.owner_email` to yours.
 8. Lastly, visit the deployment URL to create a new account 
 ``http://localhost:8001/deploy``
 
