@@ -138,7 +138,7 @@ class AdminLoanListDataController extends Controller
             $loanInfo = '<a href="'.$editUrl.'">'.$loanRow->getInventoryItem()->getName().'</a>';
             $loanInfo .= '<div class="sub-text">'.$loan->getContact()->getFirstName().' '.$loan->getContact()->getLastName().' : '.$loan->getContact()->getEmail().'</div>';
 
-            if ($loan->getStatus() == Loan::STATUS_RESERVED) {
+            if ($loan->getStatus() == Loan::STATUS_RESERVED && $loanRow->getInventoryItem()->getInventoryLocation()) {
                 if ($loanRow->getInventoryItem()->getInventoryLocation()->getSite() != $loanRow->getSiteFrom()) {
                     $loanInfo .= '<span style="color: #de7c34">Item needs moving from ' .$loanRow->getInventoryItem()->getInventoryLocation()->getSite()->getName().'</span>';
                 }
