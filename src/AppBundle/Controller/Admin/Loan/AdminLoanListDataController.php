@@ -149,13 +149,13 @@ class AdminLoanListDataController extends Controller
             $row[] = $loanInfo;
 
             $fromSite = '';
-            if ($settingsService->getSettingValue('multi_site')) {
+            if ($settingsService->getSettingValue('multi_site') && $loanRow->getSiteFrom()) {
                 $fromSite = '<div class="sub-text">'.$loanRow->getSiteFrom()->getName().'</div>';
             }
             $row[] = $loanRow->getDueOutAt()->format("D. d M Y").'<div style="font-size: 12px">'.$loanRow->getDueOutAt()->format("g:i a").'</div>'.$fromSite;
 
             $toSite = '';
-            if ($settingsService->getSettingValue('multi_site')) {
+            if ($settingsService->getSettingValue('multi_site') && $loanRow->getSiteTo()) {
                 $toSite = '<div class="sub-text">'.$loanRow->getSiteTo()->getName().'</div>';
             }
             $row[] = $loanRow->getDueInAt()->format("D. d M Y").'<div style="font-size: 12px">'.$loanRow->getDueInAt()->format("g:i a").'</div><div class="sub-text">'.$toSite;
