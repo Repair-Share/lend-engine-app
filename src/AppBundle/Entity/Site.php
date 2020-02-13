@@ -372,7 +372,7 @@ class Site
     }
 
     /**
-     * @return ArrayCollection
+     * @return array|ArrayCollection
      */
     public function getSiteOpenings()
     {
@@ -422,13 +422,21 @@ class Site
         return $closed;
     }
 
-    public function getOpenTimes()
+    /**
+     * @param string $type
+     * @return array
+     */
+    public function getOpenTimes($type = 'all')
     {
         $open = [];
         foreach ($this->getEvents() AS $ote) {
             /** @var $ote \AppBundle\Entity\Event */
             if ($ote->getType() == 'o') {
-                $open[] = $ote;
+                if ($type == 'all') {
+                    $open[] = $ote;
+                } else if ($type == 'published' && $ote->getStatus() == Event::STATUS_PUBLISHED) {
+                    $open[] = $ote;
+                }
             }
         }
         return $open;

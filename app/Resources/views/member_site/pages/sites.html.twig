@@ -16,7 +16,7 @@
         <div class="col-sm-6">
 
             <style type="text/css">
-                .map
+                .sites_map
                 {
                     height:400px;
                     width:100%;
@@ -24,7 +24,7 @@
                 }
             </style>
 
-            <div class="map" id="map"></div>
+            <div class="sites_map" id="sites_map"></div>
 
             <script>
                 window.onload = function() {
@@ -41,7 +41,7 @@
                                 zoom: 12,
                                 center: _position
                             };
-                            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+                            var map = new google.maps.Map(document.getElementById('sites_map'), mapOptions);
                         } else {
                             console.log(status);
                         }
@@ -101,7 +101,8 @@
                             {% endfor %}
                         {% endif %}
 
-                        {% if site.openTimes|length > 0 %}
+                        {#Get events#}
+                        {% if site.openTimes('published')|length > 0 %}
 
                             {% if site.siteOpenings|length > 0 %}
                                 <br>
@@ -114,8 +115,11 @@
                                 </div>
                             {% endif %}
 
-                            {% for slot in site.openTimes %}
+                            {% for slot in site.openTimes('published') %}
                                 <div style="padding-bottom: 3px">
+                                    {% if slot.title %}
+                                        <a href="{{ path('event_preview', {eventId: slot.id}) }}" class="modal-link">{{ slot.title }}</a><br>
+                                    {% endif %}
                                     {{ slot.date|date("l d F", "Europe/London") }}, <br>
                                     {{ slot.friendlyTimeFrom }} - {{ slot.friendlyTimeTo }}
                                 </div>
