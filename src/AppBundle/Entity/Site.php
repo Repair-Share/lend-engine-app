@@ -434,7 +434,8 @@ class Site
             if ($ote->getType() == 'o') {
                 if ($type == 'all') {
                     $open[] = $ote;
-                } else if ($type == 'published' && $ote->getStatus() == Event::STATUS_PUBLISHED) {
+                } else if ($type == 'published'
+                    && ($ote->getStatus() == Event::STATUS_PUBLISHED || $ote->getTitle() == null)) {
                     $open[] = $ote;
                 }
             }
