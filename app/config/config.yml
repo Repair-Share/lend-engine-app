@@ -105,8 +105,7 @@ fos_user:
             template: emails/fos_password_reset.email.twig
     registration:
         confirmation:
-            enabled: true
-            template: emails/fos_registration.email.twig
+            enabled: false
         form:
             type: AppBundle\Form\RegistrationType
             validation_groups: [AppBundleSiteRegistration]

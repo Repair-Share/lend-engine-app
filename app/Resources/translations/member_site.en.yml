@@ -228,8 +228,10 @@ public_payments:
   no_payment_required: No payment required
   title: Fees and Payments
 
-# Registration page
+# Registration process
 public_registration:
+  check_email_title: Please check your email.
+  check_email_body: An email has been sent with a link to complete the registration process.
   newsletter: Subscribe to our newsletter
   terms_link: View our Terms and Conditions
   terms_label: I agree to the Terms and Conditions

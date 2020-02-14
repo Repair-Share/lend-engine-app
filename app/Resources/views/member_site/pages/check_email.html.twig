@@ -1,0 +1,11 @@
+{% extends 'member_site/themes/loader.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block body %}
+    <div id="check-email">
+        <h2>{% trans %}public_registration.check_email_title{% endtrans %}</h2>
+        <p>
+            {% trans %}public_registration.check_email_body{% endtrans %}
+        </p>
+    </div>
+{% endblock %}

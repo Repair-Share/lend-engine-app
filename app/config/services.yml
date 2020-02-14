@@ -110,10 +110,29 @@ services:
             - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
 
     # FOS USER
+
+    service.fos_user_mailer:
+        class: AppBundle\Mailer\FOSMailer
+        arguments:
+            - "@service_container"
+            - "@twig"
+            - "@router"
+
+    # If user activation is enabled, this is used when email is confirmed:
     fos_user.registration_complete:
         class: AppBundle\EventListener\RegistrationConfirmListener
         arguments:
             - "@router"
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # This is used when registration form is submitted:
+    fos_user.registration_success:
+        class: AppBundle\EventListener\RegistrationSuccessListener
+        arguments:
+            - "@router"
+            - "@service.fos_user_mailer"
+            - "@fos_user.util.token_generator"
         tags:
             - { name: kernel.event_subscriber }
 
@@ -254,13 +273,6 @@ services:
         arguments:
             - "@doctrine.orm.entity_manager"
             - "@settings"
-
-    service.fos_user_mailer:
-        class: AppBundle\Mailer\FOSMailer
-        arguments:
-            - "@service_container"
-            - "@twig"
-            - "@router"
 
     ## REPORT SERVICES
 

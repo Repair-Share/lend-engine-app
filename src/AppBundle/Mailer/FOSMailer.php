@@ -35,8 +35,6 @@ class FOSMailer implements MailerInterface
      */
     public function sendConfirmationEmailMessage(UserInterface $user)
     {
-        $template        = $this->container->getParameter('fos_user.registration.confirmation.template');
-
         /** @var \AppBundle\Services\TenantService $tenantService */
         $tenantService = $this->container->get('service.tenant');
 
@@ -45,29 +43,42 @@ class FOSMailer implements MailerInterface
         $fromEmail      = $tenantService->getSenderEmail();
         $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
-        $url = $this->router->generate('fos_user_registration_confirm', array('token' => $user->getConfirmationToken()), UrlGeneratorInterface::ABSOLUTE_URL);
+        // If we are requiring email confirmation, there will be a token
+        if ($user->getConfirmationToken()) {
+            $template = 'emails/fos_registration.email.twig';
+            $url = $this->router->generate('fos_user_registration_confirm', array('token' => $user->getConfirmationToken()), UrlGeneratorInterface::ABSOLUTE_URL);
+            $subject = 'Please confirm your email address';
+        } else {
+            $template = 'emails/site_welcome.html.twig';
+            $url = '';
+            $subject = 'Welcome to our lending library';
+        }
 
         $message = $this->twig->render(
             $template,
-            array(
+            [
                 'user' => $user,
-                'confirmationUrl' => $url
-            )
+                'confirmationUrl' => $url,
+                'email' => '',
+                'password' => ''
+            ]
         );
 
         $toEmail = $user->getEmail();
 
         $client = new PostmarkClient($postmarkApiKey);
+
         $client->sendEmail(
             "{$senderName} <{$fromEmail}>",
             $toEmail,
-            "Confirm your registration.",
+            $subject,
             $message,
             null,
             null,
             null,
             $replyToEmail
         );
+
     }
 
     /**

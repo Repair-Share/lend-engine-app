@@ -38,7 +38,7 @@ class RegistrationController extends Controller
         $tenantService = $this->get('service.tenant');
 
         if (!$contact->getEmail()) {
-            return true;
+            return $this->redirectToRoute('home');
         }
 
         if ($locale = $contact->getLocale()) {

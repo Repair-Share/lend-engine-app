@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Used to redirect the user to a different page when they register
+ * Used to override the default response when a user confirms email address
  */
 
 namespace AppBundle\EventListener;

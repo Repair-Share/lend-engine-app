@@ -42,12 +42,12 @@ change_password:
 
 # Registration
 registration:
-    check_email: ... pop along to your inbox and see if it's there.
+    check_email: Check your inbox and see if it's there.
     confirmed: Your account is activated and you're logged in!
     back: Continue...
     submit: Register
     flash:
-        user_created: An email has been sent to you. It contains an activation link you must click to activate your account.
+        user_created: Your account has been created.
     email:
         subject: Welcome!
         message: |
