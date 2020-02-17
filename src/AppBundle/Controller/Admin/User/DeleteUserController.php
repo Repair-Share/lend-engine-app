@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Admin\User;
 
+use Doctrine\DBAL\DBALException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,8 +36,12 @@ class DeleteUserController extends Controller
             try {
                 $em->flush();
                 $this->addFlash('success', "Done. Deleted user!");
-            } catch (DBALException $e) {
-                $this->addFlash('error', $e->getMessage());
+            } catch (\Exception $e) {
+                if (strstr($e->getMessage(), 'a foreign key constraint fails')) {
+                    $this->addFlash('error', "This user is connected to historical transactions. Please remove administrative access instead.");
+                } else {
+                    $this->addFlash('error', $e->getMessage());
+                }
             }
         }
 
