@@ -80,7 +80,8 @@ class SettingsMemberSiteType extends AbstractType
             'required' => false,
             'attr' => array(
                 'placeholder' => '',
-                'data-help' => 'This page shows when a user confirms their email address.
+                'data-help' => 'This page shows when a user confirms their email address, 
+or completes the registration form if you have email confirmation turned off.
 Save and then <a target="_blank" href="/member/welcome">preview here</a>.
 If you have any self-serve membership types,
 then the user will also be shown a button to continue to choose a membership.',
@@ -186,6 +187,17 @@ then the user will also be shown a button to continue to choose a membership.',
             'attr' => [
                 'class' => 'input-100',
                 'data-help' => "If any one of the group is available, the grouped item will show as available."
+            ]
+        ));
+
+        $builder->add('registration_require_email_confirmation', ToggleType::class, array(
+            'expanded' => true,
+            'label' => 'Require email confirmation before user can log in.',
+            'data' => (int)$dbData['registration_require_email_confirmation'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => "If this is turned on, users will need to click a link in a confirmation email before registration is complete."
             ]
         ));
 

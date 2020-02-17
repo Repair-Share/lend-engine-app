@@ -10,6 +10,7 @@
     <p>{{ tenantInformation.emailWelcomeHeader|raw }}</p>
     <br><br>
 
+    {% if password %}
     <table cellpadding="10" cellspacing="0">
         <tr>
             <td>{{ 'le_email.url'|trans() }}:</td>
@@ -24,10 +25,10 @@
             <td>{{ password }}</td>
         </tr>
     </table>
+    {% endif %}
 
     <br>
     <br>
     <p>{{ tenantInformation.emailWelcomeFooter|raw }}</p>
-
 
 {% endblock %}

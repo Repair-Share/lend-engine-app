@@ -204,6 +204,7 @@
             <h2>Registration and log in</h2>
 
             {{ form_row(form.site_allow_registration) }}
+            {{ form_row(form.registration_require_email_confirmation) }}
             {#{{ form_row(form.use_captcha) }}#}
             {{ form_row(form.registration_terms_uri) }}
             {{ form_row(form.site_is_private) }}

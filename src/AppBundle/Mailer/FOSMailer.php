@@ -6,28 +6,37 @@
  */
 namespace AppBundle\Mailer;
 
+use AppBundle\Services\EmailService;
+use AppBundle\Services\SettingsService;
+use AppBundle\Services\TenantService;
 use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Mailer\MailerInterface;
 use Postmark\PostmarkClient;
 use Postmark\Models\PostmarkException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class FOSMailer implements MailerInterface
 {
 
+    protected $emailer;
     protected $router;
-    protected $container;
+    protected $tenant;
+    protected $settings;
 
-    public function __construct(Container $container, \Twig_Environment $twig, RouterInterface $router)
+    public function __construct(EmailService $emailService,
+                                TenantService $tenantService,
+                                \Twig_Environment $twig,
+                                RouterInterface $router,
+                                SettingsService $settings)
     {
-        $this->container = $container;
+        $this->emailer = $emailService;
+        $this->tenant = $tenantService;
         $this->twig = $twig;
         $this->router = $router;
+        $this->settings = $settings;
     }
 
     /**
@@ -35,23 +44,24 @@ class FOSMailer implements MailerInterface
      */
     public function sendConfirmationEmailMessage(UserInterface $user)
     {
-        /** @var \AppBundle\Services\TenantService $tenantService */
-        $tenantService = $this->container->get('service.tenant');
 
-        $senderName     = $tenantService->getCompanyName();
-        $replyToEmail   = $tenantService->getReplyToEmail();
-        $fromEmail      = $tenantService->getSenderEmail();
-        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
+        $senderName     = $this->tenant->getCompanyName();
+        $replyToEmail   = $this->tenant->getReplyToEmail();
+        $fromEmail      = $this->tenant->getSenderEmail();
+        $postmarkApiKey = $this->tenant->getSetting('postmark_api_key');
 
         // If we are requiring email confirmation, there will be a token
+        // Set in RegistrationSuccessListener
         if ($user->getConfirmationToken()) {
-            $template = 'emails/fos_registration.email.twig';
+            $template = 'emails/registration.email.twig';
             $url = $this->router->generate('fos_user_registration_confirm', array('token' => $user->getConfirmationToken()), UrlGeneratorInterface::ABSOLUTE_URL);
             $subject = 'Please confirm your email address';
         } else {
             $template = 'emails/site_welcome.html.twig';
             $url = '';
-            $subject = 'Welcome to our lending library';
+            if (!$subject = $this->settings->getSettingValue('email_welcome_subject')) {
+                $subject = 'Welcome to our lending library';
+            }
         }
 
         $message = $this->twig->render(
@@ -86,29 +96,27 @@ class FOSMailer implements MailerInterface
      */
     public function sendResettingEmailMessage(UserInterface $user)
     {
-        $template          = $this->container->getParameter('fos_user.resetting.email.template');
+        $template = 'emails/fos_password_reset.email.twig';
 
-        /** @var \AppBundle\Services\TenantService $tenantService */
-        $tenantService = $this->container->get('service.tenant');
-
-        $senderName     = $tenantService->getCompanyName();
-        $replyToEmail   = $tenantService->getReplyToEmail();
-        $fromEmail      = $tenantService->getSenderEmail();
-        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
+        $senderName     = $this->tenant->getCompanyName();
+        $replyToEmail   = $this->tenant->getReplyToEmail();
+        $fromEmail      = $this->tenant->getSenderEmail();
+        $postmarkApiKey = $this->tenant->getSetting('postmark_api_key');
 
         $url = $this->router->generate('fos_user_resetting_reset', array('token' => $user->getConfirmationToken()), UrlGeneratorInterface::ABSOLUTE_URL);
 
         $message = $this->twig->render(
             $template,
-            array(
+            [
                 'user' => $user,
                 'confirmationUrl' => $url
-            )
+            ]
         );
 
         $toEmail = $user->getEmail();
 
         $client = new PostmarkClient($postmarkApiKey);
+
         $client->sendEmail(
             "{$senderName} <{$fromEmail}>",
             $toEmail,

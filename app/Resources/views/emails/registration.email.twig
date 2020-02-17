@@ -1,4 +1,3 @@
-{# app/Resources/views/emails/fos_registration.email.twig #}
 {% extends '/emails/template.html.twig' %}
 
 {% trans_default_domain 'FOSUserBundle' %}
@@ -25,7 +24,7 @@
 
     <br><br>
 
-    <div style="padding: 10px;">
+    <div style="padding: 10px 0;">
         {% block body_text %}
             {% autoescape false %}
             {{ 'registration.email.message'|trans({'%username%': user.username, '%confirmationUrl%': confirmationUrl}, 'FOSUserBundle') }}

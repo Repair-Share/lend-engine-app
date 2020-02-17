@@ -284,6 +284,7 @@ class SettingsService
             'site_facebook_login',
             'site_twitter_login',
             'site_allow_registration',
+            'registration_require_email_confirmation',
             'site_description',
             'site_font_name',
             'site_theme_name',

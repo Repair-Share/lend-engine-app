@@ -114,11 +114,13 @@ services:
     service.fos_user_mailer:
         class: AppBundle\Mailer\FOSMailer
         arguments:
-            - "@service_container"
+            - "@service.email"
+            - "@service.tenant"
             - "@twig"
             - "@router"
+            - "@settings"
 
-    # If user activation is enabled, this is used when email is confirmed:
+    # If email confirmation is enabled, this is used when email address is confirmed:
     fos_user.registration_complete:
         class: AppBundle\EventListener\RegistrationConfirmListener
         arguments:
@@ -133,6 +135,7 @@ services:
             - "@router"
             - "@service.fos_user_mailer"
             - "@fos_user.util.token_generator"
+            - "@settings"
         tags:
             - { name: kernel.event_subscriber }
 
