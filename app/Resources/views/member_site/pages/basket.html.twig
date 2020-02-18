@@ -122,6 +122,8 @@
 
                         </div>
 
+                        <a href="{{ path('add_credit') }}" id="addCreditButton" class="btn btn-success" style="margin-top:10px; display:none">{% trans %}button_add_credit{% endtrans %}</a>
+
                     </div>
 
                 </div>
@@ -300,7 +302,8 @@
                         // carry on
                     } else {
                         // Can't check out
-                        $("#buttonCheckOut").attr('disabled', true).html("Insufficient credit to check out");
+                        $("#buttonCheckOut").attr('disabled', true).html("Insufficient credit to check out").addClass("btn-default").removeClass("btn-success");
+                        $("#addCreditButton").show();
                     }
                 }
             }
@@ -314,7 +317,8 @@
                     // carry on and charge all to account
                 } else {
                     // Can't reserve
-                    $("#buttonConfirm").attr('disabled', true).html("Insufficient credit to create reservation");
+                    $("#buttonConfirm").attr('disabled', true).html("Insufficient credit to create reservation").addClass("btn-default").removeClass("btn-success");
+                    $("#addCreditButton").show();
                 }
             }
             
