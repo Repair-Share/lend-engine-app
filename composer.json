@@ -28,7 +28,7 @@
         "wildbit/postmark-php": "^2.6",
         "league/flysystem-aws-s3-v3": "dev-master",
         "oneup/flysystem-bundle": "@stable",
-        "oneup/uploader-bundle": "~1.4",
+        "oneup/uploader-bundle": "1.9.3",
         "stripe/stripe-php": "6.*",
         "sensio/generator-bundle": "^3.1",
         "sensio/distribution-bundle": "^5.0",
