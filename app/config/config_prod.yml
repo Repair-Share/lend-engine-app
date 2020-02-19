@@ -31,12 +31,12 @@ monolog:
     handlers:
         main:
             type:         fingers_crossed
-            action_level: debug
+            action_level: error
             handler:      nested
         nested:
             type:  stream
             path:  "php://stderr"
-            level: debug
+            level: error
         console:
             type:  console
 
