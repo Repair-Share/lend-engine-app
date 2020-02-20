@@ -313,7 +313,7 @@
                 // Reservation fee is due
                 if (creditLimit == "") {
                     // carry on
-                } else if (reservationTotal < availableCredit) {
+                } else if (reservationTotal <= availableCredit) {
                     // carry on and charge all to account
                 } else {
                     // Can't reserve
