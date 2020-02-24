@@ -85,7 +85,7 @@ class BillingService
                     'WhiteLabel'        => false,
                     'EventBooking'      => true,
                     'Kits'              => true,
-                    'StockItems'        => false,
+                    'StockItems'        => true,
                     'MaintenancePlan'   => false,
                 ];
                 break;
