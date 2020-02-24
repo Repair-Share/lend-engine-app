@@ -71,9 +71,9 @@ class MenuBuilder
             $this->addChildItem('Items', 'Add kit <sup><label class="label bg-orange">NEW</label></sup>', 'item_sector', '', '', ['type' => 'kit']);
         }
 
-//        if ($this->container->get('service.tenant')->getFeature('StockItems')) {
-//            $this->addChildItem('Items', 'Add stock item <sup><label class="label bg-orange">NEW</label></sup>', 'item_sector', '', '', ['type' => 'stock']);
-//        }
+        if ($this->container->get('service.tenant')->getFeature('StockItems')) {
+            $this->addChildItem('Items', 'Add stock item <sup><label class="label bg-orange">NEW</label></sup>', 'item_sector', '', '', ['type' => 'stock']);
+        }
 
         if ($this->container->get('settings')->getSettingValue('enable_waiting_list')) {
             $this->addChildItem('Items', 'Waiting list', 'item_waiting_list', '');

@@ -205,6 +205,7 @@
                 {% for page in pages %}
                     <a href="{{ path('public_products', {
                         tagId: app.request.get('tagId'),
+                        siteId: app.request.get('siteId'),
                         show: app.request.get('show'),
                         search: app.request.get('search'),
                         e: app.request.get('e'),
