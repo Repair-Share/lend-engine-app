@@ -148,11 +148,14 @@
                         {% else %}
                             <input type="hidden" name="row_qty[{{ row.id }}]" id="qty-{{ row.id }}"
                                    value="{{ row.productQuantity }}"
-                                   class="basket-amount save-on-change" style="text-align:center">
+                                   class="basket-amount save-on-change">
                             {{ row.productQuantity }}
                         {% endif %}
 
                         {% trans %}public_basket.from{% endtrans %} {{ row.siteFrom.name }} / {{ row.itemLocation.name }}
+                    {% else %}
+                        {#Kit item#}
+                        <input type="hidden" name="row_qty[{{ row.id }}]" id="qty-{{ row.id }}" value="{{ row.productQuantity }}">
                     {% endif %}
 
                     {# Checked in #}
@@ -231,19 +234,6 @@
                     {% if row.inventoryItem.itemType == 'stock' %}
                         <br>{% trans %}public_item.each{% endtrans %}
                     {% endif %}
-
-                    <div class="row-charge">
-                        {% for p in loan.payments %}
-                            {% if p.inventoryItem == row.inventoryItem %}
-                                <div>
-                                    {#Charged {{ tenantInformation.currencySymbol }} {{ p.amount|number_format(2) }}#}
-                                    {#{% if loan.status in ['RESERVED', 'PENDING', 'ACTIVE'] %}#}
-                                    {#<input type="hidden" class="row-paid" value="{{ p.amount }}">#}
-                                    {#{% endif %}#}
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
 
                     {% if loan.loanRows|length > 1 and not row.isCheckedOut and loan.status in ['RESERVED', 'PENDING'] %}
                         <a href="{{ path('loan_item_remove', {rowId: row.id}) }}" style="margin-top: 4px; display: block">
@@ -602,7 +592,6 @@
                 if (qtyId) {
                     qty = $("#"+qtyId).val();
                 }
-
                 basketTotal += $(this).val() * qty;
             });
 
