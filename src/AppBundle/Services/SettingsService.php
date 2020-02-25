@@ -262,6 +262,7 @@ class SettingsService
 
             // Web page header text
             'page_event_header',
+            'page_registration_header',
 
             // Stripe card details
             'stripe_access_token',
