@@ -49,7 +49,7 @@ class ItemCheckInType extends AbstractType
             $siteId = $this->activeSite->getId();
             $formHelp = 'You are working at "'.$this->activeSite->getName().'". <a href="/admin/choose-site" class="modal-link">Change</a>.';
         } else {
-            $siteId = 1;
+            $siteId = null;
             $formHelp = '';
         }
 
@@ -63,7 +63,7 @@ class ItemCheckInType extends AbstractType
         $builder->add('location', EntityType::class, array(
             'class' => 'AppBundle:InventoryLocation',
             'choices' => $locations,
-            'choice_label' => 'name',
+            'choice_label' => 'nameWithSite',
             'label' => 'Check in to location',
             'required' => true,
             'data' => $defaultValue,

@@ -48,7 +48,7 @@ class InventoryLocationRepository extends \Doctrine\ORM\EntityRepository
     /**
      * Validated that we can delete the location
      * @param $id
-     * @return array
+     * @return bool
      * @throws \Doctrine\DBAL\DBALException
      */
     public function validateDelete($id)

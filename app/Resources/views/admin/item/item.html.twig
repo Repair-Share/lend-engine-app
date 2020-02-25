@@ -117,12 +117,6 @@
                 </strong>
             </span>
 
-
-            {#{% if item.assignedTo %}#}
-                {#<span class="item-inventory-detail-span">Assigned to:</span>#}
-                {#<span class="item-inventory-detail-span"><strong>{{ item.assignedTo.Name }}</strong></span>#}
-            {#{% endif %}#}
-
             {% if item.inventoryLocation.id != 1 %}
                 <span class="item-inventory-detail-span">
                     <a class="modal-link" href="{{ path('item_move', {idSet: item.id}) }}">Move / Service</a>
@@ -360,6 +354,10 @@
 
                 {% set showPrompts = '' %}
                 {% if not tenantInformation.feature('CheckInPrompt') %}
+                    <div class="upgrade">
+                        Check in and check out prompts are not available on your plan.
+                        <a href="{{ path('billing') }}">Upgrade / view plans</a>
+                    </div>
                     {% set showPrompts = 'none' %}
                 {% endif %}
 
@@ -390,9 +388,7 @@
             </div>
 
             <div class="tab-pane" id="maintenance" style="position: relative">
-
                 {{ include('admin/item/tabs/item_maintenance.html.twig') }}
-
             </div>
 
             {# This tab must be last in the form due to form_rest() #}
