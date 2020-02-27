@@ -76,7 +76,8 @@ class CustomConnectionFactory extends ConnectionFactory
                 die("The account '{$account_code}' has expired.");
             }
         } else {
-            die("We don't have an account for <strong>{$account_code}</strong> or <strong>'.$httpHost.'</strong>");
+            $html = $this->noAccount($account_code, $httpHost);
+            die($html);
         }
 
         $params['driver']   = 'pdo_mysql';
@@ -147,6 +148,37 @@ class CustomConnectionFactory extends ConnectionFactory
         } catch(PDOException $ex) {
             die("Failed to run query");
         }
+    }
+
+    private function noAccount($accountCode, $host)
+    {
+        $html = <<<EOL
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Error</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <style>
+        body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif }
+        .content {
+            width: 100%;
+            padding: 100px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="content">
+    No Lend Engine account found for <strong>{$accountCode}</strong> or <strong>{$host}</strong>
+</div>
+</body>
+</html>
+EOL;
+
+        return $html;
+
     }
 
 }

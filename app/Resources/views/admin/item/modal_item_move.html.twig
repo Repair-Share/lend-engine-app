@@ -11,12 +11,6 @@ Move or service item:
 
 {% block body %}
 
-    <div class="alert alert-warning">
-        With the recent release of the maintenance feature, "assign to" has been replaced with "create a maintenance task".<br>
-        You'll need to have created one or more maintenance types first.<br>
-        If the maintenance type has a provider, they will be emailed when maintenance is scheduled.
-    </div>
-
     {{ form_start(form) }}
     {{ form_errors(form) }}
     {% if help is defined %}
@@ -30,6 +24,11 @@ Move or service item:
         <div class="col-md-6">
             {{ form_row(form.maintenancePlan) }}
         </div>
+    </div>
+
+    <div class="help-block">
+        In order to create maintenance or service tasks; you'll need to have created one or more maintenance types first.<br>
+        If the maintenance type has a provider, they will be emailed when maintenance is scheduled.
     </div>
 
     <div class="row">
