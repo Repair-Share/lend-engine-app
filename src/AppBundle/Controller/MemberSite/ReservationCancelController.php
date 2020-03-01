@@ -63,11 +63,16 @@ class ReservationCancelController extends Controller
             $msg = $this->get('translator')->trans('msg_success.reservation_cancel', [], 'member_site');
             $this->addFlash('success', $msg);
 
+            $body = <<<EOB
+Reservation / loan {$loan->getId()} has been cancelled by ".$user->getName().".<br>
+Member: {$loan->getContact()->getName()} / Email: {$loan->getContact()->getEmail()}
+EOB;
+
             $message = $this->renderView(
                 'emails/template.html.twig',
                 [
                     'heading' => "",
-                    'message'  => "Reservation / loan {$loan->getId()} has been cancelled by ".$user->getName()."."
+                    'message'  => $body
                 ]
             );
 
