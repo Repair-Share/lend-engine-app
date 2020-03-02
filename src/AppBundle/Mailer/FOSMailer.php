@@ -44,12 +44,6 @@ class FOSMailer implements MailerInterface
      */
     public function sendConfirmationEmailMessage(UserInterface $user)
     {
-
-        $senderName     = $this->tenant->getCompanyName();
-        $replyToEmail   = $this->tenant->getReplyToEmail();
-        $fromEmail      = $this->tenant->getSenderEmail();
-        $postmarkApiKey = $this->tenant->getSetting('postmark_api_key');
-
         // If we are requiring email confirmation, there will be a token
         // Set in RegistrationSuccessListener
         if ($user->getConfirmationToken()) {
@@ -75,20 +69,10 @@ class FOSMailer implements MailerInterface
         );
 
         $toEmail = $user->getEmail();
+        $toName  = $user->getName();
 
-        $client = new PostmarkClient($postmarkApiKey);
-
-        $client->sendEmail(
-            "{$senderName} <{$fromEmail}>",
-            $toEmail,
-            $subject,
-            $message,
-            null,
-            null,
-            null,
-            $replyToEmail
-        );
-
+        // Send the email
+        $this->emailer->send($toEmail, $toName, $subject, $message, false);
     }
 
     /**
@@ -97,12 +81,6 @@ class FOSMailer implements MailerInterface
     public function sendResettingEmailMessage(UserInterface $user)
     {
         $template = 'emails/fos_password_reset.email.twig';
-
-        $senderName     = $this->tenant->getCompanyName();
-        $replyToEmail   = $this->tenant->getReplyToEmail();
-        $fromEmail      = $this->tenant->getSenderEmail();
-        $postmarkApiKey = $this->tenant->getSetting('postmark_api_key');
-
         $url = $this->router->generate('fos_user_resetting_reset', array('token' => $user->getConfirmationToken()), UrlGeneratorInterface::ABSOLUTE_URL);
 
         $message = $this->twig->render(
@@ -114,19 +92,9 @@ class FOSMailer implements MailerInterface
         );
 
         $toEmail = $user->getEmail();
+        $toName  = $user->getName();
 
-        $client = new PostmarkClient($postmarkApiKey);
-
-        $client->sendEmail(
-            "{$senderName} <{$fromEmail}>",
-            $toEmail,
-            "Reset your password.",
-            $message,
-            null,
-            null,
-            null,
-            $replyToEmail
-        );
-
+        // Send the email
+        $this->emailer->send($toEmail, $toName, "Reset your password.", $message, false);
     }
 }

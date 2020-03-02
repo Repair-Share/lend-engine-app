@@ -49,4 +49,15 @@
 
     </div>
 
+    {% if tenantInformation.allowRegistration %}
+
+        <div class="row">
+
+        <div class="col-md-6">
+        <h2>{{ 'public_registration.login_page_new_account'|trans({}, 'member_site') }}</h2>
+        <a href="{{ path('fos_user_registration_register') }}" class="btn btn-primary btn-block">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a>
+        </div>
+        </div>
+    {% endif %}
+
 {% endblock fos_user_content %}

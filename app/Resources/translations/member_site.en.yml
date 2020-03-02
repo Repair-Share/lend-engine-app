@@ -230,6 +230,7 @@ public_payments:
 
 # Registration process
 public_registration:
+  login_page_new_account: Register for a new account
   check_email_title: Please check your email.
   check_email_body: An email has been sent with a link to complete the registration process.
   newsletter: Subscribe to our newsletter
