@@ -37,6 +37,9 @@ class RegistrationController extends Controller
         /** @var \AppBundle\Services\TenantService $tenantService */
         $tenantService = $this->get('service.tenant');
 
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
+
         if (!$contact->getEmail()) {
             return $this->redirectToRoute('home');
         }
@@ -86,49 +89,29 @@ class RegistrationController extends Controller
         }
 
         // Send an email to admin
-        try {
+        $ownerEmail = $tenantService->getCompanyEmail();
+        $ownerName = $tenantService->getAccountName();
 
-            $senderName     = $tenantService->getCompanyName();
-            $replyToEmail   = $tenantService->getReplyToEmail();
-            $fromEmail      = $tenantService->getSenderEmail();
-            $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
-
-            $client = new PostmarkClient($postmarkApiKey);
-            $ownerEmail = $tenantService->getCompanyEmail();
-
-            $extra = '';
-            if ($addedToMailchimp) {
-                $extra .= PHP_EOL.'The user was added to your Mailchimp email list.';
-            }
-
-            if ($addedMembershipType) {
-                $extra .= PHP_EOL."The user was subscribed as a {$addedMembershipType} member.";
-            }
-
-            $message = $this->renderView(
-                'emails/template.html.twig',
-                array(
-                    'heading' => "Your library is growing!",
-                    'message' => "A new contact has confirmed their email address on your Lend Engine site".PHP_EOL.PHP_EOL.$contact->getName().PHP_EOL.$contact->getEmail().PHP_EOL.$extra
-                )
-            );
-
-            $client->sendEmail(
-                "{$senderName} <{$fromEmail}>",
-                $ownerEmail,
-                "New registration on your member site : ".$contact->getName(),
-                $message,
-                null,
-                null,
-                true,
-                $replyToEmail
-            );
-
-        } catch (PostmarkException $ex) {
-            $this->addFlash('error', 'Failed to send email:' . $ex->message . ' : ' . $ex->postmarkApiErrorCode);
-        } catch (\Exception $generalException) {
-            $this->addFlash('error', 'Failed to send email:' . $generalException->getMessage());
+        $extra = '';
+        if ($addedToMailchimp) {
+            $extra .= PHP_EOL.'The user was added to your Mailchimp email list.';
         }
+
+        if ($addedMembershipType) {
+            $extra .= PHP_EOL."The user was subscribed as a {$addedMembershipType} member.";
+        }
+
+        $message = $this->renderView(
+            'emails/template.html.twig',
+            array(
+                'heading' => "Your library is growing!",
+                'message' => "A new contact has registered via your Lend Engine site.".PHP_EOL.PHP_EOL.$contact->getName().PHP_EOL.$contact->getEmail().PHP_EOL.$extra
+            )
+        );
+
+        // Send the email without showing member any failures
+        $subject = "New registration on your member site : ".$contact->getName();
+        $emailService->send($ownerEmail, $ownerName, $subject, $message, false);
 
         return $this->render('member_site/registration_welcome.html.twig', [
             'chooseMembership' => $proceedToChooseMembership

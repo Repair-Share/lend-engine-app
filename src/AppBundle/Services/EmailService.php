@@ -3,6 +3,7 @@
 namespace AppBundle\Services;
 
 use Postmark\PostmarkClient;
+use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
 class EmailService
 {
@@ -12,6 +13,9 @@ class EmailService
     /** @var SettingsService */
     private $settingsService;
 
+    /** @var array */
+    private $errors = [];
+
     public function __construct(TenantService $tenantService, SettingsService $settings)
     {
         $this->tenantService = $tenantService;
@@ -19,7 +23,7 @@ class EmailService
     }
 
     /**
-     * Intentionally soaks up the exceptions silently
+     * Intentionally soaks up the admin exceptions silently
      * @param $toEmail
      * @param $toName
      * @param $subject
@@ -58,7 +62,7 @@ class EmailService
                 $attachments
             );
         } catch (\Exception $e) {
-
+            $this->errors[] = $e->getMessage();
         }
 
         $sendToAdmin = false;
@@ -88,12 +92,24 @@ class EmailService
                     $replyToEmail
                 );
             } catch (\Exception $e) {
-
+                // no errors for admin emails
             }
+        }
+
+        if (count($this->errors) > 0) {
+            return false;
         }
 
         return true;
 
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
 
     /**

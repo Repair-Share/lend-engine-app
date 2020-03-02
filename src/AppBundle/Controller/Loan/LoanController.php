@@ -323,61 +323,45 @@ class LoanController extends Controller
      */
     private function sendDonorEmail(LoanRow $loanRow)
     {
-        /** @var \AppBundle\Services\TenantService $tenantService */
-        $tenantService = $this->get('service.tenant');
-
-        $senderName     = $tenantService->getCompanyName();
-        $replyToEmail   = $tenantService->getReplyToEmail();
-        $fromEmail      = $tenantService->getSenderEmail();
-        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
 
         // Send email confirmation
         $toEmail = $loanRow->getInventoryItem()->getDonatedBy()->getEmail();
+        $toName = $loanRow->getInventoryItem()->getDonatedBy()->getName();
 
         if ($toEmail) {
 
             $locale = $loanRow->getInventoryItem()->getDonatedBy()->getLocale();
 
-            try {
+            // Save and switch locale for sending the email
+            $sessionLocale = $this->get('translator')->getLocale();
+            $this->get('translator')->setLocale($locale);
 
-                $client = new PostmarkClient($postmarkApiKey);
+            $message = $this->renderView(
+                'emails/loan_donor_notify.html.twig', [
+                    'loanRow' => $loanRow
+                ]
+            );
 
-                // Save and switch locale for sending the email
-                $sessionLocale = $this->get('translator')->getLocale();
-                $this->get('translator')->setLocale($locale);
-
-                $message = $this->renderView(
-                    'emails/loan_donor_notify.html.twig', [
-                        'loanRow' => $loanRow
-                    ]
-                );
-
-                if (!$subject = $this->get('settings')->getSettingValue('email_donor_notification_subject')) {
-                    $subject = $this->get('translator')->trans('le_email.donor_notify.subject', [], 'emails', $locale);
-                }
-
-                $client->sendEmail(
-                    "{$senderName} <{$fromEmail}>",
-                    $toEmail,
-                    $subject,
-                    $message,
-                    null,
-                    null,
-                    null,
-                    $replyToEmail
-                );
-
-                // Revert locale for the UI
-                $this->get('translator')->setLocale($sessionLocale);
-
-                return true;
-
-            } catch (\Exception $generalException) {
-
-                return false;
-
+            if (!$subject = $this->get('settings')->getSettingValue('email_donor_notification_subject')) {
+                $subject = $this->get('translator')->trans('le_email.donor_notify.subject', [], 'emails', $locale);
             }
+
+            // Send the email
+            if (!$emailService->send($toEmail, $toName, $subject, $message, false)) {
+                foreach ($emailService->getErrors() AS $msg) {
+                    $this->addFlash('error', $msg);
+                }
+            }
+
+            // Revert locale for the UI
+            $this->get('translator')->setLocale($sessionLocale);
+
+            return true;
         }
+
+        return false;
 
     }
 

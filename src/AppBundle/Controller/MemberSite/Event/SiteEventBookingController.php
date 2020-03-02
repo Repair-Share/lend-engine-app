@@ -147,96 +147,48 @@ class SiteEventBookingController extends Controller
 
     }
 
-
+    /**
+     * @param Attendee $attendee
+     * @return bool
+     */
     private function sendBookingConfirmationEmail(Attendee $attendee)
     {
-
-        /** @var \AppBundle\Services\TenantService $tenantService */
-        $tenantService = $this->get('service.tenant');
-
-        $senderName     = $tenantService->getCompanyName();
-        $replyToEmail   = $tenantService->getReplyToEmail();
-        $fromEmail      = $tenantService->getSenderEmail();
-        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
 
         $locale = $attendee->getContact()->getLocale();
 
-        $client = new PostmarkClient($postmarkApiKey);
-
         // Send email confirmation
         if ($toEmail = $attendee->getContact()->getEmail()) {
+
+            $toName = $attendee->getContact()->getName();
 
             if (!$subject = $this->get('settings')->getSettingValue('email_booking_confirmation_subject')) {
                 $subject = $this->get('translator')->trans('le_email.booking_confirmation.subject', [], 'emails', $locale);
             }
 
-            try {
+            // Save and switch locale for sending the email (it should be the same as the UI anyway)
+            $sessionLocale = $this->get('translator')->getLocale();
+            $this->get('translator')->setLocale($locale);
 
-                // Save and switch locale for sending the email (it should be the same as the UI anyway)
-                $sessionLocale = $this->get('translator')->getLocale();
-                $this->get('translator')->setLocale($locale);
+            $message = $this->renderView(
+                'emails/booking_confirmation.html.twig',
+                [
+                    'attendee' => $attendee,
+                    'message'  => ''
+                ]
+            );
 
-                $message = $this->renderView(
-                    'emails/booking_confirmation.html.twig',
-                    array(
-                        'attendee' => $attendee,
-                        'message'  => ''
-                    )
-                );
-
-                $client->sendEmail(
-                    "{$senderName} <{$fromEmail}>",
-                    $toEmail,
-                    $subject.' '.$attendee->getEvent()->getTitle(),
-                    $message,
-                    null,
-                    null,
-                    true,
-                    $replyToEmail
-                );
-
-                // Revert locale for the UI
-                $this->get('translator')->setLocale($sessionLocale);
-
-            } catch (\Exception $generalException) {
-//                $this->addFlash("error", $generalException->getMessage());
-            }
-
-        }
-
-        // Also send an email to company admin
-        if ($replyToEmail != 'email@demo.com') {
-            try {
-
-                if ($toEmail) {
-                    $toName = $attendee->getContact()->getName();
-                    $msg = "This is a copy of the email sent to {$toName} ({$toEmail}).";
-                } else {
-                    $msg = "The member does not have an email address.";
+            // Send the email
+            $subject = $subject.' '.$attendee->getEvent()->getTitle();
+            if (!$emailService->send($toEmail, $toName, $subject, $message, true)) {
+                foreach ($emailService->getErrors() AS $msg) {
+                    $this->addFlash('error', $msg);
                 }
-
-                $message = $this->renderView(
-                    'emails/booking_confirmation.html.twig',
-                    array(
-                        'attendee' => $attendee,
-                        'message'  => $msg
-                    )
-                );
-
-                $client->sendEmail(
-                    "{$senderName} <{$fromEmail}>",
-                    $replyToEmail,
-                    "Booking confirmation : ".$attendee->getEvent()->getTitle(),
-                    $message,
-                    null,
-                    null,
-                    true,
-                    $replyToEmail
-                );
-
-            } catch (\Exception $generalException) {
-
             }
+
+            // Revert locale for the UI
+            $this->get('translator')->setLocale($sessionLocale);
         }
 
         return true;

@@ -28,16 +28,8 @@ class EmailTestController extends Controller
      */
     public function emailTestAction(Request $request)
     {
-
-        /** @var \AppBundle\Services\TenantService $tenantService */
-        $tenantService = $this->get('service.tenant');
-
-        $senderName     = $tenantService->getCompanyName();
-        $replyToEmail   = $tenantService->getReplyToEmail();
-        $fromEmail      = $tenantService->getSenderEmail();
-        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
-
-        $client = new PostmarkClient($postmarkApiKey);
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
 
         $em = $this->getDoctrine()->getManager();
 
@@ -387,31 +379,13 @@ class EmailTestController extends Controller
                 break;
         }
 
-        try {
-
-            $toEmailAddress = $user->getEmail();
-            if ($toEmailAddress == 'admin@email.com') {
-                $toEmailAddress = 'hello@lend-engine.com';
-            }
-
-            $client->sendEmail(
-                "{$senderName} <{$fromEmail}>",
-                $toEmailAddress,
-                $subject,
-                $message,
-                null,
-                null,
-                true,
-                $replyToEmail
-            );
-
+        // Send the email
+        if ($emailService->send($user->getEmail(), $user->getName(), $subject, $message, false)) {
             $this->addFlash('success', "Sent a test email to ".$user->getEmail());
-
-        } catch (\Exception $e) {
-
-            $this->addFlash('debug', $e->getMessage());
-            $this->addFlash('error', 'Failed to send email to '.$user->getEmail());
-
+        } else if ($emailService->getErrors() > 0) {
+            foreach ($emailService->getErrors() AS $msg) {
+                $this->addFlash('error', $msg);
+            }
         }
 
         if ($request->get('template') == 'event_booking') {

@@ -60,33 +60,16 @@ class BillingCancelController extends Controller
      */
     private function sendCancelEmail(Tenant $tenant)
     {
-        try {
-            $client = new PostmarkClient($this->getParameter('postmark_api_key'));
-            $message = $this->renderView('emails/billing_cancel.html.twig',
-                []
-            );
-            $client->sendEmail(
-                "Lend Engine <hello@lend-engine.com>",
-                $tenant->getOwnerEmail(),
-                "We've cancelled your account",
-                $message,
-                null,
-                null,
-                true,
-                'hello@lend-engine.com'
-            );
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
 
-            // And one to admin
-            $client->sendEmail(
-                "Lend Engine billing <hello@lend-engine.com>",
-                "hello@lend-engine.com",
-                "We've cancelled your account",
-                $message
-            );
-        } catch (PostmarkException $ex) {
-            $this->addFlash('error', 'Failed to send email:' . $ex->message . ' : ' . $ex->postmarkApiErrorCode);
-        } catch (\Exception $generalException) {
-            $this->addFlash('error', 'Failed to send email:' . $generalException->getMessage());
+        $message = $this->renderView('emails/billing_cancel.html.twig', []);
+
+        // Send the email
+        if (!$emailService->send($tenant->getOwnerEmail(), $tenant->getOwnerName(), "We've cancelled your account", $message, true)) {
+            foreach ($emailService->getErrors() AS $msg) {
+                $this->addFlash('error', $msg);
+            }
         }
     }
 }

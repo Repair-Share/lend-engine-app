@@ -259,55 +259,38 @@ class ContactController extends Controller
      */
     private function sendWelcomeEmail(Contact $contact, $plainPassword)
     {
-        /** @var \AppBundle\Services\TenantService $tenantService */
-        $tenantService = $this->get('service.tenant');
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
+
         $locale = $contact->getLocale();
 
         if (!$subject = $this->get('settings')->getSettingValue('email_welcome_subject')) {
             $subject = $this->get('translator')->trans('le_email.site_welcome.subject', ['%accountName%' => $this->get('service.tenant')->getCompanyName()], 'emails', $locale);
         }
 
-        $senderName     = $tenantService->getCompanyName();
-        $replyToEmail   = $tenantService->getReplyToEmail();
-        $fromEmail      = $tenantService->getSenderEmail();
-        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
+        // Save and switch locale for sending the email
+        $sessionLocale = $this->get('translator')->getLocale();
+        $this->get('translator')->setLocale($locale);
 
-        try {
-            $client = new PostmarkClient($postmarkApiKey);
+        $message = $this->renderView(
+            'emails/site_welcome.html.twig',
+            [
+                'email'       => $contact->getEmail(),
+                'password'    => $plainPassword
+            ]
+        );
 
-            // Save and switch locale for sending the email
-            $sessionLocale = $this->get('translator')->getLocale();
-            $this->get('translator')->setLocale($locale);
-
-            $message = $this->renderView(
-                'emails/site_welcome.html.twig',
-                array(
-                    'email'       => $contact->getEmail(),
-                    'password'    => $plainPassword
-                )
-            );
-
-            $client->sendEmail(
-                "{$senderName} <{$fromEmail}>",
-                $contact->getEmail(),
-                $subject,
-                $message,
-                null,
-                null,
-                true,
-                $replyToEmail
-            );
-
-            // Revert locale for the UI
-            $this->get('translator')->setLocale($sessionLocale);
-
+        // Send the email
+        if ($emailService->send($contact->getEmail(), $contact->getName(), $subject, $message, false)) {
             $this->addFlash('success', " We've sent a welcome email to " . $contact->getEmail() . ".");
-
-        } catch (PostmarkException $ex) {
-            $this->addFlash('error', 'Failed to send email:' . $ex->message . ' : ' . $ex->postmarkApiErrorCode);
-        } catch (\Exception $generalException) {
-            $this->addFlash('error', 'Failed to send email:' . $generalException->getMessage());
+        } else if ($emailService->getErrors() > 0) {
+            foreach ($emailService->getErrors() AS $msg) {
+                $this->addFlash('error', $msg);
+            }
         }
+
+        // Revert locale for the UI
+        $this->get('translator')->setLocale($sessionLocale);
 
         return true;
     }

@@ -138,64 +138,11 @@ class UserEditController extends Controller
 
             try {
                 $em->flush();
-
                 if ($sendUserEmail == true) {
-
-                    $locale = $user->getLocale();
-                    $accountName = $this->get('service.tenant')->getCompanyName();
-
-                    if (!$subject = $this->get('settings')->getSettingValue('email_welcome_subject')) {
-                        $subject = $this->get('translator')->trans('le_email.login_details.subject', ['%accountName%' => $accountName], 'emails', $locale);
-                    }
-
-                    $senderName     = $tenantService->getCompanyName();
-                    $replyToEmail   = $tenantService->getReplyToEmail();
-                    $fromEmail      = $tenantService->getSenderEmail();
-                    $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
-
-                    try {
-                        $client = new PostmarkClient($postmarkApiKey);
-
-                        // Save and switch locale for sending the email
-                        $sessionLocale = $this->get('translator')->getLocale();
-                        $this->get('translator')->setLocale($locale);
-
-                        $message = $this->renderView(
-                            'emails/login_details.html.twig',
-                            array(
-                                'email'       => $emailAddress,
-                                'password'    => $newPassword
-                            )
-                        );
-
-                        $toEmail = $emailAddress;
-                        $client->sendEmail(
-                            "{$senderName} <{$fromEmail}>",
-                            $toEmail,
-                            $subject,
-                            $message,
-                            null,
-                            null,
-                            true,
-                            $replyToEmail
-                        );
-
-                        // Revert locale for the UI
-                        $this->get('translator')->setLocale($sessionLocale);
-
-                        $flashMessage .= " We've sent an email to " . $emailAddress . " with login information.";
-
-                    } catch (PostmarkException $ex) {
-                        $this->addFlash('error', 'Failed to send email:' . $ex->message . ' : ' . $ex->postmarkApiErrorCode);
-                    } catch (\Exception $generalException) {
-                        $this->addFlash('error', 'Failed to send email:' . $generalException->getMessage());
-                    }
+                    $this->sendWelcomeEmail($user, $newPassword);
                 }
-
                 $this->addFlash('success', $flashMessage);
-
                 return $this->redirectToRoute('users_list');
-
             } catch (DBALException $e) {
                 $this->addFlash('debug', $e->getMessage());
             } catch (\Exception $generalException) {
@@ -210,6 +157,47 @@ class UserEditController extends Controller
             'title' => $pageTitle
         ));
 
+    }
+
+    /**
+     * @param Contact $user
+     * @param $newPassword
+     */
+    private function sendWelcomeEmail(Contact $user, $newPassword)
+    {
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
+
+        $locale = $user->getLocale();
+        $accountName = $this->get('service.tenant')->getCompanyName();
+
+        if (!$subject = $this->get('settings')->getSettingValue('email_welcome_subject')) {
+            $subject = $this->get('translator')->trans('le_email.login_details.subject', ['%accountName%' => $accountName], 'emails', $locale);
+        }
+
+        // Save and switch locale for sending the email
+        $sessionLocale = $this->get('translator')->getLocale();
+        $this->get('translator')->setLocale($locale);
+
+        $message = $this->renderView(
+            'emails/login_details.html.twig',
+            [
+                'email'       => $user->getEmail(),
+                'password'    => $newPassword
+            ]
+        );
+
+        // Send the email
+        if ($emailService->send($user->getEmail(), $user->getName(), $subject, $message, false)) {
+            $this->addFlash('success', " We've sent a welcome email to " . $user->getEmail() . ".");
+        } else if ($emailService->getErrors() > 0) {
+            foreach ($emailService->getErrors() AS $msg) {
+                $this->addFlash('error', $msg);
+            }
+        }
+
+        // Revert locale for the UI
+        $this->get('translator')->setLocale($sessionLocale);
     }
 
     /**

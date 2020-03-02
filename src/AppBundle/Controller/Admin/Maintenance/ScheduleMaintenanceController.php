@@ -109,53 +109,38 @@ class ScheduleMaintenanceController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->container->get('service.contact');
 
-        $senderName     = $tenantService->getCompanyName();
-        $replyToEmail   = $tenantService->getReplyToEmail();
-        $fromEmail      = $tenantService->getSenderEmail();
-        $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
 
         $provider = $maintenance->getAssignedTo();
 
-        try {
+        $token = $contactService->generateAccessToken($provider);
 
-            $client = new PostmarkClient($postmarkApiKey);
+        $loginUri = $tenantService->getTenant()->getDomain(true);
+        $loginUri .= '/access?t='.$token.'&e='.urlencode($provider->getEmail());
+        $loginUri .= '&r=/admin/maintenance/'.$maintenance->getId();
 
-            $token = $contactService->generateAccessToken($provider);
+        $message = $this->renderView(
+            'emails/maintenance_due.html.twig',
+            [
+                'assignee' => $provider,
+                'maintenance' => [$maintenance],
+                'domain' => $tenantService->getAccountDomain(),
+                'loginUri' => $loginUri
+            ]
+        );
 
-            $loginUri = $tenantService->getTenant()->getDomain(true);
-            $loginUri .= '/access?t='.$token.'&e='.urlencode($provider->getEmail());
-            $loginUri .= '&r=/admin/maintenance/'.$maintenance->getId();
-
-            $message = $this->renderView(
-                'emails/maintenance_due.html.twig',
-                [
-                    'assignee' => $provider,
-                    'maintenance' => [$maintenance],
-                    'domain' => $tenantService->getAccountDomain(),
-                    'loginUri' => $loginUri
-                ]
-            );
-
-            $client->sendEmail(
-                "{$senderName} <{$fromEmail}>",
-                $provider->getEmail(),
-                "Maintenance has been assigned to you : ".$maintenance->getInventoryItem()->getName(),
-                $message,
-                null,
-                null,
-                true,
-                $replyToEmail
-            );
-
-            return true;
-
-        } catch (PostmarkException $ex) {
-//            $this->addFlash('error', 'Failed to send email:' . $ex->message . ' : ' . $ex->postmarkApiErrorCode);
-        } catch (\Exception $generalException) {
-//            $this->addFlash('error', 'Failed to send email:' . $generalException->getMessage());
+        // Send the email
+        $subject = "Maintenance has been assigned to you : ".$maintenance->getInventoryItem()->getName();
+        if ($emailService->send($provider->getEmail(), $provider->getName(), $subject, $message, false)) {
+            $this->addFlash('success', "We've sent an email to " . $provider->getEmail() . ".");
+        } else if ($emailService->getErrors() > 0) {
+            foreach ($emailService->getErrors() AS $msg) {
+                $this->addFlash('error', $msg);
+            }
         }
 
-        return false;
+        return true;
 
     }
 
