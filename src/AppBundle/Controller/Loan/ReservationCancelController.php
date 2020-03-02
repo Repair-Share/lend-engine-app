@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller\MemberSite;
+namespace AppBundle\Controller\Loan;
 
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\Note;
@@ -63,8 +63,10 @@ class ReservationCancelController extends Controller
             $msg = $this->get('translator')->trans('msg_success.reservation_cancel', [], 'member_site');
             $this->addFlash('success', $msg);
 
+            $userName = $user->getName();
+
             $body = <<<EOB
-Reservation / loan {$loan->getId()} has been cancelled by ".$user->getName().".<br>
+Reservation / loan {$loan->getId()} has been cancelled by "{$userName}".<br>
 Member: {$loan->getContact()->getName()} / Email: {$loan->getContact()->getEmail()}
 EOB;
 
