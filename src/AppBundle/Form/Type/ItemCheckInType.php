@@ -73,18 +73,17 @@ class ItemCheckInType extends AbstractType
             ]
         ));
 
-        /** @var $contactRepo \AppBundle\Repository\ContactRepository */
-        $contactRepo = $this->em->getRepository('AppBundle:Contact');
-        $contacts = $contactRepo->findAllStaff();
-        $builder->add('contact', EntityType::class, array(
-            'class' => 'AppBundle:Contact',
-            'choices' => $contacts,
+        /** @var $repo \AppBundle\Repository\MaintenancePlanRepository */
+        $repo = $this->em->getRepository('AppBundle:MaintenancePlan');
+        $plans = $repo->findAllOrderedByName();
+        $builder->add('maintenancePlan', EntityType::class, array(
+            'class' => 'AppBundle:MaintenancePlan',
+            'choices' => $plans,
             'choice_label' => 'name',
-            'label' => 'Assign to',
+            'label' => 'Create a maintenance task',
             'required' => false,
             'attr' => [
-                'data-name' => 'Assigned to',
-                'data-help' => 'This will send an email notification.'
+                'data-help' => ''
             ]
         ));
 

@@ -98,20 +98,18 @@ class CheckInService
      * @param LoanRow $loanRow
      * @param string $userNote
      * @param int $checkInFee
-     * @param null $assignToContact
      * @return bool
      */
     public function checkInRow(InventoryLocation $location,
                                  LoanRow $loanRow,
                                  $userNote = '',
-                                 $checkInFee = 0,
-                                 $assignToContact = null) {
+                                 $checkInFee = 0) {
 
         $user           = $this->tokenStorage->getToken()->getUser();
         $loan           = $loanRow->getLoan();
         $inventoryItem  = $loanRow->getInventoryItem();
 
-        if ( $this->inventoryService->itemMove($inventoryItem, $location, $loanRow, $assignToContact, $userNote) ) {
+        if ( $this->inventoryService->itemMove($inventoryItem, $location, $loanRow, $userNote) ) {
 
             $noteText = '';
 

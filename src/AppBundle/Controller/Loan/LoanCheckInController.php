@@ -28,6 +28,18 @@ class LoanCheckInController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
+        /** @var \AppBundle\Services\Maintenance\MaintenanceService $maintenanceService */
+        $maintenanceService = $this->get('service.maintenance');
+
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
+
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->get('service.contact');
+
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->get('service.tenant');
+
         if (!$user = $this->getUser()) {
             $this->addFlash('error', "Please log in");
             return $this->redirectToRoute('home');
@@ -93,19 +105,34 @@ class LoanCheckInController extends Controller
                 return $this->redirectToRoute('loan_check_in', ['loanRowId' => $loanRowId]);
             }
 
-            if (!$assignToContact = $form->get('contact')->getData()) {
-                $assignToContact = null;
-            }
-
             $loan = $loanRow->getLoan();
+            $maintenancePlan = $form->get('maintenancePlan')->getData();
 
             // Perform the main action for each item
             $checkInItems = $request->get('check_in');
+            $maintenanceActions = [];
 
             foreach ($checkInItems AS $rowId) {
+
                 $loanRow = $loanRowRepo->find($rowId);
-                if ($service->checkInRow($toLocation, $loanRow, $userNote, $checkInFee, $assignToContact)) {
+                $inventoryItem = $loanRow->getInventoryItem();
+
+                if ($service->checkInRow($toLocation, $loanRow, $userNote, $checkInFee)) {
+
                     $this->addFlash('success', $loanRow->getInventoryItem()->getName().' checked in to "'.$toLocation->getName().'"');
+
+                    if ($maintenancePlan) {
+                        $mData = [
+                            'itemId' => $inventoryItem->getId(),
+                            'planId' => $maintenancePlan->getId(),
+                            'note' => $userNote,
+                            'date' => new \DateTime()
+                        ];
+                        if ($m = $maintenanceService->scheduleMaintenance($mData)) {
+                            $maintenanceActions[] = $m;
+                        }
+                    }
+
                 } else {
                     foreach ($service->errors AS $error) {
                         $this->addFlash("error", $error);
@@ -120,6 +147,35 @@ class LoanCheckInController extends Controller
                     // kits and stock items contribute to this number so we can close a loan with all loanable items returned
                     $returnedRows++;
                 }
+            }
+
+            // Send an email to the provider of the plan
+            if ($maintenancePlan && $maintenancePlan->getProvider() && count($maintenanceActions) > 0) {
+
+                /** @var \AppBundle\Entity\Contact $provider */
+                $provider      = $maintenancePlan->getProvider();
+                $toEmail       = $provider->getEmail();
+                $toName        = $provider->getName();
+
+                $token = $contactService->generateAccessToken($provider);
+                $loginUri = $tenantService->getTenant()->getDomain(true);
+                $loginUri .= '/access?t='.$token.'&e='.urlencode($provider->getEmail());
+                $loginUri .= '&r=/admin/maintenance/list&assignedTo='.$provider->getId();
+
+                $message = $this->renderView(
+                    'emails/maintenance_due.html.twig',
+                    [
+                        'assignee' => $provider,
+                        'maintenance' => $maintenanceActions,
+                        'domain' => $tenantService->getAccountDomain(),
+                        'loginUri' => $loginUri
+                    ]
+                );
+
+                // Send the email
+                $subject = 'You have been assigned item(s) for maintenance';
+                $emailService->send($toEmail, $toName, $subject.' | '.$loanRow->getLoan()->getId(), $message, true);
+
             }
 
             if (count($loan->getLoanRows()) == $returnedRows) {

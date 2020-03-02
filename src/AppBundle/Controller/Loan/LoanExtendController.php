@@ -59,9 +59,6 @@ class LoanExtendController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
-        /** @var \AppBundle\Services\TenantService $tenantService */
-        $tenantService = $this->get('service.tenant');
-
         /** @var \AppBundle\Services\EmailService $emailService */
         $emailService = $this->get('service.email');
 

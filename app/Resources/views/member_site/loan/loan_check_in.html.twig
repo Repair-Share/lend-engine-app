@@ -154,7 +154,7 @@
             {{ form_row(form.notes) }}
 
             <div style="display:{% if is_granted("ROLE_ADMIN") %}block{% else %}none{% endif %}">
-                {{ form_row(form.contact) }}
+                {{ form_row(form.maintenancePlan) }}
                 <div class="form-group">
                     <label>Charge a fee</label>
                     <div class="input-group">

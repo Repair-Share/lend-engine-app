@@ -42,6 +42,9 @@ class ItemMoveController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->container->get('service.contact');
 
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
+
         $em = $this->getDoctrine()->getManager();
 
         /** @var \AppBundle\Entity\InventoryItem $inventoryItem */
@@ -118,46 +121,29 @@ class ItemMoveController extends Controller
             if ($maintenancePlan && $maintenancePlan->getProvider() && count($maintenanceActions) > 0) {
 
                 /** @var \AppBundle\Entity\Contact $provider */
-                $provider       = $maintenancePlan->getProvider();
-                $senderName     = $tenantService->getCompanyName();
-                $replyToEmail   = $tenantService->getReplyToEmail();
-                $fromEmail      = $tenantService->getSenderEmail();
-                $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
-                $toEmail        = $provider->getEmail();
+                $provider      = $maintenancePlan->getProvider();
+                $toEmail       = $provider->getEmail();
+                $toName        = $provider->getName();
 
-                try {
-                    $client = new PostmarkClient($postmarkApiKey);
+                $token = $contactService->generateAccessToken($provider);
+                $loginUri = $tenantService->getTenant()->getDomain(true);
+                $loginUri .= '/access?t='.$token.'&e='.urlencode($provider->getEmail());
+                $loginUri .= '&r=/admin/maintenance/list&assignedTo='.$provider->getId();
 
-                    $token = $contactService->generateAccessToken($provider);
+                $message = $this->renderView(
+                    'emails/maintenance_due.html.twig',
+                    [
+                        'assignee' => $provider,
+                        'maintenance' => $maintenanceActions,
+                        'domain' => $tenantService->getAccountDomain(),
+                        'loginUri' => $loginUri
+                    ]
+                );
 
-                    $loginUri = $tenantService->getTenant()->getDomain(true);
-                    $loginUri .= '/access?t='.$token.'&e='.urlencode($provider->getEmail());
-                    $loginUri .= '&r=/admin/maintenance/list&assignedTo='.$provider->getId();
+                // Send the email
+                $subject = 'You have been assigned item(s) for maintenance';
+                $emailService->send($toEmail, $toName, $subject, $message, true);
 
-                    $message = $this->renderView(
-                        'emails/maintenance_due.html.twig',
-                        [
-                            'assignee' => $provider,
-                            'maintenance' => $maintenanceActions,
-                            'domain' => $tenantService->getAccountDomain(),
-                            'loginUri' => $loginUri
-                        ]
-                    );
-
-                    $client->sendEmail(
-                        "{$senderName} <{$fromEmail}>",
-                        $toEmail,
-                        'You have been assigned item(s) for maintenance',
-                        $message,
-                        null,
-                        null,
-                        true,
-                        $replyToEmail
-                    );
-
-                } catch (\Exception $generalException) {
-                    $this->addFlash('error', 'Failed to send email:' . $generalException->getMessage());
-                }
             }
 
             if (count($idArray) > 1) {
