@@ -198,12 +198,14 @@ class InventoryService
      * @param InventoryItem $inventoryItem
      * @param InventoryLocation $toLocation
      * @param LoanRow $loanRow
-     * @param Contact $contact
      * @param $userNote
      * @param $cost
      * @return bool
      */
-    public function itemMove(InventoryItem $inventoryItem, InventoryLocation $toLocation, LoanRow $loanRow = null, Contact $contact = null, $userNote = '', $cost = 0)
+    public function itemMove(InventoryItem $inventoryItem,
+                             InventoryLocation $toLocation,
+                             LoanRow $loanRow = null,
+                             $userNote = '', $cost = 0)
     {
 
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
@@ -231,16 +233,6 @@ class InventoryService
             $noteText = '';
         } else {
             $noteText = 'Moved to <strong>'.$toLocation->getSite()->getName().' / '.$toLocation->getName().'</strong>. ';
-        }
-
-
-        if ($contact) {
-            $transactionRow->setAssignedTo($contact);
-            $inventoryItem->setAssignedTo($contact);
-            $noteText .= 'Assigned to <strong>'.$contact->getName().'</strong>. ';
-        } else {
-            $transactionRow->setAssignedTo(null);
-            $inventoryItem->setAssignedTo(null);
         }
 
         // Update the item itself

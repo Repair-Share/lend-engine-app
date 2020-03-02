@@ -41,7 +41,6 @@ class LoanCheckInControllerTest extends AuthenticatedControllerTest
 
         $form = $crawler->filter('form[name="item_check_in"]')->form(array(
             'item_check_in[notes]' => "Check in note text",
-            'item_check_in[contact]' => 2, // assign to staff
             'item_check_in[feeAmount]' => 1.29, // fee
         ),'POST');
         $this->client->submit($form);

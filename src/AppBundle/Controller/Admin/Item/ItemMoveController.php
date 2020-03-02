@@ -90,7 +90,7 @@ class ItemMoveController extends Controller
                         $this->addFlash("error", "Item ID {$itemId} cannot be moved - it is on loan.");
                         continue;
                     }
-                    if ( $inventoryService->itemMove($inventoryItem, $toLocation, null, null, $userNote) ) {
+                    if ( $inventoryService->itemMove($inventoryItem, $toLocation, null, $userNote) ) {
                         $updatedItems++;
 
                         if ($toLocation->getIsAvailable() == true) {
