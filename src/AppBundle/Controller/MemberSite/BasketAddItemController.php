@@ -23,6 +23,9 @@ class BasketAddItemController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        /** @var \AppBundle\Repository\LoanRepository $loanRepo */
+        $loanRepo = $em->getRepository('AppBundle:Loan');
+
         /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
         $itemRepo = $em->getRepository('AppBundle:InventoryItem');
 
@@ -61,8 +64,13 @@ class BasketAddItemController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        // Create them a basket if there isn't one yet
-        if (!$basket = $basketService->getBasket()) {
+        // If we're adding to an existing loan
+        if ($loanId = $this->get('session')->get('active-loan')) {
+            $basket = $loanRepo->find($loanId);
+        } else if ($loanId = $request->get('active-loan')) {
+            $basket = $loanRepo->find($loanId);
+        } else if (!$basket = $basketService->getBasket()) {
+            // Create them a basket if there isn't one yet
             if ($request->get('contactId')) {
                 $basketContactId = $request->get('contactId');
             } else if ($this->get('session')->get('sessionUserId')) {
@@ -118,7 +126,12 @@ class BasketAddItemController extends Controller
                 if ($qtyRequired > 1) {
                     $this->addFlash("error", "Please remove this item from basket before adding multiple quantities.");
                 }
-                return $this->redirectToRoute('basket_show');
+                if ($basket->getId()) {
+                    return $this->redirectToRoute('public_loan', ['loanId' => $basket->getId()]);
+                } else {
+                    return $this->redirectToRoute('basket_show');
+                }
+
             }
         }
 
@@ -154,30 +167,29 @@ class BasketAddItemController extends Controller
         $row->setDueOutAt($dFrom);
         $row->setDueInAt($dTo);
         $row->setFee($fee);
+        $row->setProductQuantity(1);
         $basket->addLoanRow($row);
 
         if ($product->getItemType() == InventoryItem::TYPE_KIT) {
             /** @var \AppBundle\Entity\KitComponent $kitComponent */
             foreach ($product->getComponents() AS $kitComponent) {
-
-                if ($checkoutService->isItemReserved($kitComponent->getComponent(), $dFrom, $dTo, null)) {
-                    $this->addFlash("error", "Cannot add ".$kitComponent->getComponent()->getName());
-                    foreach ($checkoutService->errors AS $error) {
-                        $this->addFlash('error', $error);
+                // We don't mind WHICH component by name is added if there are a few
+                $componentName = $kitComponent->getComponent()->getName();
+                if ($component = $this->getFirstAvailableItemByName($componentName, $dFrom, $dTo)) {
+                    if ($component->getId() != $kitComponent->getComponent()->getId()) {
+                        $this->addFlash('info', "We've substituted another {$componentName} as the one in the kit is not available. Please check the code and location.");
                     }
-                } else {
                     $row = new LoanRow();
                     $row->setLoan($basket);
-                    $row->setInventoryItem($kitComponent->getComponent());
+                    $row->setInventoryItem($component);
                     $row->setSiteFrom($siteFrom);
                     $row->setSiteTo($siteTo);
                     $row->setDueOutAt($dFrom);
                     $row->setDueInAt($dTo);
                     $row->setFee(0);
-                    $row->setProductQuantity($kitComponent->getQuantity());
+                    $row->setProductQuantity(1);
                     $basket->addLoanRow($row);
                 }
-
             }
         }
 
@@ -185,21 +197,16 @@ class BasketAddItemController extends Controller
 
         // If we're bulk adding, run through a loop for more rows
         if ($qtyRequired > 1) {
-
             // get other items with the same name, and find others which are available
             /** @var \AppBundle\Entity\InventoryItem $item */
             foreach ($itemRepo->findBy(['name' => $product->getName()]) AS $item) {
-
                 if ($item->getId() == $product->getId()) {
                     continue;
                 }
-
                 if ($qtyFulfilled == $qtyRequired) {
                     continue;
                 }
-
                 if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null)) {
-
                     $row = new LoanRow();
                     $row->setLoan($basket);
                     $row->setInventoryItem($item);
@@ -208,14 +215,11 @@ class BasketAddItemController extends Controller
                     $row->setDueOutAt($dFrom);
                     $row->setDueInAt($dTo);
                     $row->setFee($fee);
+                    $row->setProductQuantity(1);
                     $basket->addLoanRow($row);
-
                     $qtyFulfilled++;
-
                 }
-
             }
-
         }
 
         if ($qtyFulfilled < $qtyRequired) {
@@ -226,12 +230,50 @@ class BasketAddItemController extends Controller
             }
         }
 
-        $msg = $this->get('translator')->trans('msg_success.basket_item_added', [], 'member_site');
-        $this->addFlash('success', $qtyFulfilled. ' x ' .$product->getName().' '.$msg);
+        if ($basket->getId()) {
+            // We added to an existing loan
+            $em->persist($basket);
+            $em->flush();
+            $this->addFlash('success', $qtyFulfilled. ' x ' .$product->getName().' added.');
+            $this->get('session')->set('active-loan', null);
+            return $this->redirectToRoute('public_loan', ['loanId' => $basket->getId()]);
+        } else {
+            $msg = $this->get('translator')->trans('msg_success.basket_item_added', [], 'member_site');
+            $this->addFlash('success', $qtyFulfilled. ' x ' .$product->getName().' '.$msg);
+            $basketService->setBasket($basket);
+            return $this->redirectToRoute('basket_show');
+        }
 
-        $basketService->setBasket($basket);
+    }
 
-        return $this->redirectToRoute('basket_show');
+    /**
+     * @param $name
+     * @param $dFrom
+     * @param $dTo
+     * @return InventoryItem|null
+     */
+    private function getFirstAvailableItemByName($name, $dFrom, $dTo)
+    {
+        $em = $this->getDoctrine()->getManager();
 
+        /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
+        $itemRepo = $em->getRepository('AppBundle:InventoryItem');
+
+        /** @var \AppBundle\Services\Loan\CheckoutService $checkoutService */
+        $checkoutService = $this->get("service.checkout");
+
+        /** @var \AppBundle\Entity\InventoryItem $item */
+        foreach ($itemRepo->findBy(['name' => $name]) AS $item) {
+            if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null)) {
+                return $item;
+            }
+        }
+
+        $this->addFlash("error", "Cannot add ".$name);
+        foreach ($checkoutService->errors AS $error) {
+            $this->addFlash('error', $error);
+        }
+
+        return null;
     }
 }

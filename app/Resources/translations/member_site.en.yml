@@ -131,7 +131,7 @@ public_item:
   stock_item: Stock item
   pickup_date_error: Items in your basket define a pickup date that clashes with the bookings for this item. You won't be able to borrow this item on the same loan.
   pickup_site_error: This item is not available from the site that the other items in your basket are due to be collected from. You won't be able to borrow this item on the same loan.
-  basket_exists: You already have items in your basket, so we've set the start date for you.
+  basket_exists: You already have items in your basket/loan, so we've set the start date for you.
   account_balance_is: Account balance
   add_credit: Add credit
   pickup_at: From
@@ -193,7 +193,7 @@ public_loan:
   button_complete_checks: Please complete all checks
   button_choose_payment_method: Select a payment method to take payment
   button_deposits_require_payment: Deposits require payment now
-  cannot_check_out: Item(s) cannot be checked out
+  cannot_check_out: Item(s) cannot be checked out, check location/reservations
   no_payment_methods: No payment methods are available to check out
   not_enough_credit: You don't have enough credit on account to check out.
   quantity: Quantity

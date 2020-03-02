@@ -1,0 +1,158 @@
+<div class="row">
+    <div class="col-md-4">
+        {{ form_errors(form) }}
+        {% if help is defined %}
+            <span class="help">{{ help }}</span>
+        {% endif %}
+
+        {{ form_row(form.name) }}
+
+        <div class="row">
+            <div class="col-md-5">
+                {{ form_row(form.sku) }}
+            </div>
+            <div class="col-md-7 hide-for-kits hide-for-stock">
+                {{ form_row(form.serial) }}
+            </div>
+        </div>
+
+        {{ form_row(form.note) }}
+
+        {{ form_row(form.tags) }}
+
+        <div class="row hide-for-stock">
+            <div class="col-md-6">
+                {{ form_row(form.loanFee) }}
+            </div>
+            <div class="col-md-6" {% if tenantInformation.fixedFeePricing %}style="display:none"{% endif %}>
+                {{ form_row(form.maxLoanDays) }}
+            </div>
+        </div>
+
+        <div class="row hide-for-kits hide-for-stock" style="{% if not tenantInformation.feature('Deposits') %}display: none;{% endif %}">
+            <div class="col-md-6">
+                {{ form_row(form.depositAmount) }}
+            </div>
+            <div class="col-md-6 help-block">
+                <br>When this item is checked out, a deposit will need to be taken.
+            </div>
+        </div>
+
+        <div class="hide-for-kits hide-for-stock">
+            {{ form_row(form.condition) }}
+        </div>
+
+        {{ form_row(form.keywords) }}
+
+        <div class="row hide-for-kits">
+            <div class="col-md-6">
+                {{ form_row(form.priceCost) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.priceSell) }}
+            </div>
+        </div>
+
+        <div class="row" style="{% if tenantInformation.feature('Deposits') %}display: none;{% endif %}">
+            <div class="col-md-12">
+                <br>
+                <div class="upgrade">
+                    On paid plans you can set up items that require refundable deposits.
+                    <a href="{{ path('billing') }}">Upgrade / see plans</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        {{ form_row(form.brand) }}
+
+        {{ form_row(form.description) }}
+
+        <div class="hide-for-stock">
+            {{ form_row(form.componentInformation) }}
+            {{ form_row(form.careInformation) }}
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">Item type</label>
+            {{ form_row(form.itemSector) }}
+            {% if item.itemSector %}
+                {{ item.itemSector.name }}
+            {% else %}
+                <i class="fa fa-exclamation-circle" style="color: #ff741e;"></i>
+                Not set
+            {% endif %}
+            {% if item.id %}
+                <a class="pull-right" href="{{ path('change_item_sector', {itemId: item.id}) }}">Change</a>
+            {% endif %}
+            <div class="help-block">
+                Item type is used internally across the Lend Engine network to learn more about what people are lending and borrowing.
+                Members don't see this information.
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="row">
+            <div class="col-md-12">
+                {% if item.id %}
+                    <div class="" style="margin-bottom: 20px">
+                        {% if tenantInformation.feature('Labels') and tenantInformation.useLabels %}
+                            <button type="button" class="btn btn-xs btn-default pull-right" id="printButton">Print label</button>
+                        {% endif %}
+                        <a class="btn btn-xs btn-default" href="{{ path('public_product', {productId: item.id}) }}">View on member site</a>
+                    </div>
+                {% endif %}
+
+                {{ form_row(form.showOnWebsite) }}
+
+                <div class="hide-for-stock">
+                    {{ form_row(form.isReservable) }}
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row" id="item-thumbnails">
+            {% if item.images | length == 0 %}
+                <div class="col-md-12" id="no-images">
+                    No images uploaded yet
+                </div>
+            {% endif %}
+            <div id="image-thumbnails-closer"></div>
+            {{ form_row(form.imageName) }}
+        </div>
+
+        <div class="row">
+            <div class="col-md-12" style="margin-top:10px">
+                {% if item.id %}
+                    <div id="images-processing" class="page-help" style="display:none">
+                        <img src="/images/ajax-loader.gif">
+                        Uploading and processing images ... this might take a few moments.
+                    </div>
+
+                    <div id="imageUploader" class="dropzone"></div>
+                {% else %}
+                    Save item before uploading images.
+                {% endif %}
+            </div>
+        </div>
+
+        <br>
+        <div class="hide-for-kits hide-for-stock">
+            {{ form_row(form.donatedBy) }}
+        </div>
+
+        <div style="display: none;">
+            {#Not yet a feature#}
+            {{ form_row(form.ownedBy) }}
+        </div>
+
+    </div>
+
+</div>

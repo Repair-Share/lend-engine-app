@@ -125,13 +125,21 @@
                             <input type="text" class="form-control" name="qty" id="addQty" size="3" value="1">
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-success" id="borrowModalConfirm">
-                                    {% trans %}public_item.basket_add{% endtrans %}
+                                    {% if app.session.get('active-loan') %}
+                                        Add to loan {{ app.session.get('active-loan') }}
+                                    {% else %}
+                                        {% trans %}public_item.basket_add{% endtrans %}
+                                    {% endif %}
                                 </button>
                             </span>
                         </span>
                         {% else %}
                             <button type="button" class="btn btn-success borrow-modal-confirm" id="borrowModalConfirm" style="display: none;">
-                                {% trans %}public_item.basket_add{% endtrans %}
+                                {% if app.session.get('active-loan') %}
+                                    Add to {{ app.session.get('active-loan-type') }} {{ app.session.get('active-loan') }}
+                                {% else %}
+                                    {% trans %}public_item.basket_add{% endtrans %}
+                                {% endif %}
                             </button>
                         {% endif %}
                     </div>

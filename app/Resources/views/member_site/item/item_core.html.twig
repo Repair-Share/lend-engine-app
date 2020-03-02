@@ -264,109 +264,21 @@
         {#Main controls#}
         {% if user.id is defined %}
 
+            {% if app.session.get('active-loan') %}
+                <div class="alert alert-info">
+                    You are adding to {{ app.session.get('active-loan-type') }} {{ app.session.get('active-loan') }}
+                    <a href="{{ path("unset_active_loan", { loanId : app.session.get('active-loan') }) }}" class="btn btn-xs btn-default pull-right">Cancel</a>
+                </div>
+            {% endif %}
+
             {% if product.itemType == 'stock' %}
-
-                {% if user.activeMembership is defined and user.activeMembership %}
-
-                    {% if inventory|length > 0 %}
-                        <form method="POST" action="{{ path('basket_add_stock', {itemId: product.id}) }}">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th></th>
-                                <th>Available</th>
-                                <th>Add</th>
-                            </tr>
-                            </thead>
-                            {% for i in inventory %}
-                                <tr>
-                                    <td>{{ i.siteName }}<br>{{ i.locationName }}</td>
-                                    <td>{{ i.qty }}</td>
-                                    <td style="width:80px">
-                                        <input type="text" class="form-control" name="add_qty[{{ i.locationId }}]">
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-                        {% if app.session.get('active-loan') %}
-                            <button type="submit" name="add-to-loan" value="loan" class="btn btn-success">Add to loan {{ app.session.get('active-loan') }}</button>
-                        {% endif %}
-                        <button type="submit" name="add-to-basket" value="basket" class="btn btn-success">{% trans %}public_item.basket_add{% endtrans %}</button>
-                        </form>
-                    {% else %}
-                        <div class="alert alert-warning">
-                            No stock available
-                        </div>
-                    {% endif %}
-
-                {% else %}
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <div class="alert alert-warning">
-                            {{ user.name }} does not have an active membership.<br>
-                            <a href="{{ path('choose_membership', {c: user.id, itemId: product.id}) }}">Subscribe now</a>,
-                            or <a href="{{ path('member_search', {itemId: product.id}) }}">change user</a>.
-                        </div>
-                    {% else %}
-                        <div class="alert alert-info">
-                            An active membership is required to buy this item.
-                            {#{{ 'text_borrow_with_membership'|trans({}, 'member_site') }}#}
-                        </div>
-                    {% endif %}
-                {% endif %}
-
-                <style>
-                    #calendar { display:none }
-                    #calendar-key { display:none }
-                </style>
-
+                {{ include('member_site/item/button_stock_item.html.twig') }}
             {% elseif (product.isReservable != false or is_granted('ROLE_ADMIN'))  %}
-
-                {#Item is reservable, or we are admin#}
-                {% if user.activeMembership is defined and user.activeMembership %}
-
-                    {% if maintenanceOverdue == true %}
-
-                        <div class="alert alert-warning no-borrow" id="warning-maintenance-due">
-                            {% trans %}public_item.not_reservable{% endtrans %}
-                        </div>
-
-                    {% else %}
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>
-                        {% else %}
-                            <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>
-                        {% endif %}
-                    {% endif %}
-
-                    <div class="alert alert-danger" id="pickup-date-error" style="display: none;">
-                        {% trans %}public_item.pickup_date_error{% endtrans %}
-                    </div>
-                    <div class="alert alert-danger" id="pickup-site-error" style="display: none;">
-                        {% trans %}public_item.pickup_site_error{% endtrans %}
-                    </div>
-
-                {% else %}
-
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <div class="alert alert-warning" id="warning-no-membership">
-                            {{ user.name }} does not have an active membership.<br>
-                            <a href="{{ path('choose_membership', {c: user.id, itemId: product.id}) }}">Subscribe now</a>,
-                            or <a href="{{ path('member_search', {itemId: product.id}) }}">change user</a>.
-                        </div>
-                    {% else %}
-                        <div class="alert alert-info">
-                            {{ 'text_borrow_with_membership'|trans({}, 'member_site') }}
-                        </div>
-                    {% endif %}
-
-                {% endif %}
-
+                {{ include('member_site/item/button_loan_item.html.twig') }}
             {% else %}
-
                 <div class="alert alert-warning no-borrow" id="warning-item-not-reservable">
                     {% trans %}public_item.not_reservable{% endtrans %}
                 </div>
-
             {% endif %}
 
         {% else %}

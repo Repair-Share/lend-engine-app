@@ -1,0 +1,60 @@
+{% if item.id %}
+    {% if item.components|length > 0 %}
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th>Qty</th>
+                <th>Item</th>
+                <th>SKU</th>
+                <th>Serial</th>
+                <th> </th>
+            </tr>
+            </thead>
+            {% for component in item.components %}
+                <tr>
+                    <td style="width:60px;">
+                        {% if component.component.itemType == 'stock' %}
+                            <input type="text" class="form-control" size="3" name="component_qty[{{ component.component.id }}]" value="{{ component.quantity }}">
+                        {% else %}
+                            1
+                            <input type="hidden" class="form-control" size="3" name="component_qty[{{ component.component.id }}]" value="1">
+                        {% endif %}
+                    </td>
+                    <td>{{ component.component.name }}</td>
+                    <td>{{ component.component.sku }}</td>
+                    <td>{{ component.component.serial }}</td>
+                    <td>
+                        <a href="{{ path('remove_component', {itemId: item.id, componentId: component.component.id}) }}">Remove</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <div class="alert">
+            No components
+        </div>
+    {% endif %}
+
+    <a class="btn btn-primary" href="{{ path('item_list') }}?kit={{ item.id }}">
+        Add component(s)
+    </a>
+    <br><br>
+
+{% else %}
+    <div class="alert alert-info">
+        Please save before adding components.
+    </div>
+{% endif %}
+
+<div class="page-help">
+    <p>Kits allow you to bundle multiple items together into one listing on your website.</p>
+    <ul>
+        <li>
+            When someone creates a reservation or a loan for the kit, all the component items are
+            added / reserved.
+        </li>
+        <li>The components may or may not be visible / borrowable online separately; depending on their settings. </li>
+        <li>The price for a kit is used is place of the component prices.</li>
+        <li>Consumables (stock items) can have a quantity.</li>
+    </ul>
+</div>

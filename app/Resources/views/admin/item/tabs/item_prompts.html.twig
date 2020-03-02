@@ -1,0 +1,41 @@
+{% if isMultiSite %}
+    <div class="row" {% if not tenantInformation.feature('Site') %}style="display:none"{% endif %}>
+        <div class="col-md-12">
+            {{ form_row(form.sites) }}
+        </div>
+    </div>
+{% endif %}
+
+{% set showPrompts = '' %}
+{% if not tenantInformation.feature('CheckInPrompt') %}
+    <div class="upgrade">
+        Check in and check out prompts are not available on your plan.
+        <a href="{{ path('billing') }}">Upgrade / view plans</a>
+    </div>
+    {% set showPrompts = 'none' %}
+{% endif %}
+
+<div class="row" style="display: {{ showPrompts }}">
+    <div class="col-md-6">
+        {{ form_row(form.checkInPrompts) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.checkOutPrompts) }}
+    </div>
+</div>
+
+<div class="row" style="display: {{ showPrompts }}">
+    <div class="col-md-12">
+        {% if tenantInformation.feature('CheckInPrompt') %}
+            <div class="page-help">
+                Check in and Check out prompts are useful to ensure you have captured all the information you need when you are checking items in or out.
+                Add them in the settings screens.
+            </div>
+        {% else %}
+            <div class="upgrade">
+                Check in and check out prompts are not available on your plan.
+                <a href="{{ path('billing') }}">Upgrade / view plans</a>
+            </div>
+        {% endif %}
+    </div>
+</div>

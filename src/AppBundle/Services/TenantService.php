@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Services;
 
+use AppBundle\Services\Loan\LoanService;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Doctrine\ORM\EntityManager;
@@ -15,29 +16,22 @@ use Doctrine\ORM\EntityManager;
  */
 class TenantService
 {
-    /**
-     * @var Session
-     */
+    /** @var Session  */
     private $session;
 
-    /**
-     * @var Container
-     */
+    /** @var Container  */
     private $container;
 
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager  */
     private $entityManager;
 
-    /**
-     * @var BillingService
-     */
+    /** @var BillingService  */
     private $billingService;
 
-    /**
-     * @var SettingsService
-     */
+    /** @var LoanService  */
+    private $loanService;
+
+    /** @var SettingsService  */
     private $settings;
     
     /** @var \AppBundle\Entity\Tenant */
@@ -52,6 +46,7 @@ class TenantService
                          EntityManager $entityManager,
                          BillingService $billingService,
                          SettingsService $settingsService,
+                         LoanService $loanService,
                          $postmarkApiKey,
                          Session $session
     )
@@ -61,6 +56,7 @@ class TenantService
         $this->entityManager = $entityManager;
         $this->billingService = $billingService;
         $this->settings = $settingsService;
+        $this->loanService = $loanService;
         $this->postmarkApiKey = $postmarkApiKey;
         
         // Tenant is set in settings when first constructed
@@ -492,8 +488,14 @@ class TenantService
         return $this->settings->getSettingValue('multi_site');
     }
 
+    /**
+     * @return \AppBundle\Entity\Loan|null
+     */
     public function getBasket()
     {
+        if ($loanId = $this->session->get('active-loan')) {
+            return $this->loanService->get($loanId);
+        }
         /** @var $basket \AppBundle\Entity\Loan */
         $basket = $this->session->get('basket');
         return $basket;

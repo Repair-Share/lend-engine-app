@@ -9,16 +9,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class AddConsumablesController
+ * Class AddLoanItemController
  * @package AppBundle\Controller\MemberSite
  */
-class AddConsumablesController extends Controller
+class AddLoanItemController extends Controller
 {
     /**
+     * Allows user to add an item to an existing loan or reservation
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     * @Route("loan/{loanId}/add-stock-item", name="add_stock_item", requirements={"loanId": "\d+"})
+     * @Route("loan/{loanId}/add-loan-item", name="add_loan_item", requirements={"loanId": "\d+"})
      */
-    public function addStockItem($loanId)
+    public function addLoanItem($loanId)
     {
         /** @var \AppBundle\Entity\Loan $loan */
         $loan = $this->get('service.loan')->get($loanId);
@@ -35,8 +36,8 @@ class AddConsumablesController extends Controller
         }
 
         $this->get('session')->set('active-loan-type', $type);
-        $this->addFlash('success', "Choose stock item to add to {$type} {$loanId}.");
+        $this->addFlash('success', "Choose an item to add to {$type} {$loanId}.");
 
-        return $this->redirectToRoute('public_products', ['stock' => 'y']);
+        return $this->redirectToRoute('public_products');
     }
 }

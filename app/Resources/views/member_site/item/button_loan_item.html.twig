@@ -1,0 +1,39 @@
+{% trans_default_domain 'member_site' %}
+
+{#Item is reservable, or we are admin#}
+{% if user.activeMembership is defined and user.activeMembership %}
+
+    {% if maintenanceOverdue == true %}
+        <div class="alert alert-warning no-borrow" id="warning-maintenance-due">
+            {% trans %}public_item.not_reservable{% endtrans %}
+        </div>
+    {% else %}
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>
+        {% else %}
+            <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>
+        {% endif %}
+    {% endif %}
+
+    <div class="alert alert-danger" id="pickup-date-error" style="display: none;">
+        {% trans %}public_item.pickup_date_error{% endtrans %}
+    </div>
+    <div class="alert alert-danger" id="pickup-site-error" style="display: none;">
+        {% trans %}public_item.pickup_site_error{% endtrans %}
+    </div>
+
+{% else %}
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="alert alert-warning" id="warning-no-membership">
+            {{ user.name }} does not have an active membership.<br>
+            <a href="{{ path('choose_membership', {c: user.id, itemId: product.id}) }}">Subscribe now</a>,
+            or <a href="{{ path('member_search', {itemId: product.id}) }}">change user</a>.
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            {{ 'text_borrow_with_membership'|trans({}, 'member_site') }}
+        </div>
+    {% endif %}
+
+{% endif %}

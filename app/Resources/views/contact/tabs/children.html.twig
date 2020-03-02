@@ -1,0 +1,12 @@
+<ul class="children" data-prototype="{{ form_widget(form.children.vars.prototype)|e }}">
+    {% for child in form.children %}
+        <li class="child">
+            {{ form_row(child.name) }}
+            {{ form_row(child.gender) }}
+            {{ form_row(child.dateOfBirth) }}
+        </li>
+    {% endfor %}
+    <li id="add_child_li">
+        <a href="#" class="add_child_link">Add a child</a>
+    </li>
+</ul>

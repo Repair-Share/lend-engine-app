@@ -79,6 +79,7 @@
     {% endif %}
 
     <div class="nav-tabs-custom">
+
         <ul class="nav nav-tabs">
             <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Contact information</a></li>
             {% if tenantInformation.industry == 'toys' %}
@@ -97,134 +98,34 @@
                 </li>
             {% endif %}
         </ul>
+
         <div class="tab-content">
             <div class="tab-pane active" id="tab_1">
-
-                <div class="row">
-                    <div class="col-md-4">
-
-                        {% if help is defined %}
-                            <span class="help">{{ help }}</span>
-                        {% endif %}
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(form.firstName) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(form.lastName) }}
-                            </div>
-                        </div>
-                        {{ form_row(form.email) }}
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(form.telephone) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(form.membershipNumber) }}
-                            </div>
-                        </div>
-
-                        <div>
-                            <p><strong>Access to your Lend Engine site</strong></p>
-                            {{ form_row(form.enabled) }}
-                            {% if contact.id %}
-                                {{ form_row(form.autoPassword) }}
-                            {% else %}
-                                {{ form_row(form.sendWelcomeEmail) }}
-                            {% endif %}
-                        </div>
-
-                        {% if is_granted('ROLE_SUPER_USER') %}
-                            {{ form_row(form.roles) }}
-                        {% endif %}
-
-                    </div>
-                    <div class="col-md-4">
-                        {{ form_row(form.addressLine1) }}
-                        {{ form_row(form.addressLine2) }}
-                        {{ form_row(form.addressLine3) }}
-                        <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(form.addressLine4) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(form.countryIsoCode) }}
-                            </div>
-                        </div>
-
-                        {{ form_row(form.locale) }}
-
-                        {{ form_row(form.subscriber) }}
-                    </div>
-                    <div class="col-md-4">
-
-                        {% if tenantInformation.feature('ContactField') %}
-                            {% if customFieldsExist %}
-                                {% for field in customFields %}
-                                    {{ form_row(attribute(form, "fieldValue#{field.id}")) }}
-                                {% endfor %}
-                            {% else %}
-                                <div class="page-help">
-                                    Add extra custom fields at Settings &raquo; Contact fields.
-                                </div>
-                            {% endif %}
-                        {% else %}
-                            <br>
-                            <div class="upgrade">
-                                On higher pay plans, you can also add extra information about your members using custom fields.
-                                <br><br>Member custom fields are not available on your plan.
-                            </div>
-                        {% endif %}
-
-                    </div>
-                </div>
+                {{ include('contact/tabs/contact_info.html.twig') }}
             </div>
-
             <div class="tab-pane" id="tab_2">
-
                 {% if tenantInformation.industry == 'toys' %}
-                <ul class="children" data-prototype="{{ form_widget(form.children.vars.prototype)|e }}">
-                    {% for child in form.children %}
-                        <li class="child">
-                            {{ form_row(child.name) }}
-                            {{ form_row(child.gender) }}
-                            {{ form_row(child.dateOfBirth) }}
-                        </li>
-                    {% endfor %}
-                    <li id="add_child_li">
-                        <a href="#" class="add_child_link">Add a child</a>
-                    </li>
-                </ul>
+                    {{ include('contact/tabs/children.html.twig') }}
                 {% endif %}
-
             </div>
-
             <div class="tab-pane" id="tab_3">
                 {{ include('contact/tabs/memberships.html.twig') }}
             </div>
-
             <div class="tab-pane" id="tab_4">
                 {{ include('contact/tabs/loans.html.twig') }}
             </div>
-
             <div class="tab-pane" id="tab_events">
                 {{ include('contact/tabs/events.html.twig') }}
             </div>
-
             <div class="tab-pane" id="tab_5">
                 {{ include('contact/tabs/payments.html.twig') }}
             </div>
-
             <div class="tab-pane" id="tab_6">
                 {{ include('contact/tabs/notes.html.twig') }}
             </div>
-
             <div class="tab-pane" id="contact_files">
                 <!-- ajax-content -->
             </div>
-
         </div>
         <!-- /.tab-content -->
     </div>
