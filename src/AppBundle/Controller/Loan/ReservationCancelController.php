@@ -66,7 +66,7 @@ class ReservationCancelController extends Controller
             $userName = $user->getName();
 
             $body = <<<EOB
-Reservation / loan {$loan->getId()} has been cancelled by "{$userName}".<br>
+Reservation / loan {$loan->getId()} has been cancelled by "{$userName}". 
 Member: {$loan->getContact()->getName()} / Email: {$loan->getContact()->getEmail()}
 EOB;
 
