@@ -116,6 +116,8 @@ class UpdateController extends Controller
             $accountCode = $settingsService->getTenant()->getStub();
 
             $this->subscribeToMailchimp($name, $email, $org, $accountCode);
+
+            $this->notifyOfNewAccount($tenant->getName(), $tenant->getDomain());
         }
 
         return $this->redirect($this->generateUrl('homepage'));
@@ -285,6 +287,24 @@ class UpdateController extends Controller
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
         return $randomString;
+    }
+
+    /**
+     * @param $accountName
+     * @param $domain
+     */
+    private function notifyOfNewAccount($accountName, $domain)
+    {
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
+
+        $subject = "New account : ".$accountName;
+        $message = <<<EOM
+Account {$accountName} has been deployed.
+{$domain}
+EOM;
+
+        $emailService->send('chris@lend-engine.com', 'Lend Engine', $subject, $message);
     }
 
     /**
