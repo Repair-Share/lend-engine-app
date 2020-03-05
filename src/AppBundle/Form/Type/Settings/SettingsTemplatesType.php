@@ -206,6 +206,16 @@ class SettingsTemplatesType extends AbstractType
 
         /* RESERVATION REMINDER */
 
+        $builder->add('email_reservation_reminder_subject', TextType::class, array(
+            'label' => 'Subject',
+            'data' => $dbData['email_reservation_reminder_subject'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => 'Your reservation will be ready tomorrow',
+                'data-help' => "This will override the member's language settings."
+            )
+        ));
+
         $builder->add('email_reservation_reminder_head', TextareaType::class, array(
             'label' => 'Header',
             'data' => $dbData['email_reservation_reminder_head'],

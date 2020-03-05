@@ -150,10 +150,12 @@ class EmailReservationReminders
                                     )
                                 );
 
-                                $subject = $this->container->get('translator')->trans('le_email.reservation_reminder.subject',
-                                    ['loanId' => $loan->getId()],
-                                    'emails', $contact->getLocale()
-                                );
+                                if (!$subject = $this->settings->getSettingValue('email_reservation_reminder_subject')) {
+                                    $subject = $this->container->get('translator')->trans('le_email.reservation_reminder.subject',
+                                        ['loanId' => $loan->getId()],
+                                        'emails', $contact->getLocale()
+                                    );
+                                }
 
                                 $client->sendEmail(
                                     "{$senderName} <{$fromEmail}>",

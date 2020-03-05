@@ -305,6 +305,7 @@ class SettingsService
             'email_loan_overdue_head',
             'email_loan_overdue_foot',
 
+            'email_reservation_reminder_subject',
             'email_reservation_reminder_head',
             'email_reservation_reminder_foot',
 

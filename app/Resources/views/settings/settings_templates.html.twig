@@ -98,9 +98,7 @@
             <p>Sent the day before a reservation is due to be picked up.</p>
             <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "reservation_reminder"}) }}">Send me a test email</a></p>
 
-            <strong>Subject: </strong>
-            "Your reservation will be ready tomorrow"<br><br>
-
+            {{ form_row(form.email_reservation_reminder_subject) }}
             {{ form_row(form.email_reservation_reminder_head) }}
             {{ form_row(form.email_reservation_reminder_foot) }}
 
