@@ -27,14 +27,6 @@ class ValidTagValidator extends ConstraintValidator
 
     public function validate($object, Constraint $constraint)
     {
-        //die('hold on, we\'ll fill finish this in a second...');
-//        $conflicts = $this->em
-//            ->getRepository('AppBundle:Product')
-//            ->findOverlappingWithRange($object->getStartDate(), $object->getEndDate())
-//        ;
-//
-//        if (count($conflicts) > 0) {
-//            $this->context->addViolationAt('startDate', 'There is already an event during this time!');
-//        }
+
     }
 }

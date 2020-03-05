@@ -10,6 +10,14 @@
     {% endfor %}
 {%- endblock form_help %}
 
+{% block form_row -%}
+    <div class="form-group {% for attrname, attrvalue in attr %}{% if attrname == 'group-class' %}{{ attrvalue|raw }}{% endif %}{% endfor %}">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row %}
+
 {% block form_errors -%}
     {{ parent() }}
     {{- block('form_help') -}}

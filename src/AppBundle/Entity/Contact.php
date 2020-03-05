@@ -59,6 +59,11 @@ class Contact extends BaseUser
     protected $id;
 
     /**
+     * @var string
+     */
+    protected $emailAddress;
+
+    /**
      * @ORM\Column(name="secure_access_token", type="string", length=255, nullable=true)
      */
     protected $secure_access_token;
@@ -366,6 +371,24 @@ class Contact extends BaseUser
         $this->username = $this->getEmail();
 
         return $this;
+    }
+
+    /**
+     * Honey pot for anti spam
+     * @return string
+     */
+    public function getEmailAddress()
+    {
+        return '';
+    }
+
+    /**
+     * Honey pot for anti spam
+     * @return string
+     */
+    public function setEmailAddress($value)
+    {
+        return '';
     }
 
     /**

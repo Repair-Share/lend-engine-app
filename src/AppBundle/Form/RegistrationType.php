@@ -17,6 +17,8 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Blank;
+use Symfony\Component\Validator\Constraints\Email;
 
 class RegistrationType extends AbstractType
 {
@@ -49,9 +51,21 @@ class RegistrationType extends AbstractType
         $builder->add('email', TextType::class, array(
             'label' => 'form.email',
             'required' => true,
-            'attr' => array(
-                'data-help' => ""
-            )
+            'constraints' => [
+                new Email(['groups' => ['AppBundleSiteRegistration']]),
+            ]
+        ));
+
+        // Honey pot for anti-spam, expect this to be blank for real users
+        $builder->add('email_address', TextType::class, array(
+            'label' => 'form.email',
+            'required' => false,
+            'constraints' => [
+                new Blank(['groups' => ['AppBundleSiteRegistration']]),
+            ],
+            'attr' => [
+                'group-class' => 'email_address'
+            ]
         ));
 
         // Hide the user name (entity class overrides this with email address)
@@ -133,6 +147,7 @@ class RegistrationType extends AbstractType
             ]
         ));
 
+        /** This was proving too hard to implement with a toggle for only some libraries, hence && 0 */
         if ($this->container->get('settings')->getSettingValue('use_captcha') && 0) {
             $builder->add('captchaCode', 'Captcha\Bundle\CaptchaBundle\Form\Type\CaptchaType', [
                 'captchaConfig' => 'RegistrationCaptcha',
@@ -157,9 +172,9 @@ class RegistrationType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'translation_domain' => 'member_site',
-
-        ));
+            'validation_groups' => ['AppBundleSiteRegistration']
+        ]);
     }
 }

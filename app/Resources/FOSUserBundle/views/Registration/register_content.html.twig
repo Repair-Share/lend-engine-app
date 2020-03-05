@@ -53,6 +53,13 @@
     </div>
 </div>
 
-{% block pagejs %}{% endblock %}
+{% block pagejs %}
+    {% if not tenantInformation.setting('site_allow_registration') %}
+        <script>
+            $(".fos_user_registration_register").remove();
+            document.location.href = "{{ tenantInformation.accountDomain(true) }}";
+        </script>
+    {% endif %}
+{% endblock %}
 
 
