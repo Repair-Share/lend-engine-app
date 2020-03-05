@@ -7,19 +7,19 @@
                 <div class="alert alert-danger" id="modalWarning" style="display: none"></div>
                 <div style="padding-bottom: 10px; border-bottom: 1px dotted #ccc;">
                     {% if tenantInformation.fixedFeePricing %}
-                        <strong>
+                        <strong class="item-fee">
                             {% trans %}Fee{% endtrans %}:
                             {{ tenantInformation.currencySymbol }} {{ itemFee|number_format(2) }}
                             {% trans %}per_borrow{% endtrans %}
                         </strong>
                     {% elseif product.maxLoanDays == 1 and dailyFee > 0 %}
-                        <strong>
+                        <strong class="item-fee">
                             {% trans %}Fee{% endtrans %}:
                             {{ tenantInformation.currencySymbol }} {{ dailyFee|number_format(2) }}
                             {% trans %}per_day{% endtrans %}
                         </strong>
                     {% elseif dailyFee > 0 %}
-                        <strong>
+                        <strong class="item-fee">
                             {% trans %}Fee{% endtrans %}:
                             {{ tenantInformation.currencySymbol }} {{ dailyFee|number_format(2) }}
                             {% trans %}per_day{% endtrans %}
@@ -94,7 +94,7 @@
                     </div>
                     <div class="col-md-2">
                         <h4 class="count_days"></h4>
-                        <div style="font-weight: bold; font-size: 20px;">
+                        <div style="font-weight: bold; font-size: 20px;" class="item-fee">
                             {{ tenantInformation.currencySymbol }} <span class="total_fee">0</span>
                         </div>
                     </div>
