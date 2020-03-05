@@ -58,7 +58,8 @@ class EmailTestController extends Controller
                         'email'    => 'email@email.com',
                         'password' => 'password',
                         'user_locale' => $locale,
-                        'tenant'       => $tenant
+                        'tenant'       => $tenant,
+                        'loginUri' => ''
                     )
                 );
                 break;
@@ -75,6 +76,7 @@ class EmailTestController extends Controller
                         'imageName' => '',
                     ],
                     'loan' => [
+                        'id' => 1000,
                         'contact' => [
                             'name' => 'Emily Parker'
                         ]
@@ -90,7 +92,8 @@ class EmailTestController extends Controller
                         'row' => $row,
                         'includeButton' => false,
                         'message' => '',
-                        'checkedInBy' => "John Doe"
+                        'checkedInBy' => "John Doe",
+                        'loginUri' => ''
                     ]
                 );
                 break;
@@ -122,7 +125,8 @@ class EmailTestController extends Controller
                     'emails/booking_confirmation.html.twig',
                     array(
                         'attendee' => $attendee,
-                        'message'  => "This is a test email"
+                        'message'  => "This is a test email",
+                        'loginUri' => ''
                     )
                 );
                 break;
@@ -145,7 +149,8 @@ class EmailTestController extends Controller
                         'loanRows' => $rows,
                         'loanId' => 1000,
                         'user_locale' => $locale,
-                        'tenant'   => $tenant
+                        'tenant'   => $tenant,
+                        'loginUri' => ''
                     )
                 );
 
@@ -172,7 +177,8 @@ class EmailTestController extends Controller
                     array(
                         'expiresAt'    => $expiredAt,
                         'canSelfRenew' => $canSelfRenew,
-                        'tenant'       => $tenant
+                        'tenant'       => $tenant,
+                        'loginUri' => ''
                     )
                 );
 
@@ -203,7 +209,8 @@ class EmailTestController extends Controller
                         'dueDate' => new \DateTime(),
                         'items' => $items,
                         'user_locale' => $locale,
-                        'tenant'       => $tenant
+                        'tenant'       => $tenant,
+                        'loginUri' => ''
                     )
                 );
 
@@ -233,11 +240,14 @@ class EmailTestController extends Controller
                         'loanRows' => $rows,
                         'loanId' => 1000,
                         'user_locale' => $locale,
-                        'tenant'       => $tenant
+                        'tenant'   => $tenant,
+                        'loginUri' => ''
                     )
                 );
 
-                $subject = "Pick up your reservation tomorrow";
+                if (!$subject = $this->get('settings')->getSettingValue('email_reservation_reminder_subject')) {
+                    $subject = "Pick up your reservation tomorrow";
+                }
 
                 break;
 
@@ -253,6 +263,7 @@ class EmailTestController extends Controller
                         'inventoryItem' => [
                             'name' => 'Test item name',
                             'imageName' => '',
+                            'itemType' => 'loan',
                             'description' => 'Test item description',
                             'componentInformation' => 'Test component information',
                             'fileAttachments' => [
@@ -279,7 +290,8 @@ class EmailTestController extends Controller
                     'emails/loan_checkout.html.twig',
                     array(
                         'loanRows' => $loanRows,
-                        'user_locale' => $locale
+                        'user_locale' => $locale,
+                        'loginUri' => ''
                     )
                 );
                 break;
@@ -310,7 +322,8 @@ class EmailTestController extends Controller
                     'emails/loan_extend.html.twig',
                     array(
                         'loanRow' => $loanRow,
-                        'user_locale' => $locale
+                        'user_locale' => $locale,
+                        'loginUri' => ''
                     )
                 );
 
@@ -348,10 +361,23 @@ class EmailTestController extends Controller
                 $to = new \DateTime();
                 $to->modify("+1 week");
 
+                $loan = [
+                    'id' => 100,
+                    'contact' => [
+                        'name' => "Member name",
+                        'addressLine1' => "",
+                        'addressLine2' => "",
+                        'addressLine3' => "",
+                        'addressLine4' => "",
+                    ]
+                ];
+
                 $loanRows = [
                     0 => [
                         'inventoryItem' => [
                             'name' => 'Test item name',
+                            'itemType' => 'loan',
+                            'imageName' => '',
                             'description' => 'Test item description',
                             'componentInformation' => 'Test component information',
                             'fileAttachments' => [
@@ -369,10 +395,12 @@ class EmailTestController extends Controller
                 $message = $this->renderView(
                     'emails/reservation_confirm.html.twig',
                     array(
+                        'loan' => $loan,
                         'loanRows' => $loanRows,
                         'message' => '',
                         'user_locale' => $locale,
-                        'tenant'       => $tenant
+                        'tenant'       => $tenant,
+                        'loginUri' => ''
                     )
                 );
                 $subject .= " (Ref {ID here})";
