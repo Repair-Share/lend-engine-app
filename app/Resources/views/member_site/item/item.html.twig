@@ -269,8 +269,8 @@
                     }
                 },
                 select: function(info) {
-                    setPickup(moment(info.startStr), null, null, 1, "Site name");
-                    setReturn(moment(info.endStr), null, null, 1, "Site name");
+                    setPickup(moment(info.startStr), null, null, currentPickupSiteId, currentPickupSiteName);
+                    setReturn(moment(info.endStr), null, null, currentPickupSiteId, currentPickupSiteName);
                 },
                 selectAllow: function(info) {
                     var startOk = false;
@@ -398,6 +398,8 @@
 
             // User selects to set a loan by dragging dates for a chosen site
             borrowModal.on('change', '#site-selector', function () {
+                currentPickupSiteId = $(this).val();
+                currentPickupSiteName = $(this).find('option:selected').text();
                 borrowModal.modal('hide');
                 calendar.changeView('timeGridWeek');
                 // remove the information for all sites:
