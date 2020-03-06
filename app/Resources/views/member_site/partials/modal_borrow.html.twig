@@ -100,19 +100,25 @@
                     </div>
                 </div>
 
-                <div class="row multi-site" id="select-borrow">
-                    <div class="col-md-12">
-                        <div class="help-block">Or choose a site to select by the hour: <sup>beta</sup></div>
-                        <select class="form-control" id="site-selector">
-                            <option></option>
-                            {% for site in sites %}
-                                {% if site.isActive %}
-                                    <option value="{{ site.id }}">{{ site.name }}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
+                {% if tenantInformation.basket is defined
+                and tenantInformation.basket
+                and tenantInformation.basket.loanRows|length > 0 %}
+                    {#Cannot drag to select dates as we have a pickup date already defined#}
+                {% else %}
+                    <div class="row multi-site" id="select-borrow">
+                        <div class="col-md-12">
+                            <div class="help-block">Or choose a site to select by the hour: <sup>beta</sup></div>
+                            <select class="form-control" id="site-selector">
+                                <option></option>
+                                {% for site in sites %}
+                                    {% if site.isActive %}
+                                        <option value="{{ site.id }}">{{ site.name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
-                </div>
+                {% endif %}
 
                 <div class="row" id="booking-help" style="display:none">
                     <div class="col-md-12 help-block"><br>{% trans %}public_item.borrow_help{% endtrans %}.</div>
