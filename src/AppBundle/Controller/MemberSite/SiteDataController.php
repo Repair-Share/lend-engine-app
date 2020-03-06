@@ -51,7 +51,8 @@ class SiteDataController extends Controller
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
 
-        // Get loan dates to hide available booking days
+        // Get loan dates which we use later to hide available booking days
+        // Because this item is loaned out. We need data from all sites, no site filter here
         $bookings = [];
         if ($itemId) {
             /** @var $reservationService \AppBundle\Services\Booking\BookingService */
@@ -80,10 +81,14 @@ class SiteDataController extends Controller
             $loanRow->setDueOutAt($o);
         }
 
-        /** @var $site \AppBundle\Entity\Site */
-        $sites = $item->getSites();
-        if (count($sites) == 0) {
-            $sites = $siteRepo->findBy(['isActive' => true]);
+        if (is_numeric($request->get('siteId'))) {
+            $sites = [$siteRepo->find($request->get('siteId'))];
+        } else {
+            /** @var $site \AppBundle\Entity\Site */
+            $sites = $item->getSites();
+            if (count($sites) == 0) {
+                $sites = $siteRepo->findBy(['isActive' => true]);
+            }
         }
 
         foreach ($sites AS $site) {

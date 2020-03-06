@@ -142,12 +142,12 @@
             var currentPickupSiteId   = {{ currentPickupSiteId }};
             var currentPickupSiteName = "{{ currentPickupSiteName }}";
             var bookingStartFrom;
+            var calendarMode = '{% if app.request.get('extend') %}extend{% else %}booking{% endif %}';
+            var originalReturnDate = '{{ itemDueInAt }}';
+
             var bookableDays = []; // an array of YYYY-mm-dd for selectAllow
             var openingTimesByDate = [];
             var closingTimesByDate = [];
-
-            var calendarMode = '{% if app.request.get('extend') %}extend{% else %}booking{% endif %}';
-            var originalReturnDate = '{{ itemDueInAt }}';
 
             var sites = [];
             {% for site in sites %}
@@ -180,18 +180,18 @@
             var newTimeToPicker = $('.new_time_to');
             var tFrom = timeFromPicker.timepicker({
                 'step' : 15,
-                'minTime': '7:00am',
+                'minTime': '6:00am',
                 'maxTime': '10:00pm'
             });
             var tTo = timeToPicker.timepicker({
                 'step' : 15,
-                'minTime': '7:00am',
+                'minTime': '6:00am',
                 'maxTime': '10:00pm'
             });
             // For extending a loan:
             newTimeToPicker.timepicker({
                 'step' : 15,
-                'minTime': '7:00am',
+                'minTime': '6:00am',
                 'maxTime': '10:00pm'
             });
 
@@ -199,15 +199,17 @@
             var txt;
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: [ 'interaction', 'dayGrid' ],
+                plugins: [ 'interaction', 'dayGrid', 'timeGrid' ],
                 locale: "{{ app.request.locale }}",
                 defaultView: 'dayGridMonth',
                 allDaySlot: false,
-                minTime: '07:00:00',
+                selectable: true,
+                columnHeaderFormat: { weekday: 'short', day: 'numeric', omitCommas: true },
+                minTime: '06:00:00',
                 maxTime: '22:00:00',
                 header: {
                     left:   'title',
-                    center: '',
+                    center: 'today,dayGridMonth,timeGridWeek',
                     right:  'prev,next'
                 },
                 eventClick: function(info) {
@@ -265,6 +267,34 @@
                         // User has a basket
                         setPickup(basketPickupTime, null, null, basketSiteFromId, basketSiteFromName);
                     }
+                },
+                select: function(info) {
+                    setPickup(moment(info.startStr), null, null, 1, "Site name");
+                    setReturn(moment(info.endStr), null, null, 1, "Site name");
+                },
+                selectAllow: function(info) {
+                    var startOk = false;
+                    var endOk = false;
+                    var requestedStart = moment(info.startStr);
+                    var requestedEnd = moment(info.endStr);
+                    var evs = calendar.getEvents();
+                    // If the start and end lie within a bookable slot, return true
+                    $(evs).each(function() {
+                        if (this.extendedProps.siteId) {
+                            var slotStart = moment(this.start);
+                            var slotEnd = moment(this.end);
+                            if (requestedStart >= slotStart && requestedStart <= slotEnd) {
+                                startOk = true;
+                            }
+                            if (requestedEnd >= slotStart && requestedEnd <= slotEnd) {
+                                endOk = true;
+                            }
+                        }
+                    });
+                    if (startOk == true && endOk == true) {
+                        return true;
+                    }
+                    return false;
                 },
                 loading: function(bool) {
                     if (bool){
@@ -364,6 +394,23 @@
             borrowModal.on('click', '#chooseReturn', function () {
                 borrowModal.modal('hide');
                 dragSelect = false; // we just want to choose a date so don't set start AND end dates when click/drag
+            });
+
+            // User selects to set a loan by dragging dates for a chosen site
+            borrowModal.on('change', '#site-selector', function () {
+                borrowModal.modal('hide');
+                calendar.changeView('timeGridWeek');
+                // remove the information for all sites:
+                var eventSources = calendar.getEventSources();
+                var len = eventSources.length;
+                for (var i = 0; i < len; i++) {
+                    if (eventSources[i].url.search("site-data") != -1) {
+                        eventSources[i].remove();
+                    }
+                }
+                // replace with info for just one site:
+                addSitesToCal($(this).val());
+                dragSelect = true;
             });
 
             extendModal.on('keyup', '#extensionFeeAmount', function () {
@@ -751,8 +798,8 @@
                 }
             }
 
-            function addSitesToCal() {
-                var url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}";
+            function addSitesToCal(siteId) {
+                var url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}&siteId="+siteId;
                 calendar.addEventSource( {
                     url: url,
                     type: 'GET',
@@ -785,6 +832,19 @@
             // Used for selectAllow logic (create greyed-out days outside of site hours)
             function setBookableDays(events) {
                 var date;
+
+                // remove all existing greyed out events
+                var evs = calendar.getEvents();
+                $(evs).each(function() {
+                    if (this.title == '-') {
+                        this.remove();
+                    }
+                });
+
+                openingTimesByDate = [];
+                closingTimesByDate = [];
+                bookableDays = [];
+
                 $(events).each(function() {
                     date = this.start.substring(0, 10);
                     bookableDays.unshift(date);
@@ -795,41 +855,42 @@
                         closingTimesByDate[date] = this.end;
                     }
                 });
+
                 // put grey days otherwise; these will match with selectAllow
                 var day    = moment(calendar.view.activeStart);
                 var endDay = moment(calendar.view.activeEnd);
                 while (day < endDay) {
                     if ($.inArray(day.format("YYYY-MM-DD"), bookableDays) != -1) {
                         // we have an opening slot on this day
-                        // create an event from midnight to the first opening time
+                        // create a grey event from midnight to the first opening time
                         calendar.addEvent(
                                 {
                                     'title': "-",
                                     'start': day.format("YYYY-MM-DD 00:00:00"),
                                     'end': openingTimesByDate[day.format("YYYY-MM-DD")],
                                     'rendering': 'background',
-                                    'color': '#DDD'
+                                    'color': '#AAA'
                                 }
                         );
-                        // create an event from the last closing time to midnight
+                        // create a grey event from the last closing time to midnight
                         calendar.addEvent(
                                 {
                                     'title': "-",
                                     'start': closingTimesByDate[day.format("YYYY-MM-DD")],
                                     'end': day.format("YYYY-MM-DD 23:59:59"),
                                     'rendering': 'background',
-                                    'color': '#DDD'
+                                    'color': '#AAA'
                                 }
                         );
                     } else {
-                        // Add an all-day event
+                        // Add an all-day grey event
                         calendar.addEvent(
                                 {
                                     'title': "-",
                                     'start': day.format("YYYY-MM-DD"),
                                     'end': day.format("YYYY-MM-DD"),
                                     'rendering': 'background',
-                                    'color': '#DDD'
+                                    'color': '#AAA'
                                 }
                         );
                     }
