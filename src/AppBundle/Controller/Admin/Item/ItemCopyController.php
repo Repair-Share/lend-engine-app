@@ -58,6 +58,9 @@ class ItemCopyController extends Controller
         /** @var \AppBundle\Services\SettingsService $settings */
         $settings = $this->get('settings');
 
+        /** @var \AppBundle\Services\Item\ItemService $itemService */
+        $itemService = $this->get('service.item');
+
         try {
 
             /** @var $newProduct \AppBundle\Entity\InventoryItem */
@@ -91,7 +94,7 @@ class ItemCopyController extends Controller
             // Set initial field value if auto-sku is turned on
             $skuStub = $this->get('service.tenant')->getCodeStub();
             if ($skuStub) {
-                $sku = $this->generateAutoSku($skuStub);
+                $sku = $itemService->generateAutoSku($skuStub);
                 $newProduct->setSku($sku);
             }
 
@@ -144,36 +147,6 @@ class ItemCopyController extends Controller
             return false;
         }
 
-    }
-
-    /**
-     *
-     * THIS IS REPLICATED IN ItemController
-     * @todo move to inventory or item service
-     *
-     * This won't work at high throughput; it's not transactional
-     * Also assumes that user has got all 4-digit SKUs; will break with 3 digits
-     * unless we add the REGEX doctrine extension to only search for latest 4-digit code
-     * @param $stub
-     * @return string
-     */
-    private function generateAutoSku($stub)
-    {
-        $lastSku = $stub;
-
-        /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
-        $itemRepo = $this->getDoctrine()->getRepository('AppBundle:InventoryItem');
-        $builder = $itemRepo->createQueryBuilder('i');
-        $builder->add('select', 'MAX(i.sku) AS sku');
-        $builder->where("i.sku like '{$stub}%' AND i.isActive = 1");
-        $query = $builder->getQuery();
-        if ( $results = $query->getResult() ) {
-            $lastSku = $results[0]['sku'];
-        }
-        $id = (int)str_replace($stub, '', $lastSku);
-        $id++;
-        $newSku = $stub.str_pad($id, 4, '0', STR_PAD_LEFT);
-        return $newSku;
     }
 
 }

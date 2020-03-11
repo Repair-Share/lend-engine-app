@@ -209,4 +209,30 @@ class ItemService
 
     }
 
+    /**
+     * This won't work at high throughput; it's not transactional
+     * Also assumes that user has got all 4-digit SKUs; will break with 3 digits
+     * unless we add the REGEX doctrine extension to only search for latest 4-digit code
+     * @param $stub
+     * @return string
+     */
+    public function generateAutoSku($stub)
+    {
+        $lastSku = $stub;
+
+        /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
+        $itemRepo = $this->em->getRepository('AppBundle:InventoryItem');
+        $builder = $itemRepo->createQueryBuilder('i');
+        $builder->add('select', 'MAX(i.sku) AS sku');
+        $builder->where("i.sku like '{$stub}%' AND i.isActive = 1");
+        $query = $builder->getQuery();
+        if ( $results = $query->getResult() ) {
+            $lastSku = $results[0]['sku'];
+        }
+        $id = (int)str_replace($stub, '', $lastSku);
+        $id++;
+        $newSku = $stub.str_pad($id, 4, '0', STR_PAD_LEFT);
+        return $newSku;
+    }
+
 }

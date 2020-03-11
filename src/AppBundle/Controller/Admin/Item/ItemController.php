@@ -161,7 +161,7 @@ class ItemController extends Controller
 
             $sku = $form->get('sku')->getData();
             if ($sku == '{auto}') {
-                $newSku = $this->generateAutoSku($skuStub);
+                $newSku = $itemService->generateAutoSku($skuStub);
                 $product->setSku($newSku);
             }
 
@@ -388,35 +388,6 @@ class ItemController extends Controller
             'isMultiSite' => $this->get('settings')->getSettingValue('multi_site'),
             'activeLoanInformation' => $loanRowDetail // for the stock info header
         ));
-    }
-
-    /**
-     * THIS IS REPLICATED IN ItemCopyController
-     * @todo move to inventory or item service
-     *
-     * This won't work at high throughput; it's not transactional
-     * Also assumes that user has got all 4-digit SKUs; will break with 3 digits
-     * unless we add the REGEX doctrine extension to only search for latest 4-digit code
-     * @param $stub
-     * @return string
-     */
-    private function generateAutoSku($stub)
-    {
-        $lastSku = $stub;
-
-        /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
-        $itemRepo = $this->getDoctrine()->getRepository('AppBundle:InventoryItem');
-        $builder = $itemRepo->createQueryBuilder('i');
-        $builder->add('select', 'MAX(i.sku) AS sku');
-        $builder->where("i.sku like '{$stub}%' AND i.isActive = 1");
-        $query = $builder->getQuery();
-        if ( $results = $query->getResult() ) {
-            $lastSku = $results[0]['sku'];
-        }
-        $id = (int)str_replace($stub, '', $lastSku);
-        $id++;
-        $newSku = $stub.str_pad($id, 4, '0', STR_PAD_LEFT);
-        return $newSku;
     }
 
     /**
