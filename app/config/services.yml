@@ -8,16 +8,20 @@ parameters:
 
 services:
 
-    # Mail not yet sent via RabbitMQ but tested with Heroku and ready to link things up
-    queue.mail.add:
-        class: AppBundle\Services\QueueMailAdd
-        arguments:
-            - "@twig"
+    ## RABBITMQ / QUEUE RELATED ##
 
-    queue.mail.process:
-        class: AppBundle\Services\QueueMailProcess
+    AppBundle\Services\Queue\MailQueueProducer: '@old_sound_rabbit_mq.mail_queue_producer'
+
+    mail_queue.producer:
+        class: AppBundle\Services\Queue\MailQueueProducer
+
+    mail_queue.consumer:
+        class: AppBundle\Services\Queue\MailQueueConsumer
         arguments:
             - "@logger"
+            - "@service.mailer"
+
+    ## END RABBITMQ ##
 
     doctrine.dbal.connection_factory:
         class: AppBundle\Account\CustomConnectionFactory
@@ -155,11 +159,17 @@ services:
             - '%env(SYMFONY__POSTMARK_API_KEY)%'
             - "@session"
 
+    # Takes data from controllers and services and publishes to the email queue
     service.email:
         class: AppBundle\Services\EmailService
         arguments:
             - "@service.tenant"
             - "@settings"
+            - "@old_sound_rabbit_mq.mail_queue_producer"
+
+    # Takes a simple array [from queue] and sends via PostMark
+    service.mailer:
+        class: AppBundle\Services\Mailer
 
     service.basket:
         class: AppBundle\Services\BasketService
@@ -264,6 +274,7 @@ services:
             - "@service.email"
             - "@twig"
             - "@service.tenant"
+            - "@settings"
 
     service.waiting_list:
         class: AppBundle\Services\WaitingList\WaitingListService
@@ -356,6 +367,7 @@ services:
             - "@service_container"
             - "@settings"
             - "@service.contact"
+            - "@service.email"
             - "@doctrine.orm.entity_manager"
             - "@logger"
 
@@ -366,6 +378,7 @@ services:
             - "@service_container"
             - "@settings"
             - "@service.contact"
+            - "@service.email"
             - "@doctrine.orm.entity_manager"
             - "@logger"
 
@@ -376,6 +389,7 @@ services:
             - "@service_container"
             - "@settings"
             - "@service.contact"
+            - "@service.email"
             - "@doctrine.orm.entity_manager"
             - "@logger"
 
@@ -386,6 +400,7 @@ services:
             - "@service_container"
             - "@settings"
             - "@service.contact"
+            - "@service.email"
             - "@doctrine.orm.entity_manager"
             - "@logger"
 

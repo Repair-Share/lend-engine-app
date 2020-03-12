@@ -167,40 +167,26 @@ hype_mailchimp:
     default_list: "%mailchimp_default_list%"
     ssl: true
 
+# There's only one RabbitMQ server for all Lend Engine servers
+# Each LE server has a worker, which means we have multiple workers picking up messages
+# All tenant information is held within the message. No DB calls are made by queue consumer
 old_sound_rabbit_mq:
     connections:
         default:
-            # A different (unused) connection defined by an URL. One can omit all parts,
-            # except the scheme (amqp:). If both segment in the URL and a key value (see above)
-            # are given the value from the URL takes precedence.
-            # See https://www.rabbitmq.com/uri-spec.html on how to encode values.
-            url: 'amqp://wjngrufk:-jUSQ5q0rWCsi_cVdTW5YXv_MT0tcSEB@antelope.rmq.cloudamqp.com/wjngrufk'
+            url: "%CLOUDAMQP_URL%"
             lazy: true
-        not_used:
-            host:     'antelope.rmq.cloudamqp.com'
-            port:     5672
-            user:     'qktirzaz'
-            password: 'KJAWmNpTCBXAcYjz9FFIrBW2QLd-pfwx'
-            vhost:    '/qktirzaz'
-            lazy:     false
-            connection_timeout: 3
-            read_write_timeout: 3
-            # requires php-amqplib v2.4.1+ and PHP5.4+
-            keepalive: false
-            # requires php-amqplib v2.4.1+
-            heartbeat: 0
-            #requires php_sockets.dll
-            use_socket: true # default false
     producers:
-        task_queue:
+        mail_queue:
+            class: AppBundle\Services\Queue\MailQueueProducer
             connection:       default
-            exchange_options: {name: 'task_queue', type: direct}
-            service_alias:    queue.mail.add
+            exchange_options: {name: 'exchange_%env(APP_ENV)%', type: direct}
+            service_alias:    mail_queue.producer
             enable_logger:    true
     consumers:
-        task_queue:
+        mail_queue:
             connection:       default
-            exchange_options: {name: 'task_queue', type: direct}
-            queue_options:    {name: 'task_queue'}
-            callback:         queue.mail.process
+            exchange_options: {name: 'exchange_%env(APP_ENV)%', type: direct}
+            queue_options:    {name: 'exchange_%env(APP_ENV)%'}
+            callback:         mail_queue.consumer
             enable_logger:    true
+            qos_options:      { prefetch_size: 0, prefetch_count: 1, global: false }

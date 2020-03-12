@@ -5,6 +5,7 @@ namespace AppBundle\Services\Schedule;
 use AppBundle\Entity\Membership;
 use AppBundle\Entity\Note;
 use AppBundle\Services\Contact\ContactService;
+use AppBundle\Services\EmailService;
 use AppBundle\Services\SettingsService;
 use Doctrine\ORM\EntityManager;
 use Postmark\PostmarkClient;
@@ -28,6 +29,9 @@ class EmailReservationReminders
     /** @var \AppBundle\Services\Contact\ContactService */
     private $contactService;
 
+    /** @var EmailService */
+    private $emailService;
+
     /** @var EntityManager */
     private $em;
 
@@ -39,13 +43,16 @@ class EmailReservationReminders
 
     public function __construct(\Twig_Environment $twig,
                                 Container $container,
-                                SettingsService $settings, ContactService $contactService,
+                                SettingsService $settings,
+                                ContactService $contactService,
+                                EmailService $emailService,
                                 EntityManager $em, LoggerInterface $logger)
     {
         $this->twig = $twig;
         $this->container = $container;
         $this->settings = $settings;
         $this->contactService = $contactService;
+        $this->emailService = $emailService;
         $this->em = $em;
         $this->logger = $logger;
 
@@ -133,8 +140,6 @@ class EmailReservationReminders
                                 $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
                                 $loginUri .= '&r=/loan/'.$loan->getId();
 
-                                $client = new PostmarkClient($postmarkApiKey);
-
                                 // Save and switch locale for sending the email
                                 $sessionLocale = $this->container->get('translator')->getLocale();
                                 $this->container->get('translator')->setLocale($contact->getLocale());
@@ -157,15 +162,12 @@ class EmailReservationReminders
                                     );
                                 }
 
-                                $client->sendEmail(
-                                    "{$senderName} <{$fromEmail}>",
-                                    $toEmail,
-                                    $subject,
-                                    $message,
-                                    null,
-                                    null,
-                                    true,
-                                    $replyToEmail
+                                $this->emailService->postmarkApiKey = $postmarkApiKey;
+                                $this->emailService->senderName = $senderName;
+                                $this->emailService->fromEmail = $fromEmail;
+                                $this->emailService->replyToEmail = $replyToEmail;
+                                $this->emailService->send(
+                                    $contact->getEmail(), $contact->getName(), $subject, $message
                                 );
 
                                 // Revert locale for the UI

@@ -5,6 +5,7 @@ namespace AppBundle\Services\Schedule;
 use AppBundle\Entity\Membership;
 use AppBundle\Entity\Note;
 use AppBundle\Services\Contact\ContactService;
+use AppBundle\Services\EmailService;
 use AppBundle\Services\SettingsService;
 use Doctrine\ORM\EntityManager;
 use Postmark\PostmarkClient;
@@ -28,6 +29,9 @@ class EmailOverdueLoans
     /** @var \AppBundle\Services\Contact\ContactService */
     private $contactService;
 
+    /** @var EmailService */
+    private $emailService;
+
     /** @var EntityManager */
     private $em;
 
@@ -41,12 +45,14 @@ class EmailOverdueLoans
                                 Container $container,
                                 SettingsService $settings,
                                 ContactService $contactService,
+                                EmailService $emailService,
                                 EntityManager $em, LoggerInterface $logger)
     {
         $this->twig = $twig;
         $this->container = $container;
         $this->settings = $settings;
         $this->contactService = $contactService;
+        $this->emailService = $emailService;
         $this->em = $em;
         $this->logger = $logger;
 
@@ -138,8 +144,6 @@ class EmailOverdueLoans
                                 $this->contactService->setTenant($tenant, $tenantEntityManager);
                                 $token = $this->contactService->generateAccessToken($contact);
 
-                                $client = new PostmarkClient($postmarkApiKey);
-
                                 // Save and switch locale for sending the email
                                 $sessionLocale = $this->container->get('translator')->getLocale();
                                 $this->container->get('translator')->setLocale($contact->getLocale());
@@ -163,15 +167,12 @@ class EmailOverdueLoans
                                     'emails', $contact->getLocale()
                                 );
 
-                                $client->sendEmail(
-                                    "{$senderName} <{$fromEmail}>",
-                                    $toEmail,
-                                    $subject,
-                                    $message,
-                                    null,
-                                    null,
-                                    true,
-                                    $replyToEmail
+                                $this->emailService->postmarkApiKey = $postmarkApiKey;
+                                $this->emailService->senderName = $senderName;
+                                $this->emailService->fromEmail = $fromEmail;
+                                $this->emailService->replyToEmail = $replyToEmail;
+                                $this->emailService->send(
+                                    $contact->getEmail(), $contact->getName(), $subject, $message
                                 );
 
                                 $note = new Note();

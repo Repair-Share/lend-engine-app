@@ -4,7 +4,7 @@
  * Get a list of bookings to feed the jQuery calendar
  */
 
-namespace AppBundle\Controller\MemberSite;
+namespace AppBundle\Controller\MemberSite\Item;
 
 use AppBundle\Entity\Loan;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
