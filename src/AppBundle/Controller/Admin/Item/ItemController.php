@@ -346,6 +346,10 @@ class ItemController extends Controller
                 }
             }
 
+            if ($product->getItemType() == InventoryItem::TYPE_KIT && count($product->getComponents()) == 0) {
+                $product->setShowOnWebsite(false);
+            }
+
             try {
                 $em->flush();
                 if ($request->get('submitForm') == 'saveAndNew') {
@@ -362,6 +366,10 @@ class ItemController extends Controller
                 $this->addFlash('debug', $generalException->getMessage());
             }
 
+        }
+
+        if ($product->getItemType() == InventoryItem::TYPE_KIT && count($product->getComponents()) == 0) {
+            $this->addFlash('error', "This kit has no components yet. Members will not be able to see it online.");
         }
 
         if (count($customFields) > 0) {

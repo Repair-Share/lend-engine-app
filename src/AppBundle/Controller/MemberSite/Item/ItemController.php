@@ -1,8 +1,9 @@
 <?php
 
-namespace AppBundle\Controller\MemberSite;
+namespace AppBundle\Controller\MemberSite\Item;
 
 use AppBundle\Entity\CreditCard;
+use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\Maintenance;
@@ -185,6 +186,12 @@ class ItemController extends Controller
             if (!$product->getInventoryLocation()->getIsAvailable() && $product->getInventoryLocation()->getId() != 1) {
                 $product->setIsReservable(false);
             }
+        }
+
+        // Empty kits cannot be added to basket
+        if ($product->getItemType() == InventoryItem::TYPE_KIT && count($product->getComponents()) == 0) {
+            $this->addFlash('error', "This kit has no components; please edit and add components.");
+            $product->setIsReservable(false);
         }
 
         $maintenanceOverdue = false;

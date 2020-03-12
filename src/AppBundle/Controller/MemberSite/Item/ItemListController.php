@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Controller\MemberSite;
+namespace AppBundle\Controller\MemberSite\Item;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
