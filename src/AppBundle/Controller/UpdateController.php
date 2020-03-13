@@ -164,7 +164,8 @@ class UpdateController extends Controller
         $tenant = $tenantService->getTenant();
 
         /** @var \Doctrine\DBAL\Driver\PDOStatement $s */
-        $raw = "REPLACE INTO setting (setup_key, setup_value) VALUES ('org_name', '{$tenant->getName()}')";
+        $tenantName = $db->quote($tenant->getName());
+        $raw = "REPLACE INTO setting (setup_key, setup_value) VALUES ('org_name', '{$tenantName}')";
         $s = $db->prepare($raw);
         $s->execute();
 
