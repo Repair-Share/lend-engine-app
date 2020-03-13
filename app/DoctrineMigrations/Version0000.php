@@ -109,7 +109,7 @@ class Version0000 extends AbstractMigration
                 ('org_address','...'),
                 ('org_country','GB'),
                 ('org_currency','GBP'),
-                ('org_email','email@demo.com'),
+                ('org_email','hello@lend-engine.com'),
                 ('org_lat','51.4425439'),
                 ('org_long','-2.6152995'),
                 ('org_name','Organisation name'),
