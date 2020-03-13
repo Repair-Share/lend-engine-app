@@ -19,7 +19,7 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
     public function testPageIsSuccessful($url)
     {
         $this->client->request('GET', $url);
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $this->assertTrue($this->client->getResponse()->isSuccessful() || $this->client->getResponse()->isRedirection());
     }
 
     /**
@@ -35,6 +35,7 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/admin/settings/member_site'],
             ['/admin/settings/templates'],
             ['/admin/settings/events'],
+            ['/admin/settings/labels'],
             ['/admin/settings/maintenance-plans'],
 
             ['/admin/site/list'],
@@ -56,6 +57,9 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
 
             ['/admin/category/list'],
             ['/admin/category'],
+
+            ['/admin/section/list'],
+            ['/admin/section'],
 
             ['/admin/productField/list'],
             ['/admin/productField'],
@@ -117,6 +121,8 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
 
             // Member site
             ['/products?show=recent'],
+            ['/register'],
+            ['/choose_membership'],
             ['/sites'],
             ['/member/loans'],
             ['/member/payments'],
@@ -126,6 +132,17 @@ class ApplicationAvailabilityFunctionalTest extends AuthenticatedControllerTest
             ['/member-search?go=&member-search=test'],
             ['/products?search=test'],
             ['/site-data?itemId=1000'],
+
+            // Email testing
+            ['/admin/settings/email/test?template=welcome'],
+            ['/admin/settings/email/test?template=reminder'],
+            ['/admin/settings/email/test?template=checkout'],
+            ['/admin/settings/email/test?template=overdue'],
+            ['/admin/settings/email/test?template=extend'],
+            ['/admin/settings/email/test?template=reserve'],
+            ['/admin/settings/email/test?template=checkin'],
+            ['/admin/settings/email/test?template=expired'],
+            ['/admin/settings/email/test?template=donor_notification'],
 
             // Events
             ['/events'],

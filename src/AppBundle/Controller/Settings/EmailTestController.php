@@ -305,6 +305,7 @@ class EmailTestController extends Controller
                 $loanRow = [
                     'inventoryItem' => [
                         'name' => 'Test item name',
+                        'imageName' => '',
                         'description' => 'Test item description',
                         'componentInformation' => 'Test component information',
                         'fileAttachments' => [
@@ -315,16 +316,23 @@ class EmailTestController extends Controller
                         ]
                     ],
                     'fee' => 1,
-                    'dueInAt' => new \DateTime()
+                    'dueInAt' => new \DateTime(),
+                    'loan' => [
+                        'id' => 1000,
+                        'contact' => [
+                            'name' => 'Demo name'
+                        ]
+                    ]
                 ];
 
                 $message = $this->renderView(
                     'emails/loan_extend.html.twig',
-                    array(
+                    [
                         'loanRow' => $loanRow,
                         'user_locale' => $locale,
-                        'loginUri' => ''
-                    )
+                        'loginUri' => '',
+                        'message' => 'Test message'
+                    ]
                 );
 
                 break;
@@ -344,9 +352,9 @@ class EmailTestController extends Controller
 
                 $message = $this->renderView(
                     'emails/loan_donor_notify.html.twig',
-                    array(
+                    [
                         'loanRow' => $loanRow,
-                    )
+                    ]
                 );
 
                 break;
@@ -394,14 +402,14 @@ class EmailTestController extends Controller
                 ];
                 $message = $this->renderView(
                     'emails/reservation_confirm.html.twig',
-                    array(
+                    [
                         'loan' => $loan,
                         'loanRows' => $loanRows,
                         'message' => '',
                         'user_locale' => $locale,
                         'tenant'       => $tenant,
                         'loginUri' => ''
-                    )
+                    ]
                 );
                 $subject .= " (Ref {ID here})";
                 break;
