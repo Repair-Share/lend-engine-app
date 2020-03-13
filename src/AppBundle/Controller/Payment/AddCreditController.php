@@ -35,7 +35,7 @@ class AddCreditController extends Controller
         /** @var \AppBundle\Repository\PaymentMethodRepository $pmRepo */
         $pmRepo = $em->getRepository('AppBundle:PaymentMethod');
 
-        $minimumPaymentAmount = $this->get('settings')->getSettingValue('stripe_minimum_payment');
+        $minimumPaymentAmount = (float)$this->get('settings')->getSettingValue('stripe_minimum_payment');
 
         /** @var \AppBundle\Entity\Contact $contact */
         if ($contactId = $request->get('c')) {
@@ -55,9 +55,20 @@ class AddCreditController extends Controller
 
         $form->handleRequest($request);
 
+        $paymentAmount = null;
+        if ($request->get('amount')) {
+            $paymentAmount = (float)$request->get('amount');
+        }
+        if ($paymentAmount == 0 && $minimumPaymentAmount > 0) {
+            $paymentAmount = $minimumPaymentAmount;
+        }
+        if ($paymentAmount > 0) {
+            $form->get('paymentAmount')->setData(number_format($paymentAmount, 2, '.', ''));
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $amount   = $form->get('paymentAmount')->getData();
+            $amount = $form->get('paymentAmount')->getData();
 
             if ($amount < 0) {
                 $this->addFlash('error', "Payment amount must be more than zero. Refunds should be issued using the payments list.");
@@ -96,7 +107,11 @@ class AddCreditController extends Controller
 
                 if ($paymentService->create($payment)) {
                     $contactService->recalculateBalance($contact);
-                    $this->addFlash('success', 'Payment recorded OK.');
+                    if ($request->get('return') == 'basket') {
+                        $this->addFlash('success', 'Payment recorded OK. You can now complete your loan or reservation.');
+                    } else {
+                        $this->addFlash('success', 'Payment recorded OK.');
+                    }
                 } else {
                     $this->addFlash('error', 'There was an error creating the payment.');
                     foreach ($paymentService->errors AS $error) {
@@ -117,10 +132,6 @@ class AddCreditController extends Controller
         }
 
         $contact = $contactService->loadCustomerCards($contact);
-
-        if (!$paymentAmount = $request->get('amount')) {
-            $paymentAmount = $minimumPaymentAmount;
-        }
 
         // Switch the web session to requested user
         if ($user->getId() != $contact->getId()) {

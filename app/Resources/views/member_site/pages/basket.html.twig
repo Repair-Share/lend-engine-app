@@ -122,7 +122,7 @@
 
                         </div>
 
-                        <a href="{{ path('add_credit') }}" id="addCreditButton" class="btn btn-success" style="margin-top:10px; display:none">{% trans %}button_add_credit{% endtrans %}</a>
+                        <button type="button" id="addCreditButton" class="btn btn-success" style="margin-top:10px; display:none">{% trans %}button_add_credit{% endtrans %}</button>
 
                     </div>
 
@@ -178,7 +178,7 @@
 
             var formControls = $("#formControls");
 
-            formControls.on('click', '#buttonCredit', function() {
+            formControls.on('click', '#addCreditButton', function() {
                 document.location.href = "{{ path('add_credit') }}?amount="+basketTotal+"&c={{ tenantInformation.basket.contact.id }}&return=basket";
             });
 
