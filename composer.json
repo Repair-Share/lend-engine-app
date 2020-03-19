@@ -25,6 +25,7 @@
         "twbs/bootstrap": "^3.3",
         "ext-mbstring": "*",
         "ext-gd": "*",
+        "ext-intl": "*",
         "wildbit/postmark-php": "^2.6",
         "league/flysystem-aws-s3-v3": "dev-master",
         "oneup/flysystem-bundle": "@stable",
