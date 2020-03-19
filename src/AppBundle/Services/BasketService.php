@@ -288,7 +288,7 @@ class BasketService
         $postalFee = $this->calculateShippingFee($basket);
         $shippingItemId = $this->settings->getSettingValue('postal_shipping_item');
 
-        if ($postalFee > 0 && is_numeric($shippingItemId)) {
+        if ($postalFee > 0 && is_numeric($shippingItemId) && $basket->getCollectFrom() == "post") {
             if ($shippingItem = $itemRepo->find($shippingItemId)) {
                 $shippingRow = new LoanRow();
                 $shippingRow->setInventoryItem($shippingItem);

@@ -66,7 +66,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             ->andWhere('i.itemType = :itemType')
             ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
             ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"))
-            ->setParameter('itemType', 'stock')
+            ->setParameter('itemType', 'loan')
             ->setParameter('statusReserved', 'RESERVED')
         ;
 

@@ -28,6 +28,7 @@
         {% endif %}
 
         <span class="pull-right">
+            <a href="{{ path('loan_print', {id: loan.id}) }}" target="_blank" class="btn btn-xs btn-default">Print</a>
             {{ include('partials/loan_status_label.html.twig') }}
         </span>
     </h2>
@@ -116,6 +117,12 @@
                     {% if not row.isCheckedOut and row.inventoryItem.inventoryLocation %}
                     {#A field checked via validateCheckout to prevent checkout for non-available items#}
                     <input type="hidden" class="item-location" value="{{ row.inventoryItem.inventoryLocation.isAvailable }}">
+                    {% endif %}
+
+                    {% if row.inventoryItem.sku %}
+                        <div class="basket-code">
+                            {% trans %}public_item.code{% endtrans %}: <strong>{{ row.inventoryItem.sku }}</strong>
+                        </div>
                     {% endif %}
 
                     {% if row.inventoryItem.serial %}
@@ -447,7 +454,8 @@
             {% if loan.collectFrom == "post" %}
                 <div class="alert alert-warning">
                     {% trans %}shipping.post{% endtrans %} :
-                    {{ loan.contact.address }}
+                    {{ loan.contact.address }}<br><br>
+                    <a href="{{ path('loan_print', {id: loan.id}) }}" target="_blank" class="btn btn-xs btn-default">Print</a>
                 </div>
 
             {% else %}
@@ -476,7 +484,7 @@
                 </a>
             {% endif %}
             {% if loan.status == 'RESERVED' or loan.status == 'PENDING' %}
-                <a href="{{ path('reservation_cancel', {id: loan.id}) }}" class="btn btn-danger pull-left">
+                <a href="{{ path('reservation_cancel', {id: loan.id}) }}" id="buttonCancelReservation" class="btn btn-danger pull-left">
                     {% trans %}button_cancel_reservation{% endtrans %}
                 </a>
             {% endif %}
@@ -577,9 +585,17 @@
         var dueToCharge    = {{ loan.balance|number_format(2) }};
 
         $(document).ready(function() {
+
             calculateLoanTotal();
 
             var form = $("#paymentForm");
+
+            form.on('click', '#buttonCancelReservation', function() {
+                if (window.confirm("Are you sure you want to cancel?")) {
+                    return true;
+                }
+                return false;
+            });
 
             form.on('click', "#chooseWarehouse", function() {
                 $("#collectFrom").val('');

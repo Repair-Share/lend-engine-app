@@ -21,7 +21,7 @@
         </thead>
         {% for row in loanRows %}
             <tr style="margin-bottom: 20px;">
-                <td valign="top" style="padding-right: 15px; width: 60px;">
+                <td valign="top" style="padding-right: 15px; width: 60px; height: 100px">
                     {% if row.inventoryItem.imageName %}
                         <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}">
                     {% endif %}
@@ -29,7 +29,7 @@
                 <td valign="top">
                     <strong>{{ row.inventoryItem.name }}</strong>
 
-                    {% if row.inventoryItem.itemType == 'stock' %}
+                    {% if row.inventoryItem.itemType == 'stock' or row.inventoryItem.itemType == 'service' %}
                     <div>
                         Qty: {{ row.productQuantity }}
                     </div>
@@ -58,7 +58,6 @@
                             {% endif %}
                         {% endfor %}
                     {% endif %}
-
                 </td>
             </tr>
         {% endfor %}

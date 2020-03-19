@@ -1358,7 +1358,7 @@ class Contact extends BaseUser
             $address[] = $this->addressLine4;
         }
         if ($this->countryIsoCode) {
-            $address[] = $this->countryIsoCode;
+            $address[] = \Locale::getDisplayRegion('-'.$this->countryIsoCode);
         }
         if ($asArray == true) {
             return $address;

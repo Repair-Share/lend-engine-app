@@ -1,0 +1,197 @@
+{% trans_default_domain 'member_site' %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="all,follow">
+    <meta name="googlebot" content="index,follow,snippet,archive">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ tenantInformation.siteDescription }}">
+
+    <title>
+        {% if pageTitle is defined %}
+            {{ pageTitle }}
+        {% else %}
+            {{ tenantInformation.companyName }}
+        {% endif %}
+    </title>
+
+    <meta name="keywords" content="">
+
+    <link rel="stylesheet" href="/plugins/fullcalendar/core/main.min.css">
+    <link rel="stylesheet" href="/plugins/fullcalendar/daygrid/main.min.css">
+    <link rel="stylesheet" href="/plugins/fullcalendar/timegrid/main.min.css">
+    <link rel="stylesheet" href="/plugins/timepicker/timepicker.css">
+
+    {% stylesheets
+    '@AppBundle/Resources/css/bootstrap.css'
+    '@AppBundle/Resources/css/member_site.css'
+    '@AppBundle/Resources/css/bootstrap-social.css'
+    '@AppBundle/Resources/admin/css/plugins/datatables.css'
+    '@AppBundle/Resources/admin/css/plugins/dataTables.fontAwesome.css'
+    '@AppBundle/Resources/admin/css/plugins/buttons.dataTables.min.css'
+    '@AppBundle/Resources/admin/css/plugins/daterange.css'
+    '@AppBundle/Resources/css/shared.css'
+    filter='cssrewrite'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+
+    <style>
+        {% include('member_site/themes/css/' ~ tenantInformation.siteTheme ~ '.css') %}
+
+        {% if tenantInformation.isEditMode %}
+        .custom-nav .fa.site-editable {
+            font-size: 12px;
+            padding-right: 10px;
+        }
+        .custom-nav .fa.site-editable:hover {
+            cursor: ns-resize;
+        }
+        {% else %}
+        .nav > li.site-editable {
+            display: none;
+        }
+        .custom-nav .fa.site-editable {
+            display: none;
+        }
+        {% endif %}
+
+    </style>
+
+    {#-- any custom CSS defined in-page --#}
+    {% block pageCss %}{% endblock %}
+
+    {#Need v4.7 for the dataTables code which is common to admin (which doesn't include v5 fontawesome#}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+<head>
+<title>Loan {{ loan.id }}</title>
+</head>
+<body>
+<div class="container">
+
+    <div style="height:50px"></div>
+
+    <h2>Loan {{ loan.id }}</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <i class="fa fa-clock" style="color: #5cb85c"></i>
+            {% trans %}public_basket.pickup_after{% endtrans %} <strong>{{ loan.loanRows|first.dueOutAt|date("d F g:i a") }}</strong>
+            {% trans %}public_basket.from{% endtrans %} <strong>{{ loan.loanRows|first.siteFrom.name }}</strong>
+        </div>
+        <div class="col-md-6" style="text-align: right">
+            {{ loan.contact.address(true)|join('<br>')|raw }}
+        </div>
+    </div>
+
+    <br><br>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>{% trans %}public_loan.quantity{% endtrans %} </th>
+                    <th>{% trans %}public_item.condition{% endtrans %}</th>
+                    <th>{% trans %}public_item.contains{% endtrans %}</th>
+                </tr>
+                </thead>
+                {% for row in loan.loanRows %}
+                    <tr>
+                        <td style="width:100px" class="hidden-xs">
+                            {% if row.inventoryItem.imageName %}
+                                <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}" class="img-thumbnail img-responsive">
+                            {% else %}
+                                <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" alt="" class="img-responsive">
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="font-size:16px; font-weight: normal">{{ row.inventoryItem.name }}</div>
+
+                            {% if row.inventoryItem.sku %}
+                                <div class="basket-code">
+                                    {% trans %}public_item.code{% endtrans %}: <strong>{{ row.inventoryItem.sku }}</strong>
+                                </div>
+                            {% endif %}
+
+                            {% if row.inventoryItem.serial %}
+                                <div class="basket-serial">
+                                    {% trans %}public_item.serial{% endtrans %}: <strong>{{ row.inventoryItem.serial }}</strong>
+                                </div>
+                            {% endif %}
+
+                            {% if row.inventoryItem.itemType == 'loan' %}
+                                <div>
+                                    <i class="far fa-clock"></i>
+                                    {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
+                                    ( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
+                                </div>
+                                <div class="multi-site">
+                                    <i class="far fa-hospital"></i> {% trans %}public_basket.return_to{% endtrans %} <strong>{{ row.siteTo.name }}</strong>
+                                </div>
+                                <input type="hidden" name="row_qty[{{ row.id }}]" id="qty-{{ row.id }}" value="1">
+                            {% elseif row.inventoryItem.itemType == 'stock' %}
+                                {% trans %}public_loan.quantity{% endtrans %} : {{ row.productQuantity }}
+                                {% trans %}public_basket.from{% endtrans %} {{ row.siteFrom.name }} / {{ row.itemLocation.name }}
+                            {% elseif row.inventoryItem.itemType == 'service' %}
+                                {% trans %}public_loan.quantity{% endtrans %} : {{ row.productQuantity }}
+                            {% else %}
+                                {#Kit item#}
+                            {% endif %}
+
+
+                            {# DEPOSIT already created for an 'on loan' row #}
+                            {% set deposits = 0 %}
+                            {% if row.deposit %}
+                                {% set deposits = deposits + row.deposit.amount %}
+                                <div class="">
+                                    Refundable deposit {{ tenantInformation.currencySymbol }} {{ row.deposit.amount }}
+                                </div>
+                            {% elseif row.inventoryItem.depositAmount and loan.status in ['RESERVED', 'PENDING'] %}
+                                {# DEPOSIT is set on the item but we haven't created a row yet #}
+                                {% set deposits = deposits + row.inventoryItem.depositAmount %}
+                                <div class="">
+                                    Refundable deposit {{ tenantInformation.currencySymbol }}
+                                    {{ row.inventoryItem.depositAmount }}
+                                </div>
+                            {% else %}
+                                {#No need to show any deposits#}
+                            {% endif %}
+
+                        </td>
+                        <td>
+                            {{ row.productQuantity }}
+                        </td>
+                        <td>
+                            {% if row.inventoryItem.itemType == 'loan' %}
+                            {{ row.inventoryItem.condition.name }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ row.inventoryItem.componentInformation }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-6">
+            {{ loan.contact.email }}<br>
+            {{ loan.contact.telephone }}
+        </div>
+        <div class="col-md-6" style="text-align: right">
+            Created by {{ loan.createdBy.name }}, {{ loan.createdAt|date }}
+        </div>
+    </div>
+</div>
+</body>
+</html>

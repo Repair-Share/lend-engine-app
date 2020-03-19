@@ -32,6 +32,8 @@
                             Qty: {{ row.productQuantity }}<br>
                             {{ 'le_email.th_cost'|trans() }}: {{ row.fee|number_format(2) }}
                         </div>
+                    {% elseif row.inventoryItem.itemType == 'service' %}
+                        <div>Qty: {{ row.productQuantity }}</div>
                     {% else %}
                         <div>
                             {{ row.dueOutAt|date('d F g:i a') }} - {{ row.dueInAt|date('d F g:i a') }}<br>

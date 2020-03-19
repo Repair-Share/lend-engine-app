@@ -129,6 +129,10 @@ class AdminLoanListDataController extends Controller
                 $status = '<span class="label bg-red">'.Loan::STATUS_OVERDUE.'</span>';
             }
 
+            if ($loan->getCollectFrom() == "post") {
+                $status .= '<div style="padding:4px; font-size: 11px">POST</div>';
+            }
+
             // Modify UTC database times to match local time
             $i = $loanRow->getDueInAt()->modify("{$offSet} hours");
             $loanRow->setDueInAt($i);
