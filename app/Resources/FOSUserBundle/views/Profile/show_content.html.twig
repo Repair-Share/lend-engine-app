@@ -9,6 +9,13 @@
         <div class="user_info">{{ user.firstName }} {{ user.lastName }}</div>
         <div class="user_info">{{ user.email }}</div>
         <div class="user_info">{{ user.telephone }}</div>
+
+        <br>
+        <div class="user_info">
+            {{ 'shipping.title'|trans({}, 'member_site') }}:<br>
+            {{ user.address }}
+        </div>
+
         <br>
         <a href="{{ path('fos_user_profile_edit') }}" class="btn btn-sm btn-primary">{{ 'public_account.button_edit_details'|trans({}, 'member_site') }}</a>
         <a href="{{ path('fos_user_change_password') }}" class="btn btn-sm btn-primary">{{ 'public_account.button_change_password'|trans({}, 'member_site') }}</a>

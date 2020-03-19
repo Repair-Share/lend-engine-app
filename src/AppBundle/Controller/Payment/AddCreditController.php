@@ -62,7 +62,8 @@ class AddCreditController extends Controller
         if ($paymentAmount == 0 && $minimumPaymentAmount > 0) {
             $paymentAmount = $minimumPaymentAmount;
         }
-        if ($paymentAmount > 0) {
+        if ($paymentAmount > 0 && !$form->isSubmitted()) {
+            // Preset the value
             $form->get('paymentAmount')->setData(number_format($paymentAmount, 2, '.', ''));
         }
 

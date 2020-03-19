@@ -28,9 +28,10 @@ class ItemController extends Controller
      */
     public function showItemAction($productId, Request $request)
     {
+        $security = $this->get('security.authorization_checker');
 
         if ($this->get('settings')->getSettingValue('site_is_private')
-            && !$this->get('security.authorization_checker')->isGranted('ROLE_USER')) {
+            && !$security->isGranted('ROLE_USER')) {
             $msg = $this->get('translator')->trans("public_misc.log_in_first", [], 'member_site');
             $this->addFlash("error", $msg);
             return $this->redirectToRoute('home');
@@ -56,6 +57,12 @@ class ItemController extends Controller
         /** @var $product \AppBundle\Entity\InventoryItem */
         if (!$product = $repo->find($productId)) {
             $this->addFlash("error", "Item with ID {$productId} not found.");
+            return $this->redirectToRoute('home');
+        }
+
+        // Check permissions to access
+        if (!$security->isGranted('ROLE_ADMIN') && $product->getShowOnWebsite() == false) {
+            $this->addFlash("error", "This item listing is not available for members.");
             return $this->redirectToRoute('home');
         }
 

@@ -273,6 +273,8 @@
 
             {% if product.itemType == 'stock' %}
                 {{ include('member_site/item/button_stock_item.html.twig') }}
+            {% elseif product.itemType == 'service' %}
+                {{ include('member_site/item/button_service_item.html.twig') }}
             {% elseif (product.isReservable != false or is_granted('ROLE_ADMIN'))  %}
                 {{ include('member_site/item/button_loan_item.html.twig') }}
             {% else %}

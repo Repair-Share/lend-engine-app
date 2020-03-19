@@ -11,6 +11,7 @@ namespace AppBundle\Form;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -77,6 +78,28 @@ class ProfileType extends AbstractType
             'choices'  => $languages,
             'label'    => 'form.locale',
             'required' => true,
+        ));
+
+        $builder->add('addressLine1', TextType::class, array(
+            'required' => true,
+            'label' => 'form.address1',
+        ));
+        $builder->add('addressLine2', TextType::class, array(
+            'required' => true,
+            'label' => 'form.address2',
+        ));
+        $builder->add('addressLine3', TextType::class, array(
+            'required' => true,
+            'label' => 'form.address3',
+        ));
+        $builder->add('addressLine4', TextType::class, array(
+            'required' => true,
+            'label' => 'form.postcode',
+        ));
+        $builder->add('countryIsoCode', CountryType::class, array(
+            'label' => 'form.country',
+            'required' => true,
+            'data' => $this->container->get('service.tenant')->getCountry()
         ));
 
     }

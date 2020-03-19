@@ -110,10 +110,33 @@ class Loan
 
     /**
      * To allow admin to change the fee amount for the basket
+     * When loan is created, fees are added as lines
      * @var float
      * @Groups({"basket"})
      */
     public $reservationFee;
+
+    /**
+     * To allow basket to show the fee before a loan is created
+     * When loan is created, fees are added as lines
+     * @var float
+     * @Groups({"basket"})
+     */
+    public $shippingFee;
+
+    /**
+     * @var string
+     * Either the site ID, or "postal"
+     * @ORM\Column(name="collect_from", type="string", length=32, nullable=true)
+     * @Groups({"basket"})
+     */
+    protected $collectFrom;
+
+    /**
+     * @var Site
+     * @Groups({"basket"})
+     */
+    protected $collectFromSite;
 
     /**
      * @var float
@@ -526,6 +549,22 @@ class Loan
     }
 
     /**
+     * @param $fee
+     * @return $this
+     */
+    public function setShippingFee($fee) {
+        $this->shippingFee = $fee;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getShippingFee() {
+        return $this->shippingFee;
+    }
+
+    /**
      * @param $totalFee
      * @return $this
      */
@@ -614,6 +653,58 @@ class Loan
             }
         }
         return $totalDeposits;
+    }
+
+    /**
+     * @param $collect
+     * @return $this
+     */
+    public function setCollectFrom($collect)
+    {
+        $this->collectFrom = $collect;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCollectFrom()
+    {
+        if (!$this->collectFrom) {
+            /** @var \AppBundle\Entity\LoanRow $loanRow */
+            foreach ($this->loanRows AS $loanRow) {
+                if ($loanRow->getSiteFrom()) {
+                    $this->setCollectFrom($loanRow->getSiteFrom()->getId());
+                }
+            }
+        }
+        return $this->collectFrom;
+    }
+
+    /**
+     * @param Site $site
+     * @return $this
+     */
+    public function setCollectFromSite(Site $site)
+    {
+        $this->collectFromSite = $site;
+        return $this;
+    }
+
+    /**
+     * @return Site
+     */
+    public function getCollectFromSite()
+    {
+        if (!$this->collectFromSite) {
+            /** @var \AppBundle\Entity\LoanRow $loanRow */
+            foreach ($this->loanRows AS $loanRow) {
+                if ($loanRow->getSiteFrom()) {
+                    $this->setCollectFromSite($loanRow->getSiteFrom());
+                }
+            }
+        }
+        return $this->collectFromSite;
     }
 
 }

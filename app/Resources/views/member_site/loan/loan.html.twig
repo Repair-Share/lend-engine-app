@@ -29,13 +29,7 @@
 
         <span class="pull-right">
             {{ include('partials/loan_status_label.html.twig') }}
-
-            {% if loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_PENDING') and is_granted('ROLE_ADMIN') %}
-            <a class="btn btn-xs btn-danger buttonDelete" href="{{ path('loan_delete', {id: loan.id}) }}">
-                Delete
-            </a>
-            {% endif %}
-            </span>
+        </span>
     </h2>
 
     <style>
@@ -109,8 +103,14 @@
                     {% endif %}
                 </td>
                 <td>
-                    <div>
-                        <a style="font-size: 16px" href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">{{ row.inventoryItem.name }}</a>
+                    <div style="font-size: 16px">
+                        {% if is_granted("ROLE_ADMIN") or row.inventoryItem.showOnWebsite == true %}
+                        <a href="{{ path('public_product', {productId: row.inventoryItem.id}) }}">
+                            {{ row.inventoryItem.name }}
+                        </a>
+                        {% else %}
+                            {{ row.inventoryItem.name }}
+                        {% endif %}
                     </div>
 
                     {% if not row.isCheckedOut and row.inventoryItem.inventoryLocation %}
@@ -125,7 +125,7 @@
                     {% endif %}
 
                     {% if tenantInformation.setting('use_labels') %}
-                        <div class="basket-barcode">Barcode: {{ row.inventoryItem.id }}</div>
+                        {#<div class="basket-barcode">Barcode: {{ row.inventoryItem.id }}</div>#}
                     {% endif %}
 
                     {% if row.inventoryItem.itemType == 'loan' %}
@@ -140,7 +140,6 @@
                         <input type="hidden" name="row_qty[{{ row.id }}]" id="qty-{{ row.id }}" value="1">
                     {% elseif row.inventoryItem.itemType == 'stock' %}
                         {% trans %}public_loan.quantity{% endtrans %} :
-
                         {% if is_granted('ROLE_ADMIN') and loan.status in ['RESERVED', 'PENDING'] %}
                             <input type="text" name="row_qty[{{ row.id }}]" id="qty-{{ row.id }}"
                                    value="{{ row.productQuantity }}"
@@ -151,8 +150,19 @@
                                    class="basket-amount save-on-change">
                             {{ row.productQuantity }}
                         {% endif %}
-
                         {% trans %}public_basket.from{% endtrans %} {{ row.siteFrom.name }} / {{ row.itemLocation.name }}
+                    {% elseif row.inventoryItem.itemType == 'service' %}
+                        {% trans %}public_loan.quantity{% endtrans %} :
+                        {% if is_granted('ROLE_ADMIN') and loan.status in ['RESERVED', 'PENDING'] %}
+                            <input type="text" name="row_qty[{{ row.id }}]" id="qty-{{ row.id }}"
+                                   value="{{ row.productQuantity }}"
+                                   class="basket-amount save-on-change" style="text-align:center">
+                        {% else %}
+                            <input type="hidden" name="row_qty[{{ row.id }}]" id="qty-{{ row.id }}"
+                                   value="{{ row.productQuantity }}"
+                                   class="basket-amount save-on-change">
+                            {{ row.productQuantity }}
+                        {% endif %}
                     {% else %}
                         {#Kit item#}
                         <input type="hidden" name="row_qty[{{ row.id }}]" id="qty-{{ row.id }}" value="{{ row.productQuantity }}">
@@ -252,9 +262,6 @@
                     <td class="hidden-xs"></td>
                     <td>
                         {{ fee.note }}
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <br><a href="{{ path('fee_delete', {id: fee.id}) }}">Remove</a>
-                        {% endif %}
                     </td>
                     <td style="text-align: right;">
                         {% if fee.type == 'FEE' %}
@@ -263,8 +270,15 @@
                             {% set amt = -fee.amount %}
                         {% endif %}
 
-                        {{ tenantInformation.currencySymbol }} {{ amt|number_format(2) }}
-                        <input type="hidden" class="row-calc" value="{{ amt }}">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <input type="text" name="fee[{{ fee.id }}]" class="basket-amount row-calc" value="{{ amt|number_format(2) }}">
+                            <a href="{{ path('fee_delete', {id: fee.id}) }}" style="margin-top: 4px; display: block">
+                                {% trans %}public_basket.remove_item{% endtrans %}
+                            </a>
+                        {% else %}
+                            {{ tenantInformation.currencySymbol }} {{ amt|number_format(2) }}
+                            <input type="hidden" class="row-calc" value="{{ amt }}">
+                        {% endif %}
                     </td>
                 </tr>
             {% endif %}
@@ -276,6 +290,7 @@
                 <td>
                     <a class="btn btn-xs btn-primary" href="{{ path('add_stock_item', {loanId: loan.id}) }}" id="add-stock-item">Add stock item</a>
                     <a class="btn btn-xs btn-primary" href="{{ path('add_loan_item', {loanId: loan.id}) }}" id="add-loan-item">Add loan item</a>
+                    <a class="btn btn-xs btn-primary" href="{{ path('add_service_item', {loanId: loan.id}) }}" id="add-service-item">Add service item</a>
                 </td>
                 <td></td>
             </tr>
@@ -298,6 +313,17 @@
             <td class="hidden-xs"></td>
             <td style="text-align:right; color: #10a422">
                 {% trans %}public_loan.charged{% endtrans %}
+                {#{% for fee in loan.payments %}#}
+                {#<div>#}
+                    {#{% if fee.type == 'FEE' %}#}
+                        {#{% if fee.inventoryItem %}#}
+                            {#{{ fee.inventoryItem.name }}#}
+                        {#{% endif %}#}
+                        {#{{ fee.note }}#}
+                        {#{{ tenantInformation.currencySymbol }} {{ fee.amount|number_format(2) }}#}
+                    {#{% endif %}#}
+                {#</div>#}
+                {#{% endfor %}#}
             </td>
             <td style="text-align:right; color: #10a422">
                 {{ tenantInformation.currencySymbol }}
@@ -377,8 +403,61 @@
 
     </table>
 
+    {% if loan.status in ['RESERVED', 'PENDING'] %}
+        <button type="button" id="form-save" class="btn btn-success pull-right submit-action action-save" style="display: none;">Save changes</button>
+    {% endif %}
+
+    {% if tenantInformation.setting('postal_loans') and loan.status in ['RESERVED', 'PENDING'] %}
+        <h2>{% trans %}shipping.delivery_options{% endtrans %}</h2>
+        <div class="row" id="selectChoices">
+            <div class="col-md-6">
+                <div class="btn-group">
+                    {% if loan.collectFrom == "post" %}
+                        <button type="button" class="btn btn-default" id="chooseWarehouse">
+                            {% trans %}shipping.collect{% endtrans %} {{ loan.loanRows|first.siteFrom.name }}
+                        </button>
+                        <button type="button" class="btn btn-default active" id="choosePostal">
+                            {% trans %}shipping.post{% endtrans %}
+                        </button>
+                    {% else %}
+                        <button type="button" class="btn btn-default active" id="chooseWarehouse">
+                            {% trans %}shipping.collect{% endtrans %} {{ loan.loanRows|first.siteFrom.name }}
+                        </button>
+                        <button type="button" class="btn btn-default" id="choosePostal">
+                            {% trans %}shipping.post{% endtrans %}
+                        </button>
+                    {% endif %}
+                </div>
+                {{ include('member_site/partials/shipping_quote.html.twig') }}
+                <input type="hidden" name="collect_from" value="{{ loan.collectFrom }}" id="collectFrom">
+
+            {% if loan.collectFrom == "post" %}
+                <strong>{% trans %}shipping.ship_to{% endtrans %}</strong>
+                <div style="text-align: left; padding-bottom: 10px;">
+                    {{ loan.contact.address }}<br><br>
+                    {% if app.user and app.user.id == loan.contact.id %}
+                        <a href="{{ path('fos_user_profile_show') }}" class="btn btn-xs btn-default">{% trans %}shipping.edit_address{% endtrans %}</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    {% elseif tenantInformation.setting('postal_loans') %}
+        <div style="text-align: center; padding-right: 10px;">
+            {% if loan.collectFrom == "post" %}
+                <div class="alert alert-warning">
+                    {% trans %}shipping.post{% endtrans %} :
+                    {{ loan.contact.address }}
+                </div>
+
+            {% else %}
+                {% trans %}shipping.collect{% endtrans %} {{ loan.loanRows|first.siteFrom.name }}
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <h2 class="payment-details">Payment details</h2>
     <div class="row checkout payment-details">
-        <div class="col-md-6"></div>
         <div class="col-md-6">
             {% set contact = loan.contact %}
             <div id="paymentBlock" style="display:block">
@@ -386,9 +465,22 @@
             </div>
         </div>
     </div>
+    <br>
 
-    <div class="row" id="checkoutButtonRow">
+    {% if loan.status == 'RESERVED' or loan.status == 'PENDING' %}
+    <div class="row well" id="checkoutButtonRow">
         <div class="col-md-12">
+            {% if loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_PENDING') and is_granted('ROLE_ADMIN') %}
+                <a class="btn btn-xs btn-danger buttonDelete pull-left" href="{{ path('loan_delete', {id: loan.id}) }}">
+                    Delete this loan
+                </a>
+            {% endif %}
+            {% if loan.status == 'RESERVED' or loan.status == 'PENDING' %}
+                <a href="{{ path('reservation_cancel', {id: loan.id}) }}" class="btn btn-danger pull-left">
+                    {% trans %}button_cancel_reservation{% endtrans %}
+                </a>
+            {% endif %}
+
             {% if tenantInformation.selfCheckout and canCheckOut == true %}
                 {% if loan.status in ['RESERVED', 'PENDING'] %}
                     <button type="button" id="form-checkout" data-text="Check out" class="btn btn-success pull-right checkout submit-action payment-submit" {% if promptsExist == 1 %}disabled{% endif %}>
@@ -398,13 +490,13 @@
                             Complete check out
                         {% endif %}
                     </button>
-                    <button type="button" id="form-save" class="btn btn-success pull-right submit-action action-save" style="display: none;">Save changes</button>
                 {% endif %}
             {% elseif canCheckOut == false %}
                 <div class="alert alert-warning" style="text-align: center">Please complete required contact data before checking out</div>
             {% endif %}
         </div>
     </div>
+    {% endif %}
 
     {{ form_end(form) }}
 
@@ -473,12 +565,6 @@
         </div>
     </div>
 
-    {% if loan.status == 'RESERVED' or loan.status == 'PENDING' %}
-        <div style="margin-top: 10px;">
-            <a href="{{ path('reservation_cancel', {id: loan.id}) }}" class="btn btn-danger">{% trans %}button_cancel_reservation{% endtrans %}</a>
-        </div>
-    {% endif %}
-
 {% endblock %}
 
 {% block pagejs %}
@@ -494,6 +580,18 @@
             calculateLoanTotal();
 
             var form = $("#paymentForm");
+
+            form.on('click', "#chooseWarehouse", function() {
+                $("#collectFrom").val('');
+                form.attr("action", "{{ path('loan_save', {loanId: loan.id}) }}");
+                form.submit();
+            });
+
+            form.on('click', "#choosePostal", function() {
+                $("#collectFrom").val('post');
+                form.attr("action", "{{ path('loan_save', {loanId: loan.id}) }}");
+                form.submit();
+            });
 
             form.on('keyup', '.deposit-amount', function() {
                 // We don't want the save button here as deposit amount is not stored on loan row so we can't save

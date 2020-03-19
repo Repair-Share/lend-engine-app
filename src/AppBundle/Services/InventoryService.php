@@ -73,8 +73,9 @@ class InventoryService
             $builder->andWhere('item.id IN ('.implode(',', $filter['idSet']).')');
         }
 
-        if (isset($filter['stock']) && $filter['stock'] == 'y') {
-            $builder->andWhere("item.itemType = 'stock'");
+        if (isset($filter['type']) && in_array($filter['type'], [InventoryItem::TYPE_SERVICE, InventoryItem::TYPE_STOCK])) {
+            $builder->andWhere(" item.itemType = :itemType ");
+            $builder->setParameter('itemType', $filter['type']);
         }
 
         if (isset($filter['showOnline']) && $filter['showOnline'] == true) {

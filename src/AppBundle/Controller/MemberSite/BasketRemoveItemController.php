@@ -39,6 +39,13 @@ class BasketRemoveItemController extends Controller
             }
         }
 
+        if ($basket->getCollectFrom() == "post") {
+            $fee = $basketService->calculateShippingFee($basket);
+            $basket->setShippingFee($fee);
+        } else {
+            $basket->setShippingFee(0);
+        }
+
         $msg = $this->get('translator')->trans('msg_success.basket_item_removed', [], 'member_site');
         $this->addFlash('success', $msg);
 

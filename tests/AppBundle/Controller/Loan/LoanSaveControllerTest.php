@@ -40,7 +40,7 @@ class LoanSaveControllerTest extends AuthenticatedControllerTest
         $this->assertTrue($this->client->getResponse() instanceof RedirectResponse);
         $crawler = $this->client->followRedirect();
 
-        $this->assertContains('Saved OK', $crawler->html());
+        $this->assertContains('Saved changes OK', $crawler->html());
     }
 
 }

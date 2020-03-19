@@ -137,6 +137,7 @@ class BasketAddItemController extends Controller
 
         $fee = $request->get('item_fee');
 
+        // Reservation fee
         $reservationFee = $request->get('booking_fee');
         $basket->setReservationFee($reservationFee);
 
@@ -169,6 +170,8 @@ class BasketAddItemController extends Controller
         $row->setFee($fee);
         $row->setProductQuantity(1);
         $basket->addLoanRow($row);
+
+        $basket->setCollectFromSite($siteFrom);
 
         if ($product->getItemType() == InventoryItem::TYPE_KIT) {
             /** @var \AppBundle\Entity\KitComponent $kitComponent */
@@ -228,6 +231,14 @@ class BasketAddItemController extends Controller
             foreach ($checkoutService->errors AS $e) {
                 $this->addFlash("error", $e);
             }
+        }
+
+        // Shipping fee
+        if ($basket->getCollectFrom() == "post") {
+            $fee = $basketService->calculateShippingFee($basket);
+            $basket->setShippingFee($fee);
+        } else {
+            $basket->setShippingFee(0);
         }
 
         if ($basket->getId()) {

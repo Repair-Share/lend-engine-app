@@ -6,14 +6,24 @@
 
     {{ form_errors(form) }}
 
-    {{ form_row(form.firstName) }}
-    {{ form_row(form.lastName) }}
-    {{ form_row(form.username) }}
-    {{ form_row(form.email) }}
-    {{ form_row(form.telephone) }}
-    {{ form_row(form.locale) }}
-
-    {{ form_row(form.current_password) }}
+<div class="row">
+    <div class="col-md-6">
+        {{ form_row(form.firstName) }}
+        {{ form_row(form.lastName) }}
+        {{ form_row(form.username) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.telephone) }}
+        {{ form_row(form.locale) }}
+        {{ form_row(form.current_password) }}
+    </div>
+    <div class="col-md-6">
+        {{ form_row(form.addressLine1) }}
+        {{ form_row(form.addressLine2) }}
+        {{ form_row(form.addressLine3) }}
+        {{ form_row(form.addressLine4) }}
+        {{ form_row(form.countryIsoCode) }}
+    </div>
+</div>
 
 <div class="row">
     <div class="col-xs-4">

@@ -71,15 +71,17 @@ class SettingsService
     }
 
     /**
+     * @param bool $useCache
+     * @return bool
      * Get all settings into the class and define where not yet set
      */
-    public function getAllSettings()
+    public function getAllSettings($useCache = true)
     {
         /** @var $repo \AppBundle\Repository\SettingRepository */
         $repo =  $this->em->getRepository('AppBundle:Setting');
 
         // We've already populated the settings for this account, send them back
-        if (isset($this->settings[$this->db]) && count($this->settings[$this->db]) > 0) {
+        if (isset($this->settings[$this->db]) && count($this->settings[$this->db]) > 0 && $useCache == true) {
             return true;
         }
 
@@ -274,6 +276,13 @@ class SettingsService
             'stripe_fee',
             'stripe_use_saved_cards',
 
+            // Postal loans
+            'postal_loans',
+            'postal_shipping_item',
+            'postal_item_fee',
+            'postal_loan_fee',
+
+            // Member site
             'site_domain',
             'site_is_private',
             'site_welcome',

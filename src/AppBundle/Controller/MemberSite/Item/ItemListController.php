@@ -119,8 +119,8 @@ class ItemListController extends Controller
             $pageTitle = $searchText.': "'.$searchString.'"';
         }
 
-        if ($stock = $request->get('stock')) {
-            $filter['stock'] = $stock;
+        if ($type = $request->get('type')) {
+            $filter['type'] = $type;
         }
 
         // If not admin, only show the public items

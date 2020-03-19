@@ -45,7 +45,7 @@
         {{ form_row(form.keywords) }}
 
         <div class="row hide-for-kits">
-            <div class="col-md-6">
+            <div class="col-md-6 hide-for-service">
                 {{ form_row(form.priceCost) }}
             </div>
             <div class="col-md-6">
@@ -67,7 +67,9 @@
 
     <div class="col-md-4">
 
-        {{ form_row(form.brand) }}
+        <div class="hide-for-service">
+            {{ form_row(form.brand) }}
+        </div>
 
         {{ form_row(form.description) }}
 

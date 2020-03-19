@@ -3,30 +3,31 @@
 namespace AppBundle\Services\Loan;
 
 use AppBundle\Entity\Loan;
+use AppBundle\Entity\Note;
+use AppBundle\Entity\Payment;
+use AppBundle\Services\SettingsService;
+use AppBundle\Services\TenantService;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\Container;
 
 class LoanService
 {
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager  */
     private $em;
 
-    /**
-     * @var Container
-     */
-    private $container;
+    /** @var SettingsService  */
+    private $settings;
 
     /**
      * @var array
      */
     public $errors = [];
 
-    public function __construct(EntityManager $em, Container $container)
+    public function __construct(EntityManager $em,
+                                SettingsService $settings)
     {
         $this->em        = $em;
-        $this->container = $container;
+        $this->settings  = $settings;
     }
 
     /**
@@ -108,6 +109,46 @@ class LoanService
         } catch(\Exception $generalException) {
             $this->errors[] = 'Loan failed to delete.';
             $this->errors[] = $generalException->getMessage();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Loan $loan
+     * @param $user
+     * @param $amount
+     * @param $text
+     * @return bool
+     */
+    public function addFee(Loan $loan, $user, $amount, $text)
+    {
+        $iso = $this->settings->getSettingValue('org_currency');
+        $currencySymbol = \Symfony\Component\Intl\Intl::getCurrencyBundle()->getCurrencySymbol($iso);
+
+        $payment = new Payment();
+        $payment->setCreatedBy($user);
+        $payment->setCreatedAt(new \DateTime());
+        $payment->setLoan($loan);
+        $payment->setNote($text);
+        $payment->setContact($loan->getContact());
+        $payment->setAmount(-$amount);
+        $this->em->persist($payment);
+
+        // Add audit trail
+        $note = new Note();
+        $note->setCreatedBy($user);
+        $note->setCreatedAt(new \DateTime());
+        $note->setContact($loan->getContact());
+        $note->setLoan($loan);
+        $note->setText("Added fee of {$currencySymbol}" . $amount . "; {$text}");
+        $this->em->persist($note);
+
+        try {
+            $this->em->flush();
+        } catch (\Exception $e) {
+            $this->errors[] = $e->getMessage();
             return false;
         }
 

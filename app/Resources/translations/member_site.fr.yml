@@ -186,3 +186,9 @@ msg_fail:
   general_fail: Désolé, un problème est survenu. Merci de ré-essayer, ou de nous contacter.
   reservation_create: Un problème est survenu, nous n'avons pas pu créer votre réservation.
   reservation_cancel: Nous ne pouvons pas annuler votre réservation. Merci de nous contacter.
+shipping:
+  title: Livraison
+  per_item: par objet
+  per_loan: par prêt
+  collect: Recueillis depuis
+  post: Envoyer par courrier

@@ -162,6 +162,40 @@ EOH;
             ]
         ));
 
+        // POSTAL LOANS
+
+        $builder->add('postal_loans', ToggleType::class, array(
+            'expanded' => true,
+            'multiple' => false,
+            'label' => 'Allow postal loans',
+            'data' => (int)$dbData['postal_loans'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100 toggle-switch',
+                'data-help' => 'Turn this on to show a button on loans for "send loan by post".'
+            ]
+        ));
+
+        $builder->add('postal_item_fee', TextType::class, array(
+            'label' => 'Fee per item',
+            'data' => number_format((float)$dbData['postal_item_fee'], 2),
+            'required' => false,
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => "Add this amount to the shipping fee, once for each item on the loan."
+            ]
+        ));
+
+        $builder->add('postal_loan_fee', TextType::class, array(
+            'label' => 'Fee per loan',
+            'data' => number_format((float)$dbData['postal_loan_fee'], 2),
+            'required' => false,
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => "Add this amount as a fee, once per loan."
+            ]
+        ));
+
     }
 
     /**

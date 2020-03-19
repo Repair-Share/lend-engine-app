@@ -65,6 +65,8 @@ class ItemController extends Controller
             // Creating a new item
             if ($request->get('type') == InventoryItem::TYPE_KIT) {
                 $pageTitle = 'Add a new kit';
+            } else if ($request->get('type') == InventoryItem::TYPE_SERVICE) {
+                $pageTitle = 'Add a new service';
             } else {
                 $pageTitle = 'Add a new item';
             }
@@ -87,16 +89,16 @@ class ItemController extends Controller
             $location = $locationRepo->find($defaultLocationId);
             $product->setInventoryLocation($location);
 
-            $itemSectorId = $request->get('sectorId');
             /** @var \AppBundle\Repository\ItemSectorRepository $itemSectorRepo */
             $itemSectorRepo = $this->getDoctrine()->getRepository('AppBundle:ItemSector');
-
-            if (!$itemSector = $itemSectorRepo->find($itemSectorId)) {
-                $this->addFlash('error', "Item type {$itemSectorId} not found");
-                return $this->redirectToRoute('item_sector');
+            $itemSectorId = $request->get('sectorId');
+            if ($itemSectorId) {
+                if (!$itemSector = $itemSectorRepo->find($itemSectorId)) {
+                    $this->addFlash('error', "Item type {$itemSectorId} not found");
+                    return $this->redirectToRoute('item_sector');
+                }
+                $product->setItemSector($itemSector);
             }
-
-            $product->setItemSector($itemSector);
 
             // Set the check-in and check-out prompts which are set to "on for all new products"
             /** @var $checkInPromptRepo \AppBundle\Repository\CheckInPromptRepository */
@@ -122,6 +124,8 @@ class ItemController extends Controller
             $product->setItemType(InventoryItem::TYPE_LOAN);
             if ($request->get('type') == InventoryItem::TYPE_KIT) {
                 $product->setItemType(InventoryItem::TYPE_KIT);
+            } else if ($request->get('type') == InventoryItem::TYPE_SERVICE) {
+                $product->setItemType(InventoryItem::TYPE_SERVICE);
             } else if ($request->get('type') == InventoryItem::TYPE_STOCK) {
                 $product->setItemType(InventoryItem::TYPE_STOCK);
             }

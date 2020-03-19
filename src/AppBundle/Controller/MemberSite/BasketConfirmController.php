@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 class BasketConfirmController extends Controller
 {
     /**
-     * Create out the loan or reservation
+     * Create the loan or reservation
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @Route("basket/confirm", name="basket_confirm")
      */

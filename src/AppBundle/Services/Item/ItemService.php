@@ -41,6 +41,15 @@ class ItemService
     }
 
     /**
+     * @param $criteria
+     * @return array|\object[]
+     */
+    public function findBy($criteria)
+    {
+        return $this->repo->findBy($criteria);
+    }
+
+    /**
      * @param $id
      * @return bool
      */

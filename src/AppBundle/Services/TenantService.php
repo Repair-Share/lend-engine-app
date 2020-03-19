@@ -493,11 +493,34 @@ class TenantService
      */
     public function getBasket()
     {
+        $repo = $this->entityManager->getRepository("AppBundle:Site");
+
         if ($loanId = $this->session->get('active-loan')) {
             return $this->loanService->get($loanId);
         }
+
         /** @var $basket \AppBundle\Entity\Loan */
-        $basket = $this->session->get('basket');
+        if ($basket = $this->session->get('basket')) {
+            // Two parameters added, which we have to deal with for in-flight baskets
+            if (!isset($basket['collectFrom'])) {
+                $pickupSiteId = null;
+                foreach ($basket['loanRows'] AS $loanRow) {
+                    $pickupSiteId = $loanRow['siteFrom'];
+                }
+                if (is_numeric($pickupSiteId)) {
+                    $site = $repo->find($pickupSiteId);
+                    $basket['collectFrom'] = $pickupSiteId;
+                    $basket['collectFromSite'] = $site;
+                } else {
+                    $basket['collectFrom'] = null;
+                    $basket['collectFromSite'] = null;
+                }
+            }
+            if (!isset($basket['shippingFee'])) {
+                $basket['shippingFee'] = null;
+            }
+        }
+
         return $basket;
     }
 

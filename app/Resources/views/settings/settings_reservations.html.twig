@@ -117,6 +117,29 @@
 
             {{ form_row(form.charge_daily_fee) }}
 
+            <h2>Postal loans</h2>
+
+            {{ form_row(form.postal_loans) }}
+
+            <div class="form-group">
+                <label class="control-label">Item used for shipping lines on loans</label>
+                <div class="input-group">
+                    {% if shippingItemName %}
+                    <a href="{{ path('item', {id: tenantInformation.setting('postal_shipping_item')}) }}">{{ shippingItemName }}</a>
+                    {% else %}
+                        A shipping item will be created automatically when you turn postal loans on.
+                    {% endif %}
+                </div>
+                <div class="help-block">
+                    The shipping item is used for the name and reporting. Prices for shipping are determined below:
+                </div>
+            </div>
+
+            {{ form_row(form.postal_item_fee) }}
+            {{ form_row(form.postal_loan_fee) }}
+
+            <h2>Other</h2>
+
             <div class="form-group">
                 <label class="control-label">Bulk update items</label>
                 <p>

@@ -1337,4 +1337,34 @@ class Contact extends BaseUser
         return $this->donatedItems;
     }
 
+    /**
+     * @param bool $asArray
+     * @return array|string
+     */
+    public function getAddress($asArray = false)
+    {
+        $address = [];
+        $address[] = $this->firstName.' '.$this->lastName;
+        if ($this->addressLine1) {
+            $address[] = $this->addressLine1;
+        }
+        if ($this->addressLine2) {
+            $address[] = $this->addressLine2;
+        }
+        if ($this->addressLine3) {
+            $address[] = $this->addressLine3;
+        }
+        if ($this->addressLine4) {
+            $address[] = $this->addressLine4;
+        }
+        if ($this->countryIsoCode) {
+            $address[] = $this->countryIsoCode;
+        }
+        if ($asArray == true) {
+            return $address;
+        } else {
+            return implode(', ',$address);
+        }
+    }
+
 }

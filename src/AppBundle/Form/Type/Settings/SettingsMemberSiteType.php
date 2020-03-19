@@ -55,16 +55,10 @@ class SettingsMemberSiteType extends AbstractType
         ));
 
         $lingoData = explode(',', $dbData['org_languages']);
-        if ($this->tenantService->getFeature('MultipleLanguages')) {
-            $multi = true;
-            $lingoHelp = "Choose multiple languages here if your members require a choice. You'll be able to add item names and descriptions in each language.";
-        } else {
-            $multi = false;
-            $lingoData = $lingoData[0];
-            $lingoHelp = '<i class="fa fa-star" style="color:#ff9d00"></i> On higher pay plans you can choose to display item information in more than one language.';
-        }
+        $multi = true;
+        $lingoHelp = "Choose multiple languages here if your members require a choice when registering or browsing.";
         $builder->add('org_languages', ChoiceType::class, array(
-            'label' => 'Display language(s) for item names and descriptions',
+            'label' => 'Language(s) that members can choose from',
             'choices' => $languages,
             'multiple' => $multi,
             'required' => true,

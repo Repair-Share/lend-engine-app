@@ -9,16 +9,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class AddConsumablesController
+ * Class AddServiceController
  * @package AppBundle\Controller\MemberSite
  */
-class AddConsumablesController extends Controller
+class AddServiceController extends Controller
 {
     /**
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     * @Route("loan/{loanId}/add-stock-item", name="add_stock_item", requirements={"loanId": "\d+"})
+     * @Route("loan/{loanId}/add-service-item", name="add_service_item", requirements={"loanId": "\d+"})
      */
-    public function addStockItem($loanId)
+    public function addServiceItem($loanId)
     {
         /** @var \AppBundle\Entity\Loan $loan */
         $loan = $this->get('service.loan')->get($loanId);
@@ -35,8 +35,8 @@ class AddConsumablesController extends Controller
         }
 
         $this->get('session')->set('active-loan-type', $type);
-        $this->addFlash('success', "Choose stock item to add to {$type} {$loanId}.");
+        $this->addFlash('success', "Choose a service item to add to {$type} {$loanId}.");
 
-        return $this->redirectToRoute('public_products', ['type' => 'stock']);
+        return $this->redirectToRoute('public_products', ['type' => 'service']);
     }
 }

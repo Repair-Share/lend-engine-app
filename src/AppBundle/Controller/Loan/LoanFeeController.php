@@ -35,10 +35,11 @@ class LoanFeeController extends Controller
         /** @var \AppBundle\Repository\LoanRepository $repo */
         $repo = $em->getRepository('AppBundle:Loan');
 
+        /** @var \AppBundle\Services\Loan\LoanService $loanService */
+        $loanService = $this->get('service.loan');
+
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
-
-        $currencySymbol = $this->get('service.tenant')->getCurrencySymbol();
 
         /** @var \AppBundle\Entity\Loan $loan */
         if (!$loan = $repo->find($loanId)) {
@@ -50,35 +51,14 @@ class LoanFeeController extends Controller
         $noteText = $request->request->get('feeReason');
 
         if ($feeAmount && $noteText) {
-
-            $payment = new Payment();
-            $payment->setCreatedBy($user);
-            $payment->setCreatedAt(new \DateTime());
-            $payment->setLoan($loan);
-            $payment->setNote($noteText);
-            $payment->setContact($loan->getContact());
-            $payment->setAmount(-$feeAmount);
-            $em->persist($payment);
-
-            // Add audit trail
-            $note = new Note();
-            $note->setCreatedBy($user);
-            $note->setCreatedAt(new \DateTime());
-            $note->setContact($loan->getContact());
-            $note->setLoan($loan);
-            $note->setText("Added fee of {$currencySymbol}" . $payment->getAmount() . "; {$noteText}");
-            $em->persist($note);
-
-            try {
-                $em->flush();
-            } catch (\Exception $e) {
-                $this->addFlash('error', $e->getMessage());
+            if ($loanService->addFee($loan, $user, $feeAmount, $noteText)) {
+                $contactService->recalculateBalance($loan->getContact());
+                $this->addFlash('success', "Added fee OK.");
+            } else {
+                foreach ($loanService->errors AS $error) {
+                    $this->addFlash('error', $error);
+                }
             }
-
-            $contactService->recalculateBalance($loan->getContact());
-
-            $this->addFlash('success', "Added fee OK.");
-
         }
 
         return $this->redirectToRoute('public_loan', ['loanId' => $loan->getId()]);

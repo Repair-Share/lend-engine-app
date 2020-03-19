@@ -21,6 +21,7 @@ class InventoryItem
     CONST TYPE_LOAN  = 'loan';
     CONST TYPE_KIT   = 'kit';
     CONST TYPE_STOCK = 'stock';
+    CONST TYPE_SERVICE = 'service';
 
     /**
      * @var integer

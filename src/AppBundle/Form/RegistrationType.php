@@ -37,7 +37,8 @@ class RegistrationType extends AbstractType
     {
         
         $translator = $this->container->get('translator');
-        
+        $settings = $this->container->get('settings');
+
         $builder->add('firstName', TextType::class, array(
             'label' => 'form.firstName',
             'required' => true,
@@ -81,6 +82,7 @@ class RegistrationType extends AbstractType
             'required' => true,
         ));
 
+        // All available languages so far translated
         $languages = [
             'Deutsch'    => 'de',
             'English'    => 'en',
@@ -93,6 +95,22 @@ class RegistrationType extends AbstractType
             'Svenska'    => 'sv-SE',
             'Welsh'      => 'cy'
         ];
+
+        // Only whitelist the ones we have configured in settings
+        $languageCodes = explode(',', $settings->getSettingValue('org_languages'));
+        foreach ($languages AS $language => $code) {
+            if (!in_array($code, $languageCodes)) {
+                unset($languages[$language]);
+            }
+        }
+
+        // Catch-all in case settings have become corrupt
+        if (count($languages) == 0) {
+            $languages = [
+                'English'    => 'en'
+            ];
+        }
+
         $builder->add('locale', ChoiceType::class, array(
             'choices'  => $languages,
             'data'     => $this->container->get('service.tenant')->getLocale(),

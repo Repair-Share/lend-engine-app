@@ -21,6 +21,19 @@
                 display: none;
             }
         </style>
+    {% elseif item.itemType == 'service' %}
+        <div class="header-bar">
+            <i class="fa fa-cube" style="color:#000"></i>
+            This is a service. Inventory levels are not managed, but it can be added to loans if made visible online.
+        </div>
+        <style>
+            .hide-for-stock {
+                display:none;
+            }
+            .hide-for-service {
+                display:none;
+            }
+        </style>
     {% elseif item.itemType == 'stock' %}
         <div class="header-bar">
             <i class="fa fa-cube" style="color:#000"></i>
@@ -63,6 +76,13 @@
 {% endblock %}
 
 {% block body %}
+
+    {% if tenantInformation.setting('postal_shipping_item') == item.id %}
+        <div class="alert alert-warning">
+            This is the item added to loans when a shipping charge is required.
+            The shipping prices are determined at Settings &raquo; Reservations.
+        </div>
+    {% endif %}
 
     {{ form_start(form, { 'attr' : { 'class': 'item-form', 'id' : "itemForm" } }) }}
 

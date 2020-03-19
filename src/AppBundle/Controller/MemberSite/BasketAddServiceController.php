@@ -14,20 +14,17 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @package AppBundle\Controller\MemberSite
  */
-class BasketAddStockController extends Controller
+class BasketAddServiceController extends Controller
 {
     /**
-     * @Route("basket/add-stock/{itemId}", requirements={"itemId": "\d+"}, name="basket_add_stock")
+     * @Route("basket/add-service/{itemId}", requirements={"itemId": "\d+"}, name="basket_add_service")
      */
-    public function basketAddItem($itemId, Request $request)
+    public function basketAddServiceItem($itemId, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
         /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
         $itemRepo = $em->getRepository('AppBundle:InventoryItem');
-
-        /** @var \AppBundle\Repository\InventoryLocationRepository $locationRepo */
-        $locationRepo = $em->getRepository('AppBundle:InventoryLocation');
 
         /** @var \AppBundle\Services\Loan\LoanService $loanService */
         $loanService = $this->get("service.loan");
@@ -42,8 +39,8 @@ class BasketAddStockController extends Controller
         /** @var \AppBundle\Entity\InventoryItem $product */
         $product = $itemRepo->find($itemId);
 
-        if ($product->getItemType() != InventoryItem::TYPE_STOCK) {
-            $this->addFlash('error', "This is not a stock item.");
+        if ($product->getItemType() != InventoryItem::TYPE_SERVICE) {
+            $this->addFlash('error', "This is not a service item.");
             return $this->redirectToRoute('home');
         }
 
@@ -56,10 +53,13 @@ class BasketAddStockController extends Controller
             $product->setPriceSell(0);
         }
 
+        if (!$qty = (int)$request->get('qty')) {
+            $qty = 1;
+        }
+
         if ($request->get('add-to-loan')) {
 
             // Can only add to PENDING or RESERVED loans
-
             $loanId = $this->get('session')->get('active-loan');
 
             $loan = $loanService->get($loanId);
@@ -69,21 +69,13 @@ class BasketAddStockController extends Controller
                 return $this->redirectToRoute('public_loan', ['loanId' => $loanId]);
             }
 
-            $qtyRequired = $request->get('add_qty');
-            foreach ($qtyRequired AS $locationId => $qty) {
-                if ($qty > 0) {
-                    $location = $locationRepo->find($locationId);
-                    $row = new LoanRow();
-                    $row->setDueInAt(new \DateTime()); // required as a default
-                    $row->setProductQuantity($qty);
-                    $row->setLoan($loan);
-                    $row->setInventoryItem($product);
-                    $row->setFee($product->getPriceSell());
-                    $row->setItemLocation($location);
-                    $row->setSiteFrom($location->getSite());
-                    $loan->addLoanRow($row);
-                }
-            }
+            $row = new LoanRow();
+            $row->setDueInAt(new \DateTime()); // required as a default
+            $row->setProductQuantity($qty);
+            $row->setLoan($loan);
+            $row->setInventoryItem($product);
+            $row->setFee($product->getPriceSell());
+            $loan->addLoanRow($row);
 
             $em->persist($loan);
             $em->flush();
@@ -93,6 +85,7 @@ class BasketAddStockController extends Controller
             return $this->redirectToRoute('public_loan', ['loanId' => $loanId]);
 
         } else {
+
             // Create them a basket if there isn't one yet
             if (!$basket = $basketService->getBasket()) {
                 if ($request->get('contactId')) {
@@ -122,21 +115,12 @@ class BasketAddStockController extends Controller
                 return $this->redirectToRoute('home');
             }
 
-            $qtyRequired = $request->get('add_qty');
-            foreach ($qtyRequired AS $locationId => $qty) {
-                if ($qty > 0) {
-                    $location = $locationRepo->find($locationId);
-
-                    $row = new LoanRow();
-                    $row->setProductQuantity($qty);
-                    $row->setLoan($basket);
-                    $row->setInventoryItem($product);
-                    $row->setFee($product->getPriceSell());
-                    $row->setItemLocation($location);
-                    $row->setSiteFrom($location->getSite());
-                    $basket->addLoanRow($row);
-                }
-            }
+            $row = new LoanRow();
+            $row->setProductQuantity($qty);
+            $row->setLoan($basket);
+            $row->setInventoryItem($product);
+            $row->setFee($product->getPriceSell());
+            $basket->addLoanRow($row);
 
             $msg = $this->get('translator')->trans('msg_success.basket_item_added', [], 'member_site');
             $this->addFlash('success', $product->getName().' '.$msg);

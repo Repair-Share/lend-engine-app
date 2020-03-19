@@ -68,8 +68,10 @@ class MenuBuilder
         $this->addChildItem('Items', 'Add loan item', 'item_sector', '', '', ['type' => 'loan']);
 
         if ($this->container->get('service.tenant')->getFeature('StockItems')) {
-            $this->addChildItem('Items', 'Add stock item <sup><label class="label bg-orange">NEW</label></sup>', 'item_sector', '', '', ['type' => 'stock']);
+            $this->addChildItem('Items', 'Add stock item <sup><label class="label bg-orange">NEW</label></sup>', 'item', '', '', ['type' => 'stock']);
         }
+
+        $this->addChildItem('Items', 'Add service <sup><label class="label bg-orange">NEW</label></sup>', 'item', '', '', ['type' => 'service']);
 
         if ($this->container->get('service.tenant')->getFeature('Kits')) {
             $this->addChildItem('Items', 'Add kit', 'item_sector', '', '', ['type' => 'kit']);

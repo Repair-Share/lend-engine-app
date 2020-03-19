@@ -1,0 +1,13 @@
+{% trans_default_domain 'member_site' %}
+<div class="help-block">
+    {% trans %}shipping.post{% endtrans %}:&nbsp;&nbsp;
+
+    {% if tenantInformation.setting('postal_loan_fee') %}
+        {{ tenantInformation.currencySymbol }}{{ tenantInformation.setting('postal_loan_fee') }} {% trans %}shipping.per_loan{% endtrans %}
+        &nbsp;&nbsp;
+    {% endif %}
+
+    {% if tenantInformation.setting('postal_item_fee') %}
+        {{ tenantInformation.currencySymbol }}{{ tenantInformation.setting('postal_item_fee') }} {% trans %}shipping.per_item{% endtrans %}
+    {% endif %}
+</div>

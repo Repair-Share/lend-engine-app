@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Contact;
 use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\Loan;
+use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\Note;
 use AppBundle\Entity\Payment;
 use AppBundle\Serializer\Denormalizer\ContactDenormalizer;
@@ -12,6 +13,7 @@ use AppBundle\Serializer\Denormalizer\InventoryItemDenormalizer;
 use AppBundle\Serializer\Denormalizer\LoanDenormalizer;
 use AppBundle\Serializer\Denormalizer\LoanRowDenormalizer;
 use AppBundle\Services\Contact\ContactService;
+use AppBundle\Services\Loan\LoanService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -48,6 +50,9 @@ class BasketService
     /** @var TenantService */
     private $tenantService;
 
+    /** @var LoanService */
+    private $loanService;
+
     /** @var Translator */
     private $translator;
 
@@ -74,6 +79,7 @@ class BasketService
                                 TokenStorageInterface $tokenStorage,
                                 EmailService $emailService,
                                 TenantService $tenantService,
+                                LoanService $loanService,
                                 Translator $translator,
                                 Environment $twig)
     {
@@ -85,6 +91,7 @@ class BasketService
         $this->tokenStorage = $tokenStorage;
         $this->emailService = $emailService;
         $this->tenantService = $tenantService;
+        $this->loanService = $loanService;
         $this->translator = $translator;
         $this->twig = $twig;
 
@@ -151,8 +158,8 @@ class BasketService
         $offSet = -$timeZone->getOffset($utc)/3600;
         foreach ($basket->getLoanRows() AS $row) {
             /** @var $row \AppBundle\Entity\LoanRow */
-            if ($row->getInventoryItem()->getItemType() == InventoryItem::TYPE_STOCK) {
-                // No dates for stock items
+            if (in_array($row->getInventoryItem()->getItemType(), [InventoryItem::TYPE_STOCK, InventoryItem::TYPE_SERVICE])) {
+                // No dates for stock or service items
                 continue;
             }
             $i = $row->getDueInAt()->modify("{$offSet} hours");
@@ -184,6 +191,13 @@ class BasketService
 
         /** @var $basket \AppBundle\Entity\Loan */
         if ($data = $this->session->get('basket')) {
+
+            if (!isset($data['shippingFee'])) {
+                $data['shippingFee'] = 0;
+            }
+            if (!isset($data['collectFrom'])) {
+                $data['collectFrom'] = '';
+            }
 
             $basket = $serializer->denormalize($data, Loan::class, 'json');
 
@@ -217,7 +231,6 @@ class BasketService
      */
     public function confirmBasket($action, $rowFees)
     {
-
         /** @var \AppBundle\Repository\InventoryItemRepository $itemRepo */
         $itemRepo = $this->em->getRepository('AppBundle:InventoryItem');
 
@@ -271,25 +284,49 @@ class BasketService
         $offSet = -$timeZone->getOffset($utc)/3600;
         // ----- Change times from local to UTC ----- //
 
+        // Add a row for the shipping fee
+        $postalFee = $this->calculateShippingFee($basket);
+        $shippingItemId = $this->settings->getSettingValue('postal_shipping_item');
+
+        if ($postalFee > 0 && is_numeric($shippingItemId)) {
+            if ($shippingItem = $itemRepo->find($shippingItemId)) {
+                $shippingRow = new LoanRow();
+                $shippingRow->setInventoryItem($shippingItem);
+                $shippingRow->setProductQuantity(1);
+                $shippingRow->setFee($postalFee);
+                $shippingRow->setLoan($basket);
+                $shippingRow->setDueInAt(new \DateTime()); // due to schema requirements
+                $basket->addLoanRow($shippingRow);
+                $rowFees[$shippingItemId] = $postalFee;
+            }
+        }
+
         foreach ($basket->getLoanRows() AS $row) {
             /** @var $row \AppBundle\Entity\LoanRow */
 
             // Update time zone
-            $i = $row->getDueInAt()->modify("{$offSet} hours");
-            $row->setDueInAt($i);
-            $o = $row->getDueOutAt()->modify("{$offSet} hours");
-            $row->setDueOutAt($o);
+            if ($row->getDueInAt() && $row->getDueOutAt() ) {
+                $i = $row->getDueInAt()->modify("{$offSet} hours");
+                $row->setDueInAt($i);
+                $o = $row->getDueOutAt()->modify("{$offSet} hours");
+                $row->setDueOutAt($o);
+            }
 
             // Get the DB entity
             $itemId = $row->getInventoryItem()->getId();
             $item = $itemRepo->find($itemId);
             $row->setInventoryItem($item);
 
-            $siteFromId = $row->getSiteFrom()->getId();
-            $siteFrom = $siteRepo->find($siteFromId);
-            $row->setSiteFrom($siteFrom);
+            if ($row->getSiteFrom()) {
+                $siteFromId = $row->getSiteFrom()->getId();
+                $siteFrom = $siteRepo->find($siteFromId);
+                $row->setSiteFrom($siteFrom);
+            } else {
+                $row->setSiteFrom(null);
+            }
 
-            if ($siteToId = $row->getSiteTo()->getId()) {
+            if ($row->getSiteTo()) {
+                $siteToId = $row->getSiteTo()->getId();
                 $siteTo = $siteRepo->find($siteToId);
                 $row->setSiteTo($siteTo);
             } else {
@@ -338,14 +375,14 @@ class BasketService
             }
         }
 
-        $bookingFee = $basket->getReservationFee();
-
         if ($action == 'checkout') {
             $noteText = 'Loan created by '.$basket->getCreatedBy()->getName();
         } else {
             $noteText = 'Reservation created by '.$basket->getCreatedBy()->getName();
         }
 
+        // Reservation fee
+        $bookingFee = $basket->getReservationFee();
         if ($bookingFee > 0 && $action == 'reserve') {
             $noteText .= "<br>Charged reservation fee of ".number_format($bookingFee, 2).".";
             $fee = new Payment();
@@ -459,4 +496,25 @@ class BasketService
         return true;
     }
 
+    /**
+     * @param Loan $loan
+     * @return string
+     */
+    public function calculateShippingFee(Loan $loan)
+    {
+        $loanFee = (float)$this->settings->getSettingValue('postal_loan_fee');
+        $itemFee = (float)$this->settings->getSettingValue('postal_item_fee');
+
+        $shipping = $loanFee;
+        /** @var \AppBundle\Entity\LoanRow $loanRow */
+        foreach ($loan->getLoanRows() AS $loanRow) {
+            if ($itemFee > 0
+                && $loanRow->getInventoryItem()->getItemType() != 'service'
+                && $loanRow->getInventoryItem()->getItemType() != 'kit') {
+                $shipping += $itemFee;
+            }
+        }
+
+        return $shipping;
+    }
 }

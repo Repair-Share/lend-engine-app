@@ -32,6 +32,9 @@ class ItemArchiveController extends Controller
 
         $inventoryItemRepo = $em->getRepository('AppBundle:InventoryItem');
 
+        /** @var \AppBundle\Services\SettingsService $settings */
+        $settings = $this->get('settings');
+
         /** @var \AppBundle\Entity\InventoryItem $inventoryItem */
         $inventoryItem = $inventoryItemRepo->find($id);
 
@@ -42,6 +45,11 @@ class ItemArchiveController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            if ($settings->getSettingValue('postal_shipping_item') == $id) {
+                $this->addFlash('error', "You cannot delete the item you have set for shipping lines. ");
+                return $this->redirectToRoute('item', ['id' => $id]);
+            }
 
             $userNote = $form->get('notes')->getData();
 
