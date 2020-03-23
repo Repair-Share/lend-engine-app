@@ -433,6 +433,7 @@ EOM;
                 $fileName
             );
 
+            
 //            unlink($filePath);
 
             $response->headers->set('Content-Disposition', $disposition);
