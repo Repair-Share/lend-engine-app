@@ -25,6 +25,8 @@ class ItemExportController extends Controller
             $handle = fopen('php://output', 'r+');
 
             $header = [
+                'Id',
+                'Type',
                 'Added on',
                 'Code',
                 'Name',
@@ -98,7 +100,15 @@ class ItemExportController extends Controller
                 $ownedBy   = $item->getOwnedBy() != null ? $item->getOwnedBy()->getName() : '';
                 $donatedBy = $item->getDonatedBy() != null ? $item->getDonatedBy()->getName() : '';
 
+                if ($item->getInventoryLocation()) {
+                    $locationName = $item->getInventoryLocation()->getName();
+                } else {
+                    $locationName = '';
+                }
+
                 $itemArray = [
+                    $item->getId(),
+                    $item->getItemType(),
                     $item->getCreatedAt()->format("Y-m-d"),
                     $item->getSku(),
                     $item->getName(),
@@ -106,7 +116,7 @@ class ItemExportController extends Controller
                     $item->getSerial(),
                     $condition,
                     implode(',', $tagNameArray),
-                    $item->getInventoryLocation()->getName(),
+                    $locationName,
                     $item->getBrand(),
                     $item->getPriceCost(),
                     $item->getPriceSell(),

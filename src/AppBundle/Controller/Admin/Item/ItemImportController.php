@@ -95,9 +95,27 @@ class ItemImportController extends Controller
                 // Get the item
                 $item = str_getcsv($row, "\t");
 
-                if (!isset($columnMap['Code']) || !$code = trim($item[$columnMap['Code']])) {
-                    $this->addFlash('error', "Code on line {$rowId} was missing.");
-                    continue;
+                if (isset($columnMap['Id'])) {
+                    // We are updating existing items using the ID
+                    if (!$itemId = trim($item[$columnMap['Id']])) {
+                        $this->addFlash('error', "Item ID on line {$rowId} was missing.");
+                        continue;
+                    }
+                    $criteria = ['id' => $itemId];
+                    $code = '';
+                } else if (isset($columnMap['Code'])) {
+                    // We have a code column, it must be populated
+                    if (!$code = trim($item[$columnMap['Code']])) {
+                        $this->addFlash('error', "Code on line {$rowId} was missing.");
+                        continue;
+                    }
+                    $criteria = ['sku' => $code];
+                    $itemId = '';
+                } else {
+                    // We would have failed header validation earlier. These lines to surpress IDE warnings
+                    $criteria = [];
+                    $itemId = '';
+                    $code = '';
                 }
 
                 // Pad out the row data if any columns were empty, and validate cells
@@ -124,7 +142,7 @@ class ItemImportController extends Controller
                 }
 
                 // Get the product
-                $product = $itemRepo->findOneBy(['sku' => $code]);
+                $product = $itemRepo->findOneBy($criteria);
 
                 $action = 'create';
                 if ($product) {
@@ -137,23 +155,23 @@ class ItemImportController extends Controller
                         $product->setSku($code);
                         $created++;
                     } else {
-                        $this->addFlash('report', "Skipping row {$rowId} with code {$code} : Not enough data to create a new item.");
+                        $this->addFlash('report', "Skipping row {$rowId} with code '{$code}' or Id: '{$itemId}' : Not enough data to create a new item.");
                         continue;
                     }
                 } else {
                     // Item not found, don't update anything
-                    $this->addFlash('report', "Skipping item on row {$rowId} : item with code '{$code}' was not found.");
+                    $this->addFlash('report', "Skipping item on row {$rowId} : item with code '{$code}' or Id: '{$itemId}' was not found.");
                     $ignored++;
                     continue;
                 }
 
-                // Clean the data
+                // Clean the data and set it
                 $conditionName = null;
                 $setters = $this->getHeaderKeys();
                 foreach ($columnMap AS $colName => $colKey) {
                     if ($colName == "Condition") {
                         $conditionName = $item[$colKey];
-                    } else if (isset($item[$colKey]) && $colName != "Code") {
+                    } else if (isset($item[$colKey]) && $colName != "Id") {
                         $d = $item[$colKey];
                         $colSetter = $setters[$colName];
                         $product->$colSetter($d);
@@ -164,14 +182,6 @@ class ItemImportController extends Controller
                 if ($condition = $this->getCondition($conditionName)) {
                     $product->setCondition($condition);
                 }
-
-//                $tags = explode(",", $tagString);
-//                foreach ($tags as $tagName) {
-//                    $tagName = strtoupper(trim($tagName));
-//                    if ($tag = $this->getTagId($tagName)) {
-//                        $product->addTag($tag);
-//                    }
-//                }
 
                 $product->setUpdatedAt(new \DateTime());
 
@@ -270,7 +280,7 @@ class ItemImportController extends Controller
     /**
      * Get the item condition (don't create a new one if none found)
      * @param $name
-     * @return bool|null|object
+     * @return bool|null|ItemCondition
      */
     private function getCondition($name)
     {
@@ -322,7 +332,7 @@ class ItemImportController extends Controller
 
     /**
      * @param $name
-     * @return object
+     * @return InventoryLocation|bool|mixed|null|object
      */
     private function getOrCreateLocation($name)
     {
@@ -368,11 +378,12 @@ class ItemImportController extends Controller
             $this->errors[] = "We only found {$cols} columns in your import. Please check it's tab delimited text.";
         }
 
-        $foundCodeColumn = false;
+        $foundCodeOrIdColumn = false;
         $errors = 0;
         foreach ($header AS $key) {
-            if ($key == "Code") {
-                $foundCodeColumn = true;
+            if ($key == "Code" || $key == "Id") {
+                $foundCodeOrIdColumn = true;
+                continue;
             }
             if (!in_array($key, array_keys($validHeaderKeys))) {
                 $this->errors[] = "'{$key}' is not a valid column.";
@@ -380,8 +391,8 @@ class ItemImportController extends Controller
             }
         }
 
-        if ($foundCodeColumn == false) {
-            $this->errors[] = "Your import file needs a column called 'Code'.";
+        if ($foundCodeOrIdColumn == false) {
+            $this->errors[] = "Your import file needs a column called 'Code' or 'Id'.";
         }
 
         if ($errors > 0) {
@@ -463,6 +474,7 @@ class ItemImportController extends Controller
     private function getCellType($k)
     {
         $validations = [
+            'Id' => 'number',
             'Code' => 'text',
             'Name' => 'text',
             'Short description' => 'text',
