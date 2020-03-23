@@ -113,7 +113,8 @@ class SettingsService
             'group_similar_items' => 1,
             'org_locale' => 'en',
             'label_type' => '11355',
-            'org_timezone' => 'Europe/London'
+            'org_timezone' => 'Europe/London',
+            'event_time_step' => '30'
         ];
 
         foreach ($this->settings[$this->db] AS $k => $v) {
@@ -254,6 +255,7 @@ class SettingsService
 
             // Feature toggles
             'ft_events',
+            'event_time_step',
 
             // Setup values
             'multi_site',

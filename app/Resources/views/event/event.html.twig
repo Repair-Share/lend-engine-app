@@ -249,13 +249,13 @@
 //            http://www.jonthornton.com/jquery-timepicker/
             $("#event_timeFrom").timepicker({
                 'timeFormat' : 'H:i a',
-                'step' : 30,
+                'step' : {{ tenantInformation.setting('event_time_step') }},
                 'minTime': '7:00am',
                 'maxTime': '10:00pm'
             });
             $("#event_timeTo").timepicker({
                 'timeFormat' : 'H:i a',
-                'step' : 30,
+                'step' : {{ tenantInformation.setting('event_time_step') }},
                 'minTime': '7:00am',
                 'maxTime': '10:00pm'
             });

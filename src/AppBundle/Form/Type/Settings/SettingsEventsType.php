@@ -3,6 +3,7 @@ namespace AppBundle\Form\Type\Settings;
 
 use AppBundle\Form\Type\ToggleType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -55,6 +56,16 @@ class SettingsEventsType extends AbstractType
                 'rows' => 6,
                 'class' => 'summernote'
             )
+        ));
+
+        $builder->add('event_time_step', NumberType::class, array(
+            'label' => 'Time interval (minutes) for start and end time choice',
+            'data' => (int)$dbData['event_time_step'],
+            'required' => false,
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => 'Controls the options you get in the time selector on the event edit screen. Between 1 and 60.'
+            ]
         ));
 
         if ($this->tenantService->getFeature('CustomEmail')) {
