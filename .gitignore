@@ -51,5 +51,8 @@
 # Embedded web-server pid file
 /.web-server-pid
 
+# backup files
+/temp/
+
 .idea
 .DS_Store
