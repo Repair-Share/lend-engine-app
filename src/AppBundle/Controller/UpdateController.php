@@ -393,43 +393,32 @@ EOM;
      */
     public function backup()
     {
-        /** @var \Doctrine\DBAL\Driver\PDOConnection $db */
-        $db = $this->get('database_connection');
+        $url = getenv('RDS_URL');
+        if ($url) {
+            $dbparts = parse_url($url);
+            $server   = $dbparts['host'];
+            $username = $dbparts['user'];
+            $password = $dbparts['pass'];
+        } else  {
+            $server   = '127.0.0.1';
+            $username = getenv('DEV_DB_USER');
+            $password = getenv('DEV_DB_PASS');
+        }
 
         /** @var \AppBundle\Services\SettingsService $settingsService */
         $settingsService = $this->get('settings');
         $tenant = $settingsService->getTenant();
 
-        $dbuser = 'reuse';
         $dbname = $tenant->getDbSchema();
 
         $mysqldump = exec('which mysqldump');
-
-//        $command = "$mysqldump --opt -h $dbhost -u $dbuser -p $dbpass $dbname > {$dbname}.sql";
-//        mysqldump -B "$dbname" -u "$dbuser" --password="$dbpassword" > "$filename"
-//        $dbpass = $db->quote($dbpass);
 
         $path = '../temp/';
         $fileName = $tenant->getDbSchema().'_'.microtime(true).'.sql';
         $filePath = $path.$fileName;
 
-        $command = "$mysqldump -B -u $dbuser $dbname > $filePath";
+        $command = "$mysqldump -B -h {$server} -u $username --password=$password $dbname > $filePath";
         exec($command);
-
-//        $s = $db->prepare($command);
-//
-//        dump($s);
-//        $s->execute();
-
-//        $s3_bucket = $this->container->get('service.tenant')->getS3Bucket();
-//        $schema    = $this->container->get('service.tenant')->getSchema();
-
-//        $file = fopen("test.txt", "r");
-//        while(! feof($file)) {
-//            $line = fgets($file);
-//            echo $line. "<br>";
-//        }
-//        fclose($file);
 
         if ($fileContent = fopen($filePath, 'r')) {
             $response = new BinaryFileResponse($filePath);
