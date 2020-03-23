@@ -227,12 +227,16 @@
 
         {#CUSTOM FIELDS#}
         {% if product.textFieldValues|length > 0 and tenantInformation.feature('ProductField') %}
-            <table width="100%" cellpadding="10" cellspacing="0">
+            <table width="100%" cellpadding="10" cellspacing="0" id="custom-fields">
                 {% for field in product.textFieldValues %}
                     {% if field.content != '' and field.showOnWebsite == true %}
                         <tr>
-                            <td valign="top" style="padding: 0 10px 6px 0; font-weight: bold">{{ field.name }}</td>
-                            <td valign="top" style="padding: 0 10px 6px 0">{{ field.content|nl2br }}</td>
+                            <td valign="top" style="padding: 0 10px 6px 0; font-weight: bold" id="field-{{ field.id }}-name">
+                                {{ field.name }}
+                            </td>
+                            <td valign="top" style="padding: 0 10px 6px 0" id="field-{{ field.id }}-value">
+                                {{ field.content|nl2br }}
+                            </td>
                         </tr>
                     {% endif %}
                 {% endfor %}

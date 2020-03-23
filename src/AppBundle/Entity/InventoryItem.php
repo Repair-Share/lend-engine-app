@@ -579,6 +579,7 @@ class InventoryItem
                     }
                 }
                 $values[$key] = [
+                    'id' => $value->getId(),
                     'name' => $value->getProductField()->getName(),
                     'content' => $selectedOptionName,
                     'showOnWebsite' => $value->getProductField()->getShowOnWebsite()
@@ -592,6 +593,7 @@ class InventoryItem
                     }
                 }
                 $values[$key] = [
+                    'id' => $value->getId(),
                     'name' => $value->getProductField()->getName(),
                     'content' => implode(', ', $selectedOptions),
                     'showOnWebsite' => $value->getProductField()->getShowOnWebsite()
@@ -605,12 +607,14 @@ class InventoryItem
                     $content = null;
                 }
                 $values[$key] = [
+                    'id' => $value->getId(),
                     'name' => $value->getProductField()->getName(),
                     'content' => $content,
                     'showOnWebsite' => $value->getProductField()->getShowOnWebsite()
                 ];
             } else {
                 $values[$key] = [
+                    'id' => $value->getId(),
                     'name' => $value->getProductField()->getName(),
                     'content' => $value->getFieldValue(),
                     'showOnWebsite' => $value->getProductField()->getShowOnWebsite()
