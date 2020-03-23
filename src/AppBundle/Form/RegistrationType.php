@@ -165,14 +165,6 @@ class RegistrationType extends AbstractType
             ]
         ));
 
-        /** This was proving too hard to implement with a toggle for only some libraries, hence && 0 */
-        if ($this->container->get('settings')->getSettingValue('use_captcha') && 0) {
-            $builder->add('captchaCode', 'Captcha\Bundle\CaptchaBundle\Form\Type\CaptchaType', [
-                'captchaConfig' => 'RegistrationCaptcha',
-                'label' => "Enter the code in the image"
-            ]);
-        }
-
     }
 
     public function getParent()

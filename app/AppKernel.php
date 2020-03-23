@@ -25,8 +25,7 @@ class AppKernel extends Kernel
             new Oneup\UploaderBundle\OneupUploaderBundle(),
             new Staffim\RollbarBundle\StaffimRollbarBundle(),
             new Hype\MailchimpBundle\HypeMailchimpBundle(),
-            new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
-            new Captcha\Bundle\CaptchaBundle\CaptchaBundle(),
+            new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -298,7 +298,6 @@ class SettingsService
             'site_description',
             'site_font_name',
             'site_theme_name',
-            'use_captcha',
             'logo_image_name',
             'group_similar_items',
 

@@ -285,11 +285,6 @@ class Contact extends BaseUser
      */
     private $subscriber = false;
 
-
-    // * @CaptchaAssert\ValidCaptcha(message = "CAPTCHA validation failed, try again.", groups={"AppBundleSiteRegistration"})
-
-    protected $captchaCode;
-
     public function __construct()
     {
         parent::__construct();
@@ -323,16 +318,6 @@ class Contact extends BaseUser
         if ($this->getCreatedAt() == null) {
             $this->setCreatedAt(new \DateTime('now'));
         }
-    }
-
-    public function getCaptchaCode()
-    {
-        return $this->captchaCode;
-    }
-
-    public function setCaptchaCode($captchaCode)
-    {
-        $this->captchaCode = $captchaCode;
     }
 
     /**

@@ -32,10 +32,6 @@
                 <div class="col-md-4" id="col-password">
                     {{ form_row(form.plainPassword) }}
 
-                    {% if tenantInformation.setting('use_captcha') %}
-                    {#{{ form_row(form.captchaCode) }}#}
-                    {% endif %}
-
                     <div style="display:{% if tenantInformation.setting('mailchimp_api_key') %}block{% else %}none{% endif %}">
                         {{ form_row(form.subscriber) }}
                     </div>
