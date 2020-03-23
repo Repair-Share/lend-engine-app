@@ -389,6 +389,7 @@ EOM;
     }
 
     /**
+     * Generate a backup
      * @Route("backup", name="backup")
      */
     public function backup()
@@ -412,6 +413,10 @@ EOM;
         $dbname = $tenant->getDbSchema();
 
         $mysqldump = exec('which mysqldump');
+
+        if (!$mysqldump) {
+            return new JsonResponse(["No mysqldump"]);
+        }
 
         $path = '../temp/';
         $fileName = $tenant->getDbSchema().'_'.microtime(true).'.sql';
