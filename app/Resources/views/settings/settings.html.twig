@@ -139,6 +139,18 @@
                 all members requesting this item are sent an email.
             </p>
 
+            {% if is_granted("ROLE_SUPER_USER") %}
+            <h2>Backup</h2>
+            <p>
+                <a href="{{ path('full_backup') }}" class="btn btn-primary">Download a full backup</a>
+            </p>
+            <p class="help-block">
+                If you're wanting a copy of all your data, you can download a full mySQL database dump.<br>
+                <strong>This data requires technical expertise</strong>;
+                if you want to export items, members or other simpler data, use the export buttons on the listing screens.
+            </p>
+            {% endif %}
+
         </div>
 
     </div>
