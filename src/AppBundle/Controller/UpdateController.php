@@ -426,8 +426,6 @@ EOM;
         exec($command);
 
         if ($fileContent = fopen($filePath, 'r')) {
-
-            // Load it
             $response = new BinaryFileResponse($filePath);
 
             $disposition = $response->headers->makeDisposition(
