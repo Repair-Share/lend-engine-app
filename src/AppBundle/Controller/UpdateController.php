@@ -421,12 +421,17 @@ EOM;
         exec($command);
 
         if ($fileContent = fopen($filePath, 'r')) {
+
+            // Load it
             $response = new BinaryFileResponse($filePath);
 
             $disposition = $response->headers->makeDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
                 $fileName
             );
+
+            // Delete it
+//            unlink($filePath);
 
             $response->headers->set('Content-Disposition', $disposition);
 
