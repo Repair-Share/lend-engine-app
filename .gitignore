@@ -52,7 +52,7 @@
 /.web-server-pid
 
 # backup files
-/temp/
+/temp/*
 
 .idea
 .DS_Store
