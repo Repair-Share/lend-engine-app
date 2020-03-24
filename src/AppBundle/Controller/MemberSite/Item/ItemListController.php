@@ -53,9 +53,6 @@ class ItemListController extends Controller
         $minLoanDays = (int)$this->get('settings')->getSettingValue('min_loan_days');
         $groupItemsWithSameName = (int)$this->get('settings')->getSettingValue('group_similar_items');
 
-        /** @var \AppBundle\Services\InventoryService $inventoryService */
-        $inventoryService = $this->get('service.inventory');
-
         /** @var \AppBundle\Services\Item\ItemService $itemService */
         $itemService = $this->get('service.item');
 

@@ -411,8 +411,8 @@ class ItemController extends Controller
     private function getLoanRowDetail(InventoryItem $product)
     {
 
-        /** @var \AppBundle\Services\InventoryService $inventoryService */
-        $inventoryService = $this->get('service.inventory');
+        /** @var \AppBundle\Services\Loan\LoanRowService $loanRowService */
+        $loanRowService = $this->get('service.loan_row');
 
         /** @var $reservationService \AppBundle\Services\Booking\BookingService */
         $reservationService = $this->get("service.booking");
@@ -426,7 +426,7 @@ class ItemController extends Controller
                 'item_ids' => [$product->getId()],
                 'statuses' => ['ACTIVE', 'OVERDUE']
             ];
-            $loansForItem = $inventoryService->getItemsOnLoan($filter);
+            $loansForItem = $loanRowService->getItemsOnLoan($filter);
 
             foreach ($loansForItem AS $loanRow) {
                 /** @var $loanRow \AppBundle\Entity\LoanRow */

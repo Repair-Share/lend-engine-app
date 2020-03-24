@@ -35,8 +35,8 @@ class ItemListDataController extends Controller
         $start  = $request->get('start');
         $length = $request->get('length');
 
-        /** @var \AppBundle\Services\InventoryService $inventoryService */
-        $inventoryService = $this->get('service.inventory');
+        /** @var \AppBundle\Services\Loan\LoanRowService $loanRowService */
+        $loanRowService = $this->get('service.loan_row');
 
         /** @var \AppBundle\Services\Item\ItemService $itemService */
         $itemService = $this->get('service.item');
@@ -92,7 +92,7 @@ class ItemListDataController extends Controller
             'item_ids' => $itemIds,
             'statuses' => ['ACTIVE', 'OVERDUE']
         ];
-        $activeLoanRows = $inventoryService->getItemsOnLoan($onLoanFilter);
+        $activeLoanRows = $loanRowService->getItemsOnLoan($onLoanFilter);
         $activeLoans = [];
         foreach ($activeLoanRows AS $loanRow) {
             /** @var $loanRow \AppBundle\Entity\LoanRow */
