@@ -57,6 +57,9 @@ class ItemListDataController extends Controller
         if ($request->get('filterCondition')) {
             $filter['itemCondition'] = $request->get('filterCondition');
         }
+        if ($request->get('filterType')) {
+            $filter['type'] = $request->get('filterType');
+        }
         if ($request->get('customFieldId') && $request->get('customFieldValue')) {
             $filter['customFieldId'] = $request->get('customFieldId');
             $filter['customFieldValue'] = $request->get('customFieldValue');

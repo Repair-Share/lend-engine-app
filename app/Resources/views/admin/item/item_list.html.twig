@@ -69,7 +69,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3 form-group">
+                        <div class="col-md-2 form-group">
                             <label>Assigned to</label>
                             <select id="filterAssignedTo" name="filterAssignedTo" class="form-control">
                                 <option></option>
@@ -79,7 +79,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3 form-group">
+                        <div class="col-md-2 form-group">
                             <label>Condition</label>
                             <select id="filterCondition" name="filterCondition" class="form-control">
                                 <option></option>
@@ -89,6 +89,17 @@
                             </select>
                         </div>
 
+                        <div class="col-md-2 form-group">
+                            <label>Type</label>
+                            <select id="filterType" name="filterType" class="form-control">
+                                <option></option>
+                                {% for type in itemTypes %}
+                                    <option value="{{ type.code }}" {% if app.request.get('filterType') == type.code %}SELECTED{% endif %}>
+                                        {{ type.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
 
                     <!-- CUSTOM FIELD FILTERS -->
@@ -209,6 +220,7 @@
                         d.filterLocationId  = $("#filterLocationId").val();
                         d.filterAssignedTo  = $("#filterAssignedTo").val();
                         d.filterCondition   = $("#filterCondition").val();
+                        d.filterType        = $("#filterType").val();
 //                        d.customFieldId     = $("#customFieldId").val();
 //                        d.customFieldValue  = $("#customFieldValue").val();
                     }
@@ -218,6 +230,9 @@
                 },
                 "language": {
                     "infoFiltered": ""
+                },
+                "initComplete": function() {
+                    $('[data-toggle="tooltip"]').tooltip();
                 },
                 "columns": [
                     null,

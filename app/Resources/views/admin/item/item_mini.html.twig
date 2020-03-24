@@ -16,9 +16,11 @@
         <i class="fa fa-exclamation-circle" data-toggle="tooltip" title="This item is not shown on your Lend Engine member website" style="color: #ff741e"></i>
     {% endif %}
     {% if item.itemType == 'kit' %}
-        <i class="fa fa-sitemap" style="color:#000"></i>
+        <i class="fa fa-sitemap" data-toggle="tooltip" title="Kit" style="color:#000"></i>
+    {% elseif item.itemType == 'service' %}
+        <i class="fa fa-handshake-o" data-toggle="tooltip" title="Service" style="color:#000"></i>
     {% elseif item.itemType == 'stock' %}
-        <i class="fa fa-cube" style="color:#000"></i>
+        <i class="fa fa-cube" data-toggle="tooltip" title="Stock item" style="color:#000"></i>
     {% endif %}
     <a href="{{ path('item', {id: item.id}) }}">{{ item.name }}</a>
 </span>

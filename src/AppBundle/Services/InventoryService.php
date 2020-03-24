@@ -73,7 +73,12 @@ class InventoryService
             $builder->andWhere('item.id IN ('.implode(',', $filter['idSet']).')');
         }
 
-        if (isset($filter['type']) && in_array($filter['type'], [InventoryItem::TYPE_SERVICE, InventoryItem::TYPE_STOCK])) {
+        if (isset($filter['type']) && in_array($filter['type'], [
+                InventoryItem::TYPE_SERVICE,
+                InventoryItem::TYPE_LOAN,
+                InventoryItem::TYPE_KIT,
+                InventoryItem::TYPE_STOCK
+            ])) {
             $builder->andWhere(" item.itemType = :itemType ");
             $builder->setParameter('itemType', $filter['type']);
         }

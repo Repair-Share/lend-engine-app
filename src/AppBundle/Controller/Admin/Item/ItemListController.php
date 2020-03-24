@@ -55,6 +55,13 @@ class ItemListController extends Controller
             }
         }
 
+        // For filters:
+        $itemTypes = [];
+        $itemTypes[] = ['code' => "loan", 'name' => "Loan item"];
+        $itemTypes[] = ['code' => "stock", 'name' => "Stock"];
+        $itemTypes[] = ['code' => "service", 'name' => "Service"];
+        $itemTypes[] = ['code' => "kit", 'name' => "Kit"];
+
         return $this->render(
             'admin/item/item_list.html.twig',
             array(
@@ -63,7 +70,8 @@ class ItemListController extends Controller
                 'tags' => $tags,
                 'sites' => $sites,
                 'team' => $contacts,
-                'conditions' => $itemConditions
+                'conditions' => $itemConditions,
+                'itemTypes' => $itemTypes
             )
         );
     }
