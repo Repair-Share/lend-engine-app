@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ee4dd534a840d1c5cfb072b74f95d8d",
+    "content-hash": "2b6baffcc0459d9eb72f2db63822a260",
     "packages": [
         {
             "name": "ahmedsamy/hype-mailchimp-bundle",
