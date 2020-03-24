@@ -160,9 +160,11 @@
                 {% if isMultiSite == true or is_granted('ROLE_ADMIN') %}
                     <div class="item-info item-site">
                         <span class="item-info-label">{% trans %}public_item.location{% endtrans %}:</span>
-                        {{ product.inventoryLocation.site.name }}
                         {% if is_granted('ROLE_ADMIN') %}
+                            {{ product.inventoryLocation.site.name }}
                             <span title="Location detail (eg in stock) is visible for admin only" data-toggle="tooltip">({{ product.inventoryLocation.name }})</span>
+                        {% else %}
+                            {{ product.inventoryLocation.site.name }}
                         {% endif %}
                     </div>
                 {% endif %}

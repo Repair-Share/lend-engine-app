@@ -33,6 +33,11 @@
         </div>
     </form>
 
+    <style>
+        .dropdown-menu .fa {
+            padding-top: 3px;
+        }
+    </style>
     <div class="sidebar-collapse " style="padding:0 10px 10px 10px;">
 
         <div class="btn-group btn-block">
@@ -40,21 +45,29 @@
                 <i class="fa fa-plus"></i> Quick add <span class="caret"></span>
             </button>
             <ul class="dropdown-menu btn-block">
-                <li><a href="{{ path('item') }}?type=loan">Loan item</a></li>
+                <li>
+                    <a href="{{ path('item') }}?type=loan">Loan item <i class="fa fa-clock-o pull-right"></i></a>
+                </li>
 
                 {% if tenantInformation.getFeature('Kits') %}
-                    <li><a href="{{ path('item') }}?type=kit">Kit item</a></li>
+                    <li>
+                        <a href="{{ path('item') }}?type=kit"><i class="fa fa-sitemap pull-right"></i> Kit</a>
+                    </li>
                 {% else %}
-                    <li><a href="{{ path('billing') }}">Kit item <span style="font-size: 11px; color: #aaa;">(upgrade required)</span></a></li>
+                    <li>
+                        <a href="{{ path('billing') }}"><i class="fa fa-sitemap pull-right"></i> Kit <span style="font-size: 11px; color: #aaa;">(upgrade required)</span></a>
+                    </li>
                 {% endif %}
 
                 {% if tenantInformation.getFeature('StockItems') %}
-                    <li><a href="{{ path('item') }}?type=stock">Stock item <label class="label bg-orange">NEW</label></a></li>
+                    <li><a href="{{ path('item') }}?type=stock"><i class="fa fa-cube pull-right"></i> Stock item</a></li>
                 {% else %}
-                    <li><a href="{{ path('billing') }}?type=stock">Stock item <span style="font-size: 11px; color: #aaa;">(upgrade required)</span></a></li>
+                    <li><a href="{{ path('billing') }}?type=stock"><i class="fa fa-cube pull-right"></i> Stock item <span style="font-size: 11px; color: #aaa;">(upgrade required)</span></a></li>
                 {% endif %}
 
-                <li><a href="{{ path('item') }}?type=service">Service <label class="label bg-orange">NEW</label></a></li>
+                <li>
+                    <a href="{{ path('item') }}?type=service"><i class="fa fa-handshake-o pull-right"></i> Service</a>
+                </li>
 
                 <li><a href="{{ path('contact') }}">Contact</a></li>
                 {% if tenantInformation.setting('ft_events') %}

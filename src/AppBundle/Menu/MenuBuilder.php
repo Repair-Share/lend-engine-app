@@ -65,16 +65,16 @@ class MenuBuilder
             $this->addChildItem('Items', 'Maintenance', 'maintenance_list');
         }
 
-        $this->addChildItem('Items', 'Add loan item', 'item_sector', '', '', ['type' => 'loan']);
+        $this->addChildItem('Items', '<i class="fa fa-clock-o"></i> Add loan item', 'item', '', '', ['type' => 'loan']);
 
         if ($this->container->get('service.tenant')->getFeature('StockItems')) {
-            $this->addChildItem('Items', 'Add stock item <sup><label class="label bg-orange">NEW</label></sup>', 'item', '', '', ['type' => 'stock']);
+            $this->addChildItem('Items', '<i class="fa fa-cube"></i> Add stock item', 'item', '', '', ['type' => 'stock']);
         }
 
-        $this->addChildItem('Items', 'Add service <sup><label class="label bg-orange">NEW</label></sup>', 'item', '', '', ['type' => 'service']);
+        $this->addChildItem('Items', '<i class="fa fa-handshake-o"></i> Add service', 'item', '', '', ['type' => 'service']);
 
         if ($this->container->get('service.tenant')->getFeature('Kits')) {
-            $this->addChildItem('Items', 'Add kit', 'item_sector', '', '', ['type' => 'kit']);
+            $this->addChildItem('Items', '<i class="fa fa-sitemap"></i> Add kit', 'item', '', '', ['type' => 'kit']);
         }
 
         if ($this->container->get('settings')->getSettingValue('enable_waiting_list')) {
