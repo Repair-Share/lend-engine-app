@@ -1,6 +1,6 @@
 <div class="item-info item-fee">
-    {% if item.itemType == 'stock' %}
-        <span class="item-info-label">Cost:</span> {{ item.priceSell }} each
+    {% if item.itemType == 'stock' or item.itemType == 'service' %}
+        <span class="item-info-label">Cost:</span> {{ item.priceSell|number_format(2) }} each
     {% else %}
         <span class="item-info-label">Fee:</span> {{ item.loanFee }} for {{ item.maxLoanDays }} days
     {% endif %}

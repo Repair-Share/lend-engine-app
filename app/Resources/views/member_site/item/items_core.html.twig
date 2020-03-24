@@ -106,6 +106,8 @@
 
                             {% if product.itemType == 'stock' %}
                                 <span class="label label-default">{% trans %}public_item.stock_item{% endtrans %}</span>
+                            {% elseif product.itemType == 'service' %}
+                                <span class="label bg-gray">{% trans %}public_item.service_item{% endtrans %}</span>
                             {% else %}
                                 {% if product.inventoryLocation and product.inventoryLocation.id == 1 %}
                                     <span class="label label-info">{% trans %}public_item.on_loan{% endtrans %}</span>
@@ -118,7 +120,7 @@
                                 {% endif %}
                             {% endif %}
 
-                            {% if product.itemType == 'stock' %}
+                            {% if product.itemType == 'stock' or product.itemType == 'service' %}
 
                                 <span class="item-list-price">
                                     {{ tenantInformation.currencySymbol }} {{ product.priceSell|number_format(2) }}

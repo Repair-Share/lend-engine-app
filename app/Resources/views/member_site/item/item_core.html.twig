@@ -79,7 +79,7 @@
 
         <div style="padding: 10px 0">
 
-            {% if product.itemType == 'stock' %}
+            {% if product.itemType == 'stock' or product.itemType == 'service' %}
                 <p class="item-price">
                     {{ tenantInformation.currencySymbol }} {{ product.priceSell|number_format(2) }}
                     {% trans %}public_item.each{% endtrans %}
@@ -112,6 +112,10 @@
                 <span class="label label-default">
                     {% trans %}public_item.stock_item{% endtrans %}
                 </span>
+                <div class="clearfix" style="padding-bottom:10px;"></div>
+
+            {% elseif product.itemType == 'service' %}
+
                 <div class="clearfix" style="padding-bottom:10px;"></div>
 
             {% elseif product.inventoryLocation and product.inventoryLocation.id == 1 %}

@@ -223,6 +223,10 @@ class ItemListDataController extends Controller
                 $stockUrl = $this->generateUrl('inventory_edit', ['id' => $itemId]);
                 $locationHtml .= '<br><br><a href="'.$stockUrl.'" class="modal-link">'.$totalStock.' in stock</a>';
 
+            } else if ($item->getItemType() == InventoryItem::TYPE_SERVICE) {
+
+                $locationHtml = 'n/a';
+
             } else if ($item->getInventoryLocation()) {
                 $locationName = preg_replace("/ /", '&nbsp;', $item->getInventoryLocation()->getName());
                 if ($item->getInventoryLocation()->getId() == 1) {
