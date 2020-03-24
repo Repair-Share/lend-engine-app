@@ -77,7 +77,7 @@ class ItemListDataController extends Controller
         }
 
         /***** THE MAIN QUERY ******/
-        $searchResults = $inventoryService->itemSearch($start, $length, $filter);
+        $searchResults = $itemService->itemSearch($start, $length, $filter);
         $totalRecords = $searchResults['totalResults'];
         $inventory    = $searchResults['data'];
 

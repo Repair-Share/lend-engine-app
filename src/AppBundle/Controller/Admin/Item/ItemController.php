@@ -65,6 +65,8 @@ class ItemController extends Controller
             // Creating a new item
             if ($request->get('type') == InventoryItem::TYPE_KIT) {
                 $pageTitle = 'Add a new kit';
+            } else if ($request->get('type') == InventoryItem::TYPE_STOCK) {
+                $pageTitle = 'Add a stock item';
             } else if ($request->get('type') == InventoryItem::TYPE_SERVICE) {
                 $pageTitle = 'Add a new service';
             } else {

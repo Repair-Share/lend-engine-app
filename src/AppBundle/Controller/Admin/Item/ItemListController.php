@@ -19,6 +19,9 @@ class ItemListController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        /** @var \AppBundle\Services\Item\ItemService $itemService */
+        $itemService = $this->get('service.item');
+
         $sites = $em->getRepository('AppBundle:Site')->findOrderedByName();
         $tags = $em->getRepository('AppBundle:ProductTag')->findAllOrderedByName();
 
@@ -44,7 +47,7 @@ class ItemListController extends Controller
             /** @var \AppBundle\Services\InventoryService $inventoryService */
             $inventoryService = $this->get('service.inventory');
             $filter['search'] = $searchString;
-            $searchResults = $inventoryService->itemSearch(0, 10, $filter);
+            $searchResults = $itemService->itemSearch(0, 10, $filter);
 
             $totalRecords = $searchResults['totalResults'];
             $inventory    = $searchResults['data'];

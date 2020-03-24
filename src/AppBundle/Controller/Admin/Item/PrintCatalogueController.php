@@ -51,9 +51,6 @@ class PrintCatalogueController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        /** @var \AppBundle\Services\InventoryService $inventoryService */
-        $inventoryService = $this->get('service.inventory');
-
         /** @var \AppBundle\Services\Item\ItemService $itemService */
         $itemService = $this->get('service.item');
 
@@ -62,7 +59,7 @@ class PrintCatalogueController extends Controller
 
         $filter['tagIds'] = [ $category->getId() ];
 
-        $searchResults = $inventoryService->itemSearch(0, 200, $filter);
+        $searchResults = $itemService->itemSearch(0, 200, $filter);
         $products      = $searchResults['data'];
 
         $defaultLoanDays = (int)$this->get('settings')->getSettingValue('default_loan_days');

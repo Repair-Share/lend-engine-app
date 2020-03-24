@@ -40,16 +40,16 @@
                 <i class="fa fa-plus"></i> Quick add <span class="caret"></span>
             </button>
             <ul class="dropdown-menu btn-block">
-                <li><a href="{{ path('item_sector') }}">Loan item</a></li>
+                <li><a href="{{ path('item') }}?type=loan">Loan item</a></li>
 
                 {% if tenantInformation.getFeature('Kits') %}
-                    <li><a href="{{ path('item_sector') }}?type=kit">Kit item</a></li>
+                    <li><a href="{{ path('item') }}?type=kit">Kit item</a></li>
                 {% else %}
                     <li><a href="{{ path('billing') }}">Kit item <span style="font-size: 11px; color: #aaa;">(upgrade required)</span></a></li>
                 {% endif %}
 
                 {% if tenantInformation.getFeature('StockItems') %}
-                    <li><a href="{{ path('item_sector') }}?type=stock">Stock item <label class="label bg-orange">NEW</label></a></li>
+                    <li><a href="{{ path('item') }}?type=stock">Stock item <label class="label bg-orange">NEW</label></a></li>
                 {% else %}
                     <li><a href="{{ path('billing') }}?type=stock">Stock item <span style="font-size: 11px; color: #aaa;">(upgrade required)</span></a></li>
                 {% endif %}

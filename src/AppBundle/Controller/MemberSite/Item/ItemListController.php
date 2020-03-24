@@ -137,7 +137,7 @@ class ItemListController extends Controller
         if ($groupItemsWithSameName && !$request->get('see_variations')) {
             // Get ALL item IDs that match the filters
             $filter['grouped'] = true;
-            $arrayOfItems = $inventoryService->itemSearch(0, 1000, $filter);
+            $arrayOfItems = $itemService->itemSearch(0, 1000, $filter);
             unset($filter['grouped']);
 
             $itemsKeyedByName = [];
@@ -170,13 +170,13 @@ class ItemListController extends Controller
 
             // Run the search again only with the chosen IDs
             $filter['idSet'] = array_values($itemsKeyedByName);
-            $searchResults = $inventoryService->itemSearch($resultsFrom, $length, $filter);
+            $searchResults = $itemService->itemSearch($resultsFrom, $length, $filter);
         } else {
             if ($request->get('see_variations')) {
                 $filter['exactNameMatch'] = true;
             }
             // Return an array of objects
-            $searchResults = $inventoryService->itemSearch($resultsFrom, $length, $filter);
+            $searchResults = $itemService->itemSearch($resultsFrom, $length, $filter);
         }
 
         $products     = $searchResults['data'];
