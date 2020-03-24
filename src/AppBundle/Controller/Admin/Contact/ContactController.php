@@ -358,7 +358,7 @@ class ContactController extends Controller
 
         $apiKey = $this->get('settings')->getSettingValue('mailchimp_api_key');
         $listId = $this->get('settings')->getSettingValue('mailchimp_default_list_id');
-        $doubleOptIn = $this->get('settings')->getSettingValue('mailchimp_double_optin');
+        $doubleOptIn = (bool)$this->get('settings')->getSettingValue('mailchimp_double_optin');
 
         if ($apiKey && $listId && $contact->getSubscriber() == true) {
 

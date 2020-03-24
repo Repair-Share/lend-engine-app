@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "edc490e7191da4399be1650bd27b61cf",
+    "content-hash": "f469498d51c1f08b401a97c33ae687c0",
     "packages": [
         {
             "name": "ahmedsamy/hype-mailchimp-bundle",
-            "version": "v2.0",
+            "version": "v1.3",
             "target-dir": "Hype/MailchimpBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/AhmedSamy/HypeMailchimpBundle.git",
-                "reference": "f76c2008d0611604d67f1823ea1c414982406488"
+                "reference": "c8ebda98deb9a04c1f3875e13dc1bba6968c1970"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AhmedSamy/HypeMailchimpBundle/zipball/f76c2008d0611604d67f1823ea1c414982406488",
-                "reference": "f76c2008d0611604d67f1823ea1c414982406488",
+                "url": "https://api.github.com/repos/AhmedSamy/HypeMailchimpBundle/zipball/c8ebda98deb9a04c1f3875e13dc1bba6968c1970",
+                "reference": "c8ebda98deb9a04c1f3875e13dc1bba6968c1970",
                 "shasum": ""
             },
             "require": {
@@ -59,7 +59,7 @@
                 "mailchimp",
                 "newsletter"
             ],
-            "time": "2018-12-09T16:28:38+00:00"
+            "time": "2018-05-11T05:15:48+00:00"
         },
         {
             "name": "aws/aws-sdk-php",
@@ -2046,28 +2046,33 @@
         },
         {
             "name": "kriswallsmith/buzz",
-            "version": "v0.7",
+            "version": "v0.16.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kriswallsmith/Buzz.git",
-                "reference": "62a5a27fcfa5569010483f0f164e67b32e6f6b80"
+                "reference": "4977b7d44dbef49cdc641f14be6512fdcfe32f12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kriswallsmith/Buzz/zipball/62a5a27fcfa5569010483f0f164e67b32e6f6b80",
-                "reference": "62a5a27fcfa5569010483f0f164e67b32e6f6b80",
+                "url": "https://api.github.com/repos/kriswallsmith/Buzz/zipball/4977b7d44dbef49cdc641f14be6512fdcfe32f12",
+                "reference": "4977b7d44dbef49cdc641f14be6512fdcfe32f12",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "guzzlehttp/psr7": "^1.4",
+                "php": "^5.4 || ^7.0"
+            },
+            "require-dev": {
+                "php-http/client-integration-tests": "^0.6.2",
+                "symfony/phpunit-bridge": "^3.4 || ^4.0"
             },
             "suggest": {
                 "ext-curl": "*"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "Buzz": "lib/"
+                "psr-4": {
+                    "Buzz\\": "lib/Buzz"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2087,7 +2092,7 @@
                 "curl",
                 "http client"
             ],
-            "time": "2012-06-25T19:01:38+00:00"
+            "time": "2018-03-19T10:34:40+00:00"
         },
         {
             "name": "laminas/laminas-code",
