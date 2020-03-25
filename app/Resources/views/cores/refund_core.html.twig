@@ -1,5 +1,11 @@
 {% trans_default_domain 'member_site' %}
 
+<div class="help-block">
+    This screen is used when you are giving money back to a member.
+    Perhaps you are returning their account balance, or you are refunding a deposit.
+</div>
+
+{% if payment.paymentMethod %}
 <div class="row">
     <div class="col-md-12">
         The original payment of {{ tenantInformation.currencySymbol }}{{ payment.amount }} was taken on {{ payment.paymentDate|date("d M Y") }} with {{ payment.paymentMethod.name }}
@@ -8,8 +14,8 @@
         {% endif %}
     </div>
 </div>
-
 <br>
+{% endif %}
 
 <div class="row">
     <div class="col-md-12">
@@ -42,7 +48,7 @@
 {% block modalFooter %}
     <script>
         $(document).ready(function () {
-            var originalPaymentMethodId = {{ payment.paymentMethod.id }};
+            var originalPaymentMethodId = {% if payment.paymentMethod %}{{ payment.paymentMethod.id }}{% else %}''{% endif %};
             if (originalPaymentMethodId == stripePaymentMethodId) {
                 $("#refund_paymentMethod").val(stripePaymentMethodId);
             } else {

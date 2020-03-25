@@ -40,6 +40,12 @@ class LoanCheckInController extends Controller
         /** @var \AppBundle\Services\TenantService $tenantService */
         $tenantService = $this->get('service.tenant');
 
+        /** @var \AppBundle\Services\InventoryService $inventoryService */
+        $inventoryService = $this->get('service.inventory');
+
+        /** @var \AppBundle\Services\Item\ItemService $itemService */
+        $itemService = $this->get('service.item');
+
         if (!$user = $this->getUser()) {
             $this->addFlash('error', "Please log in");
             return $this->redirectToRoute('home');
@@ -113,7 +119,6 @@ class LoanCheckInController extends Controller
             $maintenanceActions = [];
 
             foreach ($checkInItems AS $rowId) {
-
                 $loanRow = $loanRowRepo->find($rowId);
                 $inventoryItem = $loanRow->getInventoryItem();
 
@@ -140,12 +145,62 @@ class LoanCheckInController extends Controller
                 }
             }
 
+            $inventoryItemQuantities = [];
+            $inventoryItemFees = [];
             $returnedRows = 0;
             foreach ($loan->getLoanRows() AS $row) {
                 /** @var $row \AppBundle\Entity\LoanRow */
                 if ($row->getIsReturned() or $row->getInventoryItem()->getItemType() != InventoryItem::TYPE_LOAN) {
-                    // kits and stock items contribute to this number so we can close a loan with all loanable items returned
+                    // kits, services and stock items contribute to this number so we can close a loan with all loanable items returned
                     $returnedRows++;
+                }
+                if ($row->getInventoryItem()->getItemType() == InventoryItem::TYPE_STOCK) {
+                    $itemId = $row->getInventoryItem()->getId();
+                    $inventoryItemQuantities[$itemId] = $row->getProductQuantity();
+                    $inventoryItemFees[$itemId] = $row->getFee();
+                }
+            }
+
+            if ($returnedItems = $request->get('return_qty')) {
+                foreach ($returnedItems AS $itemId => $qty) {
+                    $noteText = 'Returned on loan '.$loan->getId();
+                    if ($qty > $inventoryItemQuantities[$itemId]) {
+                        $this->addFlash('error', "You can't return more than you sold. Inventory was not added.");
+                        continue;
+                    }
+                    if ($inventoryService->addInventory($itemId, $qty, $toLocation->getId(), $noteText)) {
+                        // Add a negative line to the loan
+                        $item = $itemService->find($itemId);
+                        $loanRow = new LoanRow();
+                        $loanRow->setLoan($loan);
+                        $loanRow->setInventoryItem($item);
+                        $loanRow->setProductQuantity(-$qty);
+                        $loanRow->setFee($inventoryItemFees[$itemId]);
+                        $loanRow->setDueInAt(new \DateTime()); // due to schema constraints
+                        $em->persist($loanRow); // flushed at the end
+
+                        // Put the amount back on to account
+                        $refund = new Payment();
+                        $refund->setType(Payment::PAYMENT_TYPE_PAYMENT);
+                        $refund->setAmount($inventoryItemFees[$itemId]);
+                        $refund->setInventoryItem($item);
+                        $refund->setLoan($loan);
+                        $refund->setContact($loan->getContact());
+                        $refund->setCreatedBy($user);
+                        $refund->setNote("Returned {$qty} ".$item->getName());
+                        $refund->setPaymentDate(new \DateTime());
+                        $em->persist($refund);
+
+                        $note = new Note();
+                        $note->setLoan($loan);
+                        $note->setCreatedBy($user);
+                        $note->setText("Returned {$qty} ".$item->getName());
+                        $em->persist($note);
+                    } else {
+                        foreach ($inventoryService->errors AS $error) {
+                            $this->addFlash('error', $error);
+                        }
+                    }
                 }
             }
 
@@ -178,19 +233,20 @@ class LoanCheckInController extends Controller
 
             }
 
+            // All loanable items are returned
             if (count($loan->getLoanRows()) == $returnedRows) {
                 $loan->setStatus(Loan::STATUS_CLOSED);
-
                 // Update the loan return date to now
                 $loan->setTimeIn(new \DateTime());
+            }
 
-                $em->persist($loan);
-                try {
-                    $em->flush();
-                } catch (\Exception $generalException) {
-                    $this->addFlash('error', 'Loan failed to complete check in.');
-                    $this->addFlash('debug', $generalException->getMessage());
-                }
+            $em->persist($loan);
+            try {
+                $em->flush();
+                $contactService->recalculateBalance($loan->getContact());
+            } catch (\Exception $generalException) {
+                $this->addFlash('error', 'Loan failed to complete check in.');
+                $this->addFlash('error', $generalException->getMessage());
             }
 
             return $this->redirectToRoute('public_loan', ['loanId' => $loan->getId()]);

@@ -47,7 +47,7 @@ class BasketAddStockController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        if (!$this->getUser()) {
+        if (!$user = $this->getUser()) {
             $this->addFlash('error', "You're not logged in. Please log in and try again.");
             return $this->redirectToRoute('home');
         }
@@ -56,13 +56,15 @@ class BasketAddStockController extends Controller
             $product->setPriceSell(0);
         }
 
-        if ($request->get('add-to-loan')) {
+        if ($loanId = $request->get('loan_id')) {
 
             // Can only add to PENDING or RESERVED loans
-
-            $loanId = $this->get('session')->get('active-loan');
-
             $loan = $loanService->get($loanId);
+
+            if (!$user->hasRole("ROLE_ADMIN") && $user->getId() != $loan->getContact()->getId()) {
+                $this->addFlash('error', "You don't have permission to add items to this loan.");
+                return $this->redirectToRoute('home');
+            }
 
             if (!in_array($loan->getStatus(), [Loan::STATUS_PENDING, Loan::STATUS_RESERVED])) {
                 $this->addFlash('error', "You can only add extra items to pending loans or reservations.");

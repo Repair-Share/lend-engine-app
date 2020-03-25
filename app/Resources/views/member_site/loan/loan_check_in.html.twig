@@ -97,12 +97,45 @@
                             </div>
                             {% endif %}
                         </td>
-                        <td>
+                        <td style="width:80px; text-align: center">
                             {% if canBulkCheckIn or row.id == loanRow.id %}
                             <input type="checkbox" class="checkInBox" data-row-id="{{ row.id }}" name="check_in[]" value="{{ row.id }}" {% if row.id == loanRow.id %}checked{% endif %}>
                             {% else %}
                             <input type="checkbox" class="checkInBox" data-row-id="{{ row.id }}" disabled>
                             {% endif %}
+                        </td>
+                    </tr>
+                {% elseif row.inventoryItem.itemType == 'stock' %}
+                    <tr>
+                        <td style="width:100px" class="hidden-xs">
+                            {% if row.inventoryItem.imageName %}
+                                <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}" class="img-thumbnail img-responsive">
+                            {% else %}
+                                <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" alt="" class="img-responsive">
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ row.inventoryItem.name }}</strong>
+
+                            {% if tenantInformation.setting('use_labels') %}
+                                <div>Barcode: {{ row.inventoryItem.id }}</div>
+                            {% endif %}
+
+                            {% if row.inventoryItem.serial %}
+                                <div>{% trans %}public_item.serial{% endtrans %}: {{ row.inventoryItem.serial }}</div>
+                            {% endif %}
+
+                            {% if row.inventoryItem.sku %}
+                                <div>{% trans %}public_item.code{% endtrans %}: {{ row.inventoryItem.sku }}</div>
+                            {% endif %}
+
+                            <div>
+                                <div>{% trans %}public_loan.quantity{% endtrans %}:{{ row.productQuantity }}
+                            </div>
+                        </td>
+                        <td style="width:80px">
+                            Return:<br>
+                            <input type="text" class="form-control" size="4" placeholder="Qty" name="return_qty[{{ row.inventoryItem.id }}]">
                         </td>
                     </tr>
                 {% endif %}

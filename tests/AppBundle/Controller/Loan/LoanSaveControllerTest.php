@@ -10,6 +10,10 @@ class LoanSaveControllerTest extends AuthenticatedControllerTest
 
     public function testSaveChangesToLoan()
     {
+        // Create a new loan item
+        $itemName = "Test item for LoanSaveControllerTest".rand();
+        $itemId = $this->helpers->createItem($this->client, $itemName, ['type' => 'loan']);
+
         // Create a contact
         $contactId = $this->helpers->createContact($this->client);
 
@@ -20,7 +24,7 @@ class LoanSaveControllerTest extends AuthenticatedControllerTest
         $this->helpers->addCredit($this->client, $contactId);
 
         // Create a new loan
-        $loanId = $this->helpers->createLoan($this->client, $contactId);
+        $loanId = $this->helpers->createLoan($this->client, $contactId, [$itemId]);
         $crawler = $this->client->request('GET', '/loan/'.$loanId);
 
         $loanRowId = (int)$crawler->filter('.loanRow')->attr('id');

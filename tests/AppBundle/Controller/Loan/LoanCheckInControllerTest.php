@@ -19,7 +19,7 @@ class LoanCheckInControllerTest extends AuthenticatedControllerTest
         $itemId = $this->helpers->createItem($this->client, $itemName);
 
         // Add a loan
-        $loanId = $this->helpers->createLoan($this->client, 2, $itemId);
+        $loanId = $this->helpers->createLoan($this->client, 2, [$itemId]);
 
         // Go to it
         $crawler = $this->client->request('GET', '/loan/'.$loanId);

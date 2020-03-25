@@ -9,6 +9,7 @@ namespace Tests\AppBundle\Controller;
 use AppBundle\Entity\Setting;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
 use Tests\AppBundle\Controller\AuthenticatedControllerTest;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -18,28 +19,49 @@ class TestHelpers extends AuthenticatedControllerTest
     /**
      * @param Client $client
      * @param null $itemName
-     * @param float $depositAmount
+     * @param array $options
      * @return int
      */
-    public function createItem(Client $client, $itemName = null, $depositAmount = 0.00)
+    public function createItem(Client $client, $itemName = null, $options = [])
     {
         if (!$itemName) {
             $itemName = "Item ".rand();
         }
 
-        $crawler = $client->request('GET', '/admin/item?sectorId=33');
-        $this->assertContains('Add a new item', $crawler->html());
+        $depositAmount = null;
+        if (isset($options['depositAmount'])) {
+            $depositAmount = $options['depositAmount'];
+        }
+
+        $priceSell = 2.99;
+        if (isset($options['priceSell'])) {
+            $priceSell = $options['priceSell'];
+        }
+
+        $loanFee = 1.50;
+        if (isset($options['loanFee'])) {
+            $loanFee = $options['loanFee'];
+        }
+
+        if (isset($options['type'])) {
+            $type = $options['type'];
+        } else {
+            $type = 'loan';
+        }
+
+        $crawler = $client->request('GET', '/admin/item?type='.$type);
+        $this->assertContains('Add a ', $crawler->html());
 
         $form = $crawler->filter('form[name="item"]')->form(array(
             'item[inventoryLocation]' => "2",
             'item[name]'     => $itemName,
             'item[sku]'      => "SKU-".rand(),
-            'item[loanFee]'  => 1.50,
+            'item[loanFee]'  => $loanFee,
             'item[maxLoanDays]' => 4,
             'item[condition]'   => 1,
             'item[keywords]'    => 'Comma, separated, keywords',
             'item[priceCost]'   => 1.99,
-            'item[priceSell]'   => 2.99,
+            'item[priceSell]'   => $priceSell,
             'item[depositAmount]' => $depositAmount,
             'item[brand]'       => "DEWALT",
         ),'POST');
@@ -171,36 +193,43 @@ class TestHelpers extends AuthenticatedControllerTest
     /**
      * @param Client $client
      * @param $contactId
-     * @param int $itemId
+     * @param array $itemIds
      * @param string $action
      * @return int
      */
-    public function createLoan(Client $client, $contactId, $itemId = 1000, $action = 'checkout')
+    public function createLoan(Client $client, $contactId, $itemIds = [], $action = 'checkout')
     {
-        // Add an item to the basket
+        // Add items to the basket
         $today = new \DateTime();
-        $params = [
-            'contactId' => $contactId,
-            'from_site' => 1,
-            'to_site'   => 1,
-            'date_from' => $today->format("Y-m-d"),
-            'time_from' => $today->format("09:00:00"),
-            'date_to'   => $today->format("Y-m-d"),
-            'time_to'   => $today->format("17:00:00")
-        ];
-        $client->request('POST', '/basket/add/'.$itemId.'?contactId='.$contactId, $params);
 
-        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
-        $crawler = $client->followRedirect();
+        $fees = [];
+        foreach ($itemIds AS $itemId) {
+            // Each item has to be a loan item!
 
-        $this->assertContains('basketDetails', $crawler->html());
+            $fees[$itemId] = 10.00;
+
+            $params = [
+                'contactId' => $contactId,
+                'from_site' => 1,
+                'to_site'   => 1,
+                'date_from' => $today->format("Y-m-d"),
+                'time_from' => $today->format("09:00:00"),
+                'date_to'   => $today->format("Y-m-d"),
+                'time_to'   => $today->format("17:00:00")
+            ];
+            $client->request('POST', '/basket/add/'.$itemId.'?contactId='.$contactId, $params);
+
+            $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+            $crawler = $client->followRedirect();
+
+            $this->assertContains('basketDetails', $crawler->html());
+            $this->assertContains("product/{$itemId}", $crawler->html()); // contains the item
+        }
 
         // Confirm the loan (will be set to pending)
         $params = [
             'action' => $action,
-            'row_fee' => [
-                $itemId => 10.00
-            ]
+            'row_fee' => $fees
         ];
         $client->request('POST', '/basket/confirm', $params);
 
@@ -211,6 +240,50 @@ class TestHelpers extends AuthenticatedControllerTest
         $this->assertGreaterThan(0, $loanId);
 
         return $loanId;
+    }
+
+    /**
+     * @param Client $client
+     * @param $loanId
+     * @param int $locationId
+     * @param $itemId
+     * @param $qty
+     */
+    public function addStockItemToLoan(Client $client, $loanId, $locationId = 2, $itemId, $qty)
+    {
+        $crawler = $client->request('GET', '/product/'.$itemId);
+        $form = $crawler->filter('form[name="add_stock_items"]')->form([
+            'add_qty['.$locationId.']' => $qty,
+            'loan_id' => $loanId
+        ],'POST');
+        $client->submit($form);
+
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        $crawler = $client->followRedirect();
+
+        $this->assertContains('basketDetails', $crawler->html());
+        $this->assertContains("product/{$itemId}", $crawler->html()); // contains the item
+    }
+
+    /**
+     * @param Client $client
+     * @param $locationId
+     * @param $itemId
+     * @param $qty
+     * @return bool
+     */
+    public function addInventory(Client $client, $locationId, $itemId, $qty)
+    {
+        $params = [
+            'add_location' => $locationId,
+            'add_qty'   => $qty
+        ];
+        $client->request('POST', '/admin/item/'.$itemId.'/inventory', $params);
+
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        $crawler = $client->followRedirect();
+        $this->assertContains('Inventory updated', $crawler->html());
+        return true;
     }
 
     /**

@@ -2,7 +2,7 @@
 {% if user.activeMembership is defined and user.activeMembership %}
 
     {% if inventory|length > 0 %}
-        <form method="POST" action="{{ path('basket_add_stock', {itemId: product.id}) }}">
+        <form method="POST" name="add_stock_items" action="{{ path('basket_add_stock', {itemId: product.id}) }}">
             <table class="table">
                 <thead>
                 <tr>
@@ -25,8 +25,11 @@
                 <button type="submit" name="add-to-loan" value="loan" class="btn btn-success">
                     Add to {{ app.session.get('active-loan-type') }} {{ app.session.get('active-loan') }}
                 </button>
+                <input type="hidden" id="loan_id" name="loan_id" value="{{ app.session.get('active-loan') }}">
             {% else %}
                 <button type="submit" name="add-to-basket" value="basket" class="btn btn-success">{% trans %}public_item.basket_add{% endtrans %}</button>
+                {#Required for functional testing where we can't use the session:#}
+                <input type="hidden" id="loan_id" name="loan_id" value="">
             {% endif %}
         </form>
     {% else %}

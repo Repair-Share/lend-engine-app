@@ -167,7 +167,7 @@
             // Set the pickup time and location if we already have a basket
             {% if tenantInformation.basket.loanRows is defined
             and tenantInformation.basket.loanRows|length > 0
-            and tenantInformation.basket.collectFromSite.id %}
+            and tenantInformation.basket.collectFromSite %}
             basketPickupTime = moment("{{ tenantInformation.basket.loanRows|first.dueOutAt|date("Y-m-d H:i") }}");
             basketSiteFromId = '{{ tenantInformation.basket.collectFromSite.id }}';
             basketSiteFromName = '{{ tenantInformation.basket.collectFromSite.name }}';

@@ -67,7 +67,7 @@
         <div style="padding: 10px">
             <i class="fa fa-clock" style="color: #5cb85c"></i>
             {% trans %}public_basket.pickup_after{% endtrans %} <strong>{{ loan.loanRows|first.dueOutAt|date("d F g:i a") }}</strong>
-            {% trans %}public_basket.from{% endtrans %} <strong>{{ loan.loanRows|first.siteFrom.name }}</strong>
+            {% trans %}public_basket.from{% endtrans %} <strong>{{ loan.collectFromSite.name }}</strong>
         </div>
     {% endif %}
 
@@ -157,7 +157,9 @@
                                    class="basket-amount save-on-change">
                             {{ row.productQuantity }}
                         {% endif %}
-                        {% trans %}public_basket.from{% endtrans %} {{ row.siteFrom.name }} / {{ row.itemLocation.name }}
+                        {% if row.productQuantity > 0 %}
+                            {% trans %}public_basket.from{% endtrans %} {{ row.siteFrom.name }} / {{ row.itemLocation.name }}
+                        {% endif %}
                     {% elseif row.inventoryItem.itemType == 'service' %}
                         {% trans %}public_loan.quantity{% endtrans %} :
                         {% if is_granted('ROLE_ADMIN') and loan.status in ['RESERVED', 'PENDING'] %}
@@ -241,6 +243,9 @@
 
                 </td>
                 <td style="text-align: right">
+
+                    {% if row.productQuantity < 0 %}-{% endif %}
+
                     {% if is_granted('ROLE_ADMIN') and loan.status in ['RESERVED', 'PENDING'] %}
                         <input type="text" class="basket-amount row-calc" name="row_fee[{{ row.id }}]" data-id="qty-{{ row.id }}" value="{{ row.fee|number_format(2) }}">
                     {% else %}
@@ -264,6 +269,7 @@
         {% for fee in loan.payments %}
             {% if fee.note is null or fee.type == 'PAYMENT' %}
                 {#Fee included in items rows, or is a payment received#}
+                {#Also refunds for stock items are hidden#}
             {% else %}
                 <tr>
                     <td class="hidden-xs"></td>
@@ -320,17 +326,6 @@
             <td class="hidden-xs"></td>
             <td style="text-align:right; color: #10a422">
                 {% trans %}public_loan.charged{% endtrans %}
-                {#{% for fee in loan.payments %}#}
-                {#<div>#}
-                    {#{% if fee.type == 'FEE' %}#}
-                        {#{% if fee.inventoryItem %}#}
-                            {#{{ fee.inventoryItem.name }}#}
-                        {#{% endif %}#}
-                        {#{{ fee.note }}#}
-                        {#{{ tenantInformation.currencySymbol }} {{ fee.amount|number_format(2) }}#}
-                    {#{% endif %}#}
-                {#</div>#}
-                {#{% endfor %}#}
             </td>
             <td style="text-align:right; color: #10a422">
                 {{ tenantInformation.currencySymbol }}
@@ -421,14 +416,14 @@
                 <div class="btn-group">
                     {% if loan.collectFrom == "post" %}
                         <button type="button" class="btn btn-default" id="chooseWarehouse">
-                            {% trans %}shipping.collect{% endtrans %} {{ loan.loanRows|first.siteFrom.name }}
+                            {% trans %}shipping.collect{% endtrans %} {{ loan.collectFromSite.name }}
                         </button>
                         <button type="button" class="btn btn-default active" id="choosePostal">
                             {% trans %}shipping.post{% endtrans %}
                         </button>
                     {% else %}
                         <button type="button" class="btn btn-default active" id="chooseWarehouse">
-                            {% trans %}shipping.collect{% endtrans %} {{ loan.loanRows|first.siteFrom.name }}
+                            {% trans %}shipping.collect{% endtrans %} {{ loan.collectFromSite.name }}
                         </button>
                         <button type="button" class="btn btn-default" id="choosePostal">
                             {% trans %}shipping.post{% endtrans %}
@@ -459,7 +454,7 @@
                 </div>
 
             {% else %}
-                {% trans %}shipping.collect{% endtrans %} {{ loan.loanRows|first.siteFrom.name }}
+                {% trans %}shipping.collect{% endtrans %} {{ loan.collectFromSite.name }}
             {% endif %}
         </div>
     {% endif %}
@@ -483,8 +478,8 @@
                     Delete this loan
                 </a>
             {% endif %}
-            {% if loan.status == 'RESERVED' or loan.status == 'PENDING' %}
-                <a href="{{ path('reservation_cancel', {id: loan.id}) }}" id="buttonCancelReservation" class="btn btn-danger pull-left">
+            {% if loan.status == 'RESERVED' %}
+                <a href="{{ path('reservation_cancel', {id: loan.id}) }}" id="buttonCancelReservation" class="btn btn-xs btn-danger pull-left">
                     {% trans %}button_cancel_reservation{% endtrans %}
                 </a>
             {% endif %}

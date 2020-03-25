@@ -317,7 +317,7 @@ class BasketService
             $item = $itemRepo->find($itemId);
             $row->setInventoryItem($item);
 
-            if ($row->getSiteFrom()) {
+            if ($row->getSiteFrom() && $row->getSiteFrom()->getId()) {
                 $siteFromId = $row->getSiteFrom()->getId();
                 $siteFrom = $siteRepo->find($siteFromId);
                 $row->setSiteFrom($siteFrom);
@@ -325,7 +325,7 @@ class BasketService
                 $row->setSiteFrom(null);
             }
 
-            if ($row->getSiteTo()) {
+            if ($row->getSiteTo() && $row->getSiteTo()->getId()) {
                 $siteToId = $row->getSiteTo()->getId();
                 $siteTo = $siteRepo->find($siteToId);
                 $row->setSiteTo($siteTo);

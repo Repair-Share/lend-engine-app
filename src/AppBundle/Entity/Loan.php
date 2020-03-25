@@ -330,7 +330,26 @@ class Loan
      */
     public function getLoanRows()
     {
-        return $this->loanRows;
+        // Sort by item type so we have loan items at the top
+        $sortedRows = [];
+        $loanRowsByItemType = [];
+        foreach ($this->loanRows AS $row) {
+            $type = $row->getInventoryItem()->getItemType();
+            if (!isset($loanRowsByItemType[$type])) {
+                $loanRowsByItemType[$type] = [];
+            }
+            $loanRowsByItemType[$type][] = $row;
+        }
+        if (isset($loanRowsByItemType['loan']) && count($loanRowsByItemType['loan']) > 0) {
+            $sortedRows = array_merge($sortedRows, $loanRowsByItemType['loan']);
+        }
+        if (isset($loanRowsByItemType['stock']) && count($loanRowsByItemType['stock']) > 0) {
+            $sortedRows = array_merge($sortedRows, $loanRowsByItemType['stock']);
+        }
+        if (isset($loanRowsByItemType['service']) && count($loanRowsByItemType['service']) > 0) {
+            $sortedRows = array_merge($sortedRows, $loanRowsByItemType['service']);
+        }
+        return $sortedRows;
     }
 
     /**
@@ -607,9 +626,7 @@ class Loan
      */
     public function getBalance()
     {
-        $charges = $this->getChargedTotal();
-        $loanBalance = $this->getTotalFee() - $charges;
-
+        $loanBalance = $this->getTotalFee() - $this->getChargedTotal();
         return $loanBalance;
     }
 
@@ -623,6 +640,9 @@ class Loan
         foreach ($this->getPayments() AS $payment) {
             if ($payment->getType() == Payment::PAYMENT_TYPE_FEE) {
                 $charges += $payment->getAmount();
+            } else if ($payment->getType() == Payment::PAYMENT_TYPE_PAYMENT && $payment->getInventoryItem()) {
+                // This is a refund for an inventory item
+                $charges -= $payment->getAmount();
             }
         }
 

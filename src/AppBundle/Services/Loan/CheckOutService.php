@@ -130,6 +130,7 @@ class CheckOutService
                 $this->em->persist($row);
 
                 // Create a negative stock movement for the items sold from this location
+                // This is not done with the inventory service as it has to be transactional with the rest of the loan
                 $transactionRow = new ItemMovement();
                 $transactionRow->setInventoryLocation($row->getItemLocation());
                 $transactionRow->setCreatedBy($user);
@@ -148,6 +149,8 @@ class CheckOutService
                 $locationName = $row->getItemLocation()->getSite()->getName().' / '.$row->getItemLocation()->getName();
                 $note->setText("Sold ".$row->getProductQuantity()." from <strong>".$locationName."</strong> to <strong>".$loan->getContact()->getName().'</strong> on loan <strong>'.$loan->getId().'</strong>');
                 $this->em->persist($note);
+            } else if ($inventoryItem->getItemType() == InventoryItem::TYPE_SERVICE) {
+                // no note added
             } else {
                 $loanContainsLoanItems = true;
                 $note = new Note();

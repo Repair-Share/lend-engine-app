@@ -3,20 +3,10 @@
 
 namespace AppBundle\Controller\Admin\Item;
 
-use AppBundle\Entity\InventoryItem;
-use AppBundle\Entity\InventoryLocation;
-use AppBundle\Entity\ItemMovement;
-use AppBundle\Entity\Note;
-use AppBundle\Entity\Payment;
-use Doctrine\DBAL\DBALException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Form\Type\ItemMoveType;
-use AppBundle\Form\Type\ItemRemoveType;
-use Postmark\PostmarkClient;
-use Postmark\Models\PostmarkException;
 
 class InventoryEditController extends Controller
 {
@@ -25,11 +15,8 @@ class InventoryEditController extends Controller
      */
     public function editInventory(Request $request, $id)
     {
-
         /** @var \AppBundle\Services\InventoryService $inventoryService */
         $inventoryService = $this->get('service.inventory');
-
-        $user = $this->getUser();
 
         /** @var \AppBundle\Services\Item\ItemService $itemService */
         $itemService = $this->get('service.item');
@@ -64,35 +51,24 @@ class InventoryEditController extends Controller
 
             // Calculate changes
             foreach ($quantities AS $locationId => $qty) {
-
                 if ($qty < 0) {
                     $this->addFlash('error', "Negative inventory is not allowed.");
                     continue;
                 }
-
-                $location = $inventoryLocationRepo->find($locationId);
-
                 $change = $qty - $inventoryByLocationId[$locationId];
-
-                if ($change != 0) {
-                    $movement = new ItemMovement();
-                    $movement->setInventoryItem($inventoryItem);
-                    $movement->setCreatedBy($user);
-                    $movement->setQuantity($change);
-                    $movement->setInventoryLocation($location);
-                    $em->persist($movement);
-
-                    $note = new Note();
-                    $note->setCreatedBy($user);
-                    $note->setInventoryItem($inventoryItem);
-                    if ($change > 0) {
-                        $note->setText('Added ' . $change . ' to <strong>' . $location->getSite()->getName() . ' / ' . $location->getName() . '</strong>. ' . $noteText);
-                    } else {
-                        $note->setText('Removed ' . -$change . ' from <strong>' . $location->getSite()->getName() . ' / ' . $location->getName() . '</strong>. ' . $noteText);
+                if ($change > 0) {
+                    if (!$inventoryService->addInventory($inventoryItem->getId(), $change, $locationId, $noteText)) {
+                        foreach ($inventoryService->errors AS $error) {
+                            $this->addFlash('error', $error);
+                        }
                     }
-                    $em->persist($note);
+                } else if ($change < 0) {
+                    if (!$inventoryService->removeInventory($inventoryItem->getId(), abs($change), $locationId, $noteText)) {
+                        foreach ($inventoryService->errors AS $error) {
+                            $this->addFlash('error', $error);
+                        }
+                    }
                 }
-
             }
 
             $stockUpdated = true;
@@ -102,30 +78,17 @@ class InventoryEditController extends Controller
         // Adding stock to a new location
         $qty = $request->get('add_qty');
         if ($qty > 0 && is_numeric($qty) && $addLocationId > 0) {
-            $location = $inventoryLocationRepo->find($addLocationId);
-
-            $movement = new ItemMovement();
-            $movement->setInventoryItem($inventoryItem);
-            $movement->setCreatedBy($user);
-            $movement->setQuantity($qty);
-            $movement->setInventoryLocation($location);
-            $em->persist($movement);
-
-            $note = new Note();
-            $note->setCreatedBy($user);
-            $note->setText('Added '.$qty.' to <strong>'.$location->getSite()->getName().' / '.$location->getName().'</strong>. '.$noteText);
-            $note->setInventoryItem($inventoryItem);
-            $em->persist($note);
-
+            if (!$inventoryService->addInventory($inventoryItem->getId(), $qty, $addLocationId, $noteText)) {
+                foreach ($inventoryService->errors AS $error) {
+                    $this->addFlash('error', $error);
+                }
+            }
             $stockUpdated = true;
         }
 
         if ($stockUpdated == true) {
-            try {
-                $em->flush();
+            if (count($inventoryService->errors) == 0) {
                 $this->addFlash('success', "Inventory updated");
-            } catch (\Exception $e) {
-                $this->addFlash('error', $e->getMessage());
             }
             return $this->redirectToRoute('item', ['id' => $inventoryItem->getId()]);
         }

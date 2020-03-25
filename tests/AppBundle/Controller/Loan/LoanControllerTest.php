@@ -27,7 +27,10 @@ class LoanControllerTest extends AuthenticatedControllerTest
     public function testLoanWithContactBalanceAndFee()
     {
         // Create an item with a deposit amount
-        $itemId = $this->helpers->createItem($this->client, null, 3.00);
+        $options = [
+            'depositAmount' => 3.00
+        ];
+        $itemId = $this->helpers->createItem($this->client, null, $options);
 
         // Create a contact
         $contactId = $this->helpers->createContact($this->client);
@@ -39,7 +42,7 @@ class LoanControllerTest extends AuthenticatedControllerTest
         $this->helpers->addCredit($this->client, $contactId, 2);
 
         // Create a new loan
-        $loanId = $this->helpers->createLoan($this->client, $contactId, $itemId);
+        $loanId = $this->helpers->createLoan($this->client, $contactId, [$itemId]);
         $crawler = $this->client->request('GET', '/loan/'.$loanId);
 
         // Set the loan amount

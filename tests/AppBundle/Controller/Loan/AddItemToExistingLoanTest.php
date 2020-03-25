@@ -26,7 +26,7 @@ class AddItemToExistingLoanTest extends AuthenticatedControllerTest
         $this->helpers->addCredit($this->client, $contactId);
 
         // Create a new loan with first item
-        $loanId = $this->helpers->createLoan($this->client, $contactId, $firstItemId);
+        $loanId = $this->helpers->createLoan($this->client, $contactId, [$firstItemId]);
 
         // Add an item to the loan
         $today = new \DateTime();

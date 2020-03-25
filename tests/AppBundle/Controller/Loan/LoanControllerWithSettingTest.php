@@ -34,7 +34,7 @@ class LoanControllerWithSettingTest extends AuthenticatedControllerTest
 
         // Create a new loan
         // Due to the setting change the amount of 10.00 will be charged to account now
-        $loanId = $this->helpers->createLoan($this->client, $contactId, $itemId, 'reservation');
+        $loanId = $this->helpers->createLoan($this->client, $contactId, [$itemId], 'reservation');
         $crawler = $this->client->request('GET', '/loan/'.$loanId);
 
         $contactBalance = (float)$crawler->filter('#contactBalanceAmount')->text();
