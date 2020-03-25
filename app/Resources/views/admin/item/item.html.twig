@@ -12,10 +12,13 @@
 {% block header_bar %}
 
     {% if item.itemType == 'kit' %}
-    <div class="header-bar">
-        <i class="fa fa-sitemap" style="color:#000"></i>
-        This item is a kit of other parts. It has no inventory level or location.
-    </div>
+        <div class="header-bar">
+            <i class="fa fa-sitemap" style="color:#000"></i>
+            This item is a kit of other parts. It has no inventory level or location.
+            {% if item.id %}
+                <a href="{{ path('change_item_type', {itemId: item.id}) }}" class="btn btn-xs btn-default pull-right modal-link">Change type</a>
+            {% endif %}
+        </div>
         <style>
             .hide-for-kits {
                 display: none;
@@ -25,6 +28,9 @@
         <div class="header-bar">
             <i class="fa fa-handshake-o" style="color:#000"></i>
             This is a service. Inventory levels are not managed, but it can be added to loans if made visible online.
+            {% if item.id %}
+                <a href="{{ path('change_item_type', {itemId: item.id}) }}" class="btn btn-xs btn-default pull-right modal-link">Change type</a>
+            {% endif %}
         </div>
         <style>
             .hide-for-stock {
@@ -52,6 +58,9 @@
                 <span class="pull-right">
                     Once you have created the item, you will be able to add inventory.
                 </span>
+            {% endif %}
+            {% if item.id %}
+                <a href="{{ path('change_item_type', {itemId: item.id}) }}" class="btn btn-xs btn-default pull-right modal-link">Change type</a>
             {% endif %}
         </div>
         <style>

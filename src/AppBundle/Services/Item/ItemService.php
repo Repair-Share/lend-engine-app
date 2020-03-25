@@ -59,9 +59,7 @@ class ItemService
      */
     public function itemSearch($start = 0, $length = 1000, $filter = array())
     {
-        $repository = $this->em->getRepository('AppBundle:InventoryItem');
-
-        $builder = $repository->createQueryBuilder('item');
+        $builder = $this->repo->createQueryBuilder('item');
         $builder->leftJoin('item.inventoryLocation', 'loc');
 
         if (isset($filter['grouped']) && $filter['grouped'] == true) {
@@ -388,6 +386,60 @@ class ItemService
         $id++;
         $newSku = $stub.str_pad($id, 4, '0', STR_PAD_LEFT);
         return $newSku;
+    }
+
+    /**
+     * @param InventoryItem $inventoryItem
+     * @param $newType
+     * @return bool
+     */
+    public function changeItemType(InventoryItem $inventoryItem, $newType)
+    {
+        /** @var \AppBundle\Services\InventoryService $inventoryService */
+        $inventoryService = $this->container->get('service.inventory');
+
+        if ($newType == $inventoryItem->getItemType()) {
+            return false;
+        }
+
+        switch ($newType) {
+            case InventoryItem::TYPE_LOAN:
+
+                // Check if there are any open loans containing the item
+                $loanRowRepo = $this->em->getRepository('AppBundle:LoanRow');
+                $builder = $loanRowRepo->createQueryBuilder('lr');
+                $builder->add('select', 'lr.id');
+                $builder->where('IDENTITY(lr.inventoryItem) = '.$inventoryItem->getId());
+                $builder->andWhere('lr.checkedOutAt IS NOT NULL');
+                $builder->andWhere('lr.checkedInAt IS NULL');
+                $query = $builder->getQuery();
+                $results = $query->getResult();
+
+                if (count($results)) {
+                    $this->errors[] = "Item is on open loans. Please close all loans for this item first.";
+                    return false;
+                }
+
+                // Loan items need a location
+                $locationRepo = $this->em->getRepository('AppBundle:InventoryLocation');
+                $location = $locationRepo->findOneBy(['isAvailable' => true]);
+                $inventoryService->itemMove($inventoryItem, $location);
+
+                break;
+        }
+
+        $inventoryItem->setItemType($newType);
+        $this->em->persist($inventoryItem);
+
+        try {
+            $this->em->flush();
+        } catch(\Exception $generalException) {
+            $this->errors[] = 'Failed to change item type.';
+            $this->errors[] = $generalException->getMessage();
+            return false;
+        }
+
+        return true;
     }
 
 }

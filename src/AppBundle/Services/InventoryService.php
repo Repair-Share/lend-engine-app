@@ -253,7 +253,7 @@ class InventoryService
         $movement = new ItemMovement();
         $movement->setInventoryItem($item);
         $movement->setCreatedBy($this->user);
-        $movement->setQuantity($qty);
+        $movement->setQuantity(-$qty);
         $movement->setInventoryLocation($location);
         $this->em->persist($movement);
 

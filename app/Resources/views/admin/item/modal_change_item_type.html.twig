@@ -1,0 +1,42 @@
+{% extends 'shared/modal.html.twig' %}
+{% trans_default_domain 'member_site' %}
+
+{% block subTitle %}
+    Change item type:
+{% endblock %}
+
+{% block title %}
+    <strong>{{ item.name }}</strong>
+{% endblock %}
+
+{% block body %}
+    <style>
+        #change_item_type input {
+            margin-right: 10px;
+        }
+        #change_item_type label {
+            display: block; padding-bottom: 10px;
+        }
+    </style>
+    <form id="change_item_type" method="POST" action="{{ path('change_item_type', {itemId: item.id}) }}">
+        {% for type, name in validTypes %}
+        <label>
+            <input type="radio" name="item_type" value="{{ type }}"> {{ name }}
+        </label>
+        {% endfor %}
+
+        <div class="help-block">
+            You won't be able to change the item type if :<br><br>
+            <ul>
+                <li>Item is on loan</li>
+                <li>A stock item has inventory</li>
+                <li>A kit has components</li>
+            </ul>
+        </div>
+    </form>
+{% endblock %}
+
+{% block footer %}
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+    <button class="modal-submit btn btn-success">Change type</button>
+{% endblock %}
