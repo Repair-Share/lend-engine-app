@@ -3,6 +3,7 @@
 
 namespace AppBundle\Controller\Admin\Item;
 
+use AppBundle\Entity\InventoryItem;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,13 @@ class InventoryEditController extends Controller
         /** @var \AppBundle\Repository\InventoryLocationRepository $inventoryLocationRepo */
         $inventoryLocationRepo = $em->getRepository('AppBundle:InventoryLocation');
 
+        /** @var \AppBundle\Entity\InventoryItem $inventoryItem */
         $inventoryItem = $inventoryItemRepo->find($id);
+
+        if ($inventoryItem->getItemType() != InventoryItem::TYPE_STOCK) {
+            $this->addFlash('error', "This is not a stock item.");
+            return $this->redirectToRoute('item', ['id' => $id]);
+        }
 
         // Existing inventory
         $inventory = $itemService->getInventory($inventoryItem);

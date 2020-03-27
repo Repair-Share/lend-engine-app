@@ -11,7 +11,7 @@
 
 {% block body %}
 
-    <form method="POST" action="{{ path('inventory_edit', {id: item.id}) }}">
+    <form method="POST" name="inventory_edit" action="{{ path('inventory_edit', {id: item.id}) }}">
 
         {% if inventory|length > 0 %}
         <label>Edit quantities</label>

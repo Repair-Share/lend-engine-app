@@ -42,13 +42,9 @@ class ItemController extends Controller
         if ($id) {
 
             // Editing item
-
-            $product = $itemRepo->find($id);
-
-            if (!$product) {
-                throw $this->createNotFoundException(
-                    'No item found for id '.$id
-                );
+            if (!$product = $itemRepo->find($id)) {
+                $this->addFlash("error", "Item {$id} not found");
+                return $this->redirectToRoute('homepage');
             }
 
             $pageTitle = $product->getName();

@@ -9,7 +9,13 @@ class ItemMoveControllerTest extends AuthenticatedControllerTest
 {
     public function testMoveAction()
     {
-        $crawler = $this->client->request('GET', '/admin/item/move/1001');
+        // Create an item
+        $itemName = "Test item ItemMoveControllerTest ".rand();
+        $itemId = $this->helpers->createItem($this->client, $itemName, [
+            'type' => 'loan'
+        ]);
+
+        $crawler = $this->client->request('GET', '/admin/item/move/'.$itemId);
         $this->assertContains('Move or service item', $crawler->html());
 
         $form = $crawler->filter('form[name="item_move"]')->form(array(

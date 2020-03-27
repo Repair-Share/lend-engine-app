@@ -204,6 +204,11 @@ class InventoryService
             return false;
         }
 
+        if ($item->getItemType() != InventoryItem::TYPE_STOCK) {
+            $this->errors[] = "Must be a stock item";
+            return false;
+        }
+
         $movement = new ItemMovement();
         $movement->setInventoryItem($item);
         $movement->setCreatedBy($this->user);
@@ -247,6 +252,11 @@ class InventoryService
 
         if ($qty < 1) {
             $this->errors[] = "Qty {$qty} cannot be negative";
+            return false;
+        }
+
+        if ($item->getItemType() != InventoryItem::TYPE_STOCK) {
+            $this->errors[] = "Must be a stock item";
             return false;
         }
 

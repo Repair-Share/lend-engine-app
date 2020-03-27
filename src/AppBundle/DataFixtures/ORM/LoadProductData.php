@@ -38,6 +38,7 @@ class LoadProductData implements FixtureInterface
         $inventoryLocation->setSite($site);
         $manager->persist($inventoryLocation);
 
+        // New test item will be ID 1000
         $item = new InventoryItem();
         $item->setName("Test item");
         $item->setInventoryLocation($inStock);
@@ -47,6 +48,12 @@ class LoadProductData implements FixtureInterface
         $transactionRow->setInventoryLocation($inStock);
         $transactionRow->setInventoryItem($item);
         $manager->persist($transactionRow);
+
+        // New stock item will be ID 1001
+        $item = new InventoryItem();
+        $item->setName("Test stock item");
+        $item->setItemType(InventoryItem::TYPE_STOCK);
+        $manager->persist($item);
 
         $manager->flush();
     }
