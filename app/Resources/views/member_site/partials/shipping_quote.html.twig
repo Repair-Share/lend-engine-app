@@ -3,11 +3,11 @@
     {% trans %}shipping.post{% endtrans %}:&nbsp;&nbsp;
 
     {% if tenantInformation.setting('postal_loan_fee') %}
-        {{ tenantInformation.currencySymbol }}{{ tenantInformation.setting('postal_loan_fee') }} {% trans %}shipping.per_loan{% endtrans %}
+        {{ tenantInformation.currencySymbol }}{{ tenantInformation.setting('postal_loan_fee')|number_format(2) }} {% trans %}shipping.per_loan{% endtrans %}
         &nbsp;&nbsp;
     {% endif %}
 
     {% if tenantInformation.setting('postal_item_fee') %}
-        {{ tenantInformation.currencySymbol }}{{ tenantInformation.setting('postal_item_fee') }} {% trans %}shipping.per_item{% endtrans %}
+        {{ tenantInformation.currencySymbol }}{{ tenantInformation.setting('postal_item_fee')|number_format(2) }} {% trans %}shipping.per_item{% endtrans %}
     {% endif %}
 </div>

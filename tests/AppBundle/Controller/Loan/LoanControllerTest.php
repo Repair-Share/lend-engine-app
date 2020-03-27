@@ -54,10 +54,8 @@ class LoanControllerTest extends AuthenticatedControllerTest
 
         // Change the form action to save rather than check out
         $url = $this->client->getContainer()->get('router')->generate('loan_save', ['loanId' => $loanId], true);
-
         $node = $form->getNode(0);
         $node->setAttribute('action', $url);
-
         $this->client->submit($form);
         $crawler = $this->client->followRedirect();
 

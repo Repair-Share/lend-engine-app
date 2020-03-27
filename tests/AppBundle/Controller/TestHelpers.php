@@ -232,7 +232,6 @@ class TestHelpers extends AuthenticatedControllerTest
             'row_fee' => $fees
         ];
         $client->request('POST', '/basket/confirm', $params);
-
         $this->assertTrue($client->getResponse() instanceof RedirectResponse);
         $crawler = $client->followRedirect();
 

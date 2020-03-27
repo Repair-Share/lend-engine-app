@@ -62,9 +62,6 @@ class BasketControllerTest extends AuthenticatedControllerTest
         $this->assertTrue($this->client->getResponse() instanceof RedirectResponse);
         $crawler = $this->client->followRedirect();
 
-        // Basket amounts are now set by JS so we can't test here
-//        $basketAmount = $crawler->filter('#basketTotalAmount')->text();
-//        $this->assertEquals('10.00', $basketAmount);
         $this->assertContains('Reservation created by', $crawler->html());
 
         // Confirm that the time zone was saved properly
