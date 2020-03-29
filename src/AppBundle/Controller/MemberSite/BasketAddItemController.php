@@ -101,7 +101,7 @@ class BasketAddItemController extends Controller
                 'isOnLoan' => true // make sure we only include loanable items which are still on loan (ie no kits)
             ];
             $itemsOnLoan = $loanService->countLoanRows($filter);
-            $totalQty    = $itemsOnLoan + $basket->getLoanRows()->count();
+            $totalQty    = $itemsOnLoan + count($basket->getLoanRows());
             if ($totalQty >= $maxItems) {
                 $this->addFlash('error', "You've already got {$totalQty} items on loan and in basket. The maximum for your membership is {$maxItems}.");
                 return $this->redirectToRoute('home');
