@@ -50,14 +50,15 @@ class PostalLoanTest extends AuthenticatedControllerTest
 
         // Add an item to the basket
         $today = new \DateTime();
+        $tomorrow = $today->modify("+1 day");
         $params = [
             'contactId' => $contactId,
             'from_site' => 1,
             'to_site'   => 1,
             'date_from' => $today->format("Y-m-d"),
             'time_from' => $today->format("09:00:00"),
-            'date_to'   => $today->format("Y-m-d"),
-            'time_to'   => $today->format("17:00:00")
+            'date_to'   => $tomorrow->format("Y-m-d"),
+            'time_to'   => $tomorrow->format("17:00:00")
         ];
         $this->client->request('POST', '/basket/add/'.$loanItemId.'?qty=1&contactId='.$contactId, $params);
 

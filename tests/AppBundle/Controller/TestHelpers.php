@@ -87,7 +87,7 @@ class TestHelpers extends AuthenticatedControllerTest
         $crawler = $client->request('GET', '/admin/contact');
         $this->assertContains('Add a new contact', $crawler->html());
 
-        $rand = rand(1,1000);
+        $rand = microtime(true);
         $form = $crawler->filter('form[name="contact"]')->form(array(
             'contact[firstName]' => "Test ".$rand,
             'contact[lastName]'  => "Contact",
@@ -108,15 +108,16 @@ class TestHelpers extends AuthenticatedControllerTest
     /**
      * @param Client $client
      * @param $contactId
+     * @param int $membershipTypeId
      */
-    public function subscribeContact(Client $client, $contactId)
+    public function subscribeContact(Client $client, $contactId, $membershipTypeId = 1)
     {
         // Subscribe a contact to membership type 1
-        $crawler = $client->request('GET', '/member/subscribe?membershipTypeId=1&c='.$contactId);
+        $crawler = $client->request('GET', '/member/subscribe?membershipTypeId='.$membershipTypeId.'&c='.$contactId);
         $this->assertContains('Subscription payment', $crawler->html());
 
         $form = $crawler->filter('form[name="membership_subscribe"]')->form(array(
-            'membership_subscribe[membershipType]' => 1,
+            'membership_subscribe[membershipType]' => $membershipTypeId,
             'membership_subscribe[price]'          => 15,
             'membership_subscribe[paymentMethod]'  => 1,
             'membership_subscribe[paymentAmount]'  => 15
@@ -197,7 +198,7 @@ class TestHelpers extends AuthenticatedControllerTest
      * @param string $action
      * @return int
      */
-    public function createLoan(Client $client, $contactId, $itemIds = [], $action = 'checkout')
+    public function createLoan(Client $client, $contactId, $itemIds = [1000], $action = 'checkout')
     {
         // Add items to the basket
         $today = new \DateTime();
@@ -205,7 +206,6 @@ class TestHelpers extends AuthenticatedControllerTest
         $fees = [];
         foreach ($itemIds AS $itemId) {
             // Each item has to be a loan item!
-
             $fees[$itemId] = 10.00;
 
             $params = [
@@ -214,8 +214,8 @@ class TestHelpers extends AuthenticatedControllerTest
                 'to_site'   => 1,
                 'date_from' => $today->format("Y-m-d"),
                 'time_from' => $today->format("09:00:00"),
-                'date_to'   => $today->format("Y-m-d"),
-                'time_to'   => $today->format("17:00:00")
+                'date_to'   => $today->modify("+1 day")->format("Y-m-d"),
+                'time_to'   => $today->modify("+1 day")->format("17:00:00")
             ];
             $client->request('POST', '/basket/add/'.$itemId.'?contactId='.$contactId, $params);
 
@@ -310,6 +310,78 @@ class TestHelpers extends AuthenticatedControllerTest
         $em->flush();
 
         return true;
+    }
+
+    /**
+     * @param Client $client
+     * @param $loanId
+     * @return bool
+     */
+    public function checkoutLoan(Client $client, $loanId)
+    {
+        $crawler = $client->request('GET', '/loan/'.$loanId);
+        $this->assertContains("loan/{$loanId}", $crawler->html()); // in the link to delete the pending loan
+
+        // Check it out
+        $form = $crawler->filter('form[name="loan_check_out"]')->form(array(
+            'loan_check_out[paymentMethod]' => 1,
+            'loan_check_out[paymentAmount]' => 16.00,
+        ),'POST');
+        $client->submit($form);
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        return true;
+    }
+
+    /**
+     * @param Client $client
+     * @param $loanId
+     * @return bool
+     */
+    public function checkinLoan(Client $client, $loanId)
+    {
+        $crawler = $client->request('GET', '/loan/'.$loanId);
+        $rowId = $crawler->filter('.btn_checkin')->first()->attr('data-loan-row-id');
+
+        $crawler = $client->request('GET', '/loan-row/'.$rowId.'/check-in/');
+        $form = $crawler->filter('form[name="item_check_in"]')->form(array(
+            'item_check_in[notes]' => "",
+            'item_check_in[feeAmount]' => 0
+        ),'POST');
+        $client->submit($form);
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        $crawler = $client->followRedirect();
+
+        $loanStatusText = $crawler->filter('#loanStatusLabel')->text();
+        $this->assertEquals($loanStatusText, 'Closed');
+
+        return true;
+    }
+
+    /**
+     * Extract the entity ID for a selected value (eg a setup list for recently created thing)
+     * @param Client $client
+     * @param $url
+     * @param $name
+     * @return int|null
+     */
+    public function getEntityId(Client $client, $url, $name)
+    {
+        $crawler = $client->request('GET', $url);
+
+        $rows = $crawler->filter('tr')->each(function($node) {
+            $id  = $node->attr('id');
+            $text  = $node->text();
+            return compact('id', 'text');
+        });
+
+        $createdId = null;
+        foreach ($rows AS $row) {
+            if (strstr($row['text'], $name)) {
+                $createdId = (int)str_replace('tr', '', $row['id']);
+            }
+        }
+
+        return $createdId;
     }
 
 }

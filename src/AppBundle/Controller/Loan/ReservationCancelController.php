@@ -49,6 +49,11 @@ class ReservationCancelController extends Controller
             return $this->redirectToRoute('loans');
         }
 
+        if ($loan->getContact()->getId() != $user->getId() && !$user->hasRole("ROLE_ADMIN")) {
+            $this->addFlash('error', "You don't have permission to cancel this reservation.");
+            return $this->redirectToRoute('home');
+        }
+
         $loan->setStatus(Loan::STATUS_CANCELLED);
         $em->persist($loan);
 

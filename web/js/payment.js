@@ -87,6 +87,12 @@ function processPaymentForm(e) {
     }
 }
 
+/**
+ * First, create a payment intent
+ * @param paymentMethodId
+ * @param paymentAmount
+ * @returns {boolean}
+ */
 function createPaymentIntent(paymentMethodId, paymentAmount) {
     waitButton($('.payment-submit'));
     if (paymentInitiated != false) {

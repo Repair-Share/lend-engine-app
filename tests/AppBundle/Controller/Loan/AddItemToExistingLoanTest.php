@@ -37,8 +37,8 @@ class AddItemToExistingLoanTest extends AuthenticatedControllerTest
             'item_fee'   => 0.99,
             'date_from' => $today->format("Y-m-d"),
             'time_from' => $today->format("09:00:00"),
-            'date_to'   => $today->format("Y-m-d"),
-            'time_to'   => $today->format("17:00:00")
+            'date_to'   => $today->modify("+1 day")->format("Y-m-d"),
+            'time_to'   => $today->modify("+1 day")->format("17:00:00")
         ];
         $this->client->request('POST', '/basket/add/'.$secondItemId.'?contactId='.$contactId.'&active-loan='.$loanId, $params);
 

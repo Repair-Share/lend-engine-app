@@ -20,6 +20,10 @@ class BasketControllerTest extends AuthenticatedControllerTest
         $session = new Session(new MockFileSessionStorage());
         $session->set('time_zone', 'Europe/London');
 
+        // Create an item
+        $loanItemName = "BasketControllerTest ".rand();
+        $loanItemId = $this->helpers->createItem($this->client, $loanItemName, ['type' => 'loan']);
+
         // Create a contact
         $contactId = $this->helpers->createContact($this->client);
 
@@ -31,16 +35,17 @@ class BasketControllerTest extends AuthenticatedControllerTest
 
         // Add an item to the basket
         $today = new \DateTime();
+        $tomorrow = $today->modify("+1 day");
         $params = [
             'contactId' => $contactId, // the one set up in ContactControllerTest
             'from_site' => 1,
             'to_site'   => 1,
             'date_from' => $today->format("Y-m-d"),
             'time_from' => $today->format("09:00:00"),
-            'date_to'   => $today->format("Y-m-d"),
-            'time_to'   => $today->format("17:00:00")
+            'date_to'   => $tomorrow->format("Y-m-d"),
+            'time_to'   => $tomorrow->format("17:00:00")
         ];
-        $this->client->request('POST', '/basket/add/1000?qty=1&contactId='.$contactId, $params);
+        $this->client->request('POST', '/basket/add/'.$loanItemId.'?qty=1&contactId='.$contactId, $params);
 
         $this->assertTrue($this->client->getResponse() instanceof RedirectResponse);
         $crawler = $this->client->followRedirect();
@@ -49,12 +54,13 @@ class BasketControllerTest extends AuthenticatedControllerTest
 
         // Check time zone OK
         $this->assertContains($today->format("j F")." 9:00 am", $crawler->html());
-        $this->assertContains($today->format("j F")." 5:00 pm", $crawler->html());
+        $this->assertContains($tomorrow->format("j F")." 5:00 pm", $crawler->html());
 
         // Confirm the reservation
         $params = [
+            'action' => 'reserve',
             'row_fee' => [
-                1000 => 10.00
+                $loanItemId => 10.00
             ]
         ];
         $this->client->request('POST', '/basket/confirm', $params);
@@ -64,9 +70,22 @@ class BasketControllerTest extends AuthenticatedControllerTest
 
         $this->assertContains('Reservation created by', $crawler->html());
 
+        $loanStatusText = $crawler->filter('#loanStatusLabel')->text();
+        $this->assertEquals($loanStatusText, 'Reserved');
+
         // Confirm that the time zone was saved properly
         $this->assertContains($today->format("j F")." 9:00 am", $crawler->html());
-        $this->assertContains($today->format("j F")." 5:00 pm", $crawler->html());
+        $this->assertContains($tomorrow->format("j F")." 5:00 pm", $crawler->html());
+
+        $loanId = (int)$crawler->filter('#loanIdForTest')->attr('value');
+
+        // Cancel the reservation
+        $this->client->request('GET', "/member/booking/{$loanId}/cancel");
+        $this->assertTrue($this->client->getResponse() instanceof RedirectResponse);
+        $crawler = $this->client->followRedirect();
+
+        $loanStatusText = $crawler->filter('#loanStatusLabel')->text();
+        $this->assertEquals($loanStatusText, 'Cancelled');
 
     }
 

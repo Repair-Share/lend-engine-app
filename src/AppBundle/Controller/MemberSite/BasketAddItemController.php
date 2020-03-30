@@ -95,17 +95,27 @@ class BasketAddItemController extends Controller
         // Verify user can borrow more items, if there's a limit on their membership type
         $maxItems = $contact->getActiveMembership()->getMembershipType()->getMaxItems();
         if ($maxItems > 0) {
+
             $filter = [
                 'status' => Loan::STATUS_ACTIVE,
                 'contact' => $basket->getContact(),
                 'isOnLoan' => true // make sure we only include loanable items which are still on loan (ie no kits)
             ];
             $itemsOnLoan = $loanService->countLoanRows($filter);
-            $totalQty    = $itemsOnLoan + count($basket->getLoanRows());
+
+            $filter = [
+                'status' => Loan::STATUS_OVERDUE,
+                'contact' => $basket->getContact(),
+                'isOnLoan' => true // make sure we only include loanable items which are still on loan (ie no kits)
+            ];
+            $itemOverdue = $loanService->countLoanRows($filter);
+
+            $totalQty    = $itemsOnLoan + $itemOverdue + count($basket->getLoanRows());
             if ($totalQty >= $maxItems) {
                 $this->addFlash('error', "You've already got {$totalQty} items on loan and in basket. The maximum for your membership is {$maxItems}.");
                 return $this->redirectToRoute('home');
             }
+
         }
 
         if (!$basket) {
