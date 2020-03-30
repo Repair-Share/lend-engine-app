@@ -46,6 +46,7 @@
 
             <div id="paymentBlock" style="display: none;">
                 {{ include('cores/payment_core.html.twig') }}
+                <input type="hidden" id="paymentType" name="paymentType" value="subscription">
             </div>
 
             <div id="noPaymentRequired" style="display: none;">

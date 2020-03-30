@@ -28,8 +28,6 @@ class EventPaymentController extends Controller
         /** @var \AppBundle\Repository\AttendeeRepository $attendeeRepo */
         $attendeeRepo = $em->getRepository('AppBundle:Attendee');
 
-        $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
-
         /** @var \AppBundle\Entity\Attendee $attendee */
         if (!$attendee = $attendeeRepo->find($attendeeId)) {
             return $this->redirectToRoute('admin_event_list');
@@ -54,8 +52,16 @@ class EventPaymentController extends Controller
             $paymentMethod = $form->get('paymentMethod')->getData();
             $paymentNote   = $form->get('paymentNote')->getData();
 
-            // Create a payment which is saved when we receive OK from Stripe
-            $payment = new Payment();
+            // Create [or update the payment created earlier via Stripe payment intent]
+            if ($paymentId = $request->get('paymentId')) {
+                // We've created a payment via Stripe payment intent, link it to the event booking
+                $payments = $paymentService->get(['id' => $paymentId]);
+                $payment = $payments[0];
+            } else {
+                // No existing payment exists
+                $payment = new Payment();
+            }
+
             $payment->setCreatedBy($this->getUser());
             $payment->setPaymentMethod($paymentMethod);
             $payment->setAmount($paymentAmount);
@@ -64,11 +70,8 @@ class EventPaymentController extends Controller
             $payment->setEvent($event);
             $payment->setType(Payment::PAYMENT_TYPE_PAYMENT);
 
-            if ($stripePaymentMethodId == $paymentMethod->getId()) {
-                $payment->setPspCode($request->get('chargeId'));
-            }
-
             if ($paymentService->create($payment)) {
+                $this->get('session')->set('pendingPaymentType', null);
                 $contactService->recalculateBalance($attendee->getContact());
                 $this->addFlash("success", "Payment taken OK");
             } else {

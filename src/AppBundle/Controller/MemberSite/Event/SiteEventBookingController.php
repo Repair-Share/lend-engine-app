@@ -90,17 +90,23 @@ class SiteEventBookingController extends Controller
 
                     if ($paymentMethod) {
 
-                        $p = new Payment();
+                        // Create [or update the payment created earlier via Stripe payment intent]
+                        if ($paymentId = $request->get('paymentId')) {
+                            // We've created a payment via Stripe payment intent, link it to the event booking
+                            $payments = $paymentService->get(['id' => $paymentId]);
+                            $p = $payments[0];
+                        } else {
+                            // No existing payment exists
+                            $p = new Payment();
+                        }
+
                         $p->setContact($user);
                         $p->setType(Payment::PAYMENT_TYPE_PAYMENT);
                         $p->setEvent($event);
                         $p->setAmount($eventPrice);
                         $p->setCreatedBy($this->getUser());
                         $p->setPaymentMethod($paymentMethod);
-
-                        if ($stripePaymentMethodId == $paymentMethod->getId()) {
-                            $p->setPspCode($request->get('chargeId'));
-                        }
+                        $p->setNote(""); // remove pending_event when we're using Stripe
 
                         if ($paymentService->create($p)) {
                             $contactService->recalculateBalance($attendee->getContact());

@@ -58,6 +58,7 @@
                     <div class="col-md-12">
                         {% set contact = user %}
                         {{ include('cores/payment_core.html.twig') }}
+                        <input type="hidden" id="paymentType" name="paymentType" value="loan_extension">
                     </div>
                 </div>
 

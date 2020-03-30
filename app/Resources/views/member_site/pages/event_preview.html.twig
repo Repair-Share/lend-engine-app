@@ -120,6 +120,7 @@
                 <div id="paymentBlock" style="display:{% if event.price > 0 %}block{% else %}none{% endif %}">
                     {% set contact = user %}
                     {{ include('cores/payment_core.html.twig') }}
+                    <input type="hidden" id="paymentType" name="paymentType" value="event_booking">
                 </div>
 
                 {#BOOKING BUTTON#}

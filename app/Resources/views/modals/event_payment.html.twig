@@ -16,6 +16,7 @@
 
     {% set contact = attendee.contact %}
     {{ include('cores/payment_core.html.twig') }}
+    <input type="hidden" id="paymentType" name="paymentType" value="event_payment">
 
     {{ form_end(form) }}
 

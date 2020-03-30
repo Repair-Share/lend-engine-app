@@ -71,6 +71,7 @@
         var stripePaymentMethodId = "{{ tenantInformation.stripePaymentMethodId }}";
         var stripePaymentFee = "{{ tenantInformation.stripeFee|number_format(2) }}";
         var stripePublicApiKey = "{{ tenantInformation.stripePublicApiKey }}";
+        var pendingPaymentType = "{{ app.session.get('pendingPaymentType') }}";
         var currencyIsoCode = "{{ tenantInformation.currency }}";
         var currencySymbol = "{{ tenantInformation.currencySymbol }}";
         var minimumPaymentAmount = {{ tenantInformation.minimumPaymentAmount|number_format(2) }};

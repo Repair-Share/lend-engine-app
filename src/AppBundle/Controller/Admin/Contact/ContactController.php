@@ -197,6 +197,8 @@ class ContactController extends Controller
                 // Add / update contact in Mailchimp
                 $this->mailChimpSubscribe($contact);
 
+                $contactService->recalculateBalance($contact);
+
                 if ($form->has('autoPassword') && $form->get('autoPassword')->getData() == 1 && $contact->getEmail()) {
                     // Send the welcome email
                     $this->sendWelcomeEmail($contact, $plainPassword);

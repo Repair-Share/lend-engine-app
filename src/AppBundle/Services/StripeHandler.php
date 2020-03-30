@@ -214,7 +214,7 @@ class StripeHandler
     /**
      * @param $paymentMethodId
      * @param $amount
-     * @param $customer array
+     * @param $customer
      * @return bool|static
      */
     public function createPaymentIntent($paymentMethodId, $amount, $customer)
@@ -232,7 +232,8 @@ class StripeHandler
                 'confirmation_method' => 'manual',
                 'confirm' => true,
                 'customer' => $customer['id'],
-                'setup_future_usage' => 'off_session'
+                'setup_future_usage' => 'off_session',
+                'metadata' => ['integration_check' => 'accept_a_payment']
             ]);
             return $intent;
         } catch (\Exception $e) {

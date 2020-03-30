@@ -4,6 +4,7 @@ namespace AppBundle\Services\Payment;
 
 use AppBundle\Entity\Contact;
 use AppBundle\Entity\Deposit;
+use AppBundle\Entity\PaymentMethod;
 use AppBundle\Services\Contact\ContactService;
 use AppBundle\Services\StripeHandler;
 use AppBundle\Services\SettingsService;
@@ -17,38 +18,51 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\Container;
 use AppBundle\Repository\PaymentRepository;
 
+/**
+ * Class PaymentService
+ * @package AppBundle\Services\Payment
+ *
+ *
+ * Payment scenarios:
+ * Add credit via admin
+ * Add credit via member site
+ * Check out loan
+ * Check out loan with deposit items, when item has fee
+ * Check out loan with deposit items, when item is FREE
+ * Create reservation with reservation fee
+ * Add credit with card payment fee
+ * Extend a loan and charge a fee
+ * Create and pay for membership
+ * Book onto event and pay via member site
+ * Take payment for event booking via admin
+ *
+ */
+
 class PaymentService
 {
 
-    /**
-     * @var EntityManager
-     */
+    /** @var EntityManager  */
     private $em;
 
-    /**
-     * @var SettingsService
-     */
+    /** @var SettingsService  */
     private $settings;
 
-    /**
-     * @var StripeHandler
-     */
+    /** @var StripeHandler  */
     private $stripeService;
 
     /** @var ContactService */
     private $contactService;
 
-    /**
-     * @var PaymentRepository
-     */
+    /** @var PaymentRepository */
     private $repo;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     public $errors = [];
 
-    public function __construct(EntityManager $em, SettingsService $settings, StripeHandler $stripeService, ContactService $contactService)
+    public function __construct(EntityManager $em,
+                                SettingsService $settings,
+                                StripeHandler $stripeService,
+                                ContactService $contactService)
     {
         $this->em        = $em;
         $this->settings  = $settings;
@@ -287,6 +301,20 @@ class PaymentService
             $data[$key] += $result['fee'];
         }
         return $data;
+    }
+
+    /**
+     * @param $paymentMethodId
+     * @return bool|null|PaymentMethod
+     */
+    public function getPaymentMethodById($paymentMethodId)
+    {
+        $paymentMethodRepository = $this->em->getRepository("AppBundle:PaymentMethod");
+        if ($paymentMethod = $paymentMethodRepository->find($paymentMethodId)) {
+            return $paymentMethod;
+        } else {
+            return false;
+        }
     }
 
 }

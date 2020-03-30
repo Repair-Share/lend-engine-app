@@ -24,7 +24,6 @@ class SubscribeController extends Controller
      */
     public function subscribe(Request $request)
     {
-
         /** @var \AppBundle\Entity\Contact $user */
         $user = $this->getUser();
 
@@ -38,8 +37,6 @@ class SubscribeController extends Controller
 
         /** @var \AppBundle\Services\Payment\PaymentService $paymentService */
         $paymentService = $this->get('service.payment');
-
-        $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
 
         /** @var \AppBundle\Entity\Contact $contact */
         if ($contactId = $request->get('c')) {
@@ -154,7 +151,16 @@ class SubscribeController extends Controller
 
             if ($amountPaid > 0) {
                 // The payment for the charge
-                $payment = new Payment();
+
+                if ($paymentId = $request->get('paymentId')) {
+                    // We've created a payment via Stripe payment intent, link it to the credit
+                    $payments = $paymentService->get(['id' => $paymentId]);
+                    $payment = $payments[0];
+                } else {
+                    // No existing payment exists
+                    $payment = new Payment();
+                }
+
                 $payment->setCreatedBy($user);
                 $payment->setPaymentMethod($paymentMethod);
                 $payment->setAmount($amountPaid);
@@ -163,10 +169,6 @@ class SubscribeController extends Controller
                 $payment->setContact($contact);
                 $payment->setMembership($membership);
 
-                if ($stripePaymentMethodId == $paymentMethod->getId()) {
-                    $payment->setPspCode($request->get('chargeId'));
-                }
-
                 if (!$paymentService->create($payment)) {
                     foreach ($paymentService->errors AS $error) {
                         $this->addFlash('error', $error);
@@ -174,6 +176,7 @@ class SubscribeController extends Controller
                 }
             }
 
+            $this->get('session')->set('pendingPaymentType', null);
             $contactService->recalculateBalance($membership->getContact());
 
             if ($itemId = $request->get('itemId')) {

@@ -61,14 +61,20 @@ function processPaymentForm(e) {
         }
     }
 
+    if (paymentInitiated == true) {
+        // Deal with double clicks
+        return false;
+    }
+
+    paymentInitiated = true;
+
     if ( paymentMethod.val() == stripePaymentMethodId
         && paymentMethod.val()
         && paymentAmount.val() > 0 ) {
-
         event.preventDefault();
 
         if ( $("#stripeCardId").val() ) {
-            // Use it for the paymentIntent
+            // We've been given an existing card, use it for the paymentIntent
             createPaymentIntent($("#stripeCardId").val(), paymentAmount);
         } else {
             stripe.createPaymentMethod('card', card).then(function(result) {
@@ -88,21 +94,17 @@ function processPaymentForm(e) {
 }
 
 /**
- * First, create a payment intent
+ * First, instruct the server to create a payment intent on Stripe
+ * If payment processing has begun, use the already created payment intent
  * @param paymentMethodId
  * @param paymentAmount
  * @returns {boolean}
  */
 function createPaymentIntent(paymentMethodId, paymentAmount) {
+    var paymentType = $("#paymentType").val();
+    var depositsAmount = $("#depositTotal").val();
     waitButton($('.payment-submit'));
-    if (paymentInitiated != false) {
-        // We've already initiated a payment for this page load
-        var msg = "Payment processing has started, please wait for it to complete.\n";
-        msg += "If payment does not complete, check Stripe before refreshing this page to try again.";
-        alert(msg);
-        return false;
-    }
-    paymentInitiated = true;
+
     // Send paymentMethod.id to server to create a payment intent
     fetch('/stripe/payment-intent', {
         method: 'POST',
@@ -112,18 +114,26 @@ function createPaymentIntent(paymentMethodId, paymentAmount) {
         body: JSON.stringify({
             stripePaymentMethodId: paymentMethodId,
             contactId: $("#contactId").val(),
-            saveCard: $("#saveCard").val(),
+            saveCard: $("#saveCard").prop("checked"),
+            deposits: depositsAmount,
+            paymentType: paymentType,
             amount: paymentAmount.val() * 100 + (stripePaymentFee * 100)
         })
     }).then(function(response) {
         response.json().then(function(json) {
-            console.log(json);
             handleServerResponse(json);
         })
     });
 }
 
+/**
+ * The payment intent was created and completed, or not
+ * If it requires action (eg 3D secure) then get the client to do the required work
+ * If the intent does not require action, submit the payment form
+ * @param response
+ */
 function handleServerResponse(response) {
+    console.log("handleServerResponse:");
     console.log(response);
     if (response.error) {
         $("#paymentErrorMessage").html(response.error);
@@ -133,41 +143,54 @@ function handleServerResponse(response) {
         // Use Stripe.js to handle required card action
         handleAction(response);
     } else {
-        // Add the charge ID into the form
+        // Add the charge and payment ID into the form and submit it
+        // The form POST controller will update the payment with loan/membership/event info
         $("#chargeId").val(response.charge_id);
+        $("#paymentId").val(response.payment_id);
         $("#paymentForm").submit();
     }
 }
 
+/**
+ * Instruct the Stripe client-side code to perform any further actions (eg 3D secure)
+ * Return any errors to the user and open the form up for re-submission
+ * Or check to see if the payment intent is now completed
+ * @param response
+ */
 function handleAction(response) {
     stripe.handleCardAction(
         response.payment_intent_client_secret
     ).then(function(result) {
-            if (result.error) {
-                console.log(result.error);
-                $("#paymentErrorMessage").html(result.error.message);
-                $("#paymentError").show();
-                unWaitButton($('.payment-submit'));
-            } else {
-                // The card action has been handled
-                // The PaymentIntent can be confirmed again on the server
-                fetch('/stripe/payment-intent', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        paymentIntentId: result.paymentIntent.id
-                    })
-                }).then(function(confirmResult) {
-                    return confirmResult.json();
-                }).then(handleServerResponse);
-            }
-        });
+        if (result.error) {
+            console.log(result.error);
+            $("#paymentErrorMessage").html(result.error.message);
+            $("#paymentError").show();
+            unWaitButton($('.payment-submit'));
+        } else {
+            // The card action has been handled
+            // The PaymentIntent can be confirmed again on the server
+            fetch('/stripe/payment-intent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    paymentIntentId: result.paymentIntent.id
+                })
+            }).then(function(confirmResult) {
+                return confirmResult.json();
+            }).then(handleServerResponse);
+        }
+    });
 }
 
 $(document).ready(function() {
     setupPaymentFields();
+
+    if (pendingPaymentType) {
+        // User has not completed the previous payment
+        $("#pendingPaymentWarning").show();
+    }
 });
 
 /**

@@ -15,19 +15,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-
-/**
- * Manual loan checkout tests:
- * With and without checkout prompts
- * With and without deposits
- * Multiple items
- * Regular payment methods, and Stripe payments
- * Stripe success and Stripe failure
- * Stripe re-use of previous cards
- * Email confirmation
- */
-
-
 /**
  * Class LoanController
  * @package AppBundle\Controller
@@ -168,7 +155,16 @@ class LoanController extends Controller
 
                 // Create the payment for the loan itself
                 if ($loanAmount > 0) {
-                    $payment = new Payment();
+
+                    if ($paymentId = $request->get('paymentId')) {
+                        // We've created a payment via Stripe payment intent, link it to the loan
+                        $payments = $paymentService->get(['id' => $paymentId]);
+                        $payment = $payments[0];
+                    } else {
+                        // No existing payment exists
+                        $payment = new Payment();
+                    }
+
                     $payment->setCreatedBy($user);
                     $payment->setPaymentMethod($paymentMethod);
                     $payment->setAmount($loanAmount);
@@ -177,10 +173,6 @@ class LoanController extends Controller
                     $payment->setContact($loan->getContact());
                     $payment->setType(Payment::PAYMENT_TYPE_PAYMENT);
                     $payment->setLoan($loan);
-
-                    if ($stripePaymentMethodId == $paymentMethod->getId()) {
-                        $payment->setPspCode($request->get('chargeId'));
-                    }
 
                     if (!$paymentService->create($payment)) {
                         $paymentOk = false;
@@ -211,8 +203,8 @@ class LoanController extends Controller
                                 $p->setIsDeposit(true); // Creates deposit, payment and links to loan row
 
                                 // This can link multiple payments to one Stripe charge
-                                if ($stripePaymentMethodId == $paymentMethod->getId()) {
-                                    $p->setPspCode($request->get('chargeId'));
+                                if ($chargeId = $request->get('chargeId')) {
+                                    $p->setPspCode($chargeId);
                                 }
 
                                 if (!$paymentService->create($p)) {
@@ -231,6 +223,9 @@ class LoanController extends Controller
 
             // We either have a successful charge, or no payment amount
             if ($paymentOk == true) {
+
+                $this->get('session')->set('pendingPaymentType', null);
+
                 if ( $checkoutService->loanCheckOut($loan) ) {
                     $this->addFlash('success', "Items are now checked out.");
 

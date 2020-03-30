@@ -83,7 +83,20 @@ Take payment for an attendee already booked
         <input type="hidden" name="return" value="{{ app.request.get('return') }}">
         <input type="hidden" class="stripe-card-id" id="stripeCardId" name="stripeCardId" value="">
         <input type="hidden" id="stripePaymentMethod" name="stripePaymentMethod" value="">
+
+        {#Required so that we can remove deposits amount from pending payments#}
+        <input type="hidden" id="depositTotal" name="depositTotal" value="">
+
+        {#When the Stripe paymenbt-intent returns success, these are populated for form submission#}
+        {#A pending payment will be updated with the details from the form submission (eg loan ID)#}
         <input type="hidden" id="chargeId" name="chargeId" value="">
+        <input type="hidden" id="paymentId" name="paymentId" value="">
+
+        <div class="alert alert-warning" style="display: none" id="pendingPaymentWarning">
+            There was a problem completing your previous payment.<br>
+            We have charged your card and the amount has been added to your balance.<br>
+            If you would like this amount to be refunded, please get in touch.
+        </div>
 
     </div>
 </div>

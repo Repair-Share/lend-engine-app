@@ -88,7 +88,15 @@ class AddCreditController extends Controller
 
                 $paymentDate = new \DateTime();
 
-                $payment = new Payment();
+                if ($paymentId = $request->get('paymentId')) {
+                    // We've created a payment via Stripe payment intent, link it to the credit
+                    $payments = $paymentService->get(['id' => $paymentId]);
+                    $payment = $payments[0];
+                } else {
+                    // No existing payment exists
+                    $payment = new Payment();
+                }
+
                 $payment->setCreatedBy($user);
                 $payment->setContact($contact);
                 $payment->setAmount($amount);
@@ -100,13 +108,10 @@ class AddCreditController extends Controller
                     $payment->setNote("Credit added.");
                 }
 
-                $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
-
-                if ($stripePaymentMethodId == $paymentMethod->getId()) {
-                    $payment->setPspCode($request->get('chargeId'));
-                }
-
                 if ($paymentService->create($payment)) {
+
+                    $this->get('session')->set('pendingPaymentType', null);
+
                     $contactService->recalculateBalance($contact);
                     if ($request->get('return') == 'basket') {
                         $this->addFlash('success', 'Payment recorded OK. You can now complete your loan or reservation.');

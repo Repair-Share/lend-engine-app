@@ -68,6 +68,7 @@
         var currencySymbol = "{{ tenantInformation.currencySymbol }}";
         var minimumPaymentAmount = {{ tenantInformation.minimumPaymentAmount|number_format(2) }};
         var orgName = "{{ tenantInformation.companyName }}";
+        var pendingPaymentType = "{{ app.session.get('pendingPaymentType') }}";
     </script>
 
 </head>

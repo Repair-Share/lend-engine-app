@@ -465,6 +465,7 @@
             {% set contact = loan.contact %}
             <div id="paymentBlock" style="display:block">
                 {{ include('cores/payment_core.html.twig') }}
+                <input type="hidden" id="paymentType" name="paymentType" value="loan">
             </div>
         </div>
     </div>
@@ -739,6 +740,9 @@
             $("#loanDepositsAmount").html(depositsTotal.toFixed(2));
             $("#loanSubtotalAmount").html(subTotal.toFixed(2));
             $("#loanToPayAmount").html(toPay.toFixed(2));
+
+            // For the payment_core:
+            $("#depositTotal").val(depositsTotal);
 
             {% if loan.status in ['PENDING', 'RESERVED'] and is_granted("ROLE_ADMIN") %}
                 // Add any overdue balance due to pay

@@ -161,7 +161,15 @@ class LoanExtendController extends Controller
 
                 $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
 
-                $payment = new Payment();
+                if ($paymentId = $request->get('paymentId')) {
+                    // We've created a payment via Stripe payment intent, link it to the credit
+                    $payments = $paymentService->get(['id' => $paymentId]);
+                    $payment = $payments[0];
+                } else {
+                    // No existing payment exists
+                    $payment = new Payment();
+                }
+
                 $payment->setCreatedBy($user);
                 $paymentNote = Payment::TEXT_PAYMENT_RECEIVED;
                 $payment->setPaymentMethod($paymentMethod);
@@ -201,6 +209,8 @@ class LoanExtendController extends Controller
 
         try {
             $em->flush();
+
+            $this->get('session')->set('pendingPaymentType', null);
 
             if ($extensionFee != 0) {
                 $contactService->recalculateBalance($contact);
