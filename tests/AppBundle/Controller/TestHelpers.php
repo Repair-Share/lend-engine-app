@@ -80,18 +80,22 @@ class TestHelpers extends AuthenticatedControllerTest
 
     /**
      * @param Client $client
+     * @param null $contactName
      * @return int
      */
-    public function createContact(Client $client)
+    public function createContact(Client $client, $contactName = null)
     {
         $crawler = $client->request('GET', '/admin/contact');
         $this->assertContains('Add a new contact', $crawler->html());
 
-        $rand = microtime(true);
+        if (!$contactName) {
+            $contactName = "Test ".microtime(true);
+        }
+
         $form = $crawler->filter('form[name="contact"]')->form(array(
-            'contact[firstName]' => "Test ".$rand,
+            'contact[firstName]' => $contactName,
             'contact[lastName]'  => "Contact",
-            'contact[email]'     => 'basket'.$rand.'@email.com',
+            'contact[email]'     => microtime(true).'@email.com',
         ),'POST');
 
         $client->submit($form);
@@ -166,21 +170,24 @@ class TestHelpers extends AuthenticatedControllerTest
 
     /**
      * @param Client $client
+     * @return null|string
      */
     public function createEvent(Client $client)
     {
         $crawler = $client->request('GET', '/admin/event');
         $this->assertContains('Create a new event', $crawler->html());
 
+        $eventTitle = "Test event title ".microtime(true);
+
         $date = new \DateTime();
         $form = $crawler->filter('form[name="event"]')->form(array(
-            'event[title]' => "Test event title ".$date->format("Y-m-d H:i:s"),
+            'event[title]' => $eventTitle,
             'event[date]' => $date->format("Y-m-d"),
             'event[timeFrom]' => '09:00 am',
             'event[timeTo]'   => '11:00 am',
             'event[maxAttendees]' => '10',
             'event[price]' => '15',
-            'event[description]' => "This it's an great Stuff.",
+            'event[description]' => "It's the event description.",
         ),'POST');
 
         $client->submit($form);
@@ -188,7 +195,27 @@ class TestHelpers extends AuthenticatedControllerTest
         $this->assertTrue($client->getResponse() instanceof RedirectResponse);
         $crawler = $client->followRedirect();
 
-        $this->assertContains('Test event title', $crawler->html());
+        $this->assertContains("This event is not published yet.", $crawler->html());
+        $this->assertContains($eventTitle, $crawler->html());
+        $this->assertEquals("15", $crawler->filter('#event_price')->attr('value'));
+        $this->assertEquals("10", $crawler->filter('#event_maxAttendees')->attr('value'));
+        $this->assertEquals("0900", $crawler->filter('#event_timeFrom')->attr('value'));
+        $this->assertEquals("1100", $crawler->filter('#event_timeTo')->attr('value'));
+
+        // Confirm the creator has been added as attendee
+        $this->assertContains('hello@lend-engine.com', $crawler->html());
+
+        $eventId = $crawler->filter('#eventIdForTest')->attr('value');
+
+        // Publish it
+        $client->request('GET', "/admin/event/{$eventId}/publish");
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        $crawler = $client->followRedirect();
+
+        $statusText = $crawler->filter('#eventStatusLabel')->text();
+        $this->assertEquals($statusText, 'LIVE');
+
+        return $eventId;
     }
 
     /**

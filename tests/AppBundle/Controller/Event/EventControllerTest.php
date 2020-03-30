@@ -23,7 +23,7 @@ class EventControllerTest extends AuthenticatedControllerTest
         $session = new Session(new MockFileSessionStorage());
         $session->set('time_zone', 'Europe/London');
 
-        // Create event
+        // Create event and verify the details are saved
         $eventId = $this->helpers->createEvent($this->client);
     }
 

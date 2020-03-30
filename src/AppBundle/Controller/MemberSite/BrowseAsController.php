@@ -42,19 +42,13 @@ class BrowseAsController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        // If we have a basket, also switch the user
+        // If we have a basket, also switch the user for the basket
         if ($basket = $basketService->getBasket()) {
-
-            if (!$contact->getActiveMembership()) {
-                $this->addFlash('error', "This member doesn't have an active membership.");
-                return $this->redirectToRoute('basket_show');
-            }
-
             $basket->setContact($contact);
-            $this->addFlash('success', "Changed user to <strong>".$contact->getName().'</strong>');
-
             $basketService->setBasket($basket);
         }
+
+        $this->addFlash('success', "You are now browsing as ".$contact->getName());
 
         $basketService->setSessionUser($contactId);
 

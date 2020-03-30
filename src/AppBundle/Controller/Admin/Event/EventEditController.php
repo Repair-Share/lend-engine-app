@@ -52,13 +52,13 @@ class EventEditController extends Controller
         $label = '';
         switch ($event->getStatus()) {
             case Event::STATUS_DRAFT:
-                $label = '<span class="label label-default pull-right">DRAFT</span>';
+                $label = '<span class="label label-default pull-right" id="eventStatusLabel">DRAFT</span>';
                 break;
             case Event::STATUS_PAST:
-                $label = '<span class="label bg-black pull-right">PAST</span>';
+                $label = '<span class="label bg-black pull-right" id="eventStatusLabel">PAST</span>';
                 break;
             case Event::STATUS_PUBLISHED:
-                $label = '<span class="label label-success pull-right">LIVE</span>';
+                $label = '<span class="label label-success pull-right" id="eventStatusLabel">LIVE</span>';
                 break;
         }
 

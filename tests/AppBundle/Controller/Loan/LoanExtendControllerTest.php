@@ -14,11 +14,16 @@ class LoanExtendControllerTest extends AuthenticatedControllerTest
 
     public function testExtendLoan()
     {
+        // Create a contact
+        $contactName = "LoanExtend ".microtime(true);
+        $contactId = $this->helpers->createContact($this->client, $contactName);
+        $this->helpers->subscribeContact($this->client, $contactId);
+
         // Create a new item
         $itemId = $this->helpers->createItem($this->client, "Extension test item ".rand());
 
         // Add a loan
-        $loanId = $this->helpers->createLoan($this->client, 2, [$itemId]);
+        $loanId = $this->helpers->createLoan($this->client, $contactId, [$itemId]);
 
         // Go to it
         $crawler = $this->client->request('GET', '/loan/'.$loanId);
@@ -36,7 +41,7 @@ class LoanExtendControllerTest extends AuthenticatedControllerTest
         $this->assertContains("Choose a new return date", $crawler->html());
         $rowId = $crawler->filter('.btn_extend')->first()->attr('data-loan-row-id');
 
-        $crawler = $this->client->request('GET', '/product/1000?extend='.$rowId);
+        $crawler = $this->client->request('GET', '/product/'.$itemId.'?extend='.$rowId);
         $this->assertContains("Choose a new return date", $crawler->html());
 
         // Add a day to the loan
@@ -58,7 +63,13 @@ class LoanExtendControllerTest extends AuthenticatedControllerTest
 
         $this->assertContains("Loan return date was updated OK", $crawler->html()); // flash message
         $this->assertContains("Updated return date", $crawler->html()); // note added
+        $this->assertContains("5:00 pm", $crawler->html()); // the correct end date
         $this->assertContains("2.35", $crawler->html()); // fee added
+
+        $this->assertContains("currentUserId  = {$contactId}", $crawler->html());
+
+        // Fee was added and payment was taken
+        $this->assertContains("accountBalance = 0.00", $crawler->html());
     }
 
 }

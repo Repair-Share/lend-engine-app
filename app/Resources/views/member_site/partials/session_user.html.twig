@@ -1,4 +1,4 @@
-<span class="session-user">
+<span class="session-user" id="browseAsUser">
     {{ user.name }}
     {% if loan is defined %}
         <a href="{{ path('send_email', {contactId: user.id, loan_id: loan.id}) }}" class="modal-link btn btn-xs btn-default">
