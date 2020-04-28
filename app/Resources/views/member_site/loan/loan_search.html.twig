@@ -30,7 +30,9 @@
                             {{ loan.contact.name }}</a></td>
                     <td>
                         {% for row in loan.loanRows %}
+                            {% if row.inventoryItem.itemType == 'loan' %}
                             {% set dueInAt = row.dueInAt|date() %}
+                            {% endif %}
                             <div style="margin-bottom: 10px;">
                                 <strong>{{ row.inventoryItem.name }}</strong><br>
                                 {{ row.dueOutAt|date("l F j, g:i a") }} to <br>
