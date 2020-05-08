@@ -113,8 +113,8 @@ class EmailLoanReminders
                 $fromEmail      = $tenantService->getSenderEmail();
                 $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
-                $automateThisEmail = $this->settings->getSettingValue('automate_email_loan_reminder');
-                if ($automateThisEmail != 1) {
+                $remindBeforeNDays = (int)$this->settings->getSettingValue('automate_email_loan_reminder');
+                if (!$remindBeforeNDays) {
                     $resultString .= '    ... skipping : loan reminders not activated'.PHP_EOL;
                     continue;
                 }
@@ -124,7 +124,7 @@ class EmailLoanReminders
                     /** @var $loanRowRepo \AppBundle\Repository\LoanRowRepository */
                     $loanRowRepo = $tenantEntityManager->getRepository('AppBundle:LoanRow');
 
-                    if ($dueLoanRows = $loanRowRepo->getLoanRowsDueTomorrow()) {
+                    if ($dueLoanRows = $loanRowRepo->getLoanRowsDueInXDays($remindBeforeNDays)) {
 
                         foreach ($dueLoanRows AS $loanRow) {
 
@@ -188,7 +188,7 @@ class EmailLoanReminders
 
                         }
                     } else {
-                        $resultString .= '  No loan rows due tomorrow '.PHP_EOL;
+                        $resultString .= '  No loan rows due in '.$remindBeforeNDays.' days '.PHP_EOL;
                     }
 
                     $tenantEntityManager->getConnection()->close();

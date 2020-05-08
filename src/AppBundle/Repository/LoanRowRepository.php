@@ -10,14 +10,13 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 {
 
     /**
-     * For the nightly scheduled reminders
-     * @return array|bool
-     * For scheduled loan reminders
+     * @param int $days
+     * @return bool|mixed
      */
-    public function getLoanRowsDueTomorrow()
+    public function getLoanRowsDueInXDays($days = 1)
     {
         $tomorrow = new \DateTime();
-        $tomorrow->modify("+1 day");
+        $tomorrow->modify("+{$days} day");
 
         $repository = $this->getEntityManager()->getRepository('AppBundle:LoanRow');
         $qb = $repository->createQueryBuilder('lr');

@@ -207,7 +207,7 @@ EOT;
         $emailDisabled = true;
         if ($this->tenantService->getFeature('EmailAutomation')) {
             $emailDisabled = false;
-            $emailHelp = "";
+            $emailHelp = "Enter days before the loan is due back. Set to 0 for no reminders";
             $choices = ['Yes' => '1', 'No'  => '0',];
         } else {
             $emailHelp = '<i class="fa fa-star" style="color:#ff9d00"></i> This requires a paid plan.';
@@ -218,10 +218,9 @@ EOT;
             $choices = ['No'  => '0',];
         }
 
-        $builder->add('automate_email_loan_reminder', ToggleType::class, array(
-            'expanded' => true,
-            'choices' => $choices,
-            'label' => 'Send reminder the day before a loan is due back',
+        $builder->add('automate_email_loan_reminder', TextType::class, array(
+            'required' => false,
+            'label' => 'Send reminder X days before a loan is due back',
             'data' => (int)$dbData['automate_email_loan_reminder'],
             'attr' => [
                 'class' => 'input-100',
