@@ -207,12 +207,12 @@ EOT;
         $emailDisabled = true;
         if ($this->tenantService->getFeature('EmailAutomation')) {
             $emailDisabled = false;
-            $emailHelp = "Enter days before the loan is due back. Set to 0 for no reminders";
+            $emailHelp = "";
             $choices = ['Yes' => '1', 'No'  => '0',];
         } else {
             $emailHelp = '<i class="fa fa-star" style="color:#ff9d00"></i> This requires a paid plan.';
-            $dbData['automate_email_loan_reminder'] = false;
-            $dbData['automate_email_reservation_reminder'] = false;
+            $dbData['automate_email_loan_reminder'] = 0;
+            $dbData['automate_email_reservation_reminder'] = 0;
             $dbData['automate_email_membership'] = false;
             $dbData['automate_email_overdue_days'] = null;
             $choices = ['No'  => '0',];
@@ -224,7 +224,7 @@ EOT;
             'data' => (int)$dbData['automate_email_loan_reminder'],
             'attr' => [
                 'class' => 'input-100',
-                'data-help' => $emailHelp,
+                'data-help' => 'Set to zero to disable reminders. '.$emailHelp,
                 'disabled' => $emailDisabled
             ]
         ));
@@ -241,14 +241,13 @@ EOT;
             ]
         ));
 
-        $builder->add('automate_email_reservation_reminder', ToggleType::class, array(
-            'expanded' => true,
-            'choices' => $choices,
-            'label' => 'Send reminder the day before a reservation is due to be picked up',
+        $builder->add('automate_email_reservation_reminder', TextType::class, array(
+            'required' => false,
+            'label' => 'Send reminder X days before a reservation is due to be picked up',
             'data' => (int)$dbData['automate_email_reservation_reminder'],
             'attr' => [
                 'class' => 'input-100',
-                'data-help' => $emailHelp,
+                'data-help' => 'Set to zero to disable reminders. '.$emailHelp,
                 'disabled' => $emailDisabled
             ]
         ));
@@ -260,7 +259,7 @@ EOT;
             'data' => (int)$dbData['automate_email_membership'],
             'attr' => [
                 'class' => 'input-100',
-                'data-help' => $emailHelp,
+                'data-help' => '',
                 'disabled' => $emailDisabled
             ]
         ));

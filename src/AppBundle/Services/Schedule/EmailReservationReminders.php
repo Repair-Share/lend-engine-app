@@ -109,8 +109,8 @@ class EmailReservationReminders
                 $replyToEmail   = $tenantService->getReplyToEmail();
                 $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
-                $automateThisEmail = $this->settings->getSettingValue('automate_email_reservation_reminder');
-                if ($automateThisEmail != 1) {
+                $remindDays = (int)$this->settings->getSettingValue('automate_email_reservation_reminder');
+                if (!$remindDays) {
                     $resultString .= '    ... skipping : reservation reminders not activated'.PHP_EOL;
                     continue;
                 }
@@ -120,7 +120,7 @@ class EmailReservationReminders
                     /** @var $loanRepo \AppBundle\Repository\LoanRepository */
                     $loanRepo = $tenantEntityManager->getRepository('AppBundle:Loan');
 
-                    if ($dueReservations = $loanRepo->getReservationsDue()) {
+                    if ($dueReservations = $loanRepo->getReservationsDue($remindDays)) {
 
                         foreach ($dueReservations AS $loan) {
 
