@@ -14,12 +14,18 @@ class BillingService
     /** @var string */
     private $env;
 
+    /** @var SettingsService */
+    private $settings;
+
     /**
+     * BillingService constructor.
      * @param $symfonyEnv
+     * @param SettingsService $settings
      */
-    public function __construct($symfonyEnv)
+    public function __construct($symfonyEnv, SettingsService $settings)
     {
         $this->env = $symfonyEnv;
+        $this->settings = $settings;
     }
 
     public function isEnabled($plan = 'plus', $feature)
@@ -164,6 +170,9 @@ class BillingService
         // For trial accounts
         if (!$plan) {
             $plan = 'free';
+        }
+        if ($this->settings->getSettingValue('max_items')) {
+            return (int)$this->settings->getSettingValue('max_items');
         }
         switch ($plan) {
             case 'free':

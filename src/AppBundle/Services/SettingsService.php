@@ -362,6 +362,8 @@ class SettingsService
             'fixed_fee_pricing',
 
             'open_days', // legacy, now done per site
+
+            'max_items', // billing override
         );
 
         return $validKeys;
