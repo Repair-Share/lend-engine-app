@@ -265,7 +265,9 @@
                     } else {
                         // the event is a booking
                         if (isAdmin == true) {
-                            $(element).html(calEvent.extendedProps.statusName+' : '+calEvent.extendedProps.loanTo+'<div style="font-size:10px">'+start.format("D MMMM h:mm a")+" to "+end.format("D MMMM h:mm a")+'</div>');
+                            $(element).html(calEvent.extendedProps.statusName+' '+calEvent.extendedProps.loanTo+'<div style="font-size:10px">'+start.format("D MMMM h:mm a")+" to "+end.format("D MMMM h:mm a")+'</div>');
+                        } else if (calEvent.extendedProps.statusName == 'BUFFER') {
+                            $(element).html("Unavailable");
                         } else if (currentUserId == calEvent.extendedProps.contactId) {
                             $(element).html(text_my_booking).css('backgroundColor', '#5cb85c').css('borderColor', '#5cb85c');
                         } else if (calEvent.extendedProps.statusName == 'RESERVED') {

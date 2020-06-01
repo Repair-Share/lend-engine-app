@@ -86,6 +86,23 @@ class ItemBookingsController extends Controller
                 'start'  => $reservation->getDueOutAt()->format('Y-m-d H:i:s'),
                 'end'    => $reservation->getDueInAt()->format('Y-m-d H:i:s'),
             ];
+
+            if ($settingsService->getSettingValue('reservation_buffer')) {
+                $hours = (int)$settingsService->getSettingValue('reservation_buffer');
+                $quarantine = $reservation->getDueInAt();
+                $data[] = [
+                    'id'     => $reservation->getLoan()->getId(),
+                    'loanId' => $reservation->getLoan()->getId(),
+                    'loanTo' => '',
+                    'contactId' => $reservation->getLoan()->getContact()->getId(),
+                    'statusName' => "BUFFER",
+                    'title'  => "Quarantine",
+                    'color' => "#CCC",
+                    'start'  => $quarantine->format('Y-m-d H:i:s'),
+                    'end'    => $quarantine->modify("+{$hours} hours")->format('Y-m-d H:i:s'),
+                ];
+            }
+
         }
 
         return $this->json($data);

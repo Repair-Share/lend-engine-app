@@ -193,7 +193,7 @@ class SiteDataController extends Controller
             $results = $eventService->eventSearch(0, 100, $filter);
 
             foreach ($results['data'] AS $slot) {
-                $debug = '';
+
                 /** @var $slot \AppBundle\Entity\Event */
 
                 $s_start = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeFrom(), 0, 2).':'.substr($slot->getTimeFrom(), 2, 2).':00';
@@ -220,13 +220,11 @@ class SiteDataController extends Controller
                         if ($s_start > $loanRow->getDueOutAt()->format("Y-m-d H:i:00")
                             && $s_end < $loanRow->getDueInAt()->format("Y-m-d H:i:00")) {
                             $slotIsValid = false;
-                            $debug = $s_start.' EXISTS DURING BOOKING ';
                         }
                         // Slots that start while the booking is active
                         if ($s_start > $loanRow->getDueOutAt()->format("Y-m-d H:i:00")
                             && $s_start < $loanRow->getDueInAt()->format("Y-m-d H:i:00")) {
                             $slotIsValid = false;
-                            $debug = $s_start.' STARTS DURING BOOKING ';
                         }
                     }
 

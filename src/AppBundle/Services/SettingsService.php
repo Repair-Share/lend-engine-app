@@ -358,6 +358,7 @@ class SettingsService
             'google_tracking_id',
 
             'reservation_fee',
+            'reservation_buffer',
             'charge_daily_fee',
             'fixed_fee_pricing',
 

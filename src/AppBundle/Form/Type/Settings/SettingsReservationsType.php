@@ -50,6 +50,17 @@ class SettingsReservationsType extends AbstractType
             )
         ));
 
+        $builder->add('reservation_buffer', TextType::class, array(
+            'label' => 'Buffer hours between loans',
+            'data' => $dbData['reservation_buffer'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'class' => 'input-100',
+                'data-help' => "Use this to add a buffer period between loans for cleaning, inspection or quarantine."
+            )
+        ));
+
         $builder->add('default_loan_fee', TextType::class, array(
             'label' => 'Loan fee',
             'data' => $dbData['default_loan_fee'],
