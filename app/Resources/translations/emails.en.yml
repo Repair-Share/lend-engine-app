@@ -45,7 +45,7 @@ le_email:
     due_back: is now due back on
 
   reminder:
-    subject: Your loan loanId is due tomorrow
+    subject: Your loan loanId is due soon
     title: Your item(s) are due back soon
 
   overdue:
