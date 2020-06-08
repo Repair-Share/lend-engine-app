@@ -293,6 +293,13 @@ class CheckOutService
      */
     public function isItemReserved(InventoryItem $item, $from, $to, $loanId = null)
     {
+        // Extend the booking in both directions to validate against other bookings
+        $bufferPeriod = (int)$this->settings->getSettingValue('reservation_buffer'); // hours
+        $fromWithBuffer = clone($from);
+        $toWithBuffer   = clone($to);
+        $fromWithBuffer->modify("-{$bufferPeriod} hours");
+        $toWithBuffer->modify("+{$bufferPeriod} hours");
+
         $timeZone = $this->settings->getSettingValue('org_timezone');
         $tz = new \DateTimeZone($timeZone);
 
@@ -318,10 +325,10 @@ class CheckOutService
             $dueInAt  = $reservation->getDueInAt()->setTimezone($tz);
 
             // Formatted for easier logic comparison
-            $dueOutAt_f = $dueOutAt->format("Y-m-d H:i:s");
-            $dueInAt_f = $dueInAt->format("Y-m-d H:i:s");
+            $dueOutAt_f  = $dueOutAt->format("Y-m-d H:i:s");
+            $dueInAt_f   = $dueInAt->format("Y-m-d H:i:s");
             $requestFrom = $from->format("Y-m-d H:i:s");
-            $requestTo = $to->format("Y-m-d H:i:s");
+            $requestTo   = $to->format("Y-m-d H:i:s");
 
             $reservedItemId = $reservation->getInventoryItem()->getId();
             $errorMsg = '"'.$reservation->getInventoryItem()->getName().'" (#'.$reservedItemId.') is reserved by '.$reservation->getLoan()->getContact()->getName();
@@ -346,6 +353,33 @@ class CheckOutService
                 $this->errors[] = $errorMsg;
                 $this->errors[] = "Requested {$from->format("d M H:i")} - {$to->format("d M H:i")} (CONTAINS)";
                 return true;
+            }
+
+            // Now add buffer and try again
+            if ($bufferPeriod > 0) {
+                $requestFromWithBuffer = $fromWithBuffer->format("Y-m-d H:i:s");
+                $requestToWithBuffer   = $toWithBuffer->format("Y-m-d H:i:s");
+
+                // The requested START date is during another reservation
+                if ($requestFromWithBuffer >= $dueOutAt_f && $requestFromWithBuffer < $dueInAt_f) {
+                    $this->errors[] = $errorMsg;
+                    $this->errors[] = "Buffer clash : Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (STARTS)";
+                    return true;
+                }
+
+                // The requested END date is during or matches the end of another reservation
+                if ($requestToWithBuffer > $dueOutAt_f && $requestToWithBuffer <= $dueInAt_f) {
+                    $this->errors[] = $errorMsg;
+                    $this->errors[] = "Buffer clash : Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (ENDS)";
+                    return true;
+                }
+
+                // The requested date period CONTAINS a reservation
+                if ($requestFromWithBuffer < $dueOutAt_f && $requestToWithBuffer > $dueInAt_f) {
+                    $this->errors[] = $errorMsg;
+                    $this->errors[] = "Buffer clash : Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (CONTAINS)";
+                    return true;
+                }
             }
 
         }

@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ValidateLoanPeriodController extends Controller
 {
     /**
+     * Called from the item booking calendar to verify that the loan can be placed
      * @return Response
      * @Route("validate-loan-period", name="validate_loan_period")
      */
@@ -44,6 +45,8 @@ class ValidateLoanPeriodController extends Controller
             return new JsonResponse(['error' => 'Item not found']);
         }
 
+        // Check if the item is already reserved for the chosen dates
+        // Includes any buffer period added
         /** @var \AppBundle\Services\Loan\CheckoutService $checkoutService */
         $checkoutService = $this->get("service.checkout");
         if ($checkoutService->isItemReserved($item, $timeFrom, $timeTo, $loanId)) {
