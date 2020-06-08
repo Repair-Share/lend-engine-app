@@ -34,7 +34,6 @@ class BookingService
      */
     public function getBookings($filter = [])
     {
-
         $repository = $this->em->getRepository('AppBundle:LoanRow');
 
         $start = 0;
@@ -46,8 +45,14 @@ class BookingService
 
         $builder->leftJoin('lr.loan', 'l');
 
-        $builder->andWhere('l.status IN (:reservedStatuses)');
-        $builder->setParameter('reservedStatuses', ["RESERVED", "ACTIVE", "OVERDUE"]);
+        $builder->andWhere('l.status IN (:statuses)');
+
+        if (isset($filter['statuses']) && is_array($filter['statuses']) && count($filter['statuses']) > 0) {
+            $builder->setParameter('statuses', $filter['statuses']);
+        } else {
+            $builder->setParameter('statuses', ["RESERVED", "ACTIVE", "OVERDUE"]);
+            $builder->andWhere("lr.checkedInAt IS NULL");
+        }
 
         if (isset($filter['item_ids']) && is_array($filter['item_ids']) && count($filter['item_ids']) > 0) {
             $builder->andWhere('lr.inventoryItem IN(:itemIds)');
@@ -64,8 +69,6 @@ class BookingService
         if (isset($filter['excludeBookingId']) && $filter['excludeBookingId']) {
             $builder->andWhere('lr.id != '.(int)$filter['excludeBookingId']);
         }
-
-        $builder->andWhere("lr.checkedInAt IS NULL");
 
         $builder->setFirstResult($start);
         $builder->setMaxResults($length);

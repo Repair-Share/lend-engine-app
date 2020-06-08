@@ -29,6 +29,8 @@ class ItemBookingsController extends Controller
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get("settings");
 
+        $bufferHours = (int)$settingsService->getSettingValue('reservation_buffer');
+
         // From and To are passed in from the calendar view
         $end = new \DateTime($dateTo);
         $filter = [
@@ -36,6 +38,13 @@ class ItemBookingsController extends Controller
             'from'     => new \DateTime($dateFrom),
             'to'       => $end->modify("+14 days")
         ];
+
+        // If we have a buffer period, we need to include closed loans to add the buffer
+        if ($bufferHours > 0) {
+            $filter['statuses'] = ["RESERVED", "ACTIVE", "OVERDUE", "CLOSED"];
+        }
+
+        // Get the data
         $reservations = $bookingService->getBookings($filter);
 
         foreach ($reservations AS $reservation) {
@@ -48,12 +57,17 @@ class ItemBookingsController extends Controller
                 $color = '#39cccc';
             } else if ($statusName == 'RESERVED') {
                 $color = '#ff851b';
+            } else if ($statusName == 'CLOSED') {
+                $color = '#cccccc';
             }
 
             if (in_array($reservation->getLoan()->getStatus(), [Loan::STATUS_ACTIVE, Loan::STATUS_OVERDUE])) {
                 if ($reservation->getCheckedInAt() != null) {
-                    // even though the loan is outstanding, the item has been checked in
-                    continue;
+                    // Even though the loan is open, the item has been checked in
+                    // If we have a buffer, we still need to include it
+                    if ($bufferHours == 0) {
+                        continue;
+                    }
                 }
             }
 
@@ -87,9 +101,29 @@ class ItemBookingsController extends Controller
                 'end'    => $reservation->getDueInAt()->format('Y-m-d H:i:s'),
             ];
 
-            if ($settingsService->getSettingValue('reservation_buffer')) {
-                $hours = (int)$settingsService->getSettingValue('reservation_buffer');
-                $quarantine = $reservation->getDueInAt();
+            // Add a buffer period at the start and end of each booking to show on the calendar
+            // A 'virtual booking'
+            $hours = (int)$settingsService->getSettingValue('reservation_buffer');
+            if ($hours > 0) {
+
+                // Add a buffer at the beginning if the loan is not yet running
+                if ($statusName != 'CLOSED') {
+                    $q1 = clone($reservation->getDueOutAt());
+                    $data[] = [
+                        'id'     => $reservation->getLoan()->getId(),
+                        'loanId' => $reservation->getLoan()->getId(),
+                        'loanTo' => '',
+                        'contactId' => $reservation->getLoan()->getContact()->getId(),
+                        'statusName' => "BUFFER",
+                        'title'  => "Quarantine",
+                        'color' => "#CCC",
+                        'start'  => $q1->modify("-{$hours} hours")->format('Y-m-d H:i:s'),
+                        'end'    => $reservation->getDueOutAt()->format('Y-m-d H:i:s'),
+                    ];
+                }
+
+                // Add a buffer at the end
+                $q2 = clone($reservation->getDueInAt());
                 $data[] = [
                     'id'     => $reservation->getLoan()->getId(),
                     'loanId' => $reservation->getLoan()->getId(),
@@ -98,9 +132,10 @@ class ItemBookingsController extends Controller
                     'statusName' => "BUFFER",
                     'title'  => "Quarantine",
                     'color' => "#CCC",
-                    'start'  => $quarantine->format('Y-m-d H:i:s'),
-                    'end'    => $quarantine->modify("+{$hours} hours")->format('Y-m-d H:i:s'),
+                    'start'  => $reservation->getDueInAt()->format('Y-m-d H:i:s'),
+                    'end'    => $q2->modify("+{$hours} hours")->format('Y-m-d H:i:s'),
                 ];
+
             }
 
         }

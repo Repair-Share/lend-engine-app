@@ -743,6 +743,7 @@
             }
 
             function validateLoanPeriod(itemId, timeFrom, timeTo) {
+                console.log("validateLoanPeriod AJAX call");
                 $.get( "{{ path('validate_loan_period') }}?itemId="+itemId+"&timeFrom="+timeFrom+"&timeTo="+timeTo+"&loanId="+extendLoanId, function( data ) {
                     console.log(data);
                     if (data.error) {
