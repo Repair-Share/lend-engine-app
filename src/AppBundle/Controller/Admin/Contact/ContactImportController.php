@@ -37,7 +37,7 @@ class ContactImportController extends Controller
             'label' => 'Paste tab separated data here (copy/paste from a spreadsheet)',
             'attr' => array(
                 'rows' => 20,
-                'placeholder' => 'First name, Last name, Email, Telephone, House name, Street, City, Postcode',
+                'placeholder' => 'First name, Last name, Email, Telephone, Address line 1, City, State, Postcode',
                 'data-help' => ''
             )
         ));
