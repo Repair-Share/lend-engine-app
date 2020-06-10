@@ -89,6 +89,16 @@ class UserEditController extends Controller
             // new staff, set checkboxes on by default
             $user->addRole("ROLE_ADMIN");
             $user->addRole("ROLE_SUPER_USER");
+
+            $formBuilder->add('subscribeMailChimp', CheckboxType::class, array(
+                'label' => 'Subscribe to Lend Engine feature updates and news',
+                'mapped' => false,
+                'required' => false,
+                'data' => true,
+                'attr' => array(
+                    'data-help' => ''
+                )
+            ));
         }
 
         $formBuilder->add('roles', ChoiceType::class, array(
@@ -138,9 +148,16 @@ class UserEditController extends Controller
 
             try {
                 $em->flush();
+
                 if ($sendUserEmail == true) {
                     $this->sendWelcomeEmail($user, $newPassword);
                 }
+
+                // Add to Mailchimp news for Lend Engine
+                if ( $form->has('subscribeMailChimp') && $form->get('subscribeMailChimp')->getData() == 1 ) {
+                    $this->subscribeToMailchimp($user->getName(), $user->getEmail(), $tenantService->getCompanyName(), $tenantService->getAccountCode());
+                }
+
                 $this->addFlash('success', $flashMessage);
                 return $this->redirectToRoute('users_list');
             } catch (DBALException $e) {
@@ -212,6 +229,54 @@ class UserEditController extends Controller
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
         return $randomString;
+    }
+
+    /**
+     * @param $name
+     * @param $email
+     * @param $org
+     * @param $accountCode
+     * @return bool
+     */
+    private function subscribeToMailchimp($name, $email, $org, $accountCode)
+    {
+
+        $mailChimpApiKey = $this->getParameter('mailchimp_api_key');
+        $mailChimpListId = $this->getParameter('mailchimp_list_id');
+
+        if ($name && $email && $mailChimpApiKey && $mailChimpListId) {
+
+            $mailchimp = $this->get('hype_mailchimp');
+            $mailchimp->setApiKey($mailChimpApiKey);
+            $mailchimp->setListID($mailChimpListId);
+
+            $name_parts = explode(' ', $name);
+            if (isset($name_parts[1])) {
+                $lname = $name_parts[1];
+            } else {
+                $lname = '';
+            }
+            $mergeVars = [
+                'fname' => $name_parts[0],
+                'lname' => $lname,
+                'org'   => $org,
+                'account' => $accountCode
+            ];
+
+            try {
+                $mailchimp->getList()->addMerge_vars($mergeVars)->subscribe(
+                    $email,
+                    'html',
+                    true, // double-optin
+                    true
+                );
+            } catch (\Exception $e) {
+
+            }
+
+        }
+
+        return true;
     }
 
 }

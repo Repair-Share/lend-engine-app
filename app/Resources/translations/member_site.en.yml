@@ -189,12 +189,12 @@ public_basket:
   remove_stock_items: "To create a reservation for loan items, remove stock items from your basket first."
 
 shipping:
-  title: Shipping
+  title: Delivery
   per_item: per item
   per_loan: per loan
   collect: Collect from
-  post: Send by post
-  ship_to: Items will be shipped to
+  post: Deliver / ship
+  ship_to: Items will be delivered to
   edit_address: Update address
   delivery_options: Delivery options
 

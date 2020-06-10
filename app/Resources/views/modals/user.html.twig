@@ -27,6 +27,8 @@
 
             {% if user.id %}
                 {{ form_row(form.autoPassword) }}
+            {% else %}
+                {{ form_row(form.subscribeMailChimp) }}
             {% endif %}
 
         </div>

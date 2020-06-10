@@ -130,7 +130,7 @@ class AdminLoanListDataController extends Controller
             }
 
             if ($loan->getCollectFrom() == "post") {
-                $status .= '<div style="padding:4px; font-size: 11px">POST</div>';
+                $status .= '<div style="padding:4px; font-size: 11px">DELIVER</div>';
             }
 
             // Modify UTC database times to match local time
