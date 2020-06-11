@@ -132,7 +132,7 @@ public_item:
   service_item: Service
   pickup_date_error: Items in your basket define a pickup date that clashes with the bookings for this item. You won't be able to borrow this item on the same loan.
   pickup_site_error: This item is not available from the site that the other items in your basket are due to be collected from. You won't be able to borrow this item on the same loan.
-  basket_exists: You already have items in your basket/loan, so we've set the start date for you.
+  basket_exists: You already have items in your basket/loan, so we've preset dates for you.
   account_balance_is: Account balance
   add_credit: Add credit
   pickup_at: From

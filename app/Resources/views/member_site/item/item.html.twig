@@ -135,7 +135,7 @@
             var alert_max_days = "{% trans with {'maxLoanDays': maxLoanDays} %}calendar.alert_max_loan_days{% endtrans %}";
             var alert_min_days = "{% trans with {'minLoanDays': minLoanDays} %}calendar.alert_min_loan_days{% endtrans %}";
 
-            var basketPickupTime, basketSiteFromId, basketSiteFromName;
+            var basketPickupTime, basketReturnTime, basketSiteFromId, basketSiteFromName;
             var page = $("#productMain");
             var borrowModal = $("#borrowModal");
             var extendModal = $("#extendModal");
@@ -173,6 +173,7 @@
             and tenantInformation.basket.loanRows|length > 0
             and tenantInformation.basket.collectFromSite %}
             basketPickupTime = moment("{{ tenantInformation.basket.loanRows|first.dueOutAt|date("Y-m-d H:i") }}");
+            basketReturnTime = moment("{{ tenantInformation.basket.loanRows|first.dueInAt|date("Y-m-d H:i") }}");
             basketSiteFromId = '{{ tenantInformation.basket.collectFromSite.id }}';
             basketSiteFromName = '{{ tenantInformation.basket.collectFromSite.name }}';
             hasBasket = true;
@@ -291,7 +292,7 @@
                 },
                 select: function(info) {
                     setPickup(moment(info.startStr), null, null, currentPickupSiteId, currentPickupSiteName);
-                    setReturn(moment(info.endStr), null, null, currentPickupSiteId, currentPickupSiteName);
+                    setReturn(moment(info.endStr), null, null, currentPickupSiteId, currentPickupSiteName, true);
                 },
                 selectAllow: function(info) {
                     var startOk = false;
@@ -516,7 +517,7 @@
 
                 if (calendarMode == 'extend') {
 
-                    console.log("Extending");
+                    console.log("Extending a loan");
                     if (!validateBookingPeriod(eventStart, eventEnd, siteId)) {
                         return false;
                     }
@@ -566,7 +567,7 @@
                             // No changeover time, use the end of the slot
                             selectedTime = eventEnd;
                         }
-                        setReturn(selectedTime, eventStart, eventEnd, siteId, siteName);
+                        setReturn(selectedTime, eventStart, eventEnd, siteId, siteName, true);
                     } else {
                         // We've not chosen a start date yet, user is selecting pick up
                         if (!selectedTime) {
@@ -580,7 +581,9 @@
                 }
             }
 
-            function setReturn(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName) {
+            function setReturn(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName, showModal) {
+
+                console.log("Setting return time");
 
                 var duration, days, hours;
                 bookingStartFrom = moment($("#date_from").val()+" "+$("#time_from").val()+":00");
@@ -615,7 +618,9 @@
                     timeToPicker.timepicker('option', { 'minTime': clickedSlotFrom.format("h:mma"), 'maxTime': clickedSlotTo.format("h:mma") });
                 }
 
-                borrowModal.modal();
+                if (showModal == true) {
+                    borrowModal.modal();
+                }
 
                 calculateTotalFee();
 
@@ -631,6 +636,7 @@
 
             function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName, autoSetReturn) {
 
+                console.log("Setting pickup time to "+selectedTime.format("YYYY-MM-DD HH:mm"));
                 $("#booking-help").show();
 
                 if (!validatePickupDate(selectedTime)) {
@@ -673,20 +679,27 @@
                 var pickupCell = $(".fc-bg").find("[data-date='"+selectedTime.format("YYYY-MM-DD")+"']");
                 pickupCell.html('<div class="label label-xs label-default pickup-day">'+text_pickup_day+'</div>');
 
+
+                var returnTime;
+                if (basketPickupTime) {
+                    autoSetReturn = true;
+                    returnTime = basketReturnTime;
+                } else {
+                    returnTime = moment(selectedTime);
+                    returnTime = returnTime.add(itemLoanDays, 'd');
+                }
+
                 basketPickupTime = selectedTime;
                 basketSiteFromId = siteId;
                 basketSiteFromName = siteName;
 
                 // Set the default return day based on item loan days if user has manually chosen pickup time
                 if (selectedTime && itemLoanDays > 1 && autoSetReturn == true) {
-                    var returnTime;
-                    returnTime = moment(selectedTime);
-                    returnTime = returnTime.add(itemLoanDays, 'd');
                     if (!isValidBookingTime(returnTime, siteId)) {
                         console.log("Cannot auto-set end date as there is no opening hour slot for T+"+itemLoanDays);
                     } else {
                         console.log("Auto-setting return time based on item loan period.");
-                        setReturn(returnTime, null, null, siteId, siteName);
+                        setReturn(returnTime, null, null, siteId, siteName, false);
                     }
                 }
             }
