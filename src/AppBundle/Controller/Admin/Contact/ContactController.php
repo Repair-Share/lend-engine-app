@@ -7,6 +7,7 @@ use AppBundle\Entity\Contact;
 use AppBundle\Entity\ContactFieldValue;
 use AppBundle\Entity\Note;
 use Doctrine\Common\Collections\ArrayCollection;
+use DrewM\MailChimp\MailChimp;
 use Hype\MailchimpBundle\Mailchimp\MailchimpAPIException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -245,6 +246,11 @@ class ContactController extends Controller
             }
         }
 
+        /** @var \AppBundle\Services\Apps\MailchimpService $mailchimp */
+//        Uncomment to see whether the user is subscribed to MC
+//        $mailchimp = $this->get('service.mailchimp');
+//        $m = $mailchimp->checkMemberStatus($contact);
+
         return $this->render('contact/contact.html.twig', array(
             'form' => $form->createView(),
             'title' => $pageTitle,
@@ -353,41 +359,9 @@ class ContactController extends Controller
      */
     private function mailChimpSubscribe(Contact $contact)
     {
-
-        if (!$contact->getEmail()) {
-            return true;
-        }
-
-        $apiKey = $this->get('settings')->getSettingValue('mailchimp_api_key');
-        $listId = $this->get('settings')->getSettingValue('mailchimp_default_list_id');
-        $doubleOptIn = (bool)$this->get('settings')->getSettingValue('mailchimp_double_optin');
-
-        if ($apiKey && $listId && $contact->getSubscriber() == true) {
-
-            /** @var \Hype\MailchimpBundle\Mailchimp\Mailchimp $mailchimp */
-            $mailchimp = $this->get('hype_mailchimp');
-            $mailchimp->setApiKey($apiKey);
-            $mailchimp->setListID($listId);
-
-            $mergeVars = [
-                'mc_location' => [
-                    'latitude'  => $contact->getLatitude(),
-                    'longitude' => $contact->getLongitude()
-                ],
-                'fname' => $contact->getFirstName(),
-                'lname' => $contact->getLastName()
-            ];
-
-            try {
-                $mailchimp->getList()->addMerge_vars($mergeVars)->subscribe($contact->getEmail(), 'html', $doubleOptIn, true);
-            } catch (\Hype\MailchimpBundle\Mailchimp\MailchimpAPIException $mailchimpException) {
-                $this->addFlash('error', 'Failed to subscribe to Mailchimp:' . $mailchimpException->getMessage());
-            } catch (\Exception $generalException) {
-                $this->addFlash('error', 'Failed to subscribe to Mailchimp:' . $generalException->getMessage());
-            }
-
-        }
-
+        /** @var \AppBundle\Services\Apps\MailchimpService $mailchimp */
+        $mailchimp = $this->get('service.mailchimp');
+        $mailchimp->updateMember($contact);
         return true;
     }
 

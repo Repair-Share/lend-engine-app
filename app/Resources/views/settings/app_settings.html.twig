@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Settings &raquo; {{ appInfo.code }}{% endblock %}
+
+{% block pageTitle %}Settings &raquo; Apps &raquo; {{ appInfo.name }}{% endblock %}
+
+{% block primaryButton %}{% endblock %}
+
+{% block body %}
+
+    <style>
+        h2 { margin: 20px 0 10px; padding-bottom: 10px; border-bottom: 2px solid #3b3b3b; font-size: 20px; }
+    </style>
+
+    <div class="row" id="settings-settings">
+
+        <div class="col-md-3 col-lg-2">
+            {{ knp_menu_render('settingsMenu') }}
+        </div>
+
+        <div class="col-md-9 col-lg-8">
+            <h2>{{ appInfo.name }} settings</h2>
+
+            <div class="page-help">
+                {{ appInfo.description }}
+            </div>
+
+            {{ form_start(form) }}
+            {{ form_end(form) }}
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

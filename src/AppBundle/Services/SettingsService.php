@@ -351,9 +351,6 @@ class SettingsService
 
             'loan_terms', // terms and conditions
 
-            'mailchimp_api_key',
-            'mailchimp_default_list_id',
-            'mailchimp_double_optin',
             'enable_waiting_list',
             'google_tracking_id',
 

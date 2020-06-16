@@ -49,6 +49,10 @@ class ItemLocationController extends Controller
                 $active = "";
             }
 
+            if ($i->getId() == 1) {
+                continue;
+            }
+
             $tableRows[] = array(
                 'id' => $i->getId(),
                 'class' => $i->getIsActive() ? 'item-active' : 'item-inactive',

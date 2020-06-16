@@ -49,29 +49,9 @@ class RegistrationController extends Controller
             $session->set('_locale', $locale);
         }
 
-        $apiKey = $this->container->get('settings')->getSettingValue('mailchimp_api_key');
-        $listId = $this->container->get('settings')->getSettingValue('mailchimp_default_list_id');
-        $doubleOptIn = $this->container->get('settings')->getSettingValue('mailchimp_double_optin');
-
-        $addedToMailchimp = false;
-        if ($apiKey && $listId && $contact->getSubscriber() == true) {
-
-            $mailchimp = $this->get('hype_mailchimp');
-            $mailchimp->setApiKey($apiKey);
-            $mailchimp->setListID($listId);
-
-            $mergeVars = [
-                'mc_location' => [
-                    'latitude'  => $contact->getLatitude(),
-                    'longitude' => $contact->getLongitude()
-                ],
-                'fname' => $contact->getFirstName(),
-                'lname' => $contact->getLastName()
-            ];
-            $mailchimp->getList()->addMerge_vars($mergeVars)->subscribe($contact->getEmail(), 'html', $doubleOptIn, true);
-
-            $addedToMailchimp = true;
-        }
+        /** @var \AppBundle\Services\Apps\MailchimpService $mailchimp */
+        $mailchimp = $this->get('service.mailchimp');
+        $mailchimp->updateMember($contact);
 
         // To deal repeat visits to the URL, only sign up once
         $addedMembershipType = false;
@@ -93,10 +73,6 @@ class RegistrationController extends Controller
         $ownerName = $tenantService->getAccountName();
 
         $extra = '';
-        if ($addedToMailchimp) {
-            $extra .= PHP_EOL.'The user was added to your Mailchimp email list.';
-        }
-
         if ($addedMembershipType) {
             $extra .= PHP_EOL."The user was subscribed as a {$addedMembershipType} member.";
         }

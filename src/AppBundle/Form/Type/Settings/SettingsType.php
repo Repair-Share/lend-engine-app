@@ -330,38 +330,6 @@ EOT;
             )
         ));
 
-        /** MAILCHIMP */
-
-        $builder->add('mailchimp_api_key', TextType::class, array(
-            'label' => 'Mailchimp API key',
-            'data' => $dbData['mailchimp_api_key'],
-            'required' => false,
-            'attr' => array(
-                'placeholder' => 'eg 734939787364503d45xfibi34-us13',
-                'data-help' => 'Mailchimp Profile > Extras > API keys',
-            )
-        ));
-
-        $builder->add('mailchimp_default_list_id', TextType::class, array(
-            'label' => 'Mailchimp list ID',
-            'data' => $dbData['mailchimp_default_list_id'],
-            'required' => false,
-            'attr' => array(
-                'placeholder' => 'eg e82ca95cfd',
-                'data-help' => 'Mailchimp edit list > Settings > Name & default > List ID',
-            )
-        ));
-
-        $builder->add('mailchimp_double_optin', ToggleType::class, array(
-            'expanded' => true,
-            'label' => 'Send double opt-in email when adding email address to Mailchimp',
-            'data' => (int)$dbData['mailchimp_double_optin'],
-            'required' => true,
-            'attr' => [
-                'class' => 'input-100',
-            ]
-        ));
-
         $builder->add('enable_waiting_list', ToggleType::class, array(
             'expanded' => true,
             'label' => 'Enable waiting list',

@@ -1,0 +1,65 @@
+{# app/Resources/views/settings/settings.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block pageTitle %}Settings{% endblock %}
+
+{% block primaryButton %}{% endblock %}
+
+{% block body %}
+
+    <style>
+        h2 { margin: 20px 0 10px; padding-bottom: 10px; border-bottom: 2px solid #3b3b3b; font-size: 20px; }
+    </style>
+
+    <div class="row" id="settings-settings">
+
+        <div class="col-md-3 col-lg-2">
+            {{ knp_menu_render('settingsMenu') }}
+        </div>
+
+        <div class="col-md-9 col-lg-8">
+
+            <h2>Apps and integrations</h2>
+
+            <div class="page-help">
+                We are moving integrations and connections functionality into "Apps", starting with Mailchimp.
+                Over the next few weeks you'll see Stripe.com payment processing, SMS alerts, email automation,
+                Zapier, and others appearing in here. Just get in touch with us if you'd like to see an integration or app.
+                <br><br>
+                Apps are currently only built by the Lend Engine team, we don't have any near-term plans to allow third
+                party development of apps, however we are building an API. Get in touch if this is something you might
+                like to use.
+            </div>
+
+            <div class="row">
+                {% for app in apps %}
+                    <div class="col-md-4" style="text-align: center;">
+                        <img src="/logos/{{ app.code }}.png" style="height: 80px;">
+                        <div>
+                            {{ app.description }}
+                        </div>
+                        <br>
+                        <div>
+                            {% if app.status == 'active' %}
+                                <a href="{{ path('app_settings', {code: app.code}) }}" class="btn btn-primary">Settings</a>
+                                <a href="{{ path('app_deactivate', {code: app.code}) }}" class="btn btn-warning">Turn off</a>
+                            {% elseif app.status == 'inactive' %}
+                                <a href="{{ path('app_install', {code: app.code}) }}" class="btn btn-default">Turn on</a>
+                            {% else %}
+                                <a href="{{ path('app_install', {code: app.code}) }}" class="btn btn-default">Install</a>
+                            {% endif %}
+                        </div>
+                        <br>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

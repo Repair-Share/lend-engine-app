@@ -285,11 +285,24 @@ services:
             - "@service_container"
             - "@twig"
 
+    ## APPS ##
+
+    service.apps:
+        class: AppBundle\Services\Apps\AppService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@settings"
+
     service.stripe:
         class: AppBundle\Services\StripeHandler
         arguments:
             - "@doctrine.orm.entity_manager"
             - "@settings"
+
+    service.mailchimp:
+        class: AppBundle\Services\Apps\MailchimpService
+        arguments:
+            - "@service.apps"
 
     ## REPORT SERVICES
 
@@ -342,8 +355,6 @@ services:
             - "@service_container"
             - "@security.token_storage"
         tags:
-            - { name: knp_menu.menu_builder, method: itemsMenu, alias: itemsMenu }
-            - { name: knp_menu.menu_builder, method: itemsMenuStacked, alias: itemsMenuStacked }
             - { name: knp_menu.menu_builder, method: pagesMenu, alias: pagesMenu }
             - { name: knp_menu.menu_builder, method: pagesMenuStacked, alias: pagesMenuStacked }
             - { name: knp_menu.menu_builder, method: adminMenu, alias: adminMenu }

@@ -119,6 +119,7 @@ class MenuBuilder
 
         $this->menu->addChild('General settings', array('route' => 'settings'));
         $this->menu->addChild('Billing', array('route' => 'billing'));
+        $this->menu->addChild('Apps & integrations', array('route' => 'app_list'));
         $this->menu->addChild('Sites & opening hours', array('route' => 'site_list'));
         $this->menu->addChild('Locations', array('route' => 'location_list'));
 
@@ -134,7 +135,7 @@ class MenuBuilder
         }
         $this->menu->addChild('Staff / team', array('route' => 'users_list'));
 
-        $this->menu->addChild('Item sections <label class="label bg-orange">New</label>',
+        $this->menu->addChild('Item sections',
             [
                 'route' => 'section_list',
                 'extras' => ['safe_label' => true]
