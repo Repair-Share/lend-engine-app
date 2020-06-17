@@ -114,6 +114,9 @@ class AppService
                 case "stripe":
                     $appData = $this->getStripe();
                     break;
+                case "twilio":
+                    $appData = $this->getTwilio();
+                    break;
                 default:
                     throw new \Exception("App {$code} not found");
             }
@@ -161,6 +164,7 @@ class AppService
     {
         $apps = [];
         $apps['mailchimp'] = $this->getMailChimp();
+        $apps['twilio'] = $this->getTwilio();
 //        $apps['stripe'] = $this->getStripe();
 
         return $apps;
@@ -168,12 +172,17 @@ class AppService
 
     private function getMailChimp()
     {
+        $description = <<<EOT
+Send your Lend Engine contacts over to Mailchimp for bulk emailing. New contacts added via admin or self-registration are sent to Mailchimp, 
+as well as existing contacts updated by admin in Lend Engine.
+EOT;
+
         return [
             'code' => 'mailchimp',
             'status' => $this->getStatus('mailchimp'),
             'type' => 'crm_sync',
             'name' => "Mailchimp",
-            'description' => "Sync Lend Engine contacts with Mailchimp",
+            'description' => $description,
             'settings' => [
                 'api_key' => [
                     'title' => 'API key',
@@ -260,25 +269,61 @@ class AppService
 
     private function getTwilio()
     {
+        $description = <<<EOT
+Send automated SMS reminders and notifications using Twilio.
+Choose which notifications are sent by SMS (email automation is also required), and the content of the message. 
+Payment for SMS is made directly to Twilio via your Twilio account.
+EOT;
+
         return [
             'code' => 'twilio',
             'status' => $this->getStatus('twilio'),
             'type' => 'sms',
             'name' => "Twilio SMS",
-            'description' => "Send SMS using Twilio",
+            'description' => $description,
             'settings' => [
-                'api_key' => [
-                    'title' => 'API key',
+                'account_id' => [
+                    'title' => 'Account ID',
                     'type' => 'text',
                     'data' => '',
                     'help' => ''
                 ],
-                'list_id' => [
-                    'title' => 'API token',
+                'auth_token' => [
+                    'title' => 'Auth token',
                     'type' => 'text',
                     'data' => '',
                     'help' => ''
-                ]
+                ],
+                'number' => [
+                    'title' => 'Outgoing number',
+                    'type' => 'text',
+                    'data' => '',
+                    'help' => 'As set up in your Twilio account, e.g. "+447447325333"'
+                ],
+                'loan_reminder_text' => [
+                    'title' => 'Loan return reminder text',
+                    'type' => 'text',
+                    'data' => '',
+                    'help' => 'Add text to send a reminder message before the loan is due back.<br>Max 140 characters.'
+                ],
+                'loan_reminder_hours' => [
+                    'title' => 'Loan return reminder hours',
+                    'type' => 'text',
+                    'data' => '',
+                    'help' => 'How many hours before the loan is due back.'
+                ],
+                'reservation_collect_text' => [
+                    'title' => 'Reservation collection reminder text',
+                    'type' => 'text',
+                    'data' => '',
+                    'help' => 'Add text to send a reminder message before a reservation is due to be collected.<br>Max 140 characters.'
+                ],
+                'reservation_collect_hours' => [
+                    'title' => 'Reservation collection reminder hours',
+                    'type' => 'text',
+                    'data' => '',
+                    'help' => 'How many hours before the reservation is due to be collected.'
+                ],
             ]
         ];
     }

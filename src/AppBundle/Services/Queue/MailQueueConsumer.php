@@ -15,6 +15,7 @@ class MailQueueConsumer
     /** @var Mailer */
     private $mailer;
 
+    /** @var array */
     public $errors = [];
 
     public function __construct(LoggerInterface $logger, Mailer $mailer)
@@ -31,33 +32,23 @@ class MailQueueConsumer
     public function execute(AMQPMessage $msg)
     {
         $body = $msg->getBody();
-        $mail = json_decode($body, true);
+        $message = json_decode($body, true);
 
-        if (!$this->validateMessage($mail)) {
-            return true;
+        // Connect to client
+
+        if (isset($message['message']) && isset($message['postmarkApiKey'])) {
+            // Send email
+            $this->mailer->send($message['postmarkApiKey'], $message);
+        } else if (isset($message['sms_body'])) {
+            // Send SMS
+
         }
-
-        $this->mailer->send($mail['postmarkApiKey'], $mail);
 
         return true;
 
         // true = ack and remove
         // false = requeue
         // 0 redeliver
-    }
-
-    /**
-     * @param $mail
-     * @return bool
-     * @throws \Exception
-     */
-    private function validateMessage($mail)
-    {
-        if (!isset($mail['message'])) {
-            return false;
-        }
-
-        return true;
     }
 
 }

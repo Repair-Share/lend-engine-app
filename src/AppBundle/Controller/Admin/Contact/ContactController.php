@@ -255,6 +255,11 @@ class ContactController extends Controller
 //        $mailchimp = $this->get('service.mailchimp');
 //        $m = $mailchimp->checkMemberStatus($contact);
 
+        // Uncomment to test SMS sending
+        /** @var \AppBundle\Services\Apps\TwilioService $twilio */
+//        $twilio = $this->get('service.twilio');
+//        $twilio->sendSms($contact->getTelephone(), "Test SMS");
+
         return $this->render('contact/contact.html.twig', array(
             'form' => $form->createView(),
             'title' => $pageTitle,

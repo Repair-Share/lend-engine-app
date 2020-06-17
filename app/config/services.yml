@@ -304,6 +304,12 @@ services:
         arguments:
             - "@service.apps"
 
+    service.twilio:
+        class: AppBundle\Services\Apps\TwilioService
+        arguments:
+            - "@service.apps"
+            - "@settings"
+
     ## REPORT SERVICES
 
     report.items:

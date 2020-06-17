@@ -187,7 +187,7 @@
             <div class="col-md-12 table-responsive">
                 <table cellspacing="0" class="table table-hover table-striped has-actions" id="data-table-inventory">
                     <thead>
-                    <th style="width:10px;"><input type="checkbox" id="select-all"></th>
+                    <th style="width:10px;" class="hidden-print"><input type="checkbox" id="select-all" class="hidden-print"></th>
                     <th>Product</th>
                     <th>Location</th>
                     {% for field in customFields %}
@@ -209,6 +209,7 @@
         $(document).ready(function() {
             var itemTable = $('#data-table-inventory');
             var dataTable = itemTable.DataTable({
+                dom: 'lBfrtip',
                 ordering: false,
                 serverSide: true,
                 autoWidth: true,
@@ -235,7 +236,7 @@
                     $('[data-toggle="tooltip"]').tooltip();
                 },
                 "columns": [
-                    null,
+                    { className: "hidden-print" },
                     null,
                     null,
                 {% for field in customFields %}
@@ -244,6 +245,23 @@
                     {% endif %}
                 {% endfor %}
                     { className: "hidden-print" }
+                ],
+                buttons: [
+                    { extend: 'copy', className: 'btn btn-default btn-xs'},
+                    { extend: 'csv', className: 'btn btn-default btn-xs' },
+                    {
+                        extend: 'print',
+                        className: 'btn btn-default btn-xs',
+                        exportOptions: {
+                            stripNewlines: false,
+                            stripHtml: false,
+                            columns: ':visible'
+                        },
+                        customize: function ( win ) {
+                            $(win.document.body).find('table').addClass('compact').css('font-size','inherit');
+                            $(win.document.body).find('h1').css('font-size','14px');
+                        }
+                    }
                 ]
             });
 
@@ -330,8 +348,6 @@
             $(".batchSelectWrapper").hide();
             $("#batchCommit").text("Add to kit").fadeIn();
             {% endif %}
-
-            dataTable.buttons().container().appendTo('#data-table-inventory_length').css('padding-right', '20px');
 
             $("#data-table-inventory_filter label input").css("height", "34px");
             $("div.dataTables_wrapper div.dataTables_filter input").css("text-align", "left");

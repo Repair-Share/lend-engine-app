@@ -182,7 +182,7 @@ class ItemListDataController extends Controller
             }
 
             $linkHtml = '
-<div class="dropdown">
+<div class="dropdown hidden-print">
   <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Action
   <span class="caret"></span></button>
   <ul class="dropdown-menu pull-right">
@@ -207,7 +207,7 @@ class ItemListDataController extends Controller
             );
 
             // Add the standard columns
-            $columns[] = '<input type="checkbox" class="row-checkbox" data-id="'.$item->getId().'" name="itemId[]" value="'.$item->getId().'">';
+            $columns[] = '<input type="checkbox" class="row-checkbox hidden-print" data-id="'.$item->getId().'" name="itemId[]" value="'.$item->getId().'">';
             $columns[] = $itemHtml;
 
             // Location / assignment
