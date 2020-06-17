@@ -310,6 +310,11 @@ class CheckOutService
             'item_ids' => [$itemId]
         ];
 
+        // If we have a buffer period, we need to include closed loans to add the buffer
+        if ($bufferPeriod > 0) {
+            $filter['statuses'] = ["RESERVED", "ACTIVE", "OVERDUE", "CLOSED"];
+        }
+
         $reservationLoanRows = $this->reservationService->getBookings($filter);
 
         // Find ALL reservations for this item
@@ -321,8 +326,24 @@ class CheckOutService
                 continue;
             }
 
+            if (in_array($reservation->getLoan()->getStatus(), [Loan::STATUS_ACTIVE, Loan::STATUS_OVERDUE])) {
+                if ($reservation->getCheckedInAt() != null) {
+                    // Even though the loan is open, the item has been checked in
+                    // If we have a buffer, we still need to include it
+                    // But if we don't have buffer hours, we can skip checked in items
+                    if ($bufferPeriod == 0) {
+                        continue;
+                    }
+                }
+            }
+
             $dueOutAt = $reservation->getDueOutAt()->setTimezone($tz);
-            $dueInAt  = $reservation->getDueInAt()->setTimezone($tz);
+
+            if ($reservation->getCheckedInAt()) {
+                $dueInAt  = $reservation->getCheckedInAt()->setTimezone($tz);
+            } else {
+                $dueInAt  = $reservation->getDueInAt()->setTimezone($tz);
+            }
 
             // Formatted for easier logic comparison
             $dueOutAt_f  = $dueOutAt->format("Y-m-d H:i:s");

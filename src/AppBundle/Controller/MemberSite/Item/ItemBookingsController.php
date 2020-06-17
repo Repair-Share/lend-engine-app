@@ -140,7 +140,7 @@ class ItemBookingsController extends Controller
                     'loanId' => $reservation->getLoan()->getId(),
                     'loanTo' => '',
                     'contactId' => $reservation->getLoan()->getContact()->getId(),
-                    'statusName' => "BUFFER for ".$reservation->getLoan()->getId(),
+                    'statusName' => "BUFFER",
                     'title'  => "Quarantine",
                     'color' => "#CCC",
                     'start'  => $q2->format('Y-m-d H:i:s'),
