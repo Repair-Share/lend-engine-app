@@ -175,7 +175,7 @@ class AdminLoanListDataController extends Controller
             }
 
             $linkHtml = '
-<div class="dropdown">
+<div class="dropdown hidden-print">
   <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
   Action
   <span class="caret"></span>

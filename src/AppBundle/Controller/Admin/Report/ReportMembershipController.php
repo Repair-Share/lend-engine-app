@@ -15,6 +15,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 class ReportMembershipController extends Controller
 {
+    protected $dateFrom;
+
+    protected $dateTo;
+
     /**
      * Page which holds an empty table (results via AJAX)
      * @Route("admin/report/report_memberships", name="membership_list")
@@ -22,11 +26,17 @@ class ReportMembershipController extends Controller
     public function membershipReport(Request $request)
     {
         $searchString = $request->get('search');
+
+        $this->setDateRange($request);
+
         return $this->render(
             'membership/membership_list.html.twig',
-            array(
-                'searchString' => $searchString
-            )
+            [
+                'searchString' => $searchString,
+                'date_from' => $this->dateFrom,
+                'date_to' => $this->dateTo,
+                'memberType' => $request->get('memberType')
+            ]
         );
     }
 
@@ -49,7 +59,18 @@ class ReportMembershipController extends Controller
         /** @var \AppBundle\Repository\MembershipRepository $repo */
         $repo = $em->getRepository('AppBundle:Membership');
 
-        $subscriptions = $repo->search($start, $length, $searchString);
+        // Set date range
+        $this->setDateRange($request);
+
+        // Set up filters
+        $filter = [
+            'search'    => $searchString,
+            'memberType' => $request->get('memberType'),
+            'date_from' => $this->dateFrom,
+            'date_to'   => $this->dateTo,
+        ];
+
+        $subscriptions = $repo->search($start, $length, $filter);
         $totalRecords  = $repo->countAll();
 
         foreach ($subscriptions AS $i) {
@@ -97,6 +118,27 @@ class ReportMembershipController extends Controller
             200,
             array('Content-Type' => 'application/json')
         );
+    }
+    /**
+     * @param Request $request
+     */
+    private function setDateRange(Request $request)
+    {
+        if ($request->get('date_from')) {
+            $date_from = $request->get('date_from');
+        } else {
+            $dateFrom = new \DateTime("-1 year");
+            $date_from = $dateFrom->format("Y-m-d");
+        }
+        if ($request->get('date_to')) {
+            $date_to = $request->get('date_to');
+        } else {
+            $dateTo = new \DateTime("+1 year");
+            $date_to = $dateTo->format("Y-m-d");
+        }
+
+        $this->dateFrom = $date_from;
+        $this->dateTo = $date_to;
     }
 
 }

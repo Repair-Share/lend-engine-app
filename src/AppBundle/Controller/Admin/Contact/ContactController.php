@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Admin\Contact;
 use AppBundle\Entity\Child;
 use AppBundle\Entity\Contact;
 use AppBundle\Entity\ContactFieldValue;
+use AppBundle\Entity\Membership;
 use AppBundle\Entity\Note;
 use Doctrine\Common\Collections\ArrayCollection;
 use DrewM\MailChimp\MailChimp;
@@ -245,6 +246,9 @@ class ContactController extends Controller
                 }
             }
         }
+
+        // Expire any membership that slipped through the automated expiry scheduler
+        $contactService->recalculateBalance($contact);
 
         /** @var \AppBundle\Services\Apps\MailchimpService $mailchimp */
 //        Uncomment to see whether the user is subscribed to MC

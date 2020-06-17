@@ -1,3 +1,13 @@
 body {
     font-size: 10px;
 }
+
+a[href]:after {
+    content: none !important;
+}
+
+@media print {
+    a[href]:after {
+        content: none !important;
+    }
+}

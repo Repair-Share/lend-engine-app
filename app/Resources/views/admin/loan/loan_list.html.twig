@@ -128,7 +128,7 @@
                 <th>From</th>
                 <th>To</th>
                 <th>Fee</th>
-                <th></th>
+                <th class="hidden-print"></th>
                 </thead>
             </table>
         </div>
@@ -175,6 +175,7 @@
             datePickerField.data('dateRangePicker').setDateRange(dateFrom, dateTo, true);
 
             var dataTable = $('#data-table-loans').DataTable({
+                dom: 'lBfrtip',
                 ordering: true,
                 serverSide: true,
                 autoWidth: false,
@@ -209,12 +210,27 @@
                     null,
                     null,
                     null,
-                    { "orderable": false }
+                    { "orderable": false, className: "hidden-print" }
+                ],
+                buttons: [
+                    { extend: 'copy', className: 'btn btn-default btn-xs'},
+                    { extend: 'csv', className: 'btn btn-default btn-xs' },
+                    {
+                        extend: 'print',
+                        className: 'btn btn-default btn-xs',
+                        exportOptions: {
+                            stripNewlines: false,
+                            stripHtml: false,
+                            columns: ':visible'
+                        },
+                        customize: function ( win ) {
+                            $(win.document.body).find('table').addClass('compact').css('font-size','inherit');
+                            $(win.document.body).find('h1').css('font-size','14px');
+                        }
+                    }
                 ],
                 "order": [[ 0, "desc" ]]
             });
-
-            dataTable.buttons().container().appendTo('#data-table-loans_length').css('padding-right', '20px');
 
             $("#data-table-loans_filter label input").css("height", "34px");
             $("#data-table-loans_filter label input").attr("placeholder", "Contact, item or loan ID");

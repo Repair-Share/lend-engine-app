@@ -12,13 +12,12 @@ class MembershipRepository extends \Doctrine\ORM\EntityRepository
 {
 
     /**
-     * This function gets the data required to feed the contact list DataTable via AJAX
-     * @param $search
      * @param $start
      * @param $length
-     * @return array
+     * @param $filter
+     * @return mixed
      */
-    public function search($start, $length, $search)
+    public function search($start, $length, $filter)
     {
         $repository = $this->getEntityManager()->getRepository('AppBundle:Membership');
 
@@ -27,13 +26,33 @@ class MembershipRepository extends \Doctrine\ORM\EntityRepository
         $builder->leftJoin('s.contact', 'c');
         $builder->leftJoin('s.membershipType', 'mt');
 
-        if ($search) {
+        if (isset($filter['search']) && $filter['search']) {
             $builder->andWhere('c.firstName LIKE :string');
             $builder->orWhere('c.lastName LIKE :string');
             $builder->orWhere('c.email LIKE :string');
             $builder->orWhere('s.status LIKE :string');
             $builder->orWhere('mt.name LIKE :string');
-            $builder->setParameter('string', '%'.$search.'%');
+            $builder->setParameter('string', '%'.$filter['search'].'%');
+        }
+
+        if (isset($filter['memberType']) && $filter['memberType']) {
+            if ($filter['memberType'] == 'expired') {
+                $builder->andWhere('c.activeMembership IS NULL');
+                $builder->andWhere("s.status = 'EXPIRED'");
+            } else if ($filter['memberType'] == 'active') {
+                $builder->andWhere('c.activeMembership IS NOT NULL');
+                $builder->andWhere("s.status = 'ACTIVE'");
+            }
+        }
+
+        if (isset($filter['date_from']) && $filter['date_from']) {
+            $builder->andWhere('s.expiresAt >= :dateFrom');
+            $builder->setParameter('dateFrom', $filter['date_from'].' 00:00:00');
+        }
+
+        if (isset($filter['date_to']) && $filter['date_to']) {
+            $builder->andWhere('s.expiresAt <= :dateTo');
+            $builder->setParameter('dateTo', $filter['date_to'].' 23:59:59');
         }
 
         $builder->setFirstResult($start);
@@ -64,7 +83,7 @@ class MembershipRepository extends \Doctrine\ORM\EntityRepository
 
     /**
      * @return array|bool
-     * Called from update route
+     * Called from update route and in scheduled membership expiry
      */
     public function getExpiredMemberships()
     {

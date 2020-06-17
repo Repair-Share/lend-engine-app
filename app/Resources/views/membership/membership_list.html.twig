@@ -12,6 +12,37 @@
 {% endblock %}
 
 {% block body %}
+
+    <div class="row">
+        <div id="report-filter">
+            <form method="GET">
+                <div class="col-md-11">
+                    <div class="row">
+                        <div class="col-md-4 form-group">
+                            <label>Expiry date</label>
+                            <input type="text" id="date_picker" class="form-control report-date-picker">
+                            <input type="hidden" name="date_from" id="date_from" value="{{ date_from }}">
+                            <input type="hidden" name="date_to" id="date_to" value="{{ date_to }}">
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label>Member type</label>
+                            <select class="form-control" id="memberType" name="memberType">
+                                <option value="">All</option>
+                                <option value="active" {% if memberType == 'active' %}selected{% endif %}>Active members</option>
+                                <option value="expired" {% if memberType == 'expired' %}selected{% endif %}>Expired members</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn bg-green pull-right form-control">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-12 table-responsive">
             <table cellspacing="0" class="table table-hover table-striped has-actions" id="data-table-membership">
@@ -32,30 +63,11 @@
 
 {% block pagejs %}
     <script>
-        // The report needs more updates to work nicely with export button
-        $(document).ready(function() {
-            var dataTable = $('#data-table-membership').DataTable({
-                ordering: false,
-                serverSide: true,
-                autoWidth: false,
-                pageLength: 50,
-                ajax: "{{ path('dt_membership_list') }}",
-                "oSearch": {
-                    "sSearch": "{{ searchString }}"
-                },
-                "language": {
-                    "infoFiltered": ""
-                },
-                buttons: [
-                    {
-                        extend: 'csv',
-                        text: 'Export CSV'
-                    }
-                ]
-            });
-
-            $("#data-table-membership_filter label input").attr("placeholder", "Name, Email, Status, Type");
-            $("#data-table-membership_filter label input").css("width", "220px");
-        });
+        // For setting up the datepicker:
+        var dateFrom = "{{ date_from|date('M d Y') }}";
+        var dateTo = "{{ date_to|date('M d Y') }}";
+        var dFrom = "{{ date_from }}";
+        var dTo = "{{ date_to }}";
     </script>
+    <script src="/js/pages/report.js"></script>
 {% endblock %}

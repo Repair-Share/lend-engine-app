@@ -44,13 +44,18 @@ $(document).ready(function(){
             { className: "sum" }
         ],
         buttons: [
+            { extend: 'copy', className: 'btn btn-default btn-xs'},
+            { extend: 'csv', className: 'btn btn-default btn-xs' },
             {
-                extend: 'csv',
-                text: 'Export CSV'
+                extend: 'print',
+                className: 'btn btn-default btn-xs',
+                customize: function ( win ) {
+                    $(win.document.body).find('table').addClass('compact').css('font-size','inherit');
+                    $(win.document.body).find('h1').css('font-size','14px');
+                }
             }
         ]
     });
-    dataTable.buttons().container().appendTo('#report-table_length').css('padding-right', '20px');
     dataTable.columns('.sum').every( function () {
         if ( $("#report-table").find('tr').size() > 3 ) {
             var sum = this
@@ -67,8 +72,6 @@ $(document).ready(function(){
         dom: 'lfBrtip',
         ordering: true,
         autoWidth: false,
-        "bLengthChange": false,
-        "bPaginate": true,
         pageLength: 50,
         "columns": [
             null,
@@ -80,14 +83,23 @@ $(document).ready(function(){
             null
         ],
         buttons: [
+            { extend: 'copy', className: 'btn btn-default btn-xs'},
+            { extend: 'csv', className: 'btn btn-default btn-xs' },
             {
-                extend: 'csv',
-                text: 'Export CSV'
+                extend: 'print',
+                className: 'btn btn-default btn-xs',
+                exportOptions: {
+                    stripNewlines: false,
+                    stripHtml: false
+                },
+                customize: function ( win ) {
+                    $(win.document.body).find('table').addClass('compact').css('font-size','inherit');
+                    $(win.document.body).find('h1').css('font-size','14px');
+                }
             }
         ],
         "order": [[ 0, "desc" ]]
     });
-    paymentsTable.buttons().container().appendTo('#payment-report-table_length').css('padding-right', '20px');
 
     // Sum item loans columns
     var loanedItemsTable = $('#report-items-by-custom-field').DataTable({
@@ -102,9 +114,15 @@ $(document).ready(function(){
             { className: "sum" }
         ],
         buttons: [
+            { extend: 'copy', className: 'btn btn-default btn-xs'},
+            { extend: 'csv', className: 'btn btn-default btn-xs' },
             {
-                extend: 'csv',
-                text: 'Export CSV'
+                extend: 'print',
+                className: 'btn btn-default btn-xs',
+                customize: function ( win ) {
+                    $(win.document.body).find('table').addClass('compact').css('font-size','inherit');
+                    $(win.document.body).find('h1').css('font-size','14px');
+                }
             }
         ]
     });
@@ -135,9 +153,15 @@ $(document).ready(function(){
             { className: "sum" }
         ],
         buttons: [
+            { extend: 'copy', className: 'btn btn-default btn-xs'},
+            { extend: 'csv', className: 'btn btn-default btn-xs' },
             {
-                extend: 'csv',
-                text: 'Export CSV'
+                extend: 'print',
+                className: 'btn btn-default btn-xs',
+                customize: function ( win ) {
+                    $(win.document.body).find('table').addClass('compact').css('font-size','inherit');
+                    $(win.document.body).find('h1').css('font-size','14px');
+                }
             }
         ]
     });
@@ -171,9 +195,15 @@ $(document).ready(function(){
             { className: "sum" }
         ],
         buttons: [
+            { extend: 'copy', className: 'btn btn-default btn-xs'},
+            { extend: 'csv', className: 'btn btn-default btn-xs' },
             {
-                extend: 'csv',
-                text: 'Export CSV'
+                extend: 'print',
+                className: 'btn btn-default btn-xs',
+                customize: function ( win ) {
+                    $(win.document.body).find('table').addClass('compact').css('font-size','inherit');
+                    $(win.document.body).find('h1').css('font-size','14px');
+                }
             }
         ]
     });
@@ -189,18 +219,61 @@ $(document).ready(function(){
     } );
 
 
+    // --- MEMBERSHIP REPORT ---
 
-    var nonLoanedItemsTable = $('#report-non-loaned-items-table').DataTable({
+    $('#data-table-membership').DataTable({
+        dom: 'lfBrtip',
+        ordering: false,
+        serverSide: true,
+        autoWidth: false,
+        pageLength: 50,
+        ajax: "/admin/dt/membership/list?date_from="+dFrom+"&date_to="+dTo+"&memberType="+$("#memberType").val(),
+        "oSearch": {
+            "sSearch": ""
+        },
+        "language": {
+            "infoFiltered": ""
+        },
+        buttons: [
+            { extend: 'copy', className: 'btn btn-default btn-xs'},
+            { extend: 'csv', className: 'btn btn-default btn-xs' },
+            {
+                extend: 'print',
+                className: 'btn btn-default btn-xs',
+                customize: function ( win ) {
+                    $(win.document.body).find('table').addClass('compact').css('font-size','inherit');
+                    $(win.document.body).find('h1').css('font-size','14px');
+                }
+            }
+        ]
+    });
+
+    $("#data-table-membership_filter label input").attr("placeholder", "Name, Email, Status, Type");
+    $("#data-table-membership_filter label input").css("width", "220px");
+
+    // --- Non-loaned items report ---
+
+    $('#report-non-loaned-items-table').DataTable({
         dom: 'lfBrtip',
         ordering: true,
         autoWidth: false,
-        "bLengthChange": false,
-        "bPaginate": true,
+        // "bLengthChange": false,
+        // "bPaginate": true,
         pageLength: 50,
         buttons: [
+            { extend: 'copy', className: 'btn btn-default btn-xs'},
+            { extend: 'csv', className: 'btn btn-default btn-xs' },
             {
-                extend: 'csv',
-                text: 'Export CSV'
+                extend: 'print',
+                className: 'btn btn-default btn-xs',
+                exportOptions: {
+                    stripNewlines: false,
+                    stripHtml: false
+                },
+                customize: function ( win ) {
+                    $(win.document.body).find('table').addClass('compact').css('font-size','inherit');
+                    $(win.document.body).find('h1').css('font-size','14px');
+                }
             }
         ]
     });

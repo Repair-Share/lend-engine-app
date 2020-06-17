@@ -200,28 +200,39 @@ class ContactService
     }
 
     /**
+     * Used to update contact data that may have been missed in a scheduled event,
+     * Or update when saving a contact
      * @param Contact $contact
      * @return bool
      */
     public function recalculateBalance(Contact $contact)
     {
         $builder = $this->em->getRepository('AppBundle:Payment')->createQueryBuilder('p');
-
         $builder->add('select', "SUM(CASE WHEN p.type = 'PAYMENT' THEN p.amount ELSE -p.amount END) AS balance");
         $builder->where('p.contact = :contact');
-
         $builder->andWhere("p.deposit IS NULL");
-
         $builder->setParameter('contact', $contact->getId());
         $query = $builder->getQuery();
         $results = $query->getResult();
         $balance = $results[0]['balance'];
-
+        if (!$balance) {
+            $balance = 0;
+        }
         $contact->setBalance($balance);
+
+        if ($membership = $contact->getActiveMembership()) {
+            if ($membership->getExpiresAt() < new \DateTime() && $membership->getStatus() == Membership::SUBS_STATUS_ACTIVE) {
+                $membership->setStatus(Membership::SUBS_STATUS_EXPIRED);
+                $contact->setActiveMembership(null);
+                $this->em->persist($membership);
+            }
+        }
+
         $this->em->persist($contact);
 
         try {
             $this->em->flush($contact);
+            $this->em->flush($membership);
         } catch (\Exception $generalException) {
 
         }

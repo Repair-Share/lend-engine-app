@@ -124,9 +124,8 @@ class ReportPaymentsController extends Controller
         if ($request->get('date_from')) {
             $date_from = $request->get('date_from');
         } else {
-            $dateFrom = new \DateTime();
-            $date_from_year = $dateFrom->format("Y");
-            $date_from = $date_from_year.'-01-01';
+            $dateFrom = new \DateTime("-6 months");
+            $date_from = $dateFrom->format("Y-m-d");
         }
         if ($request->get('date_to')) {
             $date_to = $request->get('date_to');
