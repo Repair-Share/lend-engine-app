@@ -65,6 +65,7 @@ class ItemBookingsController extends Controller
                 if ($reservation->getCheckedInAt() != null) {
                     // Even though the loan is open, the item has been checked in
                     // If we have a buffer, we still need to include it
+                    // But if we don't have buffer hours, we can skip checked in items
                     if ($bufferHours == 0) {
                         continue;
                     }
@@ -77,8 +78,13 @@ class ItemBookingsController extends Controller
             $utc = new \DateTime('now', new \DateTimeZone("UTC"));
             $offSet = $timeZone->getOffset($utc)/3600;
 
-            $i = $reservation->getDueInAt()->modify("{$offSet} hours");
-            $reservation->setDueInAt($i);
+            if ($reservation->getCheckedInAt()) {
+                $in = clone($reservation->getCheckedInAt());
+            } else {
+                $in = clone($reservation->getDueInAt());
+            }
+            $in->modify("{$offSet} hours");
+
             $o = $reservation->getDueOutAt()->modify("{$offSet} hours");
             $reservation->setDueOutAt($o);
 
@@ -87,7 +93,7 @@ class ItemBookingsController extends Controller
                 $reservation->setDueOutAt( $reservation->getLoan()->getTimeOut() );
             }
 
-            $title = $reservation->getDueOutAt()->format("jS g:i a").' to '.$reservation->getDueInAt()->format("jS g:i a");
+            $title = $reservation->getDueOutAt()->format("jS g:i a").' to '.$in->format("jS g:i a");
 
             $data[] = [
                 'id'     => $reservation->getLoan()->getId(),
@@ -98,7 +104,7 @@ class ItemBookingsController extends Controller
                 'title'  => $title,
                 'color' => $color,
                 'start'  => $reservation->getDueOutAt()->format('Y-m-d H:i:s'),
-                'end'    => $reservation->getDueInAt()->format('Y-m-d H:i:s'),
+                'end'    => $in->format('Y-m-d H:i:s'),
             ];
 
             // Add a buffer period at the start and end of each booking to show on the calendar
@@ -123,16 +129,21 @@ class ItemBookingsController extends Controller
                 }
 
                 // Add a buffer at the end
-                $q2 = clone($reservation->getDueInAt());
+                if ($reservation->getCheckedInAt()) {
+                    $q2 = clone($reservation->getCheckedInAt());
+                    $q2->modify("{$offSet} hours"); // adjust for time zone
+                } else {
+                    $q2 = clone($reservation->getDueInAt());
+                }
                 $data[] = [
                     'id'     => $reservation->getLoan()->getId(),
                     'loanId' => $reservation->getLoan()->getId(),
                     'loanTo' => '',
                     'contactId' => $reservation->getLoan()->getContact()->getId(),
-                    'statusName' => "BUFFER",
+                    'statusName' => "BUFFER for ".$reservation->getLoan()->getId(),
                     'title'  => "Quarantine",
                     'color' => "#CCC",
-                    'start'  => $reservation->getDueInAt()->format('Y-m-d H:i:s'),
+                    'start'  => $q2->format('Y-m-d H:i:s'),
                     'end'    => $q2->modify("+{$hours} hours")->format('Y-m-d H:i:s'),
                 ];
 
