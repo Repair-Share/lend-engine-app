@@ -21,9 +21,9 @@ final class Version20200616205144 extends AbstractMigration
 
         // Migrate Mailchimp
         $this->addSql("INSERT INTO app (code, installed_at, is_active) SELECT 'mailchimp', NOW(), true FROM setting where setup_key = 'mailchimp_api_key' AND setup_value != '' AND setup_value IS NOT NULL");
-        $this->addSql("INSERT INTO app_setting (app_id, setup_key, setup_value) SELECT 1, 'api_key', setup_value from setting where setup_key = 'mailchimp_api_key' AND setup_value != '' AND setup_value IS NOT NULL");
-        $this->addSql("INSERT INTO app_setting (app_id, setup_key, setup_value) SELECT 1, 'list_id', setup_value from setting where setup_key = 'mailchimp_default_list_id' AND setup_value != '' AND setup_value IS NOT NULL");
-        $this->addSql("INSERT INTO app_setting (app_id, setup_key, setup_value) SELECT 1, 'opt_in', setup_value from setting where setup_key = 'mailchimp_double_optin' AND setup_value != '' AND setup_value IS NOT NULL");
+        $this->addSql("INSERT INTO app_setting (app_id, setup_key, setup_value) SELECT 1, 'api_key', setup_value from setting where setup_key = 'mailchimp_api_key' AND setup_value != '' AND setup_value IS NOT NULL AND (SELECT a.id FROM app a WHERE a.code = 'mailchimp')  ");
+        $this->addSql("INSERT INTO app_setting (app_id, setup_key, setup_value) SELECT 1, 'list_id', setup_value from setting where setup_key = 'mailchimp_default_list_id' AND setup_value != '' AND setup_value IS NOT NULL AND (SELECT a.id FROM app a WHERE a.code = 'mailchimp') ");
+        $this->addSql("INSERT INTO app_setting (app_id, setup_key, setup_value) SELECT 1, 'opt_in', setup_value from setting where setup_key = 'mailchimp_double_optin' AND setup_value != '' AND setup_value IS NOT NULL AND (SELECT a.id FROM app a WHERE a.code = 'mailchimp') ");
     }
 
     public function down(Schema $schema) : void
