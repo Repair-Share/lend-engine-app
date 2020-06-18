@@ -248,7 +248,9 @@ class ContactController extends Controller
         }
 
         // Expire any membership that slipped through the automated expiry scheduler
-        $contactService->recalculateBalance($contact);
+        if ($contact->getId()) {
+            $contactService->recalculateBalance($contact);
+        }
 
         /** @var \AppBundle\Services\Apps\MailchimpService $mailchimp */
 //        Uncomment to see whether the user is subscribed to MC

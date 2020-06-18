@@ -27,8 +27,8 @@
         <div>
             <p><strong>Access to your Lend Engine site</strong></p>
             {{ form_row(form.enabled) }}
-            {% if contact.id > 0 %}
-                {#{{ form_row(form.autoPassword) }}#}
+            {% if contact.id %}
+                {{ form_row(form.autoPassword) }}
             {% else %}
                 {{ form_row(form.sendWelcomeEmail) }}
             {% endif %}
