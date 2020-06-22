@@ -3,11 +3,11 @@
 <a href="{{ path('home') }}" style="padding: 0 10px"><i class="fa fa-home"></i><span class="hidden-xs"> {% trans %}public_misc.link_home{% endtrans %}</span></a>
 
 {% if tenantInformation.basket is defined and tenantInformation.basket %}
-    <a href="{{ path('basket_show') }}" style="padding: 0 10px;"><i class="fa fa-shopping-basket"></i><span class="hidden-xs"> Basket</span> ({{ tenantInformation.basket.loanRows|length }} items)</a>
+    <a href="{{ path('basket_show') }}" style="padding: 0 10px;" id="site-menu-basket"><i class="fa fa-shopping-basket"></i><span class="hidden-xs"> Basket</span> ({{ tenantInformation.basket.loanRows|length }} items)</a>
 {% endif %}
 
 {% if tenantInformation.setting('show_events_online') == 1 %}
-    <a href="{{ path('event_list') }}" style="padding: 0 10px">
+    <a href="{{ path('event_list') }}" style="padding: 0 10px" id="site-menu-events">
         <i class="far fa-calendar-alt"></i><span class="hidden-xs"> {% trans %}public_misc.link_events{% endtrans %}</span>
     </a>
 {% endif %}
@@ -15,17 +15,17 @@
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 
     {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('homepage') }}" style="padding: 0 10px"><i class="fa fa-wrench"></i><span class="hidden-xs"> {% trans %}public_misc.link_admin{% endtrans %}</span></a>
+        <a href="{{ path('homepage') }}" style="padding: 0 10px" id="site-menu-admin"><i class="fa fa-wrench"></i><span class="hidden-xs"> {% trans %}public_misc.link_admin{% endtrans %}</span></a>
     {% endif %}
-    <a href="{{ path('fos_user_profile_show') }}" style="padding: 0 10px"><i class="fa fa-user"></i><span class="hidden-xs"> {% trans %}My account{% endtrans %}</span></a>
-    <a href="{{ path('fos_user_security_logout') }}" style="padding: 0 10px"><i class="fa fa-sign-out-alt"></i><span class="hidden-xs"> {% trans %}Log out{% endtrans %}</span></a>
+    <a href="{{ path('fos_user_profile_show') }}" style="padding: 0 10px" id="site-menu-profile"><i class="fa fa-user"></i><span class="hidden-xs"> {% trans %}My account{% endtrans %}</span></a>
+    <a href="{{ path('fos_user_security_logout') }}" style="padding: 0 10px" id="site-menu-logout"><i class="fa fa-sign-out-alt"></i><span class="hidden-xs"> {% trans %}Log out{% endtrans %}</span></a>
 
 {% else %}
 
     {% if tenantInformation.allowRegistration %}
-        <a href="{{ path('fos_user_registration_register') }}" style="padding: 0 10px">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a>
+        <a href="{{ path('fos_user_registration_register') }}" style="padding: 0 10px" id="site-menu-register">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a>
     {% endif %}
 
-    <a href="{{ path('fos_user_security_login') }}" style="padding: 0 10px">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+    <a href="{{ path('fos_user_security_login') }}" style="padding: 0 10px" id="site-menu-login">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
 
 {% endif %}
