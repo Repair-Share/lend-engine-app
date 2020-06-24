@@ -47,7 +47,6 @@ class CustomConnectionFactory extends ConnectionFactory
 
     public function createConnection(array $params, Configuration $config = null, EventManager $eventManager = null, array $mappingTypes = array())
     {
-
         if (isset($_GET['state']) && $_GET['state']) {
             // We're coming back from Stripe.com oAuth into the HTTPS Heroku domain so we don't have a subdomain
             $account_code = $_REQUEST['state'];
@@ -60,6 +59,10 @@ class CustomConnectionFactory extends ConnectionFactory
             // This account has to exist on all servers (including production)
             // Because it's the one used as default for cache:clear as part of deployment
             $account_code = 'unit_test';
+        }
+
+        if ($account_code == 127 || strstr($account_code, 'localhost')) {
+            $account_code = 'dev';
         }
 
         $httpHost = '';

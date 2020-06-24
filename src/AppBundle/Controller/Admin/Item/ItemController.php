@@ -93,7 +93,7 @@ class ItemController extends Controller
             if ($itemSectorId) {
                 if (!$itemSector = $itemSectorRepo->find($itemSectorId)) {
                     $this->addFlash('error', "Item type {$itemSectorId} not found");
-                    return $this->redirectToRoute('item_sector');
+                    return $this->redirectToRoute('item');
                 }
                 $product->setItemSector($itemSector);
             }
@@ -356,7 +356,7 @@ class ItemController extends Controller
                 $em->flush();
                 if ($request->get('submitForm') == 'saveAndNew') {
                     $this->addFlash('success', "Item saved.");
-                    return $this->redirectToRoute('item_sector');
+                    return $this->redirectToRoute('item');
                 } elseif ($request->get('numberOfCopies') > 0) {
                     return $this->redirectToRoute('item_copy', ['id' => $product->getId(), 'numberOfCopies' => $request->get('numberOfCopies')]);
                 } else {

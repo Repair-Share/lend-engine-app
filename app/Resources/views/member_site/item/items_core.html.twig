@@ -91,7 +91,7 @@
                             {% if product.imageName %}
                                 <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/large/{{ product.imageName }}" alt="" class="img-responsive image1">
                             {% else %}
-                                <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" alt="" class="img-responsive image1">
+                                <img src="/images/no_image.png" alt="" class="img-responsive image1">
                             {% endif %}
                         </a>
 

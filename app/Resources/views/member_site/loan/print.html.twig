@@ -109,7 +109,7 @@
                             {% if row.inventoryItem.imageName %}
                                 <img src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}" class="img-thumbnail img-responsive">
                             {% else %}
-                                <img src="//{{ tenantInformation.accountDomain }}/images/no_image.png" alt="" class="img-responsive">
+                                <img src="/images/no_image.png" alt="" class="img-responsive">
                             {% endif %}
                         </td>
                         <td>

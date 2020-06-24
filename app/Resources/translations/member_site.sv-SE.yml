@@ -4,7 +4,7 @@
 # Locale: sv-SE, Swedish (Sweden)
 # Tagged: Member site
 # Exported by: Chris
-# Exported at: Thu, 23 Aug 2018 21:04:02 +0100
+# Exported at: Wed, 24 Jun 2020 09:41:17 +0100
 ---
 Loan: Lån
 Loans: Lån
@@ -73,7 +73,7 @@ public_misc.any_site: Vilken plats som helst
 public_footer.find_us: Hitta hit/öppettider
 public_footer.choose_lang: Välj språk
 public_footer.powered_by: Drivs av
-public_footer.logged_in_as: Du är inlpggad som
+public_footer.logged_in_as: Du är inloggad som
 public_account.title: Mitt Konto
 public_account.contact_subtitle: Kontaktuppgifter
 public_account.membership_subtitle: Medlemskapsuppgifter
@@ -163,3 +163,57 @@ msg_success.basket_item_exists: är redan i din varukorg.
 msg_fail.general_fail: "Ursäkta, något gick fel. Vänligen försök på nytt eller kontakta oss. \n"
 msg_fail.reservation_create: 'Något gick fel, vi kunde inte skapa en reservation. '
 msg_fail.reservation_cancel: 'Vi kunde inte avboka din reservation. Vänligen ta kontakt med oss. '
+per-borrow: per lån
+per_borrow: per lån
+public_misc.log_in_first: Vänligen logga in för att se artiklar
+public_account.button_subscribe_now: Prenumerera nu
+public_account.button_change_membership: 'Ändra medlemskap/förnya '
+public_account.current_member_type: Du är nu %type% medlem.
+public_account.membership_about_to_expire: Ditt medlemskap är på väg att gå ut.
+public_account.membership_expires_on: Ditt medlemskap går ut den
+public_registration.email_confirmed: Ditt e-postadress har nu bekräftats
+public_user.choose_membership_type: Välj en medlemstyp
+public_item.discount: rabatt
+public_registration.membership_starts_today: Ditt nya medlemskap börjar idag.
+public_registration.membership_deferred: 'Ditt medlemskap kommer att förnyas '
+public_registration.discount_on_fees: rabatt på låneavgifter
+public_registration.button_renew: Förnya medlemskap
+public_registration.button_subscribe: Prenumerera
+public_registration.no_self_serve_memberships: Vänligen kom in till oss för med legitimation för att bli medlem.
+th.deposit: Deposition
+public_misc.link_events: Evenemang
+public_misc.show_items_from: Visa bara artiklar som är tillgängliga från
+public_misc.credit_limit: Kreditgräns
+public_item.button_today: Idag
+public_item.see_parts: Se delar
+public_item.kit_containing: Den här artikeln är ett kit innehållandes
+public_item.borrow_help: Klicka i datum, tid eller plats för att ändra din bokning
+public_loan.charged: Debiterad till kontot
+public_loan.check_in: Checka in
+public_loan.button_check_out: Checka ut
+public_loan.select_items_to_check_in: Välj artiklar att checka in
+public_loan.choose_new_date: Välj ett nytt återlämningsdatum
+public_loan.button_complete_checks: Vänligen gör klart alla check ins/uts
+public_loan.button_choose_payment_method: Välj en betalningsmetod för att ta betalt
+public_loan.button_deposits_require_payment: Depositioner kärver betalning nu
+public_loan.cannot_check_out: Artikeln/Artiklarna kan inte checkas ut
+public_loan.no_payment_methods: Ingen betalningsmetod är tillgänglig för att checka ut
+public_loan.not_enough_credit: Inga betalningsmetoder är tillgängliga för utcheckning.
+public_add_credit.remove_card: Ta bort
+public_payments.no_payment_required: Ingen betalning krävs
+public_user.subscription_payment: Prenumerationsbetalning
+events.event: Event
+events.page_title: Events
+events.bookings: Eventsbokning
+events.no_events: Det finns inga events den här månaden
+events.view_on_facebook: Se det här eventet på Facebook
+events.location: Plats
+events.time: Tid
+events.cost: Kostnad
+events.you_are_attending: Du kommer
+events.book_now_button: Boka nu
+events.check_in_button: Checka in
+events.check_in_help: Incheckning lägger till dig som deltagare utan att en bokningsbekräftelse via e-post skickas
+events.contact_us_to_book: Kontakta oss för att boka
+events.not_bookable: Det här eventet går inte att boka online
+events.log_in_to_book: Logga in för att boka

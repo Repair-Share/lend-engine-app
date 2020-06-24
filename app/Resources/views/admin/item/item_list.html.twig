@@ -16,7 +16,18 @@
         {% if is_granted('ROLE_SUPER_USER') %}
             <a class="btn btn-default" href="{{ path('export_items') }}" style="margin-right: 10px">Export</a>
         {% endif %}
-        <a class="btn bg-green" href="{{ path('item_sector') }}">Add item</a>
+
+        <div class="btn-group">
+            <button type="button" class="btn bg-green dropdown-toggle" id="newOrderButton" data-toggle="dropdown" aria-expanded="false">
+                Add item <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="{{ path('item') }}?type=loan">Loan item</a></li>
+                <li><a href="{{ path('item') }}?type=kit">Kit</a></li>
+                <li><a href="{{ path('item') }}?type=stock">Stock item</a></li>
+                <li><a href="{{ path('item') }}?type=service">Service</a></li>
+            </ul>
+        </div>
     {% endif %}
 {% endblock %}
 
