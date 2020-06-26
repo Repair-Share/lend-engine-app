@@ -61,14 +61,14 @@
                 {% endif %}
 
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-5" id="modal-borrow-pickup">
                         <h4>{% trans %}public_item.pickup_at{% endtrans %} ...</h4>
                         <div>
                             <a href="javascript:void(0);" class="show_date_from" id="choosePickup"></a> &nbsp;
                             <a href="javascript:void(0);" class="time ui-timepicker-input show_time_from" id="time_from_picker"></a>
                         </div>
                         <div class="multi-site"><a class="site_from" href="javascript:void(0);"></a></div>
-                        <div style="padding-bottom: 10px;">
+                        <div style="padding-bottom: 10px;" id="today-button-wrapper">
                             <button type="button" class="btn btn-success" id="set-pickup-today">
                                 {% trans %}public_item.button_today{% endtrans %}
                             </button>
@@ -79,7 +79,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-5" id="modal-borrow-return">
                         <h4>{% trans %}public_item.return_by{% endtrans %} ...</h4>
                         <button type="button" class="btn btn-success chooseReturnButton" data-dismiss="modal" id="chooseReturnButton" style="margin-top: 10px; display: none">
                             {% trans %}public_item.button_choose_return{% endtrans %}
@@ -92,7 +92,7 @@
 
                         <br>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2" id="modal-borrow-fee">
                         <h4 class="count_days"></h4>
                         <div style="font-weight: bold; font-size: 20px;" class="item-fee">
                             {{ tenantInformation.currencySymbol }} <span class="total_fee">0</span>

@@ -31,38 +31,57 @@
                     addMap();
                 };
 
+                var sites = [];
+
+                window.map = new google.maps.Map(document.getElementById('sites_map'), { zoom: 12 });
+
+                var geocoder = new google.maps.Geocoder();
+                window.bounds = new google.maps.LatLngBounds();
+                var marker;
+
                 function addMap () {
-                    var geocoder = new google.maps.Geocoder();
-                    var marker;
                     geocoder.geocode({'address': '{{ sites[0].address }}, {{ sites[0].postCode }}, {{ sites[0].country }}'}, function(results, status) {
+
                         if (status == google.maps.GeocoderStatus.OK) {
-                            var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
-                            var mapOptions = {
-                                zoom: 12,
-                                center: _position
-                            };
-                            var map = new google.maps.Map(document.getElementById('sites_map'), mapOptions);
+                            //var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
+                            console.log(status);
                         } else {
                             console.log(status);
                         }
+
                         {% for site in sites %}
                         {% if site.isActive %}
                         geocoder.geocode({'address': '{{ site.address }}, {{ site.postCode }}, {{ site.country }}'}, function(results, status) {
                             if (status == google.maps.GeocoderStatus.OK) {
-                                var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
-                                marker = new google.maps.Marker({
-                                    position: _position,
-                                    map: map
-                                });
+                                var location = {};
+                                location.lat = results[0].geometry.location.lat();
+                                location.lng = results[0].geometry.location.lng();
+                                sites.push(location);
                             } else {
                                 console.log(status);
                             }
                         });
                         {% endif %}
                         {% endfor %}
-                    });
 
+
+                    });
+                    window.setTimeout(setBounds, 1000);
                 }
+
+                function setBounds() {
+                    console.log("sites:");
+                    for (i = 0; i < sites.length; i++) {
+                        marker = new google.maps.Marker({
+                            position: new google.maps.LatLng(sites[i].lat, sites[i].lng),
+                            map: window.map
+                        });
+                        console.log("Adding site at "+sites[i].lat+", "+sites[i].lng);
+                        window.bounds.extend(marker.position);
+                    }
+                    window.map.fitBounds(window.bounds);
+                }
+
             </script>
 
         </div>
