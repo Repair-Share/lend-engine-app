@@ -26,8 +26,8 @@ le_email.checkout.title: Din låneinformation
 le_email.extend.subject: Ditt återlämningsdatum har uppdaterats
 le_email.extend.title: Vi har ändrat återlämningsdatumet för en artikel
 le_email.extend.due_back: 'förfaller nu på '
-le_email.reminder.subject: Ditt lån loanId förfaller snart
-le_email.reminder.title: Ditt lån förfaller i morgon.
+le_email.reminder.subject: Ditt lån förfaller snart
+le_email.reminder.title: Ditt lån förfaller snart.
 le_email.reservation_reminder.subject: Hämta din reservation i morgon
 le_email.reservation_reminder.title: Hämta din reservation i morgon
 le_email.membership_expired.subject: 'Ditt medlemskap har gått ut. '
