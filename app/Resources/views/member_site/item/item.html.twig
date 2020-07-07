@@ -11,7 +11,12 @@
     #kit-wrapper {
         padding: 10px; background-color: #efefef; border: 1px solid #dedede; border-radius: 4px
     }
+    {% if product.itemType != "loan" %}
+    #calendar { display:none }
+    #calendar-key { display:none }
+    {% endif %}
 </style>
+
     <div class="row" id="item-title">
         <div class="col-md-12">
             <div class="block-borrow">
@@ -86,7 +91,6 @@
 
     {% endif %}
 
-    {% if product.itemType == 'loan' %}
     <br>
     <div class="row" id="calendar-key">
         {% for site in sites %}
@@ -104,7 +108,6 @@
             {% endif %}
         {% endfor %}
     </div>
-    {% endif %}
 
     {% endblock %}
 
@@ -331,9 +334,7 @@
                     }
                 }
             });
-            {% if product.itemType == 'loan' %}
             calendar.render();
-            {% endif %}
 
             // FUNCTIONS ::
 

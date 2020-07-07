@@ -96,6 +96,14 @@ class BasketAddItemController extends Controller
         $maxItems = $contact->getActiveMembership()->getMembershipType()->getMaxItems();
         if ($maxItems > 0) {
 
+            // Count loan items in basket
+            $countLoanItemsInBasket = 0;
+            foreach ($basket->getLoanRows() AS $row) {
+                if ($row->getInventoryItem()->getItemType() == "loan") {
+                    $countLoanItemsInBasket++;
+                }
+            }
+
             $filter = [
                 'status' => Loan::STATUS_ACTIVE,
                 'contact' => $basket->getContact(),
@@ -110,7 +118,7 @@ class BasketAddItemController extends Controller
             ];
             $itemOverdue = $loanService->countLoanRows($filter);
 
-            $totalQty    = $itemsOnLoan + $itemOverdue + count($basket->getLoanRows());
+            $totalQty = $itemsOnLoan + $itemOverdue + $countLoanItemsInBasket;
             if ($totalQty >= $maxItems) {
                 $this->addFlash('error', "You've already got {$totalQty} items on loan and in basket. The maximum for your membership is {$maxItems}.");
                 return $this->redirectToRoute('home');
