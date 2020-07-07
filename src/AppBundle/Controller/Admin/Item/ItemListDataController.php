@@ -76,6 +76,8 @@ class ItemListDataController extends Controller
             $customFields = $fieldRepo->findAllOrderedBySort();
         }
 
+//        $filter['isActive'] = false;
+
         /***** THE MAIN QUERY ******/
         $searchResults = $itemService->itemSearch($start, $length, $filter);
         $totalRecords = $searchResults['totalResults'];

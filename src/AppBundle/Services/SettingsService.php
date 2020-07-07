@@ -144,6 +144,10 @@ class SettingsService
         } else {
             // get them all into $this->settings
             $this->getAllSettings();
+            if (!isset($this->settings[$this->db][$key])) {
+                // For legacy settings which arein DB but no longer in the app
+                return null;
+            }
             return $this->settings[$this->db][$key];
         }
     }
@@ -356,6 +360,7 @@ class SettingsService
 
             'reservation_fee',
             'reservation_buffer',
+            'max_reservations',
             'charge_daily_fee',
             'fixed_fee_pricing',
 

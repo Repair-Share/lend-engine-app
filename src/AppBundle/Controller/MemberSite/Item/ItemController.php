@@ -54,6 +54,9 @@ class ItemController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
+
         /** @var $product \AppBundle\Entity\InventoryItem */
         if (!$product = $repo->find($productId)) {
             $this->addFlash("error", "Item with ID {$productId} not found.");
@@ -74,9 +77,9 @@ class ItemController extends Controller
             $contact = $this->getUser();
         }
 
-        $defaultLoanDays = (int)$this->get('settings')->getSettingValue('default_loan_days');
-        $minLoanDays = (int)$this->get('settings')->getSettingValue('min_loan_days');
-        $maxLoanDays = (int)$this->get('settings')->getSettingValue('max_loan_days');
+        $defaultLoanDays = (int)$settingsService->getSettingValue('default_loan_days');
+        $minLoanDays = (int)$settingsService->getSettingValue('min_loan_days');
+        $maxLoanDays = (int)$settingsService->getSettingValue('max_loan_days');
 
         $loanEndDate = new \DateTime();
         $loanEndDate->modify("+ {$defaultLoanDays} days");
@@ -103,14 +106,14 @@ class ItemController extends Controller
             $product->setImagePath($s3Bucket.$account_code.'/large/'.$product->getImageName());
         }
 
-        $isMultiSite = $this->get('settings')->getSettingValue('multi_site');
+        $isMultiSite = $settingsService->getSettingValue('multi_site');
 
         $contactBalance = 0;
         if ($contact) {
             $contactBalance = $contact->getBalance();
         }
 
-        $reservationFee = $this->get('settings')->getSettingValue('reservation_fee');
+        $reservationFee = $settingsService->getSettingValue('reservation_fee');
 
         $sites = $product->getSites();
         if (count($sites) == 0) {
@@ -155,13 +158,13 @@ class ItemController extends Controller
             $contact = $loanRow->getLoan()->getContact();
             $loanId  = $loanRow->getLoan()->getId();
 
-            $timeZone = $this->get('settings')->getSettingValue('org_timezone');
+            $timeZone = $settingsService->getSettingValue('org_timezone');
             $tz = new \DateTimeZone($timeZone);
 
             $loanStartAt = $loanRow->getDueOutAt()->setTimezone($tz)->format("Y-m-d H:i:00");
             $itemDueInAt = $loanRow->getDueInAt()->setTimezone($tz)->format("Y-m-d H:i:00");
 
-            $stripeUseSavedCards = $this->get('settings')->getSettingValue('stripe_use_saved_cards');
+            $stripeUseSavedCards = $settingsService->getSettingValue('stripe_use_saved_cards');
             if ($stripeUseSavedCards) {
                 $contact = $contactService->loadCustomerCards($contact);
             }
@@ -199,6 +202,27 @@ class ItemController extends Controller
         if ($product->getItemType() == InventoryItem::TYPE_KIT && count($product->getComponents()) == 0) {
             $this->addFlash('error', "This kit has no components; please edit and add components.");
             $product->setIsReservable(false);
+        }
+
+        // If member has reached maximum reservations
+        $maxReservations = $settingsService->getSettingValue('max_reservations');
+        if ($maxReservations === "") {
+            // no limit
+        } else if ($contact) {
+            $reservations = 0;
+            if (count($contact->getLoans()) > 0) {
+                foreach ($contact->getLoans() AS $loan) {
+                    if ($loan->getStatus() == Loan::STATUS_RESERVED) {
+                        $reservations++;
+                    }
+                }
+            }
+            if ($reservations >= (int)$maxReservations) {
+                if ($maxReservations > 0) {
+                    $this->addFlash('error', "You already have {$reservations} reservation(s). Maximum reservations per member is {$maxReservations}.");
+                }
+                $product->setIsReservable(false);
+            }
         }
 
         $maintenanceOverdue = false;

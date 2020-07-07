@@ -70,7 +70,7 @@ class PostalLoanTest extends AuthenticatedControllerTest
         $this->assertContains("product/{$loanItemId}", $crawler->html());
 
         // Postal loan settings turn these on:
-        $this->assertContains("Send by post", $crawler->html());
+        $this->assertContains("Deliver / ship", $crawler->html());
         $this->assertContains("1.50 per item", $crawler->html());
         $this->assertContains("2.00 per loan", $crawler->html());
 
@@ -86,7 +86,7 @@ class PostalLoanTest extends AuthenticatedControllerTest
         $crawler = $this->client->followRedirect();
 
         // Basket should be updated
-        $this->assertContains('Items will be shipped to', $crawler->html());
+        $this->assertContains('Items will be delivered to', $crawler->html());
 
         // Confirm the loan
         $params = [
@@ -99,7 +99,7 @@ class PostalLoanTest extends AuthenticatedControllerTest
 
         // Shipping item should be added
         $this->assertContains($shippingItemName, $crawler->html());
-        $this->assertContains('Items will be shipped to', $crawler->html());
+        $this->assertContains('Items will be delivered to', $crawler->html());
 
         // Check it out
         $form = $crawler->filter('form[name="loan_check_out"]')->form(array(
@@ -113,7 +113,7 @@ class PostalLoanTest extends AuthenticatedControllerTest
         // Loan screen contains the right data
         $this->assertContains('3.50', $crawler->html()); // shipping
         $this->assertContains('5.49', $crawler->html()); // loan total
-        $this->assertContains('Send by post', $crawler->html()); // warning box with address
+        $this->assertContains('Deliver / ship', $crawler->html()); // warning box with address
         $loanStatusText = $crawler->filter('#loanStatusLabel')->text();
         $this->assertEquals($loanStatusText, 'On loan');
 

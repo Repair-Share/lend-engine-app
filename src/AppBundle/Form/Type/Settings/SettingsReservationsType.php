@@ -158,6 +158,17 @@ EOH;
             )
         ));
 
+        $builder->add('max_reservations', TextType::class, array(
+            'label' => 'Maximum reservations per member',
+            'data' => $dbData['max_reservations'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'class' => 'input-100',
+                'data-help' => "How many reservations a member can have at any one time. Applies to members logged in only; no limit when you are admin. Set to 0 to turn off the reservation feature for members."
+            )
+        ));
+
         $choices = [
             'When the reservation is placed' => 1,
             'When the reservation is checked out' => 0

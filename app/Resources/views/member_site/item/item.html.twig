@@ -86,6 +86,7 @@
 
     {% endif %}
 
+    {% if product.itemType == 'loan' %}
     <br>
     <div class="row" id="calendar-key">
         {% for site in sites %}
@@ -103,6 +104,7 @@
             {% endif %}
         {% endfor %}
     </div>
+    {% endif %}
 
     {% endblock %}
 
@@ -329,7 +331,9 @@
                     }
                 }
             });
+            {% if product.itemType == 'loan' %}
             calendar.render();
+            {% endif %}
 
             // FUNCTIONS ::
 
@@ -843,7 +847,7 @@
                     url: url,
                     type: 'GET',
                     failure: function() {
-                        alert('There was an error while fetching events!');
+                        alert('There was an error while fetching site opening times.');
                     },
                     success: function(events) {
                         setBookableDays(events);
@@ -859,7 +863,7 @@
                     url: url,
                     type: 'GET',
                     failure: function() {
-                        alert('There was an error while fetching bookings!');
+                        alert('There was an error while fetching bookings. Please reload the page.');
                     },
                     success: function(events) {
                         bookings = events; // Save for booking and selectable cell validation
