@@ -206,7 +206,7 @@ class ItemController extends Controller
 
         // If member has reached maximum reservations
         $maxReservations = $settingsService->getSettingValue('max_reservations');
-        if ($maxReservations === "") {
+        if ($maxReservations === "" || $maxReservations == null) {
             // no limit
         } else if ($contact) {
             $reservations = 0;
