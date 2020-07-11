@@ -11,7 +11,7 @@
     #kit-wrapper {
         padding: 10px; background-color: #efefef; border: 1px solid #dedede; border-radius: 4px
     }
-    {% if product.itemType != "loan" %}
+    {% if product.itemType != "loan" and product.itemType != "kit" %}
     #calendar { display:none }
     #calendar-key { display:none }
     {% endif %}
