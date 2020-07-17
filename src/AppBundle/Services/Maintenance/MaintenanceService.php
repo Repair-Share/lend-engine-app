@@ -158,7 +158,36 @@ class MaintenanceService
         $builder->setMaxResults($length);
 
         // Add order by:
-        $builder->addOrderBy("m.dueAt", "DESC");
+        // Add order by:
+        if (is_array($sort) && count($sort) > 0 && $this->validateSort($sort)) {
+            $col = '';
+            switch($sort['column']) {
+                case "itemName":
+                    $col = "i.name";
+                    break;
+                case "itemCode":
+                    $col = "i.sku";
+                    break;
+                case "itemSerial":
+                    $col = "i.serial";
+                    break;
+                case "due":
+                    $col = "m.dueAt";
+                    break;
+                case "status":
+                    $col = "m.status";
+                    break;
+                case "cost":
+                    $col = "m.totalCost";
+                    break;
+            }
+            if ($col) {
+                $builder->addOrderBy($col, $sort['direction']);
+            }
+
+        } else {
+            $builder->addOrderBy("m.dueAt", "DESC");
+        }
 
         // Get the data:
         $query = $builder->getQuery();
@@ -198,5 +227,14 @@ class MaintenanceService
 
         $query = $builder->getQuery();
         return $query->getSingleResult();
+    }
+
+    /**
+     * @TODO
+     * @param array $sort
+     * @return bool
+     */
+    private function validateSort(Array $sort) {
+        return true;
     }
 }

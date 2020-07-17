@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Maintenance{% endblock %}
+{% block title %}Maintenance &amp; repair{% endblock %}
 
 {% block pageTitle %}{{ pageTitle }}{% endblock %}
 
@@ -88,7 +88,8 @@
         $(document).ready(function() {
 
             var dataTable = $('#data-table-maintenance').DataTable({
-                ordering: false,
+                dom: 'lfBrtip',
+                ordering: true,
                 serverSide: true,
                 autoWidth: false,
                 pageLength: 50,
@@ -105,7 +106,35 @@
                 },
                 "language": {
                     "infoFiltered": ""
-                }
+                },
+                "columns": [
+                    { "orderable": true }, // item
+                    { "orderable": true }, // code
+                    { "orderable": true }, // serial
+                    { "orderable": false }, // type
+                    { "orderable": true }, // date
+                    { "orderable": false }, // for
+                    { "orderable": true }, // status
+                    { "orderable": false }, // attachments
+                    { "orderable": true }, // cost
+                    { "orderable": false, className: "hidden-print" }
+                ],
+                buttons: [
+                    { extend: 'copy', className: 'btn btn-default btn-xs'},
+                    { extend: 'csv', className: 'btn btn-default btn-xs' },
+                    {
+                        extend: 'print',
+                        className: 'btn btn-default btn-xs',
+                        exportOptions: {
+                            stripNewlines: false,
+                            stripHtml: false
+                        },
+                        customize: function ( win ) {
+                            $(win.document.body).find('table').addClass('compact').css('font-size','inherit');
+                            $(win.document.body).find('h1').css('font-size','14px');
+                        }
+                    }
+                ]
             });
 
             $("#data-table-maintenance_filter label input").attr("placeholder", "Item name, code or serial");

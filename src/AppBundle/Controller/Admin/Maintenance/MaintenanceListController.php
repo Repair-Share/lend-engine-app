@@ -20,7 +20,7 @@ class MaintenanceListController extends Controller
      */
     public function contactList(Request $request)
     {
-        $pageTitle = 'Maintenance schedule';
+        $pageTitle = 'Maintenance & repair';
 
         $searchString = $request->get('search');
 

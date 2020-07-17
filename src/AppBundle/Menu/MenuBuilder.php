@@ -61,9 +61,7 @@ class MenuBuilder
             $this->addChildItem('Items', 'Bulk update <sup>beta</sup>', 'import_items', '');
         }
 
-        if ($this->container->get('service.tenant')->getFeature('MaintenancePlan')) {
-            $this->addChildItem('Items', 'Maintenance', 'maintenance_list');
-        }
+
 
         $this->addChildItem('Items', '<i class="fa fa-clock-o"></i> Add loan item', 'item', '', '', ['type' => 'loan']);
 
@@ -79,6 +77,10 @@ class MenuBuilder
 
         if ($this->container->get('settings')->getSettingValue('enable_waiting_list')) {
             $this->addChildItem('Items', 'Waiting list', 'item_waiting_list', '');
+        }
+
+        if ($this->container->get('service.tenant')->getFeature('MaintenancePlan')) {
+            $this->addMenuItem('Maintenance / repair', 'maintenance_list', 'fa-wrench');
         }
 
         $this->addMenuItem('Contacts / Members', 'contact_list', 'fa-group');

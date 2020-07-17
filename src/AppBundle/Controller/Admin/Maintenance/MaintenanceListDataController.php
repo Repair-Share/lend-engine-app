@@ -43,7 +43,34 @@ class MaintenanceListDataController extends Controller
             $filter['assignedTo'] = $status;
         }
 
-        $sort = [];
+        $sort = [
+            'column'    => 'id',
+            'direction' => 'DESC'
+        ];
+        if ($sortData = $request->get('order')) {
+            $sortByColumnId = $sortData[0]['column']; // assumes single column sort
+            $sort['direction'] = $sortData[0]['dir'];
+            switch ($sortByColumnId) {
+                case 0:
+                    $sort['column'] = 'itemName';
+                    break;
+                case 1:
+                    $sort['column'] = 'itemCode';
+                    break;
+                case 2:
+                    $sort['column'] = 'itemSerial';
+                    break;
+                case 4:
+                    $sort['column'] = 'due';
+                    break;
+                case 6:
+                    $sort['column'] = 'status';
+                    break;
+                case 8:
+                    $sort['column'] = 'cost';
+                    break;
+            }
+        }
 
         /***** MAIN QUERY ****/
 
