@@ -245,6 +245,10 @@ services:
         arguments:
             - "@doctrine.orm.entity_manager"
             - "@service.inventory"
+            - "@service.email"
+            - "@twig"
+            - "@service.tenant"
+            - "@service.contact"
 
     service.payment:
         class: AppBundle\Services\Payment\PaymentService

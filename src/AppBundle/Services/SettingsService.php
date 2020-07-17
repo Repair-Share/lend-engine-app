@@ -236,6 +236,7 @@ class SettingsService
             'org_country',
             'org_postcode',
             'org_email',
+            'org_cc_email',
             'org_email_footer',
             'org_logo_url',
             'org_locale',

@@ -86,7 +86,9 @@ class EmailService
         // Next we see if we have to send a CC to admin
 
         $sendToAdmin = false;
-        if ($ccAdmin == true && $this->settingsService->getSettingValue('email_cc_admin') == 1) {
+        $ccEmailAddress = $this->settingsService->getSettingValue('org_cc_email');
+        if ($ccAdmin == true
+            && $this->settingsService->getSettingValue('email_cc_admin') == 1) {
             $sendToAdmin = true;
         }
         if ($ccAdmin === 'always') {
@@ -100,14 +102,18 @@ class EmailService
             // Remove the login button
             $message = preg_replace('/\<a id="loginButton".*?<\/a>/', '', $message);
 
+            if (!$ccEmailAddress) {
+                $ccEmailAddress = $this->replyToEmail;
+            }
+
             // Send the email via queue
             $payload = [
                 'postmarkApiKey' => $this->postmarkApiKey,
-                'replyToEmail' => $this->replyToEmail, // the org's email
+                'replyToEmail' => $ccEmailAddress,
                 'fromEmail' => $this->fromEmail, // hello@lend-engine unless white labelled
                 'fromName' => $this->senderName,
                 'toName' => $this->senderName,
-                'toEmail' => $this->replyToEmail, // the org's email address
+                'toEmail' => $ccEmailAddress,
                 'subject' => '[Lend Engine CC] '.$subject,
                 'message' => $message
             ];

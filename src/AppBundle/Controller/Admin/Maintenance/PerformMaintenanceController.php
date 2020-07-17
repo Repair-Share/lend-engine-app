@@ -25,6 +25,8 @@ class PerformMaintenanceController extends Controller
         /** @var \AppBundle\Entity\Maintenance $maintenance */
         $maintenance = $service->get($id);
 
+        $originalAssignee = $maintenance->getAssignedTo();
+
         $options = [
             'em'         => $em,
             'action'     => $this->generateUrl('perform_maintenance', ['id' => $id])
@@ -66,6 +68,11 @@ class PerformMaintenanceController extends Controller
 
             $service->save($maintenance);
 
+            // Send an email to the new assignee
+            if ($maintenance->getAssignedTo() != $originalAssignee) {
+                $service->notifyAssignee($maintenance);
+            }
+
             return $this->redirectToRoute('perform_maintenance', ['id' => $id]);
         }
 
@@ -77,5 +84,7 @@ class PerformMaintenanceController extends Controller
             ]
         );
     }
+
+
 
 }

@@ -104,6 +104,16 @@ class SettingsType extends AbstractType
             )
         ));
 
+        $builder->add('org_cc_email', TextType::class, array(
+            'label' => 'Email address for copy of customer emails',
+            'data' => $dbData['org_cc_email'],
+            'required' => false,
+            'attr' => array(
+                'placeholder' => '',
+                'data-help' => 'If left blank, CC emails will be sent to your organisation email.'
+            )
+        ));
+
         $builder->add('org_address', TextareaType::class, array(
             'label' => 'Organisation address',
             'data' => $dbData['org_address'],
@@ -233,11 +243,11 @@ EOT;
         $builder->add('email_cc_admin', ToggleType::class, array(
             'expanded' => true,
             'choices' => $ccAdminChoices,
-            'label' => 'Send a copy of customer emails to my organisation email',
+            'label' => 'Send me a copy of customer emails',
             'data' => (int)$dbData['email_cc_admin'],
             'attr' => [
                 'class' => 'input-100',
-                'data-help' => 'Send a copy of customer emails (such as check out, check in and extension confirmations) to '.$dbData['org_email']
+                'data-help' => 'Send a copy of customer emails (such as check out, check in and extension confirmations). Not all emails are copied, for security reasons.'
             ]
         ));
 

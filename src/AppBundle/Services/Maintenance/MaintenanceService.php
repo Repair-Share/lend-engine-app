@@ -2,8 +2,12 @@
 
 namespace AppBundle\Services\Maintenance;
 use AppBundle\Entity\Maintenance;
+use AppBundle\Services\Contact\ContactService;
+use AppBundle\Services\EmailService;
 use AppBundle\Services\InventoryService;
+use AppBundle\Services\TenantService;
 use Doctrine\ORM\EntityManager;
+use Twig\Environment;
 
 /**
  * Class MaintenanceService
@@ -23,11 +27,32 @@ class MaintenanceService
     /** @var InventoryService */
     private $inventoryService;
 
-    public function __construct(EntityManager $em, InventoryService $inventoryService)
+    /** @var EmailService */
+    private $emailService;
+
+    /** @var Environment  */
+    private $twig;
+
+    /** @var TenantService  */
+    private $tenantService;
+
+    /** @var ContactService  */
+    private $contactService;
+
+    public function __construct(EntityManager $em,
+                                InventoryService $inventoryService,
+                                EmailService $emailService,
+                                Environment $twig,
+                                TenantService $tenantService,
+                                ContactService $contactService)
     {
         $this->em = $em;
         $this->repository = $this->em->getRepository('AppBundle:Maintenance');
         $this->inventoryService = $inventoryService;
+        $this->emailService = $emailService;
+        $this->twig = $twig;
+        $this->tenantService = $tenantService;
+        $this->contactService = $contactService;
     }
 
     /**
@@ -230,6 +255,34 @@ class MaintenanceService
     }
 
     /**
+     * @param Maintenance $maintenance
+     */
+    public function notifyAssignee(Maintenance $maintenance) {
+
+        $contact = $maintenance->getAssignedTo();
+        $token = $this->contactService->generateAccessToken($contact);
+        $loginUri = $this->tenantService->getTenant()->getDomain(true);
+        $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
+        $loginUri .= '&r=/admin/maintenance/list&assignedTo='.$contact->getId();
+
+        $message = $this->twig->render(
+            'emails/maintenance_due.html.twig',
+            [
+                'assignee' => $contact,
+                'maintenance' => [$maintenance],
+                'domain' => $this->tenantService->getAccountDomain(),
+                'loginUri' => $loginUri
+            ]
+        );
+
+        $subject = "Maintenance has been assigned to you";
+        $toEmail = $contact->getEmail();
+        $toName  = $contact->getName();
+
+        $this->emailService->send($toEmail, $toName, $subject, $message, true);
+    }
+
+    /**
      * @TODO
      * @param array $sort
      * @return bool
@@ -237,4 +290,5 @@ class MaintenanceService
     private function validateSort(Array $sort) {
         return true;
     }
+
 }
