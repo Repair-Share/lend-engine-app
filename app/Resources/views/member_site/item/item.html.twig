@@ -113,52 +113,54 @@
 
 {% block pagejs %}
     <script>
+
+        var itemLoanDays = {{ itemLoanDays }};
+        var maxLoanDays = {{ maxLoanDays|number_format(0) }};
+        var minLoanDays = {{ minLoanDays|number_format(0) }};
+        var dailyFee = {{ dailyFee|number_format(6) }};
+        var itemFee = {{ itemFee|number_format(6) }};
+        var fixedFeePricing = "{{ tenantInformation.fixedFeePricing }}";
+        var bufferHours = {{ tenantInformation.setting('reservation_buffer')|number_format(0) }};
+        var itemType = "{{ product.itemType }}";
+        var itemLocationIsAvailable = "{{ product.inventoryLocation.isAvailable }}";
+
+        // Translations
+        var text_pickup_day = "{% trans %}calendar.pickup_day{% endtrans %}";
+        var text_my_booking = "{% trans %}calendar.my_booking{% endtrans %}";
+        var text_on_loan    = "{% trans %}calendar.on_loan{% endtrans %}";
+        var text_reserved   = "{% trans %}calendar.reserved{% endtrans %}";
+        var text_clash_date = "{% trans %}calendar.text_clash_date{% endtrans %}";
+        if (bufferHours > 0) {
+            text_clash_date += "<br>We require a no-loan period of "+bufferHours+" hours between each loan.";
+        }
+        var text_return_after_pickup = "{% trans %}calendar.text_return_after_pickup{% endtrans %}";
+        var alert_already_booked = "{% trans %}calendar.alert_already_booked{% endtrans %}";
+        var alert_not_your_booking = "{% trans %}calendar.alert_not_your_booking{% endtrans %}";
+        var alert_day_warning = "{% trans with {'itemLoanDays': itemLoanDays} %}calendar.alert_day_warning{% endtrans %}";
+        var alert_max_days = "{% trans with {'maxLoanDays': maxLoanDays} %}calendar.alert_max_loan_days{% endtrans %}";
+        var alert_min_days = "{% trans with {'minLoanDays': minLoanDays} %}calendar.alert_min_loan_days{% endtrans %}";
+
+        var basketPickupTime, basketReturnTime, basketSiteFromId, basketSiteFromName;
+        var page = $("#productMain");
+        var borrowModal = $("#borrowModal");
+        var extendModal = $("#extendModal");
+        var bookings = [];
+        var loanUrl = "{{ path('public_loan', {loanId: 99}) }}";
+
+        var currentPickupTime     = moment("{{ currentPickupTime }}");
+        var currentPickupSiteId   = {{ currentPickupSiteId }};
+        var currentPickupSiteName = "{{ currentPickupSiteName }}";
+        var bookingStartFrom;
+        var calendarMode = '{% if app.request.get('extend') %}extend{% else %}booking{% endif %}';
+        var originalReturnDate = '{{ itemDueInAt }}';
+
+        var bookableDays = []; // an array of YYYY-mm-dd for selectAllow
+        var openingTimesByDate = [];
+        var closingTimesByDate = [];
+
+
         $(document).ready(function() {
-
-            var itemLoanDays = {{ itemLoanDays }};
-            var maxLoanDays = {{ maxLoanDays|number_format(0) }};
-            var minLoanDays = {{ minLoanDays|number_format(0) }};
-            var dailyFee = {{ dailyFee|number_format(6) }};
-            var itemFee = {{ itemFee|number_format(6) }};
-            var fixedFeePricing = "{{ tenantInformation.fixedFeePricing }}";
-            var bufferHours = {{ tenantInformation.setting('reservation_buffer')|number_format(0) }};
-            var itemType = "{{ product.itemType }}";
-            var itemLocationIsAvailable = "{{ product.inventoryLocation.isAvailable }}";
-
-            // Translations
-            var text_pickup_day = "{% trans %}calendar.pickup_day{% endtrans %}";
-            var text_my_booking = "{% trans %}calendar.my_booking{% endtrans %}";
-            var text_on_loan    = "{% trans %}calendar.on_loan{% endtrans %}";
-            var text_reserved   = "{% trans %}calendar.reserved{% endtrans %}";
-            var text_clash_date = "{% trans %}calendar.text_clash_date{% endtrans %}";
-            if (bufferHours > 0) {
-                text_clash_date += "<br>We require a no-loan period of "+bufferHours+" hours between each loan.";
-            }
-            var text_return_after_pickup = "{% trans %}calendar.text_return_after_pickup{% endtrans %}";
-            var alert_already_booked = "{% trans %}calendar.alert_already_booked{% endtrans %}";
-            var alert_not_your_booking = "{% trans %}calendar.alert_not_your_booking{% endtrans %}";
-            var alert_day_warning = "{% trans with {'itemLoanDays': itemLoanDays} %}calendar.alert_day_warning{% endtrans %}";
-            var alert_max_days = "{% trans with {'maxLoanDays': maxLoanDays} %}calendar.alert_max_loan_days{% endtrans %}";
-            var alert_min_days = "{% trans with {'minLoanDays': minLoanDays} %}calendar.alert_min_loan_days{% endtrans %}";
-
-            var basketPickupTime, basketReturnTime, basketSiteFromId, basketSiteFromName;
-            var page = $("#productMain");
-            var borrowModal = $("#borrowModal");
-            var extendModal = $("#extendModal");
-            var bookings = [];
-            var loanUrl = "{{ path('public_loan', {loanId: 99}) }}";
-
-            var currentPickupTime     = moment("{{ currentPickupTime }}");
-            var currentPickupSiteId   = {{ currentPickupSiteId }};
-            var currentPickupSiteName = "{{ currentPickupSiteName }}";
-            var bookingStartFrom;
-            var calendarMode = '{% if app.request.get('extend') %}extend{% else %}booking{% endif %}';
-            var originalReturnDate = '{{ itemDueInAt }}';
-
-            var bookableDays = []; // an array of YYYY-mm-dd for selectAllow
-            var openingTimesByDate = [];
-            var closingTimesByDate = [];
-
+            
             var sites = [];
             {% for site in sites %}
             sites[{{ site.id }}] = "{{ site.name }}";
