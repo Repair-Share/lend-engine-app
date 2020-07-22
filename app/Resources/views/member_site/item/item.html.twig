@@ -123,6 +123,7 @@
             var fixedFeePricing = "{{ tenantInformation.fixedFeePricing }}";
             var bufferHours = {{ tenantInformation.setting('reservation_buffer')|number_format(0) }};
             var itemType = "{{ product.itemType }}";
+            var itemLocationIsAvailable = "{{ product.inventoryLocation.isAvailable }}";
 
             // Translations
             var text_pickup_day = "{% trans %}calendar.pickup_day{% endtrans %}";
