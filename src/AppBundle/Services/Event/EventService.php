@@ -161,6 +161,22 @@ class EventService
         $this->em->flush();
     }
 
+    public function updatePastEvents() {
+        $d = new \DateTime();
+        $d->modify("-7 day");
+        $filter = [
+            'to'    => $d->format("Y-m-d")
+        ];
+        $results = $this->eventSearch(0, 100, $filter);
+        /** @var \AppBundle\Entity\Event $event */
+        foreach ($results['data'] AS $event) {
+            if ($event->getStatus() == Event::STATUS_PUBLISHED || $event->getStatus() == Event::STATUS_DRAFT) {
+                $event->setStatus(Event::STATUS_PAST);
+            }
+        }
+        $this->em->flush();
+    }
+
     /**
      * Matched with limit in BillingService when publishing events
      * @return int

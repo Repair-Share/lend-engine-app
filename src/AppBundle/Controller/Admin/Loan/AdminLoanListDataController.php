@@ -82,14 +82,11 @@ class AdminLoanListDataController extends Controller
                 case 0:
                     $sort['column'] = 'id';
                     break;
-                case 3:
+                case 4:
                     $sort['column'] = 'timeOut';
                     break;
-                case 4:
-                    $sort['column'] = 'timeIn';
-                    break;
                 case 5:
-                    $sort['column'] = 'totalFee';
+                    $sort['column'] = 'timeIn';
                     break;
             }
         }
@@ -151,6 +148,7 @@ class AdminLoanListDataController extends Controller
             $row[] = '<a title data-original-title="Open" href="'.$editUrl.'">'.$loan->getId().'</a>';
             $row[] = $status;
             $row[] = $loanInfo;
+            $row[] = $loanRow->getInventoryItem()->getSku();
 
             $fromSite = '';
             if ($settingsService->getSettingValue('multi_site') && $loanRow->getSiteFrom()) {
