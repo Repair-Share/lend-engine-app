@@ -14,7 +14,7 @@
                                  class="img-thumbnail img-responsive">
                             </a>
                             {% if is_granted('ROLE_ADMIN') %}
-                                <div style="position:absolute; bottom: 10px; left: 25px;">
+                                <div style="position:absolute; bottom: 10px; left: 25px;" class="role-admin">
                                     <a href="{{ path('item', {id: product.id}) }}" class="btn btn-xs btn-primary role-admin">Edit</a>
                                     {% if product.inventoryLocation and product.inventoryLocation.id > 1 and product.itemType == 'loan' %}
                                         <a href="{{ url('item_move', {idSet: product.id}) }}" class="btn btn-xs btn-primary modal-link">Move / service</a>
