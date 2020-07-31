@@ -34,7 +34,7 @@
             <button type="submit" id="member-search-button" class="btn btn-success">{% trans %}button_go{% endtrans %}</button>
         </span>
                 </div>
-                <div class="help-block">
+                <div class="help-block is-admin">
                     Search by name or email ... or
                     <a href="{{ path('contact') }}">add contact</a>
                 </div>
@@ -61,14 +61,14 @@
 
         <div class="col-md-6">
             {% if user is defined and user.id != app.user.id %}
-                <i class="fa fa-user"></i> Browsing as <strong><a title="Edit contact" data-toggle="tooltip" href="{{ path('contact', {id: user.id}) }}">{{ user.name }}</a></strong>
+                <i class="fa fa-user"></i> Browsing as <strong><a title="Edit contact" class="edit-contact" data-toggle="tooltip" href="{{ path('contact', {id: user.id}) }}">{{ user.name }}</a></strong>
                 <div class="help-block" style="font-size: 11px">
                     Change user with the search box above.
                 </div>
             {% endif %}
 
             {% if not tenantInformation.isEditMode and is_granted("ROLE_SUPER_USER") %}
-                <a href="{{ path('site_edit_begin') }}" class="btn btn-xs btn-primary">Edit website</a>
+                <a href="{{ path('site_edit_begin') }}" class="btn btn-xs btn-primary is-admin">Edit website</a>
             {% endif %}
         </div>
 

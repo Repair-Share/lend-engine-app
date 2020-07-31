@@ -45,7 +45,7 @@
                 <br><br>
 
                 <a href="{{ path('switch_contact', {contactId: contact.id, itemId: app.request.get('itemId'), go: app.request.get('go')}) }}" class="btn btn-xs btn-success">Browse / borrow as {{ contact.name }}</a>
-                <a href="{{ path('contact', {id: contact.id}) }}" class="btn btn-xs btn-default">Edit contact</a>
+                <a href="{{ path('contact', {id: contact.id}) }}" class="btn btn-xs btn-default is-admin">Edit contact</a>
 
                 {% if contact.activeMembership %}
                     <div class="membership-info">

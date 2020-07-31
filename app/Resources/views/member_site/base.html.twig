@@ -157,7 +157,7 @@
 
 </head>
 
-<body class="{% if is_granted("ROLE_ADMIN") %}logged-in-admin{% elseif is_granted("ROLE_USER") %}logged-in-user{% else %}not-logged-in{% endif %}">
+<body class="{% if is_granted("ROLE_ADMIN") %}logged-in-admin user-{{ app.user.id }}{% elseif is_granted("ROLE_USER") %}logged-in-user user-{{ app.user.id }}{% else %}not-logged-in{% endif %}">
 
 {% trans_default_domain 'member_site' %}
 
