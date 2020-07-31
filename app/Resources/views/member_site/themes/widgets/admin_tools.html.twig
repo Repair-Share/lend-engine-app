@@ -34,7 +34,7 @@
             <button type="submit" id="member-search-button" class="btn btn-success">{% trans %}button_go{% endtrans %}</button>
         </span>
                 </div>
-                <div class="help-block is-admin">
+                <div class="help-block role-admin">
                     Search by name or email ... or
                     <a href="{{ path('contact') }}">add contact</a>
                 </div>
@@ -68,7 +68,7 @@
             {% endif %}
 
             {% if not tenantInformation.isEditMode and is_granted("ROLE_SUPER_USER") %}
-                <a href="{{ path('site_edit_begin') }}" class="btn btn-xs btn-primary is-admin">Edit website</a>
+                <a href="{{ path('site_edit_begin') }}" class="btn btn-xs btn-primary role-admin">Edit website</a>
             {% endif %}
         </div>
 

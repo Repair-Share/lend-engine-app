@@ -15,7 +15,7 @@
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 
     {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('homepage') }}" style="padding: 0 10px" id="site-menu-admin" class="is-admin"><i class="fa fa-wrench"></i><span class="hidden-xs"> {% trans %}public_misc.link_admin{% endtrans %}</span></a>
+        <a href="{{ path('homepage') }}" style="padding: 0 10px" id="site-menu-admin" class="role-admin"><i class="fa fa-wrench"></i><span class="hidden-xs"> {% trans %}public_misc.link_admin{% endtrans %}</span></a>
     {% endif %}
     <a href="{{ path('fos_user_profile_show') }}" style="padding: 0 10px" id="site-menu-profile"><i class="fa fa-user"></i><span class="hidden-xs"> {% trans %}My account{% endtrans %}</span></a>
     <a href="{{ path('fos_user_security_logout') }}" style="padding: 0 10px" id="site-menu-logout"><i class="fa fa-sign-out-alt"></i><span class="hidden-xs"> {% trans %}Log out{% endtrans %}</span></a>

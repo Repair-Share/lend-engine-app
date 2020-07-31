@@ -76,7 +76,7 @@
                     <div class="img-thumbnail img-responsive">
 
                         {% if is_granted("ROLE_ADMIN") %}
-                        <div class="hover-actions">
+                        <div class="hover-actions role-admin">
                             <a class="btn btn-xs btn-default" href="{{ path('item', {id: product.id}) }}">Edit</a>
                             {% if product.inventoryLocation and product.inventoryLocation.id > 1 and product.itemType == 'loan' %}
                             <a class="btn btn-xs btn-default modal-link" href="{{ url('item_move', {idSet: product.id}) }}">Move</a>
