@@ -852,7 +852,7 @@
                 } else {
                     url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}&siteId="+siteId;
                 }
-                
+
                 calendar.addEventSource( {
                     url: url,
                     type: 'GET',
@@ -874,7 +874,7 @@
                     url: url,
                     type: 'GET',
                     failure: function() {
-                        alert('There was an error while fetching bookings. Please reload the page.');
+                        //alert('There was an error while fetching bookings. Please reload the page.');
                     },
                     success: function(events) {
                         bookings = events; // Save for booking and selectable cell validation
