@@ -851,7 +851,8 @@
                     url: url,
                     type: 'GET',
                     failure: function() {
-                        alert('There was an error while fetching site opening times.');
+                        // For some reason this triggers when we do actually get site data back
+                        // alert('There was an error while fetching site opening times.');
                     },
                     success: function(events) {
                         setBookableDays(events);
