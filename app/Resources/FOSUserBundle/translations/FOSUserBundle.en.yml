@@ -52,7 +52,7 @@ registration:
         subject: Welcome!
         message: |
             To finish activating your account, please visit <br><br>
-            %confirmationUrl%
+            <a href="%confirmationUrl%">%confirmationUrl%</a>
 
 # Password resetting
 resetting:
