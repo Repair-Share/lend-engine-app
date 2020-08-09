@@ -25,7 +25,7 @@
             {% endif %}
             <td valign="top" >
                 "{{ loanRow.inventoryItem.name }}" {{ 'le_email.extend.due_back'|trans() }}
-                <strong>{{ loanRow.dueInAt|date('d F g:i a') }}</strong>
+                <strong>{{ loanRow.dueInAt|date('d F Y g:i a') }}</strong>
             </td>
         </tr>
     </table>

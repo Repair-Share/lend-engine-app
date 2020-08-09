@@ -25,7 +25,7 @@
         <br>
 
         {{ 'public_basket.pickup_after'|trans({}, 'member_site') }}
-        <strong>{{ dueDate|date('d F g:i a') }}</strong>
+        <strong>{{ dueDate|date('d F Y g:i a') }}</strong>
         {{ 'public_basket.from'|trans({}, 'member_site') }}:<br><br>
         {{ loanRows[0].siteFrom.name }}<br>
         {{ loanRows[0].siteFrom.address|nl2br }}
