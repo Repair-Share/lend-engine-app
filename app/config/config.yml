@@ -119,6 +119,9 @@ oneup_flysystem:
                  client: lendengine.s3_client
                  bucket: lend-engine
                  prefix: ''
+        file_adapter_local:
+            local:
+                directory: "%kernel.root_dir%/../web/images/files"
         file_adapter:
              awss3v3:
                  client: lendengine.s3_client
@@ -126,10 +129,12 @@ oneup_flysystem:
                  prefix: ''
     filesystems:
         product_image_fs:
-            adapter: product_adapter
+#            adapter: product_adapter
+            adapter: product_adapter_local
             mount:   product_image_fs
         secure_file_fs:
-            adapter: file_adapter
+#            adapter: file_adapter
+            adapter: file_adapter_local
             mount:   secure_file_fs
 
 # Image and file uploader
