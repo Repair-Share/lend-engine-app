@@ -20,4 +20,5 @@ parameters:
     s3_bucket:         https://s3-us-west-2.amazonaws.com/lend-engine/
 
     locale: en
-    CLOUDAMQP_URL: 'amqp://lendengine:lendengine@localhost/lendengine'
+    #CLOUDAMQP_URL: 'amqp://lendengine:lendengine@localhost/lendengine'
+    CLOUDAMQP_URL: '%env(RABBITMQ_URL)%'
