@@ -170,7 +170,8 @@ services:
 
     # Takes a simple array [from queue] and sends via PostMark
     service.mailer:
-        class: AppBundle\Services\Mailer
+#        class: AppBundle\Services\Mailer
+        class: AppBundle\Services\MailerDev # send via PHPMailer instead
 
     service.basket:
         class: AppBundle\Services\BasketService
