@@ -21,4 +21,5 @@ parameters:
     s3_bucket:         http://127.0.0.1:8000/images/products/
 
     locale: en
-    CLOUDAMQP_URL: 'amqp://lendengine:lendengine@localhost/lendengine'
+    #CLOUDAMQP_URL: 'amqp://lendengine:lendengine@localhost:5672/lendengine'
+    CLOUDAMQP_URL: '%env(RABBITMQ_URL)%'
