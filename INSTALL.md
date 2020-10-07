@@ -551,6 +551,20 @@ To quickly start an active MQ server, you can use docker:
             class: AppBundle\Services\MailerDev # send via PHPMailer instead
     ```
 
+* Install RabbitMq on windows
+
+Open a cmd console
+```
+choco install rabbitmq
+cd "C:\Program Files\RabbitMQ Server\rabbitmq_server-3.8.5\sbin"  # or open rabbitmq console from start menu
+rabbitmq-plugins enable rabbitmq_management
+```
+Access management page from (http://{node-hostname}:15672/) and login (default user/pwd is guest/guest)  
+  * Create virtualhost on rabbitmq e.g. lendengine
+  * Create exchanges 'exchange_dev' and/or 'exchange_prod' with type direct
+  * Create a queue (e.g. mail_queue) and bind it to the exchanges
+
+
 **Updating account type**
 
 After DB migration, the account is marked as 'TRIAL' and will expire after 1 month
