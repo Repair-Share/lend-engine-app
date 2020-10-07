@@ -19,7 +19,8 @@ services:
         class: AppBundle\Services\Queue\MailQueueConsumer
         arguments:
             - "@logger"
-            - "@service.mailer"
+            #- "@service.mailer"
+            - "@service.mailer.swiftmailer" # send via SwiftMailer instead
 
     ## END RABBITMQ ##
 
@@ -169,9 +170,31 @@ services:
             - "@old_sound_rabbit_mq.mail_queue_producer"
 
     # Takes a simple array [from queue] and sends via PostMark
+    service.mailer.postmark:
+        class: AppBundle\Services\Mailer
+
+    service.mailer.swiftmailer:
+        class: AppBundle\Services\MailerSwift  # send via PHPMailer
+        arguments:
+            $logger : "@logger"
+            $transport : "@service.swifttransport"
+            $username : "user"
+            $password : "password"
+
+    service.swiftmailer:
+        class: Swift_Mailer
+        arguments:
+            - "@service.swifttransport"
+
+    service.swifttransport:
+        class: Swift_SmtpTransport
+        arguments:
+            $host : "localhost"
+            $port : 1025
+            $encryption : null
+
     service.mailer:
-#        class: AppBundle\Services\Mailer
-        class: AppBundle\Services\MailerDev # send via PHPMailer instead
+        class: AppBundle\Services\Mailer
 
     service.basket:
         class: AppBundle\Services\BasketService
