@@ -74,6 +74,7 @@ $ sudo dokku plugin:install https://github.com/dokku/dokku-rabbitmq.git rabbitmq
 ```
 
 **App creation**
+Note: create one app for each lendengine instance
 ```
 $ dokku apps:create lendengine
 $ dokku mysql:create lendenginedb
@@ -147,6 +148,11 @@ mysql> INSERT INTO `account` (`stub`, `name`, `db_schema`, `owner_name`, `owner_
 VALUES
 	('lendengine','Dev lend engine','lendenginedb','Me TheDeployer','me@repairshare.be','DEPLOYING',
   'plus','lendengine.repairshare.be','localhost','info@repairshare.be','2020-09-26 09:07:08');
+mysql> grant all privileges on lendenginedb.* to 'mysql'@'%';
+# create extra target db schema and corresponding user
+mysql> create database extratargetdb;
+mysql> create user 'myuser'@'localhost' identified by 'password';
+mysql> grant all privileges on extratargetdb.* to 'myuser'@'localhost';
 mysql> quit;
 root@fb51ccb6b6e0:/# exit
 ```
@@ -163,7 +169,7 @@ root@lendenginemq:/# rabbitmqadmin list vhosts -u $RABBITMQ_DEFAULT_USER -p $RAB
 root@lendenginemq:/# rabbitmqadmin declare exchange name=exchange_dev type=direct --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
 root@lendenginemq:/# rabbitmqadmin declare exchange name=exchange_prod type=direct --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
 root@lendenginemq:/# rabbitmqadmin declare queue name=exchange_prod --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
-root@lendenginemq:/# rabbitmqadmin declare queue name=exchange_dev --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS>
+root@lendenginemq:/# rabbitmqadmin declare queue name=exchange_dev --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
 root@lendenginemq:/# rabbitmqadmin declare binding source="exchange_prod" destination_type="queue" destination="exchange_prod" routing_key="" --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
 root@lendenginemq:/# rabbitmqadmin declare binding source="exchange_dev" destination_type="queue" destination="exchange_dev" routing_key="" --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
 root@lendenginemq:/# exit
@@ -174,7 +180,6 @@ Use these commands to check your configuration
 ```
 $ dokku rabbitmq:enter lendenginemq
 root@lendenginemq:/# rabbitmqadmin list vhosts -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
-root@lendenginemq:/# rabbitmqadmin list exchanges --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
 root@lendenginemq:/# rabbitmqadmin list exchanges --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
 root@lendenginemq:/# rabbitmqctl list_queues --vhost=$RABBITMQ_DEFAULT_VHOST
 root@lendenginemq:/# rabbitmqadmin publish exchange=exchange_prod routing_key="" payload="hello, world" --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
