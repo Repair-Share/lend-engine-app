@@ -271,7 +271,7 @@ These instructions are valid for any type of install
   * owner_name: your name. Will be split in first and last name, so should contain at least 2 words delimited by space
   * owner_email: your email, will be used to login into the system e.g. me@reparishare.be
   * status: 'DEPLOYING'
-  * plan: 'plus'
+  * plan: 'plus' (or 'business' if you want to use Postmark for sending email)
   * domain: domain of your lend engine application e.g. lendengine.repairshare.be
   * server_name: server running lend engine e.g. localhost. Should match value of LE_SERVER_NAME env variable
   * org_email: your organisation contact email e.g. info@repairshare.be
@@ -533,14 +533,22 @@ To quickly start an active MQ server, you can use docker:
 
 ```CLOUDAMQP_URL: 'amqp://guest:guest@localhost:5672/lendengine'```
 
-* Running consumer
-    ```
-    php bin/console rabbitmq:consumer -m 50 mail_queue
-    ```
-    
+* Process emails
+    * With Postmark  
     The default consumer pushes the messages to [Postmark](https://postmarkapp.com/) 
-    and requires a Postmark API key to be set as SYMFONY__POSTMARK_API_KEY env var
+    and requires a Postmark API key to be set as SYMFONY__POSTMARK_API_KEY env var  
+        * Create Postmark account
+        * Setup Sender Signature
+        * Switch lend engine plan 'business'. This makes it possible to update 'From' email adres
+        * Go to lend engine 'General' settings
+        * Set your postmark API key in 'Postmark API key for outbound email'
+        * Make sure '"From" email address for outbound email' matches your Sender Signature
+        * Clear cache 
+        ```
+        php bin/console cache:clear --env=prod --no-debug
+        ```
     
+    * With SMTP server  
     For development purposes, the consumer can be replaced by a custom mailer src/AppBundle/Services/MailerDev.php
     which uses [PHPMailer](https://github.com/PHPMailer/PHPMailer) to push the messages to a [mailcatcher](https://mailcatcher.me/) running on port 1025
     
@@ -550,6 +558,13 @@ To quickly start an active MQ server, you can use docker:
     #        class: AppBundle\Services\Mailer
             class: AppBundle\Services\MailerDev # send via PHPMailer instead
     ```
+    
+    * Running consumer
+    ```
+    php bin/console rabbitmq:consumer -m 50 mail_queue
+    ```
+    
+    
 
 * Install RabbitMq on windows
 

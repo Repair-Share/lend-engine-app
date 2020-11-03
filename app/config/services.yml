@@ -19,8 +19,8 @@ services:
         class: AppBundle\Services\Queue\MailQueueConsumer
         arguments:
             - "@logger"
-            #- "@service.mailer"
-            - "@service.mailer.swiftmailer" # send via SwiftMailer instead
+            - "@service.mailer"
+            #- "@service.mailer.swiftmailer" # send via SwiftMailer instead
 
     ## END RABBITMQ ##
 
