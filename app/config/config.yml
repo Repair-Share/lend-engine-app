@@ -40,6 +40,7 @@ twig:
     form_themes:      [':form:fields.html.twig']
     globals:
         tenantInformation: "@service.tenant"
+        appService:        "@service.apps"
         app_version:       "%app_version%"
         stripe_client_id:  "%stripe_client_id%"
         rollbar_client_token : "%rollbar_client_token%"

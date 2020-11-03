@@ -98,11 +98,6 @@ class AppSettingsController extends AbstractController
             foreach ($app['settings'] AS $key => $value) {
                 $submittedValue = $form->get($key)->getData();
                 $appService->saveSetting($code, $key, $submittedValue);
-
-                if ($key == "list_id" && $submittedValue) {
-                    // To deal with legacy setting check on registration page
-                    $settingService->setSettingValue('mailchimp_api_key', true);
-                }
             }
 
             $this->addFlash("success", "Setting saved OK");

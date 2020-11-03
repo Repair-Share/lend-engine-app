@@ -32,7 +32,7 @@
                 <div class="col-md-4" id="col-password">
                     {{ form_row(form.plainPassword) }}
 
-                    <div style="display:{% if tenantInformation.setting('mailchimp_api_key') %}block{% else %}none{% endif %}">
+                    <div style="display:{% if appService.status('mailchimp') == "active" %}block{% else %}none{% endif %}">
                         {{ form_row(form.subscriber) }}
                     </div>
 
