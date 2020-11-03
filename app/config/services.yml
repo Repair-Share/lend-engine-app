@@ -189,8 +189,8 @@ services:
     service.swifttransport:
         class: Swift_SmtpTransport
         arguments:
-            $host : "localhost"
-            $port : 1025
+            $host : '%env(SMTP_HOST)%'
+            $port : '%env(SMTP_PORT)%'
             $encryption : null
 
     service.mailer:
