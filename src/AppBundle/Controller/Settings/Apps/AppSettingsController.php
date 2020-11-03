@@ -21,6 +21,9 @@ class AppSettingsController extends AbstractController
         /** @var \AppBundle\Services\Apps\AppService $appService */
         $appService = $this->get('service.apps');
 
+        /** @var \AppBundle\Services\SettingsService $settingService */
+        $settingService = $this->get('settings');
+
         if (!$user = $this->getUser()){
             $this->addFlash('error', "Please log in to access this page.");
             return $this->redirectToRoute('home');
@@ -95,7 +98,13 @@ class AppSettingsController extends AbstractController
             foreach ($app['settings'] AS $key => $value) {
                 $submittedValue = $form->get($key)->getData();
                 $appService->saveSetting($code, $key, $submittedValue);
+
+                if ($key == "list_id" && $submittedValue) {
+                    // To deal with legacy setting check on registration page
+                    $settingService->setSettingValue('mailchimp_api_key', true);
+                }
             }
+
             $this->addFlash("success", "Setting saved OK");
             return $this->redirectToRoute('app_settings', ['code' => $code]);
         }
