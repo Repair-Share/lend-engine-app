@@ -34,7 +34,7 @@ framework:
 # Twig Configuration
 twig:
     date:
-        timezone:     Europe/London
+        timezone:     Europe/Brussels
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     form_themes:      [':form:fields.html.twig']
