@@ -113,7 +113,7 @@ oneup_flysystem:
     adapters:
         product_adapter_local:
             local:
-                directory: "%kernel.root_dir%/../web/images/products"
+                directory: "%kernel.root_dir%/../web/uploads/products"
         product_adapter:
              awss3v3:
                  client: lendengine.s3_client
@@ -121,7 +121,7 @@ oneup_flysystem:
                  prefix: ''
         file_adapter_local:
             local:
-                directory: "%kernel.root_dir%/../web/images/files"
+                directory: "%kernel.root_dir%/../web/uploads/files"
         file_adapter:
              awss3v3:
                  client: lendengine.s3_client

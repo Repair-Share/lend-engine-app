@@ -18,7 +18,7 @@ parameters:
 
     app_version: 1.0.0
     #s3_bucket:         https://s3-us-west-2.amazonaws.com/lend-engine/
-    s3_bucket:         %env(WEB_URL)%/images/products/
+    s3_bucket:         %env(WEB_URL)%/uploads/products/
 
     locale: en
     #CLOUDAMQP_URL: 'amqp://lendengine:lendengine@localhost:5672/lendengine'
