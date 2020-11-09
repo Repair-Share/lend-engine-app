@@ -32,12 +32,7 @@ class AppService
     {
         $this->em = $em;
         $this->settings = $settings;
-
-
         $this->repo = $this->em->getRepository('AppBundle:App');
-
-        // Initialise
-        $this->getInstalled();
     }
 
     public function getInstalled()
@@ -52,6 +47,10 @@ class AppService
 
     public function getStatus($code)
     {
+        if (count($this->installedAppsByCode) == 0) {
+            $this->getInstalled();
+        }
+
         if (!isset($this->installedAppsByCode[$code])) {
             return '';
         }
