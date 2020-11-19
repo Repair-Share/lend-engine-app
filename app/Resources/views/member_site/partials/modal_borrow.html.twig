@@ -68,11 +68,15 @@
                             <a href="javascript:void(0);" class="time ui-timepicker-input show_time_from" id="time_from_picker"></a>
                         </div>
                         <div class="multi-site"><a class="site_from" href="javascript:void(0);"></a></div>
+
+                        {% if is_granted('ROLE_ADMIN') %}
                         <div style="padding-bottom: 10px;" id="today-button-wrapper">
                             <button type="button" class="btn btn-success" id="set-pickup-today">
                                 {% trans %}public_item.button_today{% endtrans %}
                             </button>
                         </div>
+                        {% endif %}
+
                         <div style="padding-bottom: 20px;">
                             <button type="button" class="btn btn-success" data-dismiss="modal" id="choosePickupButton">
                                 {% trans %}public_item.button_choose_pickup{% endtrans %}

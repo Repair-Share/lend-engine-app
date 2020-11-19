@@ -23,7 +23,7 @@ and then run `composer install` to add dependencies.
 6. ``UPDATE _core.account SET status = 'DEPLOYING' where stub = 'unit_test';``
 7. Set `account.owner_name` and `account.owner_email` to yours.
 8. Lastly, visit the deployment URL to create a new account 
-``http://localhost:8001/deploy``
+``http://unit_test.localhost:8000/deploy``
 
 So that all tenants share the same item types, for network-level reporting, we use 
 a shared table: `_core.item_type`. Run 
@@ -31,6 +31,11 @@ a shared table: `_core.item_type`. Run
 ``/web/plugins/type/itemTypes.sql``
 
 to insert the latest set. These are taken from a Google product taxonomy.
+
+**Email**
+
+Emails are sent using RabbitMQ. You'll need to configure the settings, and then run a worker (or two) 
+using ``bin/console rabbitmq:consumer mail_queue``
 
 **Functional testing**
 
