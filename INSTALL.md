@@ -15,7 +15,7 @@ Or download the zip file from github
 
 * Add this line to app/config/parameters.yml.dist
 ```
-    CLOUDAMQP_URL: amqp://lendengine:lendengine@localhost/lendengine
+CLOUDAMQP_URL: amqp://lendengine:lendengine@localhost/lendengine
 ```
 
 
@@ -25,7 +25,15 @@ Dokku
 **Install**
 
 Install dokku on your target server.   
-For detailed instructions, see (http://dokku.viewdocs.io/dokku/)
+For detailed instructions, see (http://dokku.viewdocs.io/dokku/)  
+The use of virtualhost naming for apps is assumed
+
+For daily management, it is recommended to create an extra user
+```
+$ adduser newuser
+$ usermod -aG sudo newuser
+```
+Add your public key to /home/newuser/.ssh/authorized_keys 
 
 *Local linux install*
 
@@ -73,32 +81,34 @@ $ sudo dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
 $ sudo dokku plugin:install https://github.com/dokku/dokku-rabbitmq.git rabbitmq
 ```
 
-**App creation**
-Note: create one app for each lendengine instance
+**App creation**  
+Note: create one app for each lendengine instance. Replace 'myapp' by real app name and 'mydomain' by your fully qualified domain name
 ```
-$ dokku apps:create lendengine
+$ dokku apps:create myapp
 $ dokku mysql:create lendenginedb
-$ dokku mysql:link lendenginedb lendengine
+$ dokku mysql:link lendenginedb myapp
 $ dokku rabbitmq:create lendenginemq
-$ dokku rabbitmq:link lendenginemq lendengine
-$ dokku config:set lendengine SYMFONY_ENV=prod LE_SERVER_NAME=yourServer SYMFONY__POSTMARK_API_KEY=yourKey
-$ dokku config:set lendengine RDS_URL="mysql://mysql:password@dokku-mysql-lendenginedb:3306/lendenginedb"
-$ dokku config:set lendengine APP_ENV=prod
-$ dokku buildpacks:add lendengine https://github.com/heroku/heroku-buildpack-apt
-$ dokku buildpacks:add lendengine https://github.com/heroku/heroku-buildpack-php
+$ dokku rabbitmq:link lendenginemq myapp
+$ dokku config:set myapp SYMFONY_ENV=prod LE_SERVER_NAME=yourServer SYMFONY__POSTMARK_API_KEY=yourKey
+$ dokku config:set myapp RDS_URL="mysql://mysql:password@dokku-mysql-lendenginedb:3306/lendenginedb"
+$ dokku config:set myapp APP_ENV=prod
+$ dokku config:set myapp WEB_URL=http://myapp.mydomain
+$ dokku buildpacks:add myapp https://github.com/heroku/heroku-buildpack-apt
+$ dokku buildpacks:add myapp https://github.com/heroku/heroku-buildpack-php
+$ dokku storage:mount myapp /var/lib/dokku/data/storage/myapp/uploads:/app/web/uploads
 ```
 Note:  
-Lookup mysql password from 'dokku config lendengine' command. The value of RDS_URL should match DATABASE_URL 
+Lookup mysql password from 'dokku config myapp' command. The value of RDS_URL should match DATABASE_URL 
 
 For DEV environments, use this updated config
 ```
-$ dokku config:set lendengine SYMFONY_ENV=dev
-$ dokku config:set lendengine LE_SERVER_NAME=localhost
-$ dokku config:set lendengine SYMFONY__POSTMARK_API_KEY=dummyApiKey
-$ dokku config:set lendengine DEV_DB_USER=lendengine DEV_DB_PASS=lendengine
-$ dokku config:set lendengine APP_ENV=dev
-$ dokku config:set lendengine WEB_CONCURRENCY=5      # limit the number of started processes
-$ dokku proxy:ports-add lendengine http:8081:5000    # also listen on port 8081
+$ dokku config:set myapp SYMFONY_ENV=dev
+$ dokku config:set myapp LE_SERVER_NAME=localhost
+$ dokku config:set myapp SYMFONY__POSTMARK_API_KEY=dummyApiKey
+$ dokku config:set myapp DEV_DB_USER=lendengine DEV_DB_PASS=lendengine
+$ dokku config:set myapp APP_ENV=dev
+$ dokku config:set myapp WEB_CONCURRENCY=5      # limit the number of started processes
+$ dokku proxy:ports-add myapp http:8081:5000    # also listen on port 8081
 ```
 Note:  
 DEV deploys require extra packages. This might require an update of your composer.lock file
@@ -107,10 +117,12 @@ DEV deploys require extra packages. This might require an update of your compose
 * Clone the git repository
 
 ```
-$ git clone https://github.com/deelbaarmechelen/lend-engine-app.git
-$ git remote add dokku dokku@<servername>:lendengine
+$ git clone https://github.com/Repair-Share/lend-engine-app.git
+$ git checkout -b myapp
+$ git remote add myapp dokku@mydomain:myapp
 ```
 
+Tip: create a branch and remote for each target lend engine instance
   
 * Add Aptfile configuration file for heroku-buildpack-apt to add missing mbstring.so php extension
 ```
@@ -126,9 +138,9 @@ $ git commit -m "add heroku-buildpack-apt configuration file for install of mbst
 
 * Copy and commit server configuration file for your environment
 ```
-$ cp app/config/server/lend-engine-eu.yml app/config/server/<servername>.yml
-$ git add app/config/server/<servername>.yml
-$ git commit -m "add <servername> config file"
+$ cp app/config/server/lend-engine-eu.yml app/config/server/mydomain.yml
+$ git add app/config/server/mydomain.yml
+$ git commit -m "add mydomain config file"
 ```
 
 **Database setup**  
@@ -151,8 +163,9 @@ VALUES
 mysql> grant all privileges on lendenginedb.* to 'mysql'@'%';
 # create extra target db schema and corresponding user
 mysql> create database extratargetdb;
-mysql> create user 'myuser'@'localhost' identified by 'password';
-mysql> grant all privileges on extratargetdb.* to 'myuser'@'localhost';
+mysql> create user 'myuser'@'%' identified by 'password';
+mysql> grant all privileges on extratargetdb.* to 'myuser'@'%';
+mysql> grant SELECT, INSERT, UPDATE privileges on _core.* to 'myuser'@'%';
 mysql> quit;
 root@fb51ccb6b6e0:/# exit
 ```
@@ -182,27 +195,42 @@ $ dokku rabbitmq:enter lendenginemq
 root@lendenginemq:/# rabbitmqadmin list vhosts -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
 root@lendenginemq:/# rabbitmqadmin list exchanges --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
 root@lendenginemq:/# rabbitmqctl list_queues --vhost=$RABBITMQ_DEFAULT_VHOST
+root@lendenginemq:/# rabbitmqadmin -f long -d 3 list queues --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
 root@lendenginemq:/# rabbitmqadmin publish exchange=exchange_prod routing_key="" payload="hello, world" --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS
 root@lendenginemq:/# rabbitmqadmin get queue=exchange_prod ackmode=ack_requeue_true --vhost=$RABBITMQ_DEFAULT_VHOST -u $RABBITMQ_DEFAULT_USER -p $RABBITMQ_DEFAULT_PASS 
 ```
 
 *Start processing email*
 
-* Create postmark account
+* Create postmark account.
 * Start 'worker' container to read messages from queue
 ```
-$ dokku config:set lendengine SYMFONY__POSTMARK_API_KEY=<serverApiTokenFromPostmarkAccount>
-$ dokku ps:scale lendengine worker=1
+$ dokku config:set myapp SYMFONY__POSTMARK_API_KEY=<serverApiTokenFromPostmarkAccount>
+$ dokku ps:scale myapp worker=1
+```
+
+Alternatively, manually start the worker. This can be usefull in troubleshooting as eventual error messages are easier to catch
+```
+$ php bin/console rabbitmq:consumer mail_queue
 ```
 
 **Deploy**  
+* Check ssh access
+```
+$ ssh dokku@<hostname>
+```
+
 * Deploy app to dokku server
 ```
+$ git remote add mytarget dokku@<hostname>:mytarget
 $ git push dokku
+$ git push mytarget mytarget:master
 ```
 
 Browse to your server's deploy page:  
-http://&lt;servername&gt;/deploy
+```
+http://mytarget.<hostname>/deploy
+```
 
 *Windows WSL2 setup (experimental)*  
 Connection from Windows when using WSL2
@@ -477,7 +505,8 @@ Next steps
 **Replace Amazon S3 by local storage:**
 
 Update app/config/config.yml file to add local oneup_flysystem adapters and refer them in filesystems definition
-(see also [Flysystem](https://github.com/thephpleague/flysystem) and [Flysystem as storage layer](https://github.com/1up-lab/OneupUploaderBundle/blob/master/doc/flysystem_storage.md)
+(see also [Flysystem](https://github.com/thephpleague/flysystem) 
+and [Flysystem as storage layer](https://github.com/1up-lab/OneupUploaderBundle/blob/master/doc/flysystem_storage.md) )
 ```
 oneup_flysystem:
     adapters:
@@ -501,7 +530,7 @@ oneup_flysystem:
 Update app/config/parameters.yml(.dist) to update weburl where images are located
 ```
     #s3_bucket:         https://s3-us-west-2.amazonaws.com/lend-engine/
-    s3_bucket:         http://127.0.0.1:8000/images/products/
+    s3_bucket:         http://<FQDN>/images/products/
 ```
 
 This change might require a cache clear to take effect
@@ -544,7 +573,8 @@ To quickly start an active MQ server, you can use docker:
     and requires a Postmark API key to be set as SYMFONY__POSTMARK_API_KEY env var  
         * Create Postmark account
         * Setup Sender Signature
-        * Switch lend engine plan 'business'. This makes it possible to update 'From' email adres
+        * Request approval of your account to send messages to external domains
+        * Switch lend engine plan to 'business'. This makes it possible to update 'From' email adres
         * Go to lend engine 'General' settings
         * Set your postmark API key in 'Postmark API key for outbound email'
         * Make sure '"From" email address for outbound email' matches your Sender Signature
@@ -591,6 +621,94 @@ After DB migration, the account is marked as 'TRIAL' and will expire after 1 mon
 You might want to update the _core.account record in database to update its status to 'LIVE'
 
 See also src\AppBundle\Entity\Tenant.php for all possible values
+```
+$ dokku mysql:enter lendenginedb
+root@fb51ccb6b6e0:/# env      # to retrieve root password
+root@fb51ccb6b6e0:/# mysql -p
+Enter password:
+mysql> use _core;
+mysql> UPDATE account SET status = 'LIVE' where stub = '<stub>';
+mysql> commit;
+mysql> quit;
+root@fb51ccb6b6e0:/# exit
+```
+
+**Configuring DB backups**  
+Tip: use [rclone](https://rclone.org) to replicate the backups to a safe storage
+
+Set mysql backup script in /etc/cron.daily for daily backups of database
+
+```
+#!/bin/bash
+LOGFILE=/var/log/dokku/backup_mysql.log
+
+echo "Backing up Mysql databases from Dokku ..." >> $LOGFILE
+
+dt=$(date +"%Y-%m-%d")
+
+echo " today is $dt" >> $LOGFILE
+
+BACKUP_PATH=/var/lib/dokku/data/backup/mysql/$(date +"%Y")/$(date +"%B")
+# Uncomment this to use with rclone
+# BACKUP_PATH=remote:dokku/mysql/$(date +"%Y")/$(date +"%B") 
+TEMP_DIR=/tmp/backup
+echo " creating $TEMP_DIR .." >> $LOGFILE
+mkdir -p $TEMP_DIR >> $LOGFILE
+
+dbs=$(dokku mysql:list | tail -n +2 | cut -f1 -d' ')
+
+for db in $dbs
+do
+  echo " backing up $db ..." >> $LOGFILE
+  mkdir -p $TEMP_DIR/$db >> $LOGFILE
+  f=$TEMP_DIR/$db/$dt-$db.sql
+  rm -f $f
+  dokku mysql:export $db > $f
+  gzip -f $f
+  echo " backup file created at $f.gz" >> $LOGFILE
+
+  mkdir -p $BACKUP_PATH/$db >> $LOGFILE
+  cp $f.gz $BACKUP_PATH/$db >> $LOGFILE
+  # Uncomment this to use with rclone
+  # rclone copy $f.gz $BACKUP_PATH/$db >> $LOGFILE
+  rm -f $f.gz
+  echo " backup file $f.gz transferred to $BACKUP_PATH/$db" >> $LOGFILE
+done
+echo "Mysql backup completed" >> $LOGFILE
+```
+
+Similarly, backups of persisted data (e.g. uploaded files) can be configured
+```
+#!/bin/bash
+LOGFILE=/var/log/dokku/backup_data.log
+echo "Backing up data from dokku apps..." >> $LOGFILE
+
+dt=$(date +"%Y-%m-%d")
+
+echo " today is $dt" >> $LOGFILE
+
+DATA_PATH=/var/lib/dokku/data/storage
+BACKUP_PATH=/var/lib/dokku/data/backup/data/$(date +"%Y")/$(date +"%B")
+# Uncomment this to use with rclone
+# BACKUP_PATH=remote:dokku/data/storage
+
+echo " creating $BACKUP_PATH .." >> $LOGFILE
+mkdir -p $BACKUP_PATH
+
+cp -pr $DATA_PATH $BACKUP_PATH
+# Uncomment this to use with rclone
+# rclone sync $DATA_PATH $BACKUP_PATH -P >> $LOGFILE
+
+echo " backup of $DATA_PATH to $BACKUP_PATH completed" >> $LOGFILE
+```
+
+**Setup SSL**
+
+To enable SSL, generate a certificate with letsencrypt
+```
+$ dokku config:set --no-restart myapp DOKKU_LETSENCRYPT_EMAIL=your@email.tld
+$ dokku letsencrypt myapp
+```
 
 
 Migration
