@@ -1,0 +1,221 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: sl-SI, Slovenian (Slovenia)
+# Tagged: Member site
+# Status: Translated
+# Exported by: Chris
+# Exported at: Wed, 13 Jan 2021 00:58:21 +0000
+---
+Loan: Izposoja
+Loans: Izposoje
+Reservation: rezervacija
+Reservations: Rezervacije
+Brand: Znamka
+Payment: Plačilo
+Payments: Plačila
+Fee: Strošek
+loan_status.pending: Na čakanju
+loan_status.on_loan: Izposojeno
+loan_status.reserved: Rezervirano
+loan_status.cancelled: Prekinjeno
+loan_status.overdue: Zapadlo
+loan_status.closed: Zaključeno
+note_reservation_fee: Stroški rezervacije
+note_reservation_fee_will_be_added: bo dodano za vsako rezervacijo.
+th.date: Datum
+th.payment_method: Način plačila
+th.fee: Strošek
+th.payment: Plačilo
+th.ref: Referenca
+th.items: Predmeti
+th.date_from: Od
+th.date_to: Za
+th.status: Status
+Reference: Referenca
+Items: Predmeti
+Status: Status
+STATUS_PENDING: Na čakanju
+STATUS_ACTIVE: Izposojeno
+STATUS_OVERDUE: Zapadlo
+STATUS_RESERVED: Rezervirano
+STATUS_CANCELLED: PRekinjeno
+STATUS_CLOSED: Končano
+days: '{1}dan|[2,Inf[dni'
+per_day: na dan
+per_n_days: za %count% dni
+button_cancel: Prekinitev
+button_cancel_reservation: Odpovej rezervacijo
+button_add_credit: Dodaj sredstva
+button_go: Pojdi
+I forgot my password: Pozabljeno geslo
+Log out: Odjava
+My account: Moj račun
+Login with Facebook: Prijava s Facebook računom
+Login with Google: Prijava z Google računom
+form.firstName: Ime
+form.lastName: Priimek
+form.email: Elektronska pošta
+form.telephone: Telefon
+form.address1: Ulica in hišna številka
+form.address2: Mesto
+form.address3: Regija
+form.postcode: Poštna številka
+form.country: Država
+form.locale: Jezik
+public_misc.link_admin: Admin
+public_misc.link_home: Domov
+public_misc.link_recent_items: Nazadnje dodano
+public_misc.link_all_items: Vsi predmeti
+public_misc.search_items: Išči
+public_misc.no_results: Brez zadetkov
+public_misc.filter_items: Filter
+public_misc.any_site: Katerakoli lokacija
+public_footer.find_us: Odpiralni čas
+public_footer.choose_lang: Izberi jezik
+public_footer.powered_by: Storitev poganja
+public_footer.logged_in_as: Prijavljeni kot
+public_account.title: Moj račun
+public_account.contact_subtitle: Kontaktni podatki
+public_account.membership_subtitle: Podatki o članstvu
+public_account.button_edit_details: Uredi moje podatke
+public_account.button_change_password: Sprememba gesla
+public_item_list.pages: Prikazujemo predmete %x% - %y% od %z% predmetov
+public_item.location: Lokacija
+public_item.brand: Znamka
+public_item.code: Šifra
+public_item.serial: Serijska številka
+public_item.condition: Stanje
+public_item.contains: Vsebuje
+public_item.downloads: Prenosi
+public_item.log_in_to_download: Prijavite se za prenos
+public_item.log_in_to_borrow: Prijavite se za rezervacijo ali izposojo
+public_item.borrow_now: Izposoja / rezervacija
+public_item.not_available: Ni na voljo
+public_item.available: Na voljo
+public_item.on_loan: Izposojeno
+public_item.pickup_date_error: Datum prevzema nekaterih predmetov v vaši košarici je v navzkrižju z rezervacijo. Predmetov si tako ne boste mogli izposoditi hkrati.
+public_item.pickup_site_error: Ta predmet ni na voljo na isti lokaciji kot ostali predmeti. Tega predmeta si tako ne boste mogli izposoditi hkrati z ostalimi.
+public_item.basket_exists: V vaši košarici so že drugi predmeti, zato smo avtomatsko uskladili datume.
+public_item.account_balance_is: Stanje
+public_item.add_credit: Dodaj sredstva
+public_item.pickup_at: Od
+public_item.return_by: Za
+public_item.choose_pickup_first: Najprej izberite prevzem
+public_item.button_choose_pickup: Izberite datum
+public_item.button_choose_return: Izberite datum
+public_item.cancel: PReklic
+public_item.basket_add: Dodaj v košarico
+public_item.locations: Lokacija
+public_item.maps_link: Odpri v Google Zemljevidih
+public_item.similar_items: podobni predmeti
+public_item.see_all: Pokaži vse
+public_item.not_reservable: Ta predmet ni na voljo za spletno rezervacijo. Prosimo, da nas kontaktirate.
+calendar.pickup_day: Prevzem
+calendar.my_booking: MOJE REZERVACIJE
+calendar.reserved: REZERVIRANO
+calendar.on_loan: IZPOSOJENO
+calendar.text_clash_date: Vaš želeni termin izposoje se prekriva z obstoječo rezervacijo. Prosimo, izberite drug termin.
+calendar.text_return_after_pickup: Datum vračila mora biti za datumom prevzema.
+calendar.alert_already_booked: Tega datuma zaradi druge rezervacije ni mogoče izbrati.
+calendar.alert_not_your_booking: Ogledate si lahko le podrobnosti vaših rezervacij
+calendar.alert_day_warning: Ta predmet si lahko izposodite samo za itemLoanDays dni (ali večkratnik tega števila dni). \nProsimo, izberite nov datum vračila.
+calendar.alert_min_loan_days: Ta predmet si lahko izposodite za najmanj minLoanDays dni.
+calendar.alert_max_loan_days: Ta predmet si lahko izposodite za največ maxLoanDays dni.
+public_basket.title: Košarica
+public_basket.name: Košarica
+public_basket.due_at: Za vračilo
+public_basket.return_to: 'Lokacija za vračanje:'
+public_basket.pickup_after: Na voljo po
+public_basket.from: iz
+public_basket.add_credit_message: Prosimo, da najprej naložite sredstva.
+public_basket.empty: Izprazni košarico
+public_basket.confirm_reservation: Rezerviraj
+public_basket.remove_item: Odstrani
+public_basket.total: Skupaj
+public_basket.balance: Dolg
+public_basket.no_items: V košarici ni predmetov. Poiščite predmet in ga dodajte.
+public_basket.full_charge: bo zaračunano vašemu uporabniškemu računu.
+public_basket.delay_charge: bo zaračunano vašemu računu takoj, preostanek za plačilo ob zaključku
+public_loan.title: Izposoja
+public_user_menu.contact_info: Profil
+text_borrow_with_membership: Z članstvom pridobite možnost za rezervacijo in izposojo tega predmeta. Obiščite "Moj račun" za ogled možnosti članstva.
+text_no_membership: Niste aktivni član.
+public_add_credit.title: Dodaj sredstva
+public_add_credit.choose_card: Uporabite obstoječo bančno kartico (zgoraj) ali nadaljujte za uporabo druge kartice.
+public_add_credit.use_this_card: Uporabi to kartico
+public_add_credit.amount_to_add: Znesek
+public_add_credit.payment_method: Način plačila
+public_add_credit.min_amount: Najnižja vrednost
+public_add_credit.processing_fee: bo dodano za stroške kartične transakcije
+public_loans.no_loans: Niste si še izposodili nobenega predmeta.
+public_payments.no_payment: Niste še izvedli plačil.
+public_payments.title: Plačila
+public_registration.newsletter: Prijavite se na naš seznam za obveščanje.
+public_registration.terms_link: Poglejte naše pogoje poslovanja
+public_registration.terms_label: Strinjam se s pogoji poslovanja.
+public_become_member.title: Postani član.
+msg_success.payment_ok: Plačilo uspešno. Stanje na vašem računu je posodobljeno.
+msg_success.reservation_create: Rezervirano! Prejeli ste elektronsko pošto s potrditvijo rezervacije.
+msg_success.reservation_cancel: Vaša rezervacija je bila prekinjena.
+msg_success.basket_item_removed: Predmet je bil odstranjen iz vaše košarice.
+msg_success.basket_item_added: '- dodano v košarico.'
+msg_success.basket_item_exists: je že dodan v vašo košarico.
+msg_fail.general_fail: Žal je prišlo do napake. Prosimo, poskusite ponovno ali nas kontaktirajte.
+msg_fail.reservation_create: Prišlo je do napake, rezervacija ni uspela.
+msg_fail.reservation_cancel: Vaše rezervacije nismo uspeli preklicati. Prosimo, da nas kontaktirate.
+per-borrow: na izposojo
+per_borrow: na izposojo
+public_misc.log_in_first: Prijavite se za ogled predmetov
+public_account.button_subscribe_now: Naročite se
+public_account.button_change_membership: Spremenite ali obnovite članstvo
+public_account.current_member_type: 'Vaše trenutno članstvo: %type%.'
+public_account.membership_about_to_expire: Vaše članstvo se izteka.
+public_account.membership_expires_on: 'Vaša članarina preteče '
+public_registration.email_confirmed: Vaš elektronski naslov je bil potrjen.
+public_user.choose_membership_type: Izberite vrsto članstva
+public_item.discount: Popust
+public_registration.membership_starts_today: Članarina je veljavna od danes dalje.
+public_registration.membership_deferred: 'Obnovitev članarine: '
+public_registration.discount_on_fees: popust na ceno izposoje
+public_registration.button_renew: Obnovi članstvo
+public_registration.button_subscribe: Naročite se
+public_registration.no_self_serve_memberships: Članarine ne morete skleniti preko spleta. Prosimo, da nas obiščete - s seboj potrebujete osebni dokument.
+th.deposit: Depozit
+public_misc.link_events: Dogodki
+public_misc.show_items_from: 'Prikaži samo predmete, ki se nahajajo v: '
+public_misc.credit_limit: Limit
+public_item.button_today: danes
+public_item.see_parts: Ogled sestavnih delov
+public_item.kit_containing: 'To je paket, ki ga sestavljajo: '
+public_item.borrow_help: Izberite datum, čas ali lokacijo za spremembo rezervacije
+public_loan.charged: 'Zaračunano uporabniku '
+public_loan.check_in: Vračilo
+public_loan.button_check_out: Izposoja
+public_loan.select_items_to_check_in: Izberite predmete za vračilo
+public_loan.choose_new_date: Izberite nov datum vračila
+public_loan.button_complete_checks: Prosimo, dokončajte.
+public_loan.button_choose_payment_method: Izberite način plačila
+public_loan.button_deposits_require_payment: Zahtevano je takojšnje plačilo
+public_loan.cannot_check_out: Predmeti ne morejo biti izposojeni, preverite lokacijo oz. rezervacijo.
+public_loan.no_payment_methods: Na voljo ni nobenega načina plačila.
+public_loan.not_enough_credit: Nimate dovolj sredstev za izposojo.
+public_add_credit.remove_card: Odstrani
+public_payments.no_payment_required: Brez plačila
+public_user.subscription_payment: Plačilo naročnine
+events.event: Dogodek
+events.page_title: Dogodki
+events.bookings: Rezervacija dogodka
+events.no_events: Ni dogodkov v tem mesecu.
+events.view_on_facebook: Ogled dogodka na Facebooku
+events.location: Lokacija
+events.time: Čas
+events.cost: Cena
+events.you_are_attending: 'Udeležili se boste '
+events.book_now_button: Rezervacija
+events.check_in_button: Potrditev udeležbe
+events.check_in_help: S potrditvijo udeležbe postanete udeleženec dogodka (brez potrditvene elektronske pošte).
+events.contact_us_to_book: Kontaktirajte nas za rezervacijo
+events.not_bookable: Ta dogodek ne omogoča rezervacije.
+events.log_in_to_book: Prijavite se za rezervacijo
+...

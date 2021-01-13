@@ -40,6 +40,7 @@ class SettingsMemberSiteType extends AbstractType
             'Nederlands' => 'nl',
             'Română'     => 'ro',
             'Slovak'     => 'sk',
+            'Slovenian'  => 'sl',
             'Svenska'    => 'sv-SE',
             'Welsh'      => 'cy'
         ];
