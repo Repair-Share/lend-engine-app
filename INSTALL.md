@@ -90,15 +90,18 @@ $ dokku mysql:link lendenginedb myapp
 $ dokku rabbitmq:create lendenginemq
 $ dokku rabbitmq:link lendenginemq myapp
 $ dokku config:set myapp SYMFONY_ENV=prod LE_SERVER_NAME=yourServer SYMFONY__POSTMARK_API_KEY=yourKey
-$ dokku config:set myapp RDS_URL="mysql://mysql:password@dokku-mysql-lendenginedb:3306/lendenginedb"
+$ dokku config:set myapp RDS_URL="mysql://myapp:password@dokku-mysql-lendenginedb:3306/myapp"
 $ dokku config:set myapp APP_ENV=prod
 $ dokku config:set myapp WEB_URL=http://myapp.mydomain
+$ dokku config:set myapp WEB_CONCURRENCY=10      # limit the number of started processes to preserve enough memory for db and rabbitmq
 $ dokku buildpacks:add myapp https://github.com/heroku/heroku-buildpack-apt
 $ dokku buildpacks:add myapp https://github.com/heroku/heroku-buildpack-php
 $ dokku storage:mount myapp /var/lib/dokku/data/storage/myapp/uploads:/app/web/uploads
+$ dokku storage:mount myapp /var/lib/dokku/data/storage/myapp/logs:/app/var/log
 ```
 Note:  
-Lookup mysql password from 'dokku config myapp' command. The value of RDS_URL should match DATABASE_URL 
+Lookup mysql password from 'dokku config myapp' command. The value of RDS_URL should match DATABASE_URL  
+-> **Update**: create a new db user for your app and use this new user in RDS_URL
 
 For DEV environments, use this updated config
 ```
