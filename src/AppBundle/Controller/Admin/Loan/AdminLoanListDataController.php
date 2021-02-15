@@ -26,7 +26,11 @@ class AdminLoanListDataController extends Controller
         $draw = $request->get('draw');
 
         $search = $request->get('search');
-        $searchString = $search['value'];
+
+        $searchString = '';
+        if (isset($search['value'])) {
+            $searchString = $search['value'];
+        }
 
         $start  = $request->get('start');
         $length = $request->get('length');
@@ -35,7 +39,7 @@ class AdminLoanListDataController extends Controller
         $length += 50;
 
         $columns = $request->get('columns');
-        if ($columns[1]['search']['value']) {
+        if (isset($columns[1]['search']['value']) && $columns[1]['search']['value']) {
             $statusFilter = $columns[1]['search']['value'];
         } else {
             // For first page load from menu
