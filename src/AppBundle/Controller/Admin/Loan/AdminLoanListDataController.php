@@ -26,7 +26,12 @@ class AdminLoanListDataController extends Controller
         $draw = $request->get('draw');
 
         $search = $request->get('search');
-        $searchString = $search['value'];
+
+        if (isset($search['value'])) {
+            $searchString = $search['value'];
+        } else {
+            $searchString = '';
+        }
 
         $start  = $request->get('start');
         $length = $request->get('length');
