@@ -27,10 +27,9 @@ class AdminLoanListDataController extends Controller
 
         $search = $request->get('search');
 
+        $searchString = '';
         if (isset($search['value'])) {
             $searchString = $search['value'];
-        } else {
-            $searchString = '';
         }
 
         $start  = $request->get('start');
@@ -40,7 +39,7 @@ class AdminLoanListDataController extends Controller
         $length += 50;
 
         $columns = $request->get('columns');
-        if ($columns[1]['search']['value']) {
+        if (isset($columns[1]['search']['value']) && $columns[1]['search']['value']) {
             $statusFilter = $columns[1]['search']['value'];
         } else {
             // For first page load from menu

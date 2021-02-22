@@ -27,7 +27,11 @@ class ContactListDataController extends Controller
         $draw = $request->get('draw');
 
         $search = $request->get('search');
-        $searchString = $search['value'];
+
+        $searchString = '';
+        if (isset($search['value'])) {
+            $searchString = $search['value'];
+        }
 
         $start  = $request->get('start');
         $length = $request->get('length');
