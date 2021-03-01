@@ -80,6 +80,12 @@ class ItemController extends Controller
                 $this->addFlash('error', "We don't have a default location for site ID 1, please choose a site to work at.");
                 return $this->redirectToRoute('homepage');
             }
+
+            if ($site->getDefaultCheckInLocation() === null) {
+                $this->addFlash('error', "We don't have a default check in location for site ID {$site->getName()}, please set up.");
+                return $this->redirectToRoute('site_list');
+            }
+
             $defaultLocationId = $site->getDefaultCheckInLocation()->getId();
 
             /** @var \AppBundle\Repository\InventoryLocationRepository $locationRepo */
