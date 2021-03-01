@@ -115,6 +115,8 @@ EOT;
         }
 
         $form = $this->createForm(ItemLocationType::class, $location, array(
+            'em' => $em,
+            'id' => $id,
             'action' => $this->generateUrl('location', array('id' => $id))
         ));
 
