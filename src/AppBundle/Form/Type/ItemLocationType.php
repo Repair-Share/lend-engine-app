@@ -55,13 +55,16 @@ class ItemLocationType extends AbstractType
             'data-help'   => "If you've used a location you can't delete it; you'd need to deactivate it.",
         );
 
+        $activeFieldRequired = false;
+
         if ($sites !== null) {
-            $activeFieldAttrs['onchange'] = 'if(!this.checked) { alert(\'This location is in use for xxx default check in location. Please change it before you deactivate this.\');};this.checked=true;';
+            $activeFieldAttrs['onchange'] = 'if(!this.checked) { alert(\'This location is in use for ' . str_replace("'", ' ', $sites->getName()) . ' default check in location. Please change it before you deactivate this.\');};this.checked=true;';
+            $activeFieldRequired = true;
         }
 
         $builder->add('isActive', CheckboxType::class, array(
             'label'    => 'Active?',
-            'required' => false,
+            'required' => $activeFieldRequired,
             'attr'     => $activeFieldAttrs
         ));
 
