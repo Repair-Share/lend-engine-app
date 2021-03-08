@@ -22,6 +22,18 @@ class EventRepository extends \Doctrine\ORM\EntityRepository
 
         return true;
     }
+    /**
+     * @param $eventId
+     * @return bool
+     */
+    public function validateDeleteWithPayments($eventId)
+    {
+        if ($this->hasPayments($eventId)) {
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * @param $eventId
@@ -37,6 +49,31 @@ class EventRepository extends \Doctrine\ORM\EntityRepository
         $stmt->execute();
         $result = $stmt->fetchAll();
         if ( $result[0]['cnt'] > 0 ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param $eventId
+     * @return bool
+     */
+    private function hasPayments($eventId)
+    {
+        $sql = "
+            SELECT 
+                COUNT(id) AS cnt
+            FROM 
+                payment
+            WHERE 
+                event_id = {$eventId}
+          ";
+
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+        if ($result[0]['cnt'] > 0) {
             return true;
         } else {
             return false;
