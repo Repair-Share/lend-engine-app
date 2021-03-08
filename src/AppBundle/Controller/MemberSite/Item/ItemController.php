@@ -233,6 +233,21 @@ class ItemController extends Controller
             }
         }
 
+        // Already in the basket
+        $basketService = $this->get('service.basket');
+        if ($basket = $basketService->getBasket()) {
+
+            foreach ($basket->getLoanRows() as $row) {
+
+                if ($row->getInventoryItem()->getId() === $product->getId()) {
+                    $product->setInBasket(true);
+                    $product->setIsReservable(false);
+                }
+
+            }
+
+        }
+
         return $this->render($template, array(
             'product' => $product,
             'inventory' => $itemService->getInventory($product),

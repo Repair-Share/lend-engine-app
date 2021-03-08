@@ -109,7 +109,9 @@
                             {% elseif product.itemType == 'service' %}
                                 <span class="label bg-gray">{% trans %}public_item.service_item{% endtrans %}</span>
                             {% else %}
-                                {% if product.inventoryLocation and product.inventoryLocation.id == 1 %}
+                                {% if product.inBasket %}
+                                    <span class="label label-primary">{% trans %}public_item.in_basket{% endtrans %}</span>
+                                {% elseif product.inventoryLocation and product.inventoryLocation.id == 1 %}
                                     <span class="label label-info">{% trans %}public_item.on_loan{% endtrans %}</span>
                                 {% elseif product.inventoryLocation and product.inventoryLocation.isAvailable == 1 %}
                                     <span class="label label-success">{% trans %}public_item.available{% endtrans %}</span>

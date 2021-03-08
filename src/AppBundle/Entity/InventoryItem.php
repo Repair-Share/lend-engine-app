@@ -325,6 +325,9 @@ class InventoryItem
     /** @var string */
     private $quantityAvailable;
 
+    /** @var boolean */
+    private $inBasket;
+
     /**
      * Empty constructor
      */
@@ -1641,6 +1644,25 @@ class InventoryItem
     public function getQuantityAvailable()
     {
         return $this->quantityAvailable;
+    }
+
+    /**
+     * @param $inBasket
+     * @return $this
+     */
+    public function setInBasket($inBasket)
+    {
+        $this->inBasket = $inBasket;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getInBasket()
+    {
+        return $this->inBasket;
     }
 
     /**
