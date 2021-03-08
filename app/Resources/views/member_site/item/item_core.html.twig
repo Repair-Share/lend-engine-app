@@ -118,6 +118,14 @@
 
                 <div class="clearfix" style="padding-bottom:10px;"></div>
 
+            {% elseif product.getInBasket %}
+
+                <span class="label label-primary">
+                    {% trans %}public_item.in_basket{% endtrans %}
+                </span>
+
+                <div class="clearfix" style="padding-bottom:10px;"></div>
+
             {% elseif product.inventoryLocation and product.inventoryLocation.id == 1 %}
 
                 <span class="label label-info">
@@ -285,6 +293,8 @@
                 {{ include('member_site/item/button_stock_item.html.twig') }}
             {% elseif product.itemType == 'service' %}
                 {{ include('member_site/item/button_service_item.html.twig') }}
+            {% elseif product.getInBasket %}
+                <!-- Item is already in the basket -->
             {% elseif (product.isReservable != false or is_granted('ROLE_ADMIN'))  %}
                 {{ include('member_site/item/button_loan_item.html.twig') }}
             {% else %}
