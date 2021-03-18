@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h4>Release notes</h4>
+    <div class="well">
+        <p>
+            Released bugfixes:
+        </p>
+        <ul>
+            {% for key, fix in bugfixes %}
+                <li class="margin">
+                    <a href="{{ issueLink }}97"
+                       target="_blank"
+                    >{{ fix }} #{{ key }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}
