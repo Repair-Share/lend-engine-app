@@ -126,12 +126,22 @@ class EmailLoanReminders
 
                     if ($dueLoanRows = $loanRowRepo->getLoanRowsDueInXDays($remindBeforeNDays)) {
 
+                        // Modify times to match local time
+                        $tz = $this->settings->getSettingValue('org_timezone');
+                        $timeZone = new \DateTimeZone($tz);
+                        $utc = new \DateTime('now', new \DateTimeZone("UTC"));
+                        $offSet = $timeZone->getOffset($utc)/3600;
+
                         foreach ($dueLoanRows AS $loanRow) {
 
                             /** @var $loanRow \AppBundle\Entity\LoanRow */
                             $loan = $loanRow->getLoan();
                             $contact = $loan->getContact();
                             $item = $loanRow->getInventoryItem();
+
+                            // Modify UTC database times to match local time
+                            $i = $loanRow->getDueInAt()->modify("{$offSet} hours");
+                            $loanRow->setDueInAt($i);
 
                             $resultString .= '  Loan: '.$loan->getId().' : '.$contact->getEmail(). PHP_EOL;
                             $resultString .= '  Item: '.$item->getName().PHP_EOL;
