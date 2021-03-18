@@ -117,12 +117,21 @@ class EmailReservationReminders
 
                 try {
 
+                    // Modify times to match local time
+                    $tz = $this->settings->getSettingValue('org_timezone');
+                    $timeZone = new \DateTimeZone($tz);
+                    $utc = new \DateTime('now', new \DateTimeZone("UTC"));
+                    $offSet = $timeZone->getOffset($utc)/3600;
+
                     /** @var $loanRepo \AppBundle\Repository\LoanRepository */
                     $loanRepo = $tenantEntityManager->getRepository('AppBundle:Loan');
 
                     if ($dueReservations = $loanRepo->getReservationsDue($remindDays)) {
 
                         foreach ($dueReservations AS $loan) {
+
+                            // Modify UTC database times to match local time
+                            $loan->getTimeOut()->modify("{$offSet} hours");
 
                             /** @var $loan \AppBundle\Entity\Loan */
                             $contact = $loan->getContact();
