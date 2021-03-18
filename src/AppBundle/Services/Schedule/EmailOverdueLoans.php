@@ -79,6 +79,12 @@ class EmailOverdueLoans
 
         $resultString .= 'Number of tenants = '.count($tenants).PHP_EOL;
 
+        // Modify times to match local time
+        $tz = $this->settings->getSettingValue('org_timezone');
+        $timeZone = new \DateTimeZone($tz);
+        $utc = new \DateTime('now', new \DateTimeZone("UTC"));
+        $offSet = $timeZone->getOffset($utc)/3600;
+
         foreach ($tenants AS $tenant) {
 
             /** @var $tenant \AppBundle\Entity\Tenant */
@@ -134,6 +140,9 @@ class EmailOverdueLoans
                             /** @var $loanRow \AppBundle\Entity\LoanRow */
                             $loan    = $loanRow->getLoan();
                             $contact = $loan->getContact();
+
+                            // Modify UTC database times to match local time
+                            $loanRow->getDueInAt()->modify("{$offSet} hours");
 
                             $resultString .= '  Loan: '.$loan->getId().' : '.$contact->getEmail(). PHP_EOL;
                             $resultString .= '  Due: '.$loanRow->getDueInAt()->format("Y-m-d").PHP_EOL;
