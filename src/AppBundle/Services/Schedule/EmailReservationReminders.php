@@ -128,6 +128,11 @@ class EmailReservationReminders
 
                     if ($dueReservations = $loanRepo->getReservationsDue($remindDays)) {
 
+                        // Test only the last row
+                        if (getenv('APP_ENV') === 'test' && sizeof($dueReservations)) {
+                            $dueReservations = [array_pop($dueReservations)];
+                        }
+
                         foreach ($dueReservations AS $loan) {
 
                             // Modify UTC database times to match local time
@@ -163,6 +168,11 @@ class EmailReservationReminders
                                         'loginUri' => $loginUri
                                     )
                                 );
+
+                                // Returns the debug info to unit test
+                                if (getenv('APP_ENV') === 'test') {
+                                    return $loan->getTimeOut()->format('Y-m-d H:i');
+                                }
 
                                 if (!$subject = $this->settings->getSettingValue('email_reservation_reminder_subject')) {
                                     $subject = $this->container->get('translator')->trans('le_email.reservation_reminder.subject',

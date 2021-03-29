@@ -225,10 +225,14 @@ class TestHelpers extends AuthenticatedControllerTest
      * @param string $action
      * @return int
      */
-    public function createLoan(Client $client, $contactId, $itemIds = [1000], $action = 'checkout')
+    public function createLoan(Client $client, $contactId, $itemIds = [1000], $action = 'checkout', $dayOffset = 0)
     {
         // Add items to the basket
         $today = new \DateTime();
+
+        if ($dayOffset) {
+            $today = $today->modify($dayOffset . " day");
+        }
 
         $fees = [];
         foreach ($itemIds AS $itemId) {
