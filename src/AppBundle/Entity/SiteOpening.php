@@ -207,6 +207,12 @@ class SiteOpening
      */
     public function getFriendlyTimeFrom()
     {
+        $time = (int)$this->getTimeFrom();
+
+        if (!$time) {
+            return '';
+        }
+
         $timeFrom = new \DateTime('2020-01-01 ' . $this->getTimeFrom());
         return $timeFrom->format("g:i a");
     }
@@ -216,6 +222,12 @@ class SiteOpening
      */
     public function getFriendlyTimeTo()
     {
+        $time = (int)$this->getTimeTo();
+
+        if (!$time) {
+            return '';
+        }
+
         $timeTo = new \DateTime('2020-01-01 ' . $this->getTimeTo());
         return $timeTo->format("g:i a");
     }
