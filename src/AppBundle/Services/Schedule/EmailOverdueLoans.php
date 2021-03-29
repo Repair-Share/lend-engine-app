@@ -135,6 +135,11 @@ class EmailOverdueLoans
 
                     if ($overdueLoanRows = $loanRowRepo->getOverdueItems($overdueDays)) {
 
+                        // Test only the last row
+                        if (getenv('APP_ENV') === 'test' && sizeof($overdueLoanRows)) {
+                            $overdueLoanRows = [array_pop($overdueLoanRows)];
+                        }
+
                         foreach ($overdueLoanRows AS $loanRow) {
 
                             /** @var $loanRow \AppBundle\Entity\LoanRow */
@@ -170,6 +175,11 @@ class EmailOverdueLoans
                                         'loginUri' => $loginUri
                                     )
                                 );
+
+                                // Returns the debug info to unit test
+                                if (getenv('APP_ENV') === 'test') {
+                                    return $loanRow->getDueInAt()->format('Y-m-d H:i');
+                                }
 
                                 $subject = $this->container->get('translator')->trans('le_email.overdue.subject',
                                     ['loanId' => $loan->getId()],
