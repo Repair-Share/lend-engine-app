@@ -40,6 +40,7 @@ class EmailLoanRemindersTest extends AuthenticatedControllerTest
         // Create a new loan
         $loanId = $this->helpers->createLoan($this->client, $contactId, [$itemId]);
 
+        // Check out the loan
         $this->helpers->checkoutLoan($this->client, $loanId);
 
         return $loanId;
