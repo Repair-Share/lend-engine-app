@@ -8,19 +8,8 @@ class EmailOverdueLoansTest extends AuthenticatedControllerTest
 {
     private function setUpSettings($tz)
     {
-        $container = $this->getContainer();
-
-        $em   = $container->get('doctrine')->getManager();
-        $repo = $em->getRepository('AppBundle:Setting');
-
-        $setting = $repo->findOneBy(['setupKey' => 'org_timezone']);
-        $setting->setSetupValue($tz);
-
-        $setting = $repo->findOneBy(['setupKey' => 'automate_email_overdue_days']);
-        $setting->setSetupValue(1);
-
-        $em->persist($setting);
-        $em->flush();
+        $this->helpers->setSettingValue('org_timezone', $tz);
+        $this->helpers->setSettingValue('automate_email_overdue_days', 1);
     }
 
     private function setUpLoan()
