@@ -207,13 +207,13 @@ class SiteOpening
      */
     public function getFriendlyTimeFrom()
     {
-        $time = (int)$this->getTimeFrom();
+        $time = $this->parseTime($this->getTimeFrom());
 
         if (!$time) {
             return '';
         }
 
-        $timeFrom = new \DateTime('2020-01-01 ' . $this->getTimeFrom());
+        $timeFrom = new \DateTime('2020-01-01 ' . $time);
         return $timeFrom->format("g:i a");
     }
 
@@ -222,14 +222,51 @@ class SiteOpening
      */
     public function getFriendlyTimeTo()
     {
-        $time = (int)$this->getTimeTo();
+        $time = $this->parseTime($this->getTimeTo());
 
         if (!$time) {
             return '';
         }
 
-        $timeTo = new \DateTime('2020-01-01 ' . $this->getTimeTo());
+        $timeTo = new \DateTime('2020-01-01 ' . $time);
         return $timeTo->format("g:i a");
+    }
+
+    private function parseTime($value)
+    {
+        $value = trim($value);
+
+        $time = (int)$value;
+
+        $timeStr = '';
+
+        if (!$time) {
+            return '';
+        }
+
+        if (strlen($value) === 3) { // HMM format
+
+            $hours   = substr($value, 0, 1);
+            $minutes = substr($value, 1, 2);
+
+        } else { // HHMM format
+
+            $hours   = substr($value, 0, 2);
+            $minutes = substr($value, 2, 2);
+
+        }
+
+        if (!$hours) {
+            return '';
+        }
+
+        if ($minutes) {
+            $timeStr .= $hours . $minutes;
+        } else {
+            $timeStr .= $hours . ':00';
+        }
+
+        return $timeStr;
     }
 }
 
