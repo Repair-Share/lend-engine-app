@@ -4,6 +4,10 @@ namespace AppBundle\Helpers;
 
 class DateTimeHelper
 {
+    public static function leadingZero($string)
+    {
+        return str_pad($string, 2, '0', STR_PAD_LEFT);
+    }
 
     /**
      * @param $string
@@ -13,36 +17,61 @@ class DateTimeHelper
     {
         $string = trim($string);
 
-        $time = (int)$string;
+        $hours = $minutes = -1;
 
-        $timeStr = '';
-
-        if (!$time) {
+        // Missing string -> No further action needed
+        if (!$string) {
             return '';
         }
 
-        if (strlen($string) === 3) { // HMM format
+        // If this is not a numeric value, give up the parsing
+        $numericTest = (int)$string;
 
-            $hours   = substr($string, 0, 1);
-            $minutes = substr($string, 1, 2);
-
-        } else { // HHMM format
-
-            $hours   = substr($string, 0, 2);
-            $minutes = substr($string, 2, 2);
-
-        }
-
-        if (!$hours) {
+        if (!$numericTest) {
             return '';
         }
 
-        if ($minutes) {
-            $timeStr .= $hours . $minutes;
+        if (strlen($string) <= 2) { // Only hours added
+            $hours   = (int)$string;
+            $minutes = 0;
         } else {
-            $timeStr .= $hours . ':00';
+
+            if (preg_match('/^[0-9]{1,2}:[0-9]{2}$/', $string, $matches)) { // Expected format HH:MM, H:MM
+
+                $parts = explode(':', $string);
+
+                $hours   = $parts[0];
+                $minutes = $parts[1];
+
+            } elseif (preg_match('/^[0-9]{1,2}:[0-9]{1}$/', $string, $matches)) { // HH:M format
+
+                $parts = explode(':', $string);
+
+                $hours   = $parts[0];
+                $minutes = $parts[1];
+
+            } elseif (preg_match('/^[0-9]{3}$/', $string, $matches)) { // HMM
+
+                $hours   = substr($string, 0, 1);
+                $minutes = substr($string, 1, 2);
+
+            } elseif (preg_match('/^[0-9]{4}$/', $string, $matches)) { // HHMM
+
+                $hours   = substr($string, 0, 2);
+                $minutes = substr($string, 2, 2);
+
+            }
+
         }
 
-        return $timeStr;
+        if ($hours < 0 || $hours > 23) {
+            return '';
+        }
+
+        if ($minutes < 0 || $minutes > 59) {
+            return '';
+        }
+
+        return self::leadingZero($hours) . ':' . self::leadingZero($minutes);
     }
 }
