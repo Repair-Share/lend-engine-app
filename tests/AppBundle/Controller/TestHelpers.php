@@ -199,8 +199,8 @@ class TestHelpers extends AuthenticatedControllerTest
         $this->assertContains($eventTitle, $crawler->html());
         $this->assertEquals("15", $crawler->filter('#event_price')->attr('value'));
         $this->assertEquals("10", $crawler->filter('#event_maxAttendees')->attr('value'));
-        $this->assertEquals("0900", $crawler->filter('#event_timeFrom')->attr('value'));
-        $this->assertEquals("1100", $crawler->filter('#event_timeTo')->attr('value'));
+        $this->assertEquals("09:00", $crawler->filter('#event_timeFrom')->attr('value'));
+        $this->assertEquals("11:00", $crawler->filter('#event_timeTo')->attr('value'));
 
         // Confirm the creator has been added as attendee
         $this->assertContains('hello@lend-engine.com', $crawler->html());
