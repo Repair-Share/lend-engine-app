@@ -11,6 +11,9 @@ class SiteOpeningTest extends AuthenticatedControllerTest
     {
         $siteOpening = new SiteOpening();
 
+        $siteOpening->setTimeFrom('');
+        $this->assertEmpty($siteOpening->getFriendlyTimeFrom());
+
         $siteOpening->setTimeFrom('9');
         $this->assertEquals('9:00 am', $siteOpening->getFriendlyTimeFrom());
 
@@ -27,6 +30,9 @@ class SiteOpeningTest extends AuthenticatedControllerTest
     public function testTimeTo()
     {
         $siteOpening = new SiteOpening();
+
+        $siteOpening->setTimeTo('');
+        $this->assertEmpty($siteOpening->getFriendlyTimeTo());
 
         $siteOpening->setTimeTo('9');
         $this->assertEquals('9:00 am', $siteOpening->getFriendlyTimeTo());
