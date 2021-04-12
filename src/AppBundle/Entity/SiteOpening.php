@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Helpers\DateTimeHelper;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -207,7 +208,7 @@ class SiteOpening
      */
     public function getFriendlyTimeFrom()
     {
-        $time = $this->parseTime($this->getTimeFrom());
+        $time = DateTimeHelper::parseTime($this->getTimeFrom());
 
         if (!$time) {
             return '';
@@ -222,7 +223,7 @@ class SiteOpening
      */
     public function getFriendlyTimeTo()
     {
-        $time = $this->parseTime($this->getTimeTo());
+        $time = DateTimeHelper::parseTime($this->getTimeTo());
 
         if (!$time) {
             return '';
@@ -230,43 +231,6 @@ class SiteOpening
 
         $timeTo = new \DateTime('2020-01-01 ' . $time);
         return $timeTo->format("g:i a");
-    }
-
-    private function parseTime($value)
-    {
-        $value = trim($value);
-
-        $time = (int)$value;
-
-        $timeStr = '';
-
-        if (!$time) {
-            return '';
-        }
-
-        if (strlen($value) === 3) { // HMM format
-
-            $hours   = substr($value, 0, 1);
-            $minutes = substr($value, 1, 2);
-
-        } else { // HHMM format
-
-            $hours   = substr($value, 0, 2);
-            $minutes = substr($value, 2, 2);
-
-        }
-
-        if (!$hours) {
-            return '';
-        }
-
-        if ($minutes) {
-            $timeStr .= $hours . $minutes;
-        } else {
-            $timeStr .= $hours . ':00';
-        }
-
-        return $timeStr;
     }
 }
 
