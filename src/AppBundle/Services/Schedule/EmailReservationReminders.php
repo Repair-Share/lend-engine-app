@@ -158,10 +158,12 @@ class EmailReservationReminders
                                 $sessionLocale = $this->container->get('translator')->getLocale();
                                 $this->container->get('translator')->setLocale($contact->getLocale());
 
+                                $dueDateFormatted = $loan->getTimeOut()->format('d F Y g:i a');
+
                                 $message = $this->twig->render(
                                     'emails/reservation_reminder.html.twig',
                                     array(
-                                        'dueDate' => $loan->getTimeOut(),
+                                        'dueDateFormatted' => $dueDateFormatted,
                                         'loanId' => $loan->getId(),
                                         'loanRows' => $loan->getLoanRows(),
                                         'schema' => $tenantDbSchema,
@@ -171,7 +173,7 @@ class EmailReservationReminders
 
                                 // Returns the debug info to unit test
                                 if (getenv('APP_ENV') === 'test') {
-                                    return $loan->getTimeOut()->format('Y-m-d H:i');
+                                    return $message;
                                 }
 
                                 if (!$subject = $this->settings->getSettingValue('email_reservation_reminder_subject')) {

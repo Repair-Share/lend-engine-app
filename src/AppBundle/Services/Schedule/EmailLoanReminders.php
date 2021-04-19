@@ -169,10 +169,12 @@ class EmailLoanReminders
                                     $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
                                     $loginUri .= '&r=/loan/'.$loan->getId();
 
+                                    $dueDateFormatted = date('d F Y g:i a', $loanRow->getDueInAt()->getTimestamp());
+
                                     $message = $this->twig->render(
                                         'emails/loan_reminder.html.twig',
                                         [
-                                            'dueDate' => $loanRow->getDueInAt(),
+                                            'dueDateFormatted' => $dueDateFormatted,
                                             'items' => $items,
                                             'schema' => $tenantDbSchema,
                                             'loginUri' => $loginUri
@@ -181,7 +183,7 @@ class EmailLoanReminders
 
                                     // Returns the debug info to unit test
                                     if (getenv('APP_ENV') === 'test') {
-                                        return $loanRow->getDueInAt()->format('Y-m-d H:i');
+                                        return $message;
                                     }
 
                                     $subject = $this->container->get('translator')->trans('le_email.reminder.subject', [

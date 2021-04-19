@@ -50,7 +50,7 @@ class EmailLoanRemindersTest extends AuthenticatedControllerTest
             $d->setTime(17, 0, 0);
             $d->setDate(date('Y'), date('m'), date('d') + 1);
 
-            $this->assertEquals($d->format('Y-m-d H:i'), $scheduleHandler->processLoanReminders());
+            $this->assertContains($d->format('d F Y g:i a'), $scheduleHandler->processLoanReminders());
 
             $this->helpers->checkinLoan($this->client, $loanID);
 
