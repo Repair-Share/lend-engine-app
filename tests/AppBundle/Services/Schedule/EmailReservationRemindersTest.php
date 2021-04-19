@@ -47,7 +47,7 @@ class EmailReservationRemindersTest extends AuthenticatedControllerTest
             $d->setTime(9, 0, 0);
             $d->setDate(date('Y'), date('m'), date('d') + 1);
 
-            $this->assertEquals($d->format('Y-m-d H:i'), $scheduleHandler->processReservationReminders());
+            $this->assertContains($d->format('d F Y g:i a'), $scheduleHandler->processReservationReminders());
 
         }
     }
