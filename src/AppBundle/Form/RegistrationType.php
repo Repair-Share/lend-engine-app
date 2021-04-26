@@ -87,6 +87,7 @@ class RegistrationType extends AbstractType
             'Deutsch'     => 'de',
             'English'     => 'en',
             'Espanol'     => 'es',
+            'Catalan'     => 'ca',
             'Francais'    => 'fr',
             'íslensku'    => 'is',
             'Nederlands'  => 'nl',

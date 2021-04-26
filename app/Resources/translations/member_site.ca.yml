@@ -1,0 +1,220 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: ca-ES, Catalan (Spain)
+# Tagged: Member site
+# Exported by: Andor Tamas
+# Exported at: Mon, 26 Apr 2021 13:58:07 +0200
+---
+Loan: Préstec
+Loans: Préstecs
+Reservation: Reserva
+Reservations: Reserves
+Brand: Marca
+Payment: Pagament
+Payments: Pagaments
+Fee: Quota
+loan_status.pending: Pendent
+loan_status.on_loan: En préstec
+loan_status.reserved: Reservat
+loan_status.cancelled: Cancel·lat
+loan_status.overdue: Endarrerit
+loan_status.closed: Tancat
+note_reservation_fee: Quota de reserva
+note_reservation_fee_will_be_added: S’afegirà una tarifa per cada reserva
+th.date: Data
+th.payment_method: Mètode de pagament
+th.fee: Tarifa
+th.payment: Pagament
+th.ref: Referència
+th.items: Article
+th.date_from: De
+th.date_to: Fins a
+th.status: Estat
+Reference: Referència
+Items: Article
+Status: Estat
+STATUS_PENDING: Pendent
+STATUS_ACTIVE: En préstec
+STATUS_OVERDUE: Endarrerit
+STATUS_RESERVED: Reservat
+STATUS_CANCELLED: Cancel·lat
+STATUS_CLOSED: Tancat
+days: '{1}día|[2,Inf[días'
+per_day: Per dia
+per_n_days: durante %count% days
+button_cancel: Cancel·lar
+button_cancel_reservation: Cancel·lar la reserva
+button_add_credit: Afegir import
+button_go: Ir
+I forgot my password: He oblidat la meva contrasenya
+Log out: Tancar sessió
+My account: El meu compte
+Login with Facebook: Iniciar sessió amb Facebook
+Login with Google: Iniciar sessió amb Google
+form.firstName: Nom
+form.lastName: Cognom
+form.email: Adreça de correu electrònic
+form.telephone: Telèfon
+form.address1: Adreça
+form.address2: Ciutat
+form.address3: País
+form.postcode: Codi postal
+form.country: País
+form.locale: Idioma preferent
+public_misc.link_admin: Gestión
+public_misc.link_home: Inicio
+public_misc.link_recent_items: Añadidos recientemente
+public_misc.link_all_items: Todos los objetos
+public_misc.search_items: Busca entre nuestros objetos
+public_misc.no_results: Ningún resultado coincide con la búsqueda
+public_misc.filter_items: Filtrar objetos
+public_misc.any_site: Cualquier lugar
+public_footer.find_us: Dónde estamos / horario
+public_footer.choose_lang: Idioma
+public_footer.powered_by: Desarrollado por
+public_footer.logged_in_as: Sesión iniciada como
+public_account.title: Mi cuenta
+public_account.contact_subtitle: Detalles de contacto
+public_account.membership_subtitle: Detalles de afiliación
+public_account.button_edit_details: Editar mis detalles
+public_account.button_change_password: Cambiar contraseña
+public_item_list.pages: '%x% a %y% de %z% objetos'
+public_item.location: Lugar
+public_item.brand: Marca
+public_item.code: Código
+public_item.serial: Número de serie
+public_item.condition: Estado
+public_item.contains: Consta de
+public_item.downloads: Descargas
+public_item.log_in_to_download: inicia sesión para descargar
+public_item.log_in_to_borrow: Inicia sesión para seleccionar objetos o reservar.
+public_item.borrow_now: Seleccionar / reservar
+public_item.not_available: No disponible
+public_item.available: Disponible
+public_item.on_loan: En préstamo
+public_item.pickup_date_error: La fecha de recogida de los objetos que has seleccionado coincide con la reserva para este objeto  .No podrás llevártelo como parte del mismo préstamo.
+public_item.pickup_site_error: Este objeto no está disponible en el mismo lugar del que tienes que recoger el resto de objetos que has seleccionado. No podrás llevártelo como parte del mismo préstamo.
+public_item.basket_exists: Ya hay objetos en tu cesta. <br>Es necesario que te los lleves juntos así que te hemos seleccionado la fecha de recogida.
+public_item.account_balance_is: Saldo en compte
+public_item.add_credit: Afegir targeta de crèdit
+public_item.pickup_at: De
+public_item.return_by: A
+public_item.choose_pickup_first: Abans, triï tipus de recollida
+public_item.button_choose_pickup: |
+  Triï data
+public_item.button_choose_return: Triï data
+public_item.cancel: Cancel·li
+public_item.basket_add: Afegir a la cistella
+public_item.locations: Disponible en diferents ubicacions.
+public_item.maps_link: Obrir-ho in Google maps
+public_item.similar_items: Articles similars
+public_item.see_all: Veure-ho tot
+public_item.not_reservable: Aquest article no està disponible per a reserva en línia. Si us plau, contacti amb nosaltres.
+calendar.pickup_day: Recollida
+calendar.my_booking: La meva reserva
+calendar.reserved: Reservat
+calendar.on_loan: En préstec
+calendar.text_clash_date: No li podem fer la reserva en la data seleccionada. Si us plau, triï una altra data
+calendar.text_return_after_pickup: Si us plau, triï la data de retorn després de la data de recollida
+calendar.alert_already_booked: No puedes elegir esta fecha debido a otra reserva.
+calendar.alert_not_your_booking: Vostè només pot visualitzar les dades de les seves pròpies reserves
+calendar.alert_day_warning: Este objeto sólo puede prestarse múltiplos de itemLoanDays días. Por favor elige una fecha de devolución diferente.
+calendar.alert_min_loan_days: S'ha de manllevar prestat aquest objecte per un mínim de dies
+calendar.alert_max_loan_days: Es pot tenir prestat aquest objecte per un màxim de... dies
+public_basket.title: Cistella
+public_basket.name: Cistella
+public_basket.due_at: Venciment
+public_basket.return_to: Retonar a
+public_basket.pickup_after: Disponible a partir de
+public_basket.from: Des de
+public_basket.add_credit_message: Si us plau, afegiu primer la targeta de crèdit
+public_basket.empty: Cistella buida
+public_basket.confirm_reservation: Reservar
+public_basket.remove_item: Eliminar
+public_basket.total: Total
+public_basket.balance: Por cargar
+public_basket.no_items: No hi ha productes a la cistella. Cerca productes per afegir-hi.
+public_basket.full_charge: Serà carregat al seu compte
+public_basket.delay_charge: Es carregarà al compte ara, amb la resta pendent de pagar
+public_loan.title: Préstec
+public_user_menu.contact_info: Descripció
+text_borrow_with_membership: Com a sòcia podrà demanar el préstec i reservar en línia els objectes. Visiti el meu compte"
+text_no_membership: No tenim cap subscripció activa per vostè
+public_add_credit.title: Afegir import
+public_add_credit.choose_card: Triï a la part superior una targeta de crèdit ja existent, o afegeixi una nova targeta a la part inferior
+public_add_credit.use_this_card: Utilitzar aquesta targeta
+public_add_credit.amount_to_add: Import a afegir
+public_add_credit.payment_method: Mètode de pagament
+public_add_credit.min_amount: Import mínim amb targeta
+public_add_credit.processing_fee: s’afegirà una comissió de processament per a les transaccions amb targeta
+public_loans.no_loans: Encara no ha demanat cap objecte en préstec
+public_payments.no_payment: Encara no s'ha efectuat pagament de cap tipus
+public_payments.title: Tarifes i pagaments
+public_registration.newsletter: Subscriu-te al nostre butlletí informatiu
+public_registration.terms_link: Consulteu els nostres Termes i condicions
+public_registration.terms_label: Estic d'acord amb els Termes i Condicions
+public_become_member.title: Fer-se  sòcia
+msg_success.payment_ok: El pagament s'ha efectuat correctament. El saldo del vostre compte s'ha modificat
+msg_success.reservation_create: Reservat!  Li enviarem un correu de confirmació
+msg_success.reservation_cancel: La seva reserva ha estat cancel·lada
+msg_success.basket_item_removed: El producte ha estat eliminat de la seva cistella
+msg_success.basket_item_added: Afegit a la seva cistella
+msg_success.basket_item_exists: Ja ho tens a la cistella
+msg_fail.general_fail: Perdona, alguna cosa no funciona. Si us plau, torna-ho a intentar o posa't en contacte amb nosaltres.
+msg_fail.reservation_create: Hi ha hagut un problema, ens és impossible fer la teva reserva
+msg_fail.reservation_cancel: Ens és impossible cancel·lar la seva reserva. Si us plau, posis en contacte amb nosaltres.
+per-borrow: per préstec
+per_borrow: per préstec
+public_misc.log_in_first: Si us plau inicieu sessió per a veure els articles
+public_account.button_subscribe_now: Subscriure's ara
+public_account.button_change_membership: Canviar membresia / renovar
+public_account.current_member_type: Actualment la seva membresia és de tipus %type%.
+public_account.membership_about_to_expire: La vostra membresia és a punt d'expirar.
+public_account.membership_expires_on: La vostra membresia expira el
+public_registration.email_confirmed: La vostra adreça de correu electrònic ha estat confirmada
+public_user.choose_membership_type: Seleccioni un tipus de membresia
+public_item.discount: Descompte
+public_registration.membership_starts_today: La vostra membresia començarà avui.
+public_registration.membership_deferred: La vostra membresia serà renovada des de
+public_registration.discount_on_fees: Descompte als càrrecs pel lloguer
+public_registration.button_renew: Renovar la membresia
+public_registration.button_subscribe: Subscriure's
+public_registration.no_self_serve_memberships: No hi ha membresies disponibles per a auto-subscripció. Si us plau vingui a visitar-nos amb el seu DNI/NIE/Passaport per a completar el registre.
+th.deposit: Dipòsit
+public_misc.link_events: Aconteixement
+public_misc.show_items_from: Mostrar articles només disponibles des de
+public_misc.credit_limit: Límit de despesa
+public_item.button_today: Avui
+public_item.see_parts: Veure peces
+public_item.kit_containing: Aquest article és un pack que conté
+public_item.borrow_help: Faci clic a una data, hora o lloc per a canviar la seva reserva
+public_loan.charged: Carregat al seu compte
+public_loan.check_in: Registrar
+public_loan.button_check_out: Comprovar
+public_loan.select_items_to_check_in: Seleccionar els articles per a registrar
+public_loan.choose_new_date: Seleccioni una nova data de retorn
+public_loan.button_complete_checks: Si us plau completeu tots els controls
+public_loan.button_choose_payment_method: Seleccioni una forma de pagament per a rebre pagament
+public_loan.button_deposits_require_payment: Els dipòsits requereixen pagament
+public_loan.cannot_check_out: Els articles no es poden comprovar, comprovi lloc/reserva
+public_loan.no_payment_methods: No hi ha opcions de pagament disponibles per a fer la comprovació
+public_loan.not_enough_credit: No teniu prou crèdit disponible al vostre compte per a fer la comprovació
+public_add_credit.remove_card: Esborra
+public_payments.no_payment_required: Pagament no necessari
+public_user.subscription_payment: Pagament de la subscripció
+events.event: Aconteixement
+events.page_title: Aconteixements
+events.bookings: Reserves d'aconteixement
+events.no_events: No hi ha cap aconteixement aquest mes
+events.view_on_facebook: Vegeu aquest aconteixement a Facebook
+events.location: Lloc
+events.time: Hora
+events.cost: Preu
+events.you_are_attending: Hi sereu
+events.book_now_button: Feu la reserva ara
+events.check_in_button: Fer el registre
+events.check_in_help: Fer el registre us afegeix com a participant sense enviar un correu electrònic de confirmació
+events.contact_us_to_book: Contacti'ns per a reservar
+events.not_bookable: Aquest aconteixement no permet fer reserva en línia
+events.log_in_to_book: Inicieu sessió per a reservar
