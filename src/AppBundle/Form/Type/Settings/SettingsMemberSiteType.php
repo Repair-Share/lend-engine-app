@@ -32,17 +32,17 @@ class SettingsMemberSiteType extends AbstractType
         $dbData = $this->settingsService->getAllSettingValues();
 
         $languages = [
-            'Deutsch'    => 'de',
-            'English'    => 'en',
-            'Espanol'    => 'es',
-            'Francais'   => 'fr',
-            'íslensku'   => 'is',
-            'Nederlands' => 'nl',
-            'Română'     => 'ro',
-            'Slovak'     => 'sk',
-            'Slovenian'  => 'sl',
-            'Svenska'    => 'sv-SE',
-            'Welsh'      => 'cy'
+            'Deutsch'     => 'de',
+            'English'     => 'en',
+            'Espanol'     => 'es',
+            'Francais'    => 'fr',
+            'íslensku'    => 'is',
+            'Nederlands'  => 'nl',
+            'Română'      => 'ro',
+            'Slovak'      => 'sk',
+            'Slovenščina' => 'sl',
+            'Svenska'     => 'sv-SE',
+            'Welsh'       => 'cy'
         ];
         $builder->add('org_locale', ChoiceType::class, array(
             'label' => 'Default language',
