@@ -64,16 +64,16 @@ class ProfileType extends AbstractType
         ));
 
         $languages = [
-            'English'    => 'en',
-            'Espanol'    => 'es',
-            'Francais'   => 'fr',
-            'íslensku'   => 'is',
-            'Nederlands' => 'nl',
-            'Română'     => 'ro',
-            'Slovak'     => 'sk',
-            'Slovenian'  => 'sl',
-            'Svenska'    => 'sv-SE',
-            'Welsh'      => 'cy'
+            'English'     => 'en',
+            'Espanol'     => 'es',
+            'Francais'    => 'fr',
+            'íslensku'    => 'is',
+            'Nederlands'  => 'nl',
+            'Română'      => 'ro',
+            'Slovak'      => 'sk',
+            'Slovenščina' => 'sl',
+            'Svenska'     => 'sv-SE',
+            'Welsh'       => 'cy'
         ];
         $builder->add('locale', ChoiceType::class, array(
             'choices'  => $languages,

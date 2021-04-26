@@ -84,17 +84,17 @@ class RegistrationType extends AbstractType
 
         // All available languages so far translated
         $languages = [
-            'Deutsch'    => 'de',
-            'English'    => 'en',
-            'Espanol'    => 'es',
-            'Francais'   => 'fr',
-            'íslensku'   => 'is',
-            'Nederlands' => 'nl',
-            'Română'     => 'ro',
-            'Slovak'     => 'sk',
-            'Slovenian'  => 'sl',
-            'Svenska'    => 'sv-SE',
-            'Welsh'      => 'cy'
+            'Deutsch'     => 'de',
+            'English'     => 'en',
+            'Espanol'     => 'es',
+            'Francais'    => 'fr',
+            'íslensku'    => 'is',
+            'Nederlands'  => 'nl',
+            'Română'      => 'ro',
+            'Slovak'      => 'sk',
+            'Slovenščina' => 'sl',
+            'Svenska'     => 'sv-SE',
+            'Welsh'       => 'cy'
         ];
 
         // Only whitelist the ones we have configured in settings
