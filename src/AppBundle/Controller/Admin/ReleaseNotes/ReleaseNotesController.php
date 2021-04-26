@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '110' => 'Add Catalan language',
             '109' => 'Update language Slovenščina',
             '101' => 'Exception: DateTime::__construct(): (Rollbar 101)',
             '99' => 'Exception: DateTime::__construct(): (Rollbar 98)',
