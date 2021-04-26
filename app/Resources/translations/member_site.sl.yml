@@ -3,9 +3,8 @@
 # Release: Working copy
 # Locale: sl-SI, Slovenian (Slovenia)
 # Tagged: Member site
-# Status: Translated
-# Exported by: Chris
-# Exported at: Wed, 13 Jan 2021 00:58:21 +0000
+# Exported by: Andor Tamas
+# Exported at: Mon, 26 Apr 2021 11:52:20 +0200
 ---
 Loan: Izposoja
 Loans: Izposoje
@@ -30,7 +29,7 @@ th.payment: Plačilo
 th.ref: Referenca
 th.items: Predmeti
 th.date_from: Od
-th.date_to: Za
+th.date_to: Do
 th.status: Status
 Reference: Referenca
 Items: Predmeti
@@ -74,10 +73,10 @@ public_misc.any_site: Katerakoli lokacija
 public_footer.find_us: Odpiralni čas
 public_footer.choose_lang: Izberi jezik
 public_footer.powered_by: Storitev poganja
-public_footer.logged_in_as: Prijavljeni kot
+public_footer.logged_in_as: Prijavljeni ste kot
 public_account.title: Moj račun
 public_account.contact_subtitle: Kontaktni podatki
-public_account.membership_subtitle: Podatki o članstvu
+public_account.membership_subtitle: Podatki o uporabnini
 public_account.button_edit_details: Uredi moje podatke
 public_account.button_change_password: Sprememba gesla
 public_item_list.pages: Prikazujemo predmete %x% - %y% od %z% predmetov
@@ -104,7 +103,7 @@ public_item.return_by: Za
 public_item.choose_pickup_first: Najprej izberite prevzem
 public_item.button_choose_pickup: Izberite datum
 public_item.button_choose_return: Izberite datum
-public_item.cancel: PReklic
+public_item.cancel: Preklic
 public_item.basket_add: Dodaj v košarico
 public_item.locations: Lokacija
 public_item.maps_link: Odpri v Google Zemljevidih
@@ -136,11 +135,11 @@ public_basket.total: Skupaj
 public_basket.balance: Dolg
 public_basket.no_items: V košarici ni predmetov. Poiščite predmet in ga dodajte.
 public_basket.full_charge: bo zaračunano vašemu uporabniškemu računu.
-public_basket.delay_charge: bo zaračunano vašemu računu takoj, preostanek za plačilo ob zaključku
+public_basket.delay_charge: 'morate plačati sedaj, ob prevzemu pa še: '
 public_loan.title: Izposoja
 public_user_menu.contact_info: Profil
-text_borrow_with_membership: Z članstvom pridobite možnost za rezervacijo in izposojo tega predmeta. Obiščite "Moj račun" za ogled možnosti članstva.
-text_no_membership: Niste aktivni član.
+text_borrow_with_membership: Kot uporabnik pridobite možnost rezervacije in izposoje tega predmeta. Obiščite "Moj račun" za ogled možnosti.
+text_no_membership: Niste aktivni uporabnik.
 public_add_credit.title: Dodaj sredstva
 public_add_credit.choose_card: Uporabite obstoječo bančno kartico (zgoraj) ali nadaljujte za uporabo druge kartice.
 public_add_credit.use_this_card: Uporabi to kartico
@@ -154,7 +153,7 @@ public_payments.title: Plačila
 public_registration.newsletter: Prijavite se na naš seznam za obveščanje.
 public_registration.terms_link: Poglejte naše pogoje poslovanja
 public_registration.terms_label: Strinjam se s pogoji poslovanja.
-public_become_member.title: Postani član.
+public_become_member.title: Postani uporabnik.
 msg_success.payment_ok: Plačilo uspešno. Stanje na vašem računu je posodobljeno.
 msg_success.reservation_create: Rezervirano! Prejeli ste elektronsko pošto s potrditvijo rezervacije.
 msg_success.reservation_cancel: Vaša rezervacija je bila prekinjena.
@@ -168,22 +167,22 @@ per-borrow: na izposojo
 per_borrow: na izposojo
 public_misc.log_in_first: Prijavite se za ogled predmetov
 public_account.button_subscribe_now: Naročite se
-public_account.button_change_membership: Spremenite ali obnovite članstvo
-public_account.current_member_type: 'Vaše trenutno članstvo: %type%.'
-public_account.membership_about_to_expire: Vaše članstvo se izteka.
-public_account.membership_expires_on: 'Vaša članarina preteče '
+public_account.button_change_membership: Spremenite ali obnovite uporabnino
+public_account.current_member_type: 'Vaša trenutna uporabnina: %type%.'
+public_account.membership_about_to_expire: Vaša uporabnina bo kmalu pretekla.
+public_account.membership_expires_on: 'Vaša uporabnina preteče '
 public_registration.email_confirmed: Vaš elektronski naslov je bil potrjen.
-public_user.choose_membership_type: Izberite vrsto članstva
+public_user.choose_membership_type: Izberite vrsto uporabnine
 public_item.discount: Popust
-public_registration.membership_starts_today: Članarina je veljavna od danes dalje.
-public_registration.membership_deferred: 'Obnovitev članarine: '
+public_registration.membership_starts_today: Uporabnina je veljavna od danes dalje.
+public_registration.membership_deferred: 'Obnovitev uporabnine: '
 public_registration.discount_on_fees: popust na ceno izposoje
-public_registration.button_renew: Obnovi članstvo
+public_registration.button_renew: Obnovi uporabnino
 public_registration.button_subscribe: Naročite se
-public_registration.no_self_serve_memberships: Članarine ne morete skleniti preko spleta. Prosimo, da nas obiščete - s seboj potrebujete osebni dokument.
+public_registration.no_self_serve_memberships: Uporabnine ne morete skleniti preko spleta. Prosimo, da nas obiščete - s seboj potrebujete osebni dokument.
 th.deposit: Depozit
 public_misc.link_events: Dogodki
-public_misc.show_items_from: 'Prikaži samo predmete, ki se nahajajo v: '
+public_misc.show_items_from: 'Prikaži samo predmete, ki so na voljo med: '
 public_misc.credit_limit: Limit
 public_item.button_today: danes
 public_item.see_parts: Ogled sestavnih delov
