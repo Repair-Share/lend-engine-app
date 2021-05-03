@@ -66,6 +66,7 @@ class ProfileType extends AbstractType
         $languages = [
             'English'     => 'en',
             'Espanol'     => 'es',
+            'Catalan'     => 'ca',
             'Francais'    => 'fr',
             'íslensku'    => 'is',
             'Nederlands'  => 'nl',
