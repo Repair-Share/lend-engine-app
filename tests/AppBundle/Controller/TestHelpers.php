@@ -172,7 +172,7 @@ class TestHelpers extends AuthenticatedControllerTest
      * @param Client $client
      * @return null|string
      */
-    public function createEvent(Client $client)
+    public function createEvent(Client $client, $maxAttendees = 10)
     {
         $crawler = $client->request('GET', '/admin/event');
         $this->assertContains('Create a new event', $crawler->html());
@@ -185,7 +185,7 @@ class TestHelpers extends AuthenticatedControllerTest
             'event[date]' => $date->format("Y-m-d"),
             'event[timeFrom]' => '09:00 am',
             'event[timeTo]'   => '11:00 am',
-            'event[maxAttendees]' => '10',
+            'event[maxAttendees]' => $maxAttendees,
             'event[price]' => '15',
             'event[description]' => "It's the event description.",
         ),'POST');
@@ -198,7 +198,7 @@ class TestHelpers extends AuthenticatedControllerTest
         $this->assertContains("This event is not published yet.", $crawler->html());
         $this->assertContains($eventTitle, $crawler->html());
         $this->assertEquals("15", $crawler->filter('#event_price')->attr('value'));
-        $this->assertEquals("10", $crawler->filter('#event_maxAttendees')->attr('value'));
+        $this->assertEquals($maxAttendees, $crawler->filter('#event_maxAttendees')->attr('value'));
         $this->assertEquals("09:00", $crawler->filter('#event_timeFrom')->attr('value'));
         $this->assertEquals("11:00", $crawler->filter('#event_timeTo')->attr('value'));
 
