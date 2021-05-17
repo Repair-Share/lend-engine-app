@@ -53,13 +53,10 @@
         }
     </style>
 
-    {% if event.attendees|length >= event.maxAttendees and event.maxAttendees > 0 %}
-        {% set hasSpaces = false %}
+    {% if not hasSpaces %}
         <div class="alert alert-warning">
             The maximum number of attendees ({{ event.maxAttendees }}) has been reached. This event is now full.
         </div>
-    {% else %}
-        {% set hasSpaces = true %}
     {% endif %}
 
     <div style="margin-bottom: 20px">
@@ -138,9 +135,11 @@
                             </div>
                         {% else %}
                             {% if event.isBookable or is_granted("ROLE_ADMIN") %}
-                                <button type="button" class="btn btn-success btn-block btn-loading payment-submit" id="buttonBook">
-                                    {% trans %}events.book_now_button{% endtrans %}
-                                </button>
+                                {% if hasSpaces or is_granted("ROLE_ADMIN") %}
+                                    <button type="button" class="btn btn-success btn-block btn-loading payment-submit" id="buttonBook">
+                                        {% trans %}events.book_now_button{% endtrans %}
+                                    </button>
+                                {% endif %}
                                 {% if app.user != user %}
                                     <div class="small help-block">You are booking <strong>{{ user.name }}</strong> onto
                                         this event.
@@ -188,7 +187,7 @@
         </div>
 
         {% if tenantInformation.feature('EventBooking') %}
-            {% if (event.price == 0 and is_granted("IS_AUTHENTICATED_REMEMBERED")) or is_granted("ROLE_ADMIN") %}
+            {% if (event.price == 0 and is_granted("IS_AUTHENTICATED_REMEMBERED") and hasSpaces) or is_granted("ROLE_ADMIN") %}
                 <div class="col-md-6">
                     {% if alreadyBooked != true %}
                         <div class="help-block" style="font-size: 12px; text-align: left" id="check-in-help">
