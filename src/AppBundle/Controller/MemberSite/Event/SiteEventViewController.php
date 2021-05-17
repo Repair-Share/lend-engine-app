@@ -19,6 +19,7 @@ class SiteEventViewController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+
         /** @var \AppBundle\Services\Event\EventService $eventService */
         $eventService = $this->get('service.event');
 
@@ -68,6 +69,13 @@ class SiteEventViewController extends Controller
             'action' => $this->generateUrl('event_book', ['eventId' => $event->getId()])
         ]);
 
+        // Calculate has spaces variable
+        $hasSpaces = true;
+
+        if (sizeof($event->getAttendees()) >= $event->getMaxAttendees() && $event->getMaxAttendees() > 0) {
+            $hasSpaces = false;
+        }
+
         return $this->render(
             'member_site/pages/event_preview.html.twig',
             [
@@ -76,7 +84,8 @@ class SiteEventViewController extends Controller
                 'form' => $form->createView(),
                 'alreadyBooked' => $alreadyBooked,
                 'stripePaymentMethodId' => $stripePaymentMethodId,
-                'paymentMethods' => $paymentMethods
+                'paymentMethods' => $paymentMethods,
+                'hasSpaces' => $hasSpaces
             ]
         );
     }
