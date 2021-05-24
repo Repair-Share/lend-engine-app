@@ -33,4 +33,5 @@ class ReleaseNotesController extends Controller
             'issueLink' => $gitHubIssueLink
         ]);
     }
+
 }
