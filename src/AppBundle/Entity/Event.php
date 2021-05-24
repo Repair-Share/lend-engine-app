@@ -268,7 +268,7 @@ class Event
      */
     public function getTimeChangeover()
     {
-        return $this->timeChangeover;
+        return DateTimeHelper::parseTime($this->timeChangeover);
     }
 
     /**
