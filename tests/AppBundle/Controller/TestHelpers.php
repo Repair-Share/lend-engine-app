@@ -415,4 +415,118 @@ class TestHelpers extends AuthenticatedControllerTest
         return $createdId;
     }
 
+    /**
+     * @param  Client  $client
+     * @return null|string
+     */
+    public function createSite(Client $client)
+    {
+        $crawler = $client->request('GET', '/admin/site/list');
+        $this->assertContains('Sites', $crawler->html());
+        $this->assertContains('Add a site', $crawler->html());
+
+        $button = $crawler
+            ->filter('a:contains("Add a site")') // find all buttons with the text "Add a site"
+            ->eq(0) // select the first button in the list
+            ->link() // and click it
+        ;
+
+        // Opened a modal
+        $crawler = $client->click($button);
+        $this->assertContains('Add a new site', $crawler->html());
+
+        $button = $crawler
+            ->filter('a:contains("Add opening hours")') // find all buttons with the text "Add a site"
+            ->eq(0) // select the first button in the list
+            ->link() // and click it
+        ;
+
+        $siteName = 'Test site ' . uniqid();
+
+        $form = $crawler->filter('form[name="site"]')->form(array(
+            'site[name]'      => $siteName,
+            'site[post_code]' => 'PO12345',
+
+            'site[siteOpenings][0][weekDay]'  => '1',
+            'site[siteOpenings][0][timeFrom]' => '0900',
+            'site[siteOpenings][0][timeTo]'   => '1700'
+        ), 'POST');
+
+        $client->submit($form);
+
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        $crawler = $client->followRedirect();
+
+        $this->assertContains("Site saved.", $crawler->html());
+        $this->assertContains($siteName, $crawler->html());
+
+        return $this->getSiteId($client, $siteName);
+    }
+
+    /**
+     * Extract the site ID for a selected value (eg a setup list for recently created thing)
+     * @param  Client  $client
+     * @param $siteName
+     * @return int|null
+     */
+    public function getSiteId(Client $client, $siteName)
+    {
+        $siteID = null;
+
+        $crawler = $client->request('GET', '/admin/site/list');
+
+        $crawler->filter('.site-id')->each(function ($node) use ($siteName, &$siteID) {
+            $id    = $node->attr('id');
+            $value = $node->attr('value');
+
+            if (trim($siteName) === trim($value)) {
+                $siteID = str_replace('siteIdForTest', '', $id);
+            }
+
+        });
+
+        return $siteID;
+    }
+
+    /**
+     * @param  Client  $client
+     * @param $siteID
+     * @param $date
+     * @param $timeFrom
+     * @param $timeTo
+     * @param $opened
+     * @return null|string
+     */
+    public function addSiteOpeningHours(Client $client, $siteID, $date, $timeFrom, $timeTo, $opened)
+    {
+        $crawler = $client->request('GET', '/admin/site/' . $siteID . '/event/list');
+        $this->assertContains('Custom opening hours', $crawler->html());
+
+        $button = $crawler
+            ->filter('a:contains("Add new")') // find all buttons with the text "Add a site"
+            ->eq(0) // select the first button in the list
+            ->link() // and click it
+        ;
+
+        // Opened a modal
+        $crawler = $client->click($button);
+        $this->assertContains('Add custom hours for', $crawler->html());
+
+        $form = $crawler->filter('form[name="opening_hours"]')->form(array(
+            'opening_hours[date]'     => $date->format('D M d Y'),
+            'opening_hours[type]'     => ($opened ? 'o' : 'c'),
+            'opening_hours[timeFrom]' => $timeFrom,
+            'opening_hours[timeTo]'   => $timeTo,
+            'opening_hours[site]'     => $siteID
+        ), 'POST');
+
+        $client->submit($form);
+
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+
+        $crawler = $client->followRedirect();
+        $this->assertContains('Saved.', $crawler->html());
+        $this->assertContains($date->format('l d M Y'), $crawler->html());
+    }
+
 }
