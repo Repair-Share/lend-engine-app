@@ -23,11 +23,23 @@ class ValidateLoanPeriodController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        if (!$timeFrom  = new \DateTime($request->get('timeFrom'))) {
+        try {
+
+            if (!$timeFrom = new \DateTime($request->get('timeFrom'))) {
+                return new JsonResponse(['error' => 'No time from']);
+            }
+
+        } catch (\Exception $e) {
             return new JsonResponse(['error' => 'No time from']);
         }
 
-        if (!$timeTo    = new \DateTime($request->get('timeTo'))) {
+        try {
+
+            if (!$timeTo = new \DateTime($request->get('timeTo'))) {
+                return new JsonResponse(['error' => 'No time to']);
+            }
+
+        } catch (\Exception $e) {
             return new JsonResponse(['error' => 'No time to']);
         }
 
