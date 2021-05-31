@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '118' => 'Exception: DateTime::__construct(): (Rollbar 107)',
             '116' => 'Custom opening hours not functioning',
             '105' => 'Events don\'t adhere to the maximum attendees',
             '110' => 'Add Catalan language',
