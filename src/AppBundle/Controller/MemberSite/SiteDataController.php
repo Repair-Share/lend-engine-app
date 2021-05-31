@@ -245,7 +245,10 @@ class SiteDataController extends Controller
                     // Check all opening times loaded so far
                     foreach ($data AS $k => $openingTime) {
                         // If any opening time lies within closed custom slot, remove it
-                        if ($openingTime['start'] >= $s_start && $openingTime['end'] <= $s_end) {
+                        if ($openingTime['start'] >= $s_start
+                            && $openingTime['end'] <= $s_end
+                            && $openingTime['siteName'] === $slot->getSite()->getName()
+                        ) {
                             unset($data[$k]);
                         }
                     }
