@@ -508,7 +508,6 @@ class TestHelpers extends AuthenticatedControllerTest
             ->link() // and click it
         ;
 
-        // Opened a modal
         $crawler = $client->click($button);
         $this->assertContains('Add custom hours for', $crawler->html());
 
@@ -526,7 +525,7 @@ class TestHelpers extends AuthenticatedControllerTest
 
         $crawler = $client->followRedirect();
         $this->assertContains('Saved.', $crawler->html());
-        $this->assertContains($date->format('l d M Y'), $crawler->html());
+        $this->assertContains($date->format('l j F Y'), $crawler->html());
     }
 
 }
