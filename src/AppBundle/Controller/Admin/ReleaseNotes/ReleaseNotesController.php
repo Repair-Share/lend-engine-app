@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '123' => 'As a user you can check-in on an event that is not self serve "book now" is not available',
             '117' => 'Setting Minimum Loan Period to 14 days causes problems with item loan periods on catalogue view',
             '118' => 'Exception: DateTime::__construct(): (Rollbar 107)',
             '116' => 'Custom opening hours not functioning',
