@@ -1,43 +1,65 @@
-# Loco yaml export: Simple YAML object
+# Loco yaml export: Symfony YAML object
 # Project: Lend Engine
 # Release: Working copy
 # Locale: cy-GB, Welsh (Wales)
 # Tagged: Emails
-# Exported by: Chris
-# Exported at: Fri, 18 Aug 2017 08:57:58 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 07 Jun 2021 18:34:56 +0200
 ---
-le_email.item_description: Disgrifiad
-le_email.item_contains: Cynnwys
-le_email.see_attachment: Gweld atodiad
-le_email.return_sites: Dychwelwch yr eitem i'r lleoliad(au) canlynol
-le_email.th_item: Eitem
-le_email.th_fee: Ffi
-le_email.th_due_back: 'Disgwylir yn ôl '
-le_email.url: URL mewngofnodi
-le_email.email: E-bost
-le_email.password: Cyfrinair
-le_email.assign.title: Rydych wedi cael eich neilltuo i eitem
-le_email.assign.message: '%Enwcyntaf%, rydych wedi cael eich neilltuo i eitem ''''%Enweitem$'''' gan %Enwaseiniwr%.'
-le_email.assign.added_note: hefyd wedi ychwanegu nodyn
-le_email.assign.all_items: Gweld pob eitem wedi'i neilltuo i chi
-le_email.assign.current_location: Lleoliad presennol
-le_email.checkout.subject: Gwybodaeth eich benthyciad
-le_email.checkout.title: Gwybodaeth eich benthyciad
-le_email.extend.subject: 'Mae amser dychwelyd eich benthyciad wedi cael ei ddiweddaru '
-le_email.extend.title: Rydym wedi newid amser dychwelyd eitem
-le_email.extend.due_back: bellach i fod yn ol ar
-le_email.reminder.subject: Mae eich Idbenthyciad yn ddyledus yfory
-le_email.reminder.title: Bydd eich eitem(au) yn ôl yn fuan
-le_email.reservation_reminder.subject: Codwch eich archeb yfory
-le_email.reservation_reminder.title: Codwch eich archeb yfory
-le_email.membership_expired.subject: Mae eich aelodaeth wedi dod i ben
-le_email.membership_expired.title: Mae eich aelodaeth wedi dod i ben
-le_email.login_details.subject: Eich manylion mewngofnodi ar gyfer %Enwcyfrif%
-le_email.login_details.title: Manylion mewngofnodi
-le_email.login_details.message: Dyma eich manylion mewngofnodi ar gyfer ein system benthyca
-le_email.new_password.title: Eich cyfrinair newydd
-le_email.new_password.message: Dyma'ch cyfrinair newydd ar gyfer %Enwcyfrif%
-le_email.reservation_confirm.subject: Cadarnhad eich archeb
-le_email.reservation_confirm.title: Cadarnhad archeb
-le_email.site_welcome.subject: Croeso i %Enwcyfrif%
-le_email.site_welcome.title: Croeso
+le_email:
+  item_description: Disgrifiad
+  item_contains: Cynnwys
+  see_attachment: Gweld atodiad
+  return_sites: Dychwelwch yr eitem i'r lleoliad(au) canlynol
+  th_item: Eitem
+  th_fee: Ffi
+  th_due_back: 'Disgwylir yn ôl '
+  url: URL mewngofnodi
+  email: E-bost
+  password: Cyfrinair
+  assign:
+    title: Rydych wedi cael eich neilltuo i eitem
+    message: '%Enwcyntaf%, rydych wedi cael eich neilltuo i eitem ''''%Enweitem$'''' gan %Enwaseiniwr%.'
+    added_note: hefyd wedi ychwanegu nodyn
+    all_items: Gweld pob eitem wedi'i neilltuo i chi
+    current_location: Lleoliad presennol
+  checkout:
+    subject: Gwybodaeth eich benthyciad
+    title: Gwybodaeth eich benthyciad
+  extend:
+    subject: 'Mae amser dychwelyd eich benthyciad wedi cael ei ddiweddaru '
+    title: Rydym wedi newid amser dychwelyd eitem
+    due_back: bellach i fod yn ol ar
+  reminder:
+    subject: Mae eich Idbenthyciad yn ddyledus yfory
+    title: Bydd eich eitem(au) yn ôl yn fuan
+  reservation_reminder:
+    subject: Codwch eich archeb yfory
+    title: Codwch eich archeb yfory
+  membership_expired:
+    subject: Mae eich aelodaeth wedi dod i ben
+    title: Mae eich aelodaeth wedi dod i ben
+    renew_button: Cliciwch yma i adnewyddu'r aelodaeth
+  login_details:
+    subject: Eich manylion mewngofnodi ar gyfer %Enwcyfrif%
+    title: Manylion mewngofnodi
+    message: Dyma eich manylion mewngofnodi ar gyfer ein system benthyca
+  new_password:
+    title: Eich cyfrinair newydd
+    message: Dyma'ch cyfrinair newydd ar gyfer %Enwcyfrif%
+  reservation_confirm:
+    subject: Cadarnhad eich archeb
+    title: Cadarnhad archeb
+  site_welcome:
+    subject: Croeso i %Enwcyfrif%
+    title: Croeso
+  login_to_view_this_loan: Gweld y benthyciad hwn ar-lein
+  booking_confirmation:
+    title: Cadarnhad archebu digwyddiad
+    subject: Cadarnhad archebu digwyddiad
+  donor_notify:
+    subject: Mae'r eitem a roddwyd wedi'i rhoi ar fenthyg
+  overdue:
+    subject: Mae'n hen bryd eitem
+    title: Dychwelwch yr eitem hon
+...
