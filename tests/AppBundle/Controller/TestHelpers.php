@@ -49,6 +49,11 @@ class TestHelpers extends AuthenticatedControllerTest
             $type = 'loan';
         }
 
+        $maxLoanDays = 4;
+        if (isset($options['maxLoanDays'])) {
+            $maxLoanDays = $options['maxLoanDays'];
+        }
+
         $crawler = $client->request('GET', '/admin/item?type='.$type);
         $this->assertContains('Add a ', $crawler->html());
 
@@ -57,7 +62,7 @@ class TestHelpers extends AuthenticatedControllerTest
             'item[name]'     => $itemName,
             'item[sku]'      => "SKU-".rand(),
             'item[loanFee]'  => $loanFee,
-            'item[maxLoanDays]' => 4,
+            'item[maxLoanDays]' => $maxLoanDays,
             'item[condition]'   => 1,
             'item[keywords]'    => 'Comma, separated, keywords',
             'item[priceCost]'   => 1.99,
@@ -526,6 +531,18 @@ class TestHelpers extends AuthenticatedControllerTest
         $crawler = $client->followRedirect();
         $this->assertContains('Saved.', $crawler->html());
         $this->assertContains($date->format('l j F Y'), $crawler->html());
+    }
+
+    public function compressHtml($html)
+    {
+        $compressedHTML = $html;
+
+        $compressedHTML = preg_replace('/' . PHP_EOL . '+/', '', $compressedHTML);
+        $compressedHTML = preg_replace('/ /', '', $compressedHTML);
+
+        $compressedHTML = trim($compressedHTML);
+
+        return $compressedHTML;
     }
 
 }
