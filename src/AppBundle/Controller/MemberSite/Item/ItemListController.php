@@ -210,12 +210,6 @@ class ItemListController extends Controller
                 $itemLoanDays = $defaultLoanDays;
             }
 
-            // Multiply out for the UI
-            if ($minLoanDays > $itemLoanDays) {
-                $itemFee = $itemFee * $minLoanDays;
-                $itemLoanDays = $itemLoanDays * $minLoanDays;
-            }
-
             $item->setLoanFee($itemFee);
             $item->setMaxLoanDays($itemLoanDays);
 
