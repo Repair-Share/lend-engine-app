@@ -161,6 +161,8 @@
 
         $(document).ready(function() {
 
+            var siteEvents = [];
+
             var sites = [];
             {% for site in sites %}
             sites[{{ site.id }}] = "{{ site.name }}";
@@ -783,6 +785,28 @@
 
             /** Returns the event that the time was found in */
             function isValidBookingTime(time, siteId) {
+
+                let opened = false;
+
+                let timeStr = time.format('YYYY-MM-DD HH:mm:ss');
+
+                // Check that this time is available for this time and site
+                $(siteEvents).each(function (i, event) {
+
+                    if (event.siteId === siteId) {
+
+                        if (timeStr === event.start || timeStr === event.end) {
+                            opened = true;
+                        }
+
+                    }
+
+                });
+
+                if (!opened) {
+                    return false;
+                }
+
                 // Currently have an issue where moving the calendar a month forwards replaces the array that we validate start time against
                 // Fix : move the events into a global non-calendar dataset as the calendar view is moved around and validate against that
                 return true;
@@ -862,6 +886,7 @@
                     },
                     success: function(events) {
                         setBookableDays(events);
+                        siteEvents = events;
                     },
                     textColor: 'black',
                     className: 'siteOpening'
