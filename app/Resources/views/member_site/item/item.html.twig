@@ -577,7 +577,7 @@
                             // No changeover time, use the end of the slot
                             selectedTime = eventEnd;
                         }
-                        setReturn(selectedTime, eventStart, eventEnd, siteId, siteName, true);
+                        setReturn(selectedTime, eventStart, eventEnd, siteId, siteName, true, calEvent.extendedProps.changeover);
                     } else {
                         // We've not chosen a start date yet, user is selecting pick up
                         if (!selectedTime) {
@@ -585,7 +585,7 @@
                             selectedTime = eventStart;
                         }
                         // Set pickup time, allowing the system to auto-set the return time if there is a visible slot
-                        setPickup(selectedTime, eventStart, eventEnd, siteId, siteName, true);
+                        setPickup(selectedTime, eventStart, eventEnd, siteId, siteName, true, calEvent.extendedProps.changeover);
                         borrowModal.modal();
                     }
                 }
@@ -644,7 +644,7 @@
 
             }
 
-            function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName, autoSetReturn) {
+            function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName, autoSetReturn, changeOver) {
 
                 console.log("Setting pickup time to "+selectedTime.format("YYYY-MM-DD HH:mm"));
                 $("#booking-help").show();
@@ -697,6 +697,10 @@
                 } else {
                     returnTime = moment(selectedTime);
                     returnTime = returnTime.add(itemLoanDays, 'd');
+
+                    if (!changeOver && clickedSlotTo.format('HH')) {
+                        returnTime = returnTime.set({hour: clickedSlotTo.format('HH')});
+                    }
                 }
 
                 basketPickupTime = selectedTime;
