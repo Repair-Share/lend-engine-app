@@ -4,7 +4,7 @@
 # Locale: cy-GB, Welsh (Wales)
 # Tagged: Member site
 # Exported by: Andor Tamas
-# Exported at: Mon, 07 Jun 2021 18:33:40 +0200
+# Exported at: Mon, 21 Jun 2021 10:42:19 +0200
 ---
 Loan: Benthyciad
 Loans: 'Benthyciadau '
@@ -43,9 +43,9 @@ STATUS_OVERDUE: Yn hwyr
 STATUS_RESERVED: Wedi archebu
 STATUS_CANCELLED: Wedi'i ganslo
 STATUS_CLOSED: Ar gau
-days: '{1}diwrnod|[2,Inf[diwrnodau'
+days: '{1}day|[2,Inf[days'
 per_day: y dydd
-per_n_days: ar gyfer %cont% diwrnod
+per_n_days: ar gyfer %count% diwrnod
 button_cancel: Canslo
 button_cancel_reservation: Canslo archeb
 button_add_credit: 'Ychwanegu credyd '
@@ -142,9 +142,9 @@ calendar:
   text_return_after_pickup: Dewiswch ddyddiad dychwelyd ar ôl y dyddiad codi
   alert_already_booked: Ni allwch ddewis y dyddiad yma oherwydd archeb arall.
   alert_not_your_booking: Dim ond eich archebion eich hun y gallwch chi weld.
-  alert_day_warning: Dim ond am luosrifau o Ddiwndau Benghyg Eitem y gallwch ei fenthyg. \nDewiswch ddyddiad dychwelyd arall.
-  alert_min_loan_days: Mae'n rhaid i chi fenthyg yr eitem hon am o leiaf isafswm diwrnodau.
-  alert_max_loan_days: Gallwch fenthyg yr eitem hon am hyd at uchafswm diwrnodau.
+  alert_day_warning: Dim ond am luosrifau o itemLoanDays days y gallwch ei fenthyg. \nDewiswch ddyddiad dychwelyd arall.
+  alert_min_loan_days: Mae'n rhaid i chi fenthyg yr eitem hon am o leiaf minLoanDays diwrnodau.
+  alert_max_loan_days: Gallwch fenthyg yr eitem hon am hyd at maxLoanDays diwrnodau.
 public_basket:
   title: Basged
   name: Basged
