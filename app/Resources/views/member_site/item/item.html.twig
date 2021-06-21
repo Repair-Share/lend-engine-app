@@ -797,7 +797,7 @@
                 // Check that this time is available for this time and site
                 $(siteEvents).each(function (i, event) {
 
-                    if (event.siteId === siteId) {
+                    if (!isNaN(parseInt(event.siteId)) && parseInt(event.siteId) === parseInt(siteId)) {
 
                         if (timeStr === event.start || timeStr === event.end) {
                             opened = true;
