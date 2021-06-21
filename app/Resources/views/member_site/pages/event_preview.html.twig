@@ -187,7 +187,7 @@
         </div>
 
         {% if tenantInformation.feature('EventBooking') %}
-            {% if (event.price == 0 and is_granted("IS_AUTHENTICATED_REMEMBERED" and event.isBookable) and hasSpaces) or is_granted("ROLE_ADMIN") %}
+            {% if (event.price == 0 and is_granted("IS_AUTHENTICATED_REMEMBERED") and event.isBookable and hasSpaces) or is_granted("ROLE_ADMIN") %}
                 <div class="col-md-6">
                     {% if alreadyBooked != true %}
                         <div class="help-block" style="font-size: 12px; text-align: left" id="check-in-help">
