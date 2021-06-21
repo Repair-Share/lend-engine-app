@@ -698,7 +698,7 @@
                     returnTime = moment(selectedTime);
                     returnTime = returnTime.add(itemLoanDays, 'd');
 
-                    if (!changeOver && clickedSlotTo.format('HH')) {
+                    if (!changeOver && clickedSlotTo && clickedSlotTo.format('HH')) { // TODO yes
                         returnTime = returnTime.set({hour: clickedSlotTo.format('HH')});
                     }
                 }
