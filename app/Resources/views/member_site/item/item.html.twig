@@ -382,7 +382,29 @@
 
             borrowModal.on('click', '#set-pickup-today', function () {
                 resetDates();
-                setPickup(moment(), null, null, itemSiteId, itemSiteName);
+
+                let today = null;
+
+                // Find today's opening hour
+                $(siteEvents).each(function (i, event) {
+
+                    if (!isNaN(parseInt(event.siteId)) && parseInt(event.siteId) === parseInt(itemSiteId)) {
+
+                        let shortDate  = event.start.substr(0, 10);
+                        let shortToday = moment().format('YYYY-MM-DD');
+
+                        if (shortDate === shortToday) {
+                            today = moment(event.start);
+                        }
+
+                    }
+
+                });
+
+                if (today) {
+                    setPickup(today, null, null, itemSiteId, itemSiteName);
+                }
+
             });
 
             {% if app.user and app.user.activeSite and product.itemType != 'stock' %}
@@ -891,6 +913,31 @@
                     success: function(events) {
                         setBookableDays(events);
                         siteEvents = events;
+
+                        let todayIsAvailable = false;
+
+                        $(siteEvents).each(function (i, event) {
+
+                            if (!isNaN(parseInt(event.siteId)) && parseInt(event.siteId) === parseInt(
+                                currentPickupSiteId)) {
+
+                                let shortDate  = event.start.substr(0, 10);
+                                let shortToday = moment().format('YYYY-MM-DD');
+
+                                if (shortDate === shortToday) {
+                                    todayIsAvailable = true;
+                                }
+
+                            }
+
+                        });
+
+                        if (!todayIsAvailable) {
+                            $('#set-pickup-today').hide();
+                        } else {
+                            $('#set-pickup-today').show();
+                        }
+
                     },
                     textColor: 'black',
                     className: 'siteOpening'
