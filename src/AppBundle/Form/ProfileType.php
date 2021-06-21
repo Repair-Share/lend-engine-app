@@ -74,7 +74,7 @@ class ProfileType extends AbstractType
             'Slovak'      => 'sk',
             'Slovenščina' => 'sl',
             'Svenska'     => 'sv-SE',
-            'Welsh'       => 'cy'
+            'Cymraeg'     => 'cy'
         ];
         $builder->add('locale', ChoiceType::class, array(
             'choices'  => $languages,
