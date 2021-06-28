@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '120' => 'User can extend an loan over existing reservations',
             '111' => 'Update Welsh language after translation',
             '128' => 'Loans do not adhere to conditions set out in opening hours and will set to opening time instead of closing time.',
             '127' => 'Booking item allows return on a closed day',
