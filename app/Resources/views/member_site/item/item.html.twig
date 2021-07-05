@@ -231,6 +231,9 @@
                     right:  'prev,next'
                 },
                 dateClick: function(info) {
+
+                    {% if product.isReservable %}
+
                     if (currentUserId) {
                         if (sitesLoaded == false) {
                             loadSiteOpeningTimes();
@@ -241,6 +244,12 @@
                     } else {
                         alert("{% trans %}public_item.log_in_to_borrow{% endtrans %}");
                     }
+
+                    {% else %}
+
+                        alert("{% trans %}public_item.not_reservable{% endtrans %}");
+
+                    {% endif %}
                 },
                 eventClick: function(info) {
                     if (info.event.extendedProps.siteId) {
