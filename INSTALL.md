@@ -225,14 +225,14 @@ $ ssh dokku@<hostname>
 
 * Deploy app to dokku server
 ```
-$ git remote add mytarget dokku@<hostname>:mytarget
+$ git remote add myapp dokku@<hostname>:myapp
 $ git push dokku
-$ git push mytarget mytarget:master
+$ git push myapp localbranch:master
 ```
 
 Browse to your server's deploy page:  
 ```
-http://mytarget.<hostname>/deploy
+http://myapp.<hostname>/deploy
 ```
 
 *Windows WSL2 setup (experimental)*  
@@ -713,6 +713,29 @@ $ dokku config:set --no-restart myapp DOKKU_LETSENCRYPT_EMAIL=your@email.tld
 $ dokku letsencrypt myapp
 ```
 
+The generated certificate has a validity of 3 months. It is recommended to renew it 1 month before expiration
+```
+$ dokku letsencrypt:auto-renew myapp
+```
+
+You can configure a cron job to do this automatically by creating a file /etc/cron.weekly/dokku-letsencryt-renewal:
+```
+#!/bin/bash
+LOGFILE=/var/log/dokku/letsencrypt-renewal.log
+echo "Triggering letsencrypt certificate renewal..." >> $LOGFILE
+
+dt=$(date +"%Y-%m-%d")
+
+echo " today is $dt" >> $LOGFILE
+
+dokku letsencrypt:auto-renew >> $LOGFILE
+echo " certificate renewal completed" >> $LOGFILE
+```
+
+Make sure to create the file with execution permission
+```
+sudo chmod 755 /etc/cron.weekly/dokku-letsencrypt-renewal
+```
 
 Migration
 ---------
