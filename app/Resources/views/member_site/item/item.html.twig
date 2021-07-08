@@ -829,6 +829,9 @@
             /** Returns the event that the time was found in */
             function isValidBookingTime(time, siteId, dateOnly) {
 
+                // Hot fix: ignore the checking whilst it is fixed permanently
+                return true;
+
                 if (dateOnly !== true) {
                     dateOnly = false;
                 }
