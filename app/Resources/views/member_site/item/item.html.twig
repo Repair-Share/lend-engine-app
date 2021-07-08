@@ -774,10 +774,13 @@
             }
 
             function validateBookingPeriod(start, end, siteId, dateOnly) {
-                console.log("validateBookingPeriod: "+
-                        " From: "+start.format("YYYY-MM-DD HH:mm:00") +
-                        " To: "+end.format("YYYY-MM-DD HH:mm:00")) +
-                        " siteId: "+siteId;
+
+                console.log("validateBookingPeriod: " +
+                            " From: " + start.format("YYYY-MM-DD HH:mm:00") +
+                            " To: " + end.format("YYYY-MM-DD HH:mm:00") +
+                            " siteId: " + siteId +
+                            " dateOnly: " + dateOnly
+                );
 
                 if (dateOnly !== true) {
                     dateOnly = false;
