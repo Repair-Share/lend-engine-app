@@ -376,7 +376,7 @@
 
                 var start = moment($("#loanStartAt").val());
                 var end   = moment($("#newReturnDate").val()+" "+$("#newReturnTime").val()+":00");
-                validateBookingPeriod(start, end);
+                validateBookingPeriod(start, end, currentPickupSiteId, true);
             });
 
             page.on('click', '.button-borrow', function(event) {
@@ -773,20 +773,25 @@
                 return returnValue;
             }
 
-            function validateBookingPeriod(start, end, siteId) {
+            function validateBookingPeriod(start, end, siteId, dateOnly) {
                 console.log("validateBookingPeriod: "+
                         " From: "+start.format("YYYY-MM-DD HH:mm:00") +
-                        " To: "+end.format("YYYY-MM-DD HH:mm:00"));
+                        " To: "+end.format("YYYY-MM-DD HH:mm:00")) +
+                        " siteId: "+siteId;
+
+                if (dateOnly !== true) {
+                    dateOnly = false;
+                }
 
                 validateLoanPeriod({{ product.id }}, start.format("YYYY-MM-DD HH:mm:00"), end.format("YYYY-MM-DD HH:mm:00"), siteId);
 
-                if (!isValidBookingTime(start, siteId)) {
+                if (!isValidBookingTime(start, siteId, dateOnly)) {
                     console.log("validateBookingPeriod : start time is not within opening hours");
                     alert("Start time is not within opening hours");
                     return false;
                 }
 
-                if (!isValidBookingTime(end, siteId)) {
+                if (!isValidBookingTime(end, siteId, dateOnly)) {
                     console.log("validateBookingPeriod : end time is not within opening hours");
                     alert("End time is not within opening hours");
                     return false;
@@ -819,18 +824,36 @@
             }
 
             /** Returns the event that the time was found in */
-            function isValidBookingTime(time, siteId) {
+            function isValidBookingTime(time, siteId, dateOnly) {
+
+                if (dateOnly !== true) {
+                    dateOnly = false;
+                }
 
                 let opened = false;
 
                 let timeStr = time.format('YYYY-MM-DD HH:mm:ss');
+
+                if (dateOnly === true) {
+                    timeStr = time.format('YYYY-MM-DD');
+                }
 
                 // Check that this time is available for this time and site
                 $(siteEvents).each(function (i, event) {
 
                     if (!isNaN(parseInt(event.siteId)) && parseInt(event.siteId) === parseInt(siteId)) {
 
-                        if (timeStr === event.start || timeStr === event.end) {
+                        let eventStartStr = event.start;
+                        let eventEndStr   = event.end;
+
+                        if (dateOnly === true) {
+
+                            eventStartStr = moment(event.start).format('YYYY-MM-DD');
+                            eventEndStr   = moment(event.end).format('YYYY-MM-DD');
+
+                        }
+
+                        if (timeStr === eventStartStr || timeStr === eventEndStr) {
                             opened = true;
                         }
 
