@@ -376,7 +376,7 @@
 
                 var start = moment($("#loanStartAt").val());
                 var end   = moment($("#newReturnDate").val()+" "+$("#newReturnTime").val()+":00");
-                validateBookingPeriod(start, end, currentPickupSiteId, true);
+                validateBookingPeriod(null, end, currentPickupSiteId, true);
             });
 
             page.on('click', '.button-borrow', function(event) {
@@ -776,7 +776,7 @@
             function validateBookingPeriod(start, end, siteId, dateOnly) {
 
                 console.log("validateBookingPeriod: " +
-                            " From: " + start.format("YYYY-MM-DD HH:mm:00") +
+                            " From: " + (start === null ? start : start.format("YYYY-MM-DD HH:mm:00")) +
                             " To: " + end.format("YYYY-MM-DD HH:mm:00") +
                             " siteId: " + siteId +
                             " dateOnly: " + dateOnly
@@ -786,9 +786,11 @@
                     dateOnly = false;
                 }
 
-                validateLoanPeriod({{ product.id }}, start.format("YYYY-MM-DD HH:mm:00"), end.format("YYYY-MM-DD HH:mm:00"), siteId);
+                if (start !== null) {
+                    validateLoanPeriod({{ product.id }}, start.format("YYYY-MM-DD HH:mm:00"), end.format("YYYY-MM-DD HH:mm:00"), siteId);
+                }
 
-                if (!isValidBookingTime(start, siteId, dateOnly)) {
+                if (start !== null && !isValidBookingTime(start, siteId, dateOnly)) {
                     console.log("validateBookingPeriod : start time is not within opening hours");
                     alert("Start time is not within opening hours");
                     return false;
@@ -800,7 +802,7 @@
                     return false;
                 }
 
-                if (moment(end) < moment(start)) {
+                if (start !== null && moment(end) < moment(start)) {
                     alert(text_return_after_pickup+" ("+start.format("DD MMMM h:mm a")+")");
                     return false;
                 }
@@ -845,6 +847,7 @@
                 console.group('Validate booking time');
                 console.group('siteEvents');
                 console.log(siteEvents);
+                console.log('siteId: ' + parseInt(siteId));
                 console.groupEnd();
 
                 // Check that this time is available for this time and site
