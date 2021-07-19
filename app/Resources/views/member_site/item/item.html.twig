@@ -829,9 +829,6 @@
             /** Returns the event that the time was found in */
             function isValidBookingTime(time, siteId, dateOnly) {
 
-                // Hot fix: ignore the checking whilst it is fixed permanently
-                return true;
-
                 if (dateOnly !== true) {
                     dateOnly = false;
                 }
@@ -843,6 +840,12 @@
                 if (dateOnly === true) {
                     timeStr = time.format('YYYY-MM-DD');
                 }
+
+                // Temp debug for testing data on the staging server
+                console.group('Validate booking time');
+                console.group('siteEvents');
+                console.log(siteEvents);
+                console.groupEnd();
 
                 // Check that this time is available for this time and site
                 $(siteEvents).each(function (i, event) {
@@ -863,9 +866,20 @@
                             opened = true;
                         }
 
+                        console.group('Check time strings');
+                        console.log('dateOnly: ' + dateOnly);
+                        console.log('timeStr: ' + timeStr);
+                        console.log('eventStartStr: ' + eventStartStr);
+                        console.log('eventEndStr: ' + eventEndStr);
+                        console.log('opened: ' + opened);
+                        console.groupEnd();
+
                     }
 
                 });
+
+                console.log('opened: ' + opened);
+                console.groupEnd();
 
                 if (!opened) {
                     return false;
