@@ -374,9 +374,11 @@
                 newTimeToPicker.html(moment(t).format("h:mm a"));
                 $("#newReturnTime").val(moment(t).format("HH:mm"));
 
-                var start = moment($("#loanStartAt").val());
                 var end   = moment($("#newReturnDate").val()+" "+$("#newReturnTime").val()+":00");
                 var siteId = $("#newReturnSiteId").val();
+
+                // Do not check start time now, because loan start's siteId could be different. Also
+                // we change only the return date here
                 validateBookingPeriod(null, end, siteId, true);
             });
 
@@ -844,13 +846,6 @@
                     timeStr = time.format('YYYY-MM-DD');
                 }
 
-                // Temp debug for testing data on the staging server
-                console.group('Validate booking time');
-                console.group('siteEvents');
-                console.log(siteEvents);
-                console.log('siteId: ' + parseInt(siteId));
-                console.groupEnd();
-
                 // Check that this time is available for this time and site
                 $(siteEvents).each(function (i, event) {
 
@@ -870,19 +865,15 @@
                             opened = true;
                         }
 
-                        console.group('Check time strings');
-                        console.log('siteId: ' + siteId);
-                        console.log('dateOnly: ' + dateOnly);
-                        console.log('timeStr: ' + timeStr);
-                        console.log('eventStartStr: ' + eventStartStr);
-                        console.log('eventEndStr: ' + eventEndStr);
-                        console.log('opened: ' + opened);
-                        console.groupEnd();
-
                     }
 
                 });
 
+                console.group('Checking valid booking time');
+                console.log('time: ' + time);
+                console.log('timeStr: ' + timeStr);
+                console.log('siteId: ' + siteId);
+                console.log('dateOnly: ' + dateOnly);
                 console.log('opened: ' + opened);
                 console.groupEnd();
 
