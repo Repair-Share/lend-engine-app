@@ -376,7 +376,8 @@
 
                 var start = moment($("#loanStartAt").val());
                 var end   = moment($("#newReturnDate").val()+" "+$("#newReturnTime").val()+":00");
-                validateBookingPeriod(null, end, currentPickupSiteId, true);
+                var siteId = $("#newReturnSiteId").val();
+                validateBookingPeriod(null, end, siteId, true);
             });
 
             page.on('click', '.button-borrow', function(event) {
@@ -870,6 +871,7 @@
                         }
 
                         console.group('Check time strings');
+                        console.log('siteId: ' + siteId);
                         console.log('dateOnly: ' + dateOnly);
                         console.log('timeStr: ' + timeStr);
                         console.log('eventStartStr: ' + eventStartStr);
