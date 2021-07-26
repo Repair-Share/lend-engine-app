@@ -35,6 +35,13 @@ class SiteDataController extends Controller
         $dateFrom = $request->get('start');
         $dateTo   = $request->get('end');
 
+        // JS calendar passes the calendar's view last day+1 automatically, but we need the full month's
+        // opening data
+        if (isset($_GET['extendLastDayOfMonth'])) {
+            $dTo    = date('Y-m-t', strtotime($dateTo));
+            $dateTo = date('Y-m-d', strtotime($dTo . ' +1 day')); // Inclusive
+        }
+
         // We can pass in a loan row to allow slots for shortening an existing loan
         // Passed to getBookings
         $loanRowId = $request->get('excludeLoanRowId');

@@ -954,9 +954,9 @@
             function addSitesToCal(siteId) {
                 var url;
                 if (siteId == undefined) {
-                    url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}";
+                    url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}&extendLastDayOfMonth";
                 } else {
-                    url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}&siteId="+siteId;
+                    url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}&extendLastDayOfMonth&siteId="+siteId;
                 }
 
                 calendar.addEventSource( {
