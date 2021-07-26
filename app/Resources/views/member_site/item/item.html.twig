@@ -736,8 +736,13 @@
                     returnTime = returnTime.add(itemLoanDays, 'd');
 
                     if (!changeOver && clickedSlotTo && clickedSlotTo.format('HH')) { // TODO yes
-                        returnTime = returnTime.set({hour: clickedSlotTo.format('HH')});
+                        returnTime = returnTime.set({
+                            hour: clickedSlotTo.format('HH'),
+                            minute: clickedSlotTo.format('mm')
+                        });
                     }
+
+                    console.log(returnTime)
                 }
 
                 basketPickupTime = selectedTime;
