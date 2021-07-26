@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '137' => 'Cannot auto-set end date as there is no opening hour slot for T+4',
             '134' => 'Start time is not within opening hours issue',
             '129' => 'A non-reservable item can be reserved by clicking on the empty calendar',
             '120' => 'User can extend an loan over existing reservations',
