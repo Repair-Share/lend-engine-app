@@ -645,7 +645,10 @@
                     alert(alert_min_days);
                     return false;
                 }
-                if (!validateBookingPeriod(bookingStartFrom, selectedTime, siteId)) {
+
+                // Return site ID could be different than pick up siteID, therefore check only the return time with
+                // the return site ID
+                if (!validateBookingPeriod(null, selectedTime, siteId)) {
                     return false;
                 }
 
