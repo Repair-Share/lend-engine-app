@@ -663,6 +663,41 @@
                 // Set the valid times on the time picker based on opening slot times
                 if (clickedSlotFrom && clickedSlotTo) {
                     timeToPicker.timepicker('option', { 'minTime': clickedSlotFrom.format("h:mma"), 'maxTime': clickedSlotTo.format("h:mma") });
+                } else if (siteId && siteEvents) {
+
+                    let minTime = null;
+                    let maxTime = null;
+
+                    $(siteEvents).each(function (i, event) {
+
+                        if (event.siteId === siteId) {
+
+                            if (moment(event.start).format('YYYY-MM-DD') === selectedTime.format('YYYY-MM-DD')) {
+
+                                if (minTime === null || minTime.format('x') > moment(event.start).format('x')) {
+                                    minTime = moment(event.start);
+                                }
+
+                                if (maxTime === null || maxTime.format('x') < moment(event.end).format('x')) {
+                                    maxTime = moment(event.end);
+                                }
+
+                            }
+
+                        }
+
+                    });
+
+                    if (minTime && maxTime) {
+
+                        timeToPicker.timepicker(
+                            'option',
+                            {
+                                'minTime': minTime.format("h:mma"),
+                                'maxTime': maxTime.format("h:mma")
+                            }
+                        );
+                    }
                 }
 
                 if (showModal == true) {
