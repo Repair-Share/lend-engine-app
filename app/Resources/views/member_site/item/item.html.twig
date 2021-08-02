@@ -665,8 +665,9 @@
                     timeToPicker.timepicker('option', { 'minTime': clickedSlotFrom.format("h:mma"), 'maxTime': clickedSlotTo.format("h:mma") });
                 } else if (siteId && siteEvents) {
 
-                    let minTime = null;
-                    let maxTime = null;
+                    let minTime           = null;
+                    let maxTime           = null;
+                    let disableTimeRanges = [];
 
                     $(siteEvents).each(function (i, event) {
 
@@ -674,12 +675,22 @@
 
                             if (moment(event.start).format('YYYY-MM-DD') === selectedTime.format('YYYY-MM-DD')) {
 
-                                if (minTime === null || minTime.format('x') > moment(event.start).format('x')) {
+                                if (maxTime === null) {
                                     minTime = moment(event.start);
-                                }
-
-                                if (maxTime === null || maxTime.format('x') < moment(event.end).format('x')) {
                                     maxTime = moment(event.end);
+                                } else if (maxTime.format('x') < moment(event.end).format('x')) {
+
+                                    disableTimeRanges.push([
+                                        maxTime.format("h:mma"),
+                                        moment(event.start).format("h:mma")
+                                    ]);
+
+                                    maxTime = moment(event.end);
+
+                                } else if (minTime.format('x') > moment(event.start).format('x')) {
+
+                                    minTime = moment(event.start);
+
                                 }
 
                             }
@@ -690,11 +701,14 @@
 
                     if (minTime && maxTime) {
 
+                        console.log(disableTimeRanges); // TODO
+
                         timeToPicker.timepicker(
                             'option',
                             {
-                                'minTime': minTime.format("h:mma"),
-                                'maxTime': maxTime.format("h:mma")
+                                'minTime':         minTime.format("h:mma"),
+                                'maxTime':         maxTime.format("h:mma"),
+                                disableTimeRanges: disableTimeRanges,
                             }
                         );
                     }
