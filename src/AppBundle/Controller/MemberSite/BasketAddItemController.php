@@ -5,6 +5,7 @@ namespace AppBundle\Controller\MemberSite;
 use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
+use AppBundle\Helpers\DateTimeHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -43,6 +44,9 @@ class BasketAddItemController extends Controller
 
         /** @var \AppBundle\Services\BasketService $basketService */
         $basketService = $this->get('service.basket');
+
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
 
         // FIND THE ITEM
         /** @var \AppBundle\Entity\InventoryItem $product */
@@ -170,6 +174,9 @@ class BasketAddItemController extends Controller
         $dFrom = new \DateTime($request->get('date_from').' '.$request->get('time_from'));
         $dTo   = new \DateTime($request->get('date_to').' '.$request->get('time_to'));
 
+        $dFrom = DateTimeHelper::changeLocalTimeToUtc($settingsService->getSettingValue('org_timezone'), $dFrom);
+        $dTo = DateTimeHelper::changeLocalTimeToUtc($settingsService->getSettingValue('org_timezone'), $dTo);
+
         if ($checkoutService->isItemReserved($product, $dFrom, $dTo, null)) {
             $this->addFlash('error', "This item is reserved or on loan for your selected dates");
             foreach ($checkoutService->errors AS $error) {
@@ -269,7 +276,7 @@ class BasketAddItemController extends Controller
         } else {
             $msg = $this->get('translator')->trans('msg_success.basket_item_added', [], 'member_site');
             $this->addFlash('success', $qtyFulfilled. ' x ' .$product->getName().' '.$msg);
-            $basketService->setBasket($basket);
+            $basketService->setBasket($basket, false);
             return $this->redirectToRoute('basket_show');
         }
 
