@@ -197,17 +197,6 @@ class BasketAddItemController extends Controller
 
         if ($product->getItemType() == InventoryItem::TYPE_KIT) {
 
-            if (!$tz = $settingsService->getSettingValue('org_timezone')) {
-                $tz = 'Europe/London';
-            }
-
-            $timeZone = new \DateTimeZone($tz);
-            $utc      = new \DateTime('now', new \DateTimeZone("UTC"));
-            $offSet   = $timeZone->getOffset($utc) / 3600;
-
-            $dFromKit = $dFrom->modify("{$offSet} hours");
-            $dToKit   = $dTo->modify("{$offSet} hours");
-
             /** @var \AppBundle\Entity\KitComponent $kitComponent */
             foreach ($product->getComponents() AS $kitComponent) {
                 // We don't mind WHICH component by name is added if there are a few
@@ -221,8 +210,8 @@ class BasketAddItemController extends Controller
                     $row->setInventoryItem($component);
                     $row->setSiteFrom($siteFrom);
                     $row->setSiteTo($siteTo);
-                    $row->setDueOutAt($dFromKit);
-                    $row->setDueInAt($dToKit);
+                    $row->setDueOutAt($dFrom);
+                    $row->setDueInAt($dTo);
                     $row->setFee(0);
                     $row->setProductQuantity(1);
                     $basket->addLoanRow($row);
