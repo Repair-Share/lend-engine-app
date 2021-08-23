@@ -146,31 +146,28 @@ class BasketService
     /**
      * Takes the Basket entity and turns it into JSON for storing in the session
      * @param Loan $basket
-     * @param boolean $changeTimes
      */
-    public function setBasket(Loan $basket, $changeTimes = true)
+    public function setBasket(Loan $basket)
     {
         // ----- Change times from local to UTC ----- //
-        if ($changeTimes) {
+        if (!$tz = $this->settings->getSettingValue('org_timezone')) {
+            $tz = 'Europe/London';
+        }
+        $timeZone = new \DateTimeZone($tz);
+        $utc = new \DateTime('now', new \DateTimeZone("UTC"));
+        $offSet = -$timeZone->getOffset($utc)/3600;
 
-            if (!$tz = $this->settings->getSettingValue('org_timezone')) {
-                $tz = 'Europe/London';
-            }
-            $timeZone = new \DateTimeZone($tz);
-            $utc = new \DateTime('now', new \DateTimeZone("UTC"));
-            $offSet = -$timeZone->getOffset($utc)/3600;
-            foreach ($basket->getLoanRows() AS $row) {
-                /** @var $row \AppBundle\Entity\LoanRow */
-                if (in_array($row->getInventoryItem()->getItemType(), [InventoryItem::TYPE_STOCK, InventoryItem::TYPE_SERVICE])) {
-                    // No dates for stock or service items
-                    continue;
-                }
-                $i = $row->getDueInAt()->modify("{$offSet} hours");
-                $row->setDueInAt($i);
-                $o = $row->getDueOutAt()->modify("{$offSet} hours");
-                $row->setDueOutAt($o);
-            }
+        foreach ($basket->getLoanRows() AS $row) {
 
+            /** @var $row \AppBundle\Entity\LoanRow */
+            if (in_array($row->getInventoryItem()->getItemType(), [InventoryItem::TYPE_STOCK, InventoryItem::TYPE_SERVICE])) {
+                // No dates for stock or service items
+                continue;
+            }
+            $i = $row->getDueInAt()->modify("{$offSet} hours");
+            $row->setDueInAt($i);
+            $o = $row->getDueOutAt()->modify("{$offSet} hours");
+            $row->setDueOutAt($o);
         }
         // ----- Change times from local to UTC ----- //
 

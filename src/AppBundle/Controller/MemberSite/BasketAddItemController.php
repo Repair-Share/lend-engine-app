@@ -174,9 +174,6 @@ class BasketAddItemController extends Controller
         $dFrom = new \DateTime($request->get('date_from').' '.$request->get('time_from'));
         $dTo   = new \DateTime($request->get('date_to').' '.$request->get('time_to'));
 
-        $dFrom = DateTimeHelper::changeLocalTimeToUtc($settingsService->getSettingValue('org_timezone'), $dFrom);
-        $dTo = DateTimeHelper::changeLocalTimeToUtc($settingsService->getSettingValue('org_timezone'), $dTo);
-
         if ($checkoutService->isItemReserved($product, $dFrom, $dTo, null)) {
             $this->addFlash('error', "This item is reserved or on loan for your selected dates");
             foreach ($checkoutService->errors AS $error) {
@@ -199,6 +196,18 @@ class BasketAddItemController extends Controller
         $basket->setCollectFromSite($siteFrom);
 
         if ($product->getItemType() == InventoryItem::TYPE_KIT) {
+
+            if (!$tz = $settingsService->getSettingValue('org_timezone')) {
+                $tz = 'Europe/London';
+            }
+
+            $timeZone = new \DateTimeZone($tz);
+            $utc      = new \DateTime('now', new \DateTimeZone("UTC"));
+            $offSet   = $timeZone->getOffset($utc) / 3600;
+
+            $dFromKit = $dFrom->modify("{$offSet} hours");
+            $dToKit   = $dTo->modify("{$offSet} hours");
+
             /** @var \AppBundle\Entity\KitComponent $kitComponent */
             foreach ($product->getComponents() AS $kitComponent) {
                 // We don't mind WHICH component by name is added if there are a few
@@ -212,8 +221,8 @@ class BasketAddItemController extends Controller
                     $row->setInventoryItem($component);
                     $row->setSiteFrom($siteFrom);
                     $row->setSiteTo($siteTo);
-                    $row->setDueOutAt($dFrom);
-                    $row->setDueInAt($dTo);
+                    $row->setDueOutAt($dFromKit);
+                    $row->setDueInAt($dToKit);
                     $row->setFee(0);
                     $row->setProductQuantity(1);
                     $basket->addLoanRow($row);
@@ -276,7 +285,7 @@ class BasketAddItemController extends Controller
         } else {
             $msg = $this->get('translator')->trans('msg_success.basket_item_added', [], 'member_site');
             $this->addFlash('success', $qtyFulfilled. ' x ' .$product->getName().' '.$msg);
-            $basketService->setBasket($basket, false);
+            $basketService->setBasket($basket);
             return $this->redirectToRoute('basket_show');
         }
 
