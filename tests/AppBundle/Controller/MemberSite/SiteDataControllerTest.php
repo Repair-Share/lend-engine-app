@@ -131,4 +131,33 @@ class SiteDataControllerTest extends AuthenticatedControllerTest
         $this->assertContains($tuesday->format('Y-m-d 09:00:00'), $responseContent);
 
     }
+
+    public function testLastDayMonths()
+    {
+        // Create an item
+        $itemID = $this->helpers->createItem($this->client);
+
+        // Check site data
+        $from = new \DateTime();
+        $from->modify('-1 month');
+
+        $to = new \DateTime();
+        $to->setDate(date('Y'), date('m'), 1);
+
+        $uri = '/site-data?itemId=' . $itemID
+               . '&start=' . urlencode($from->format('Y-m-d'))
+               . '&end=' . urlencode($to->format('Y-m-d'))
+               . '&extendLastDayOfMonth';
+
+        $lastDayOfMonth = date('Y-m-t');
+
+        $this->client->request('GET', $uri);
+        $response = $this->client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        $responseContent = $response->getContent();
+
+        $this->assertContains($lastDayOfMonth, $responseContent);
+    }
 }

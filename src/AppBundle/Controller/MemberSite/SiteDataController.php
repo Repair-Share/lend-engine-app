@@ -37,7 +37,7 @@ class SiteDataController extends Controller
 
         // JS calendar passes the calendar's view last day+1 automatically, but we need the full month's
         // opening data
-        if (isset($_GET['extendLastDayOfMonth'])) {
+        if ($request->get('extendLastDayOfMonth') !== null) {
             $dTo    = date('Y-m-t', strtotime($dateTo));
             $dateTo = date('Y-m-d', strtotime($dTo . ' +1 day')); // Inclusive
         }
