@@ -74,23 +74,4 @@ class DateTimeHelper
 
         return self::leadingZero($hours) . ':' . self::leadingZero($minutes);
     }
-
-    /**
-     * Change local time to UTC
-     */
-    public static function changeLocalTimeToUtc($settingsTimeZone, \DateTime $time)
-    {
-        if (!$settingsTimeZone) {
-            $settingsTimeZone = 'Europe/London';
-        }
-
-        $tz = new \DateTimeZone($settingsTimeZone);
-
-        $utc    = new \DateTime('now', new \DateTimeZone('UTC'));
-        $offSet = $tz->getOffset($utc) / 3600 * -1;
-
-        $time->modify("{$offSet} hours");
-
-        return $time;
-    }
 }
