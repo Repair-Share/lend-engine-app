@@ -174,6 +174,12 @@ mysql> quit;
 root@fb51ccb6b6e0:/# exit
 ```
 
+Update database url with newly created user
+```
+$ dokku config:set myapp RDS_URL="mysql://myuser:password@dokku-mysql-lendenginedb:3306/extratargetdb"
+```
+
+
 See also [Database](#database) section for help on appropriate values
 
 **RabbitMQ setup**
