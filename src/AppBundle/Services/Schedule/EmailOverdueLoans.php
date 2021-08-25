@@ -79,6 +79,12 @@ class EmailOverdueLoans
 
         $resultString .= 'Number of tenants = '.count($tenants).PHP_EOL;
 
+        // Modify times to match local time
+        $tz = $this->settings->getSettingValue('org_timezone');
+        $timeZone = new \DateTimeZone($tz);
+        $utc = new \DateTime('now', new \DateTimeZone("UTC"));
+        $offSet = $timeZone->getOffset($utc)/3600;
+
         foreach ($tenants AS $tenant) {
 
             /** @var $tenant \AppBundle\Entity\Tenant */
@@ -129,11 +135,19 @@ class EmailOverdueLoans
 
                     if ($overdueLoanRows = $loanRowRepo->getOverdueItems($overdueDays)) {
 
+                        // Test only the last row
+                        if (getenv('APP_ENV') === 'test' && sizeof($overdueLoanRows)) {
+                            $overdueLoanRows = [array_pop($overdueLoanRows)];
+                        }
+
                         foreach ($overdueLoanRows AS $loanRow) {
 
                             /** @var $loanRow \AppBundle\Entity\LoanRow */
                             $loan    = $loanRow->getLoan();
                             $contact = $loan->getContact();
+
+                            // Modify UTC database times to match local time
+                            $loanRow->getDueInAt()->modify("{$offSet} hours");
 
                             $resultString .= '  Loan: '.$loan->getId().' : '.$contact->getEmail(). PHP_EOL;
                             $resultString .= '  Due: '.$loanRow->getDueInAt()->format("Y-m-d").PHP_EOL;
@@ -161,6 +175,11 @@ class EmailOverdueLoans
                                         'loginUri' => $loginUri
                                     )
                                 );
+
+                                // Returns the debug info to unit test
+                                if (getenv('APP_ENV') === 'test') {
+                                    return $loanRow->getDueInAt()->format('Y-m-d H:i');
+                                }
 
                                 $subject = $this->container->get('translator')->trans('le_email.overdue.subject',
                                     ['loanId' => $loan->getId()],
@@ -212,13 +231,13 @@ class EmailOverdueLoans
         $resultString .= '  Total T: '.$timeElapsed.PHP_EOL;
 
         // And then finally send a log.
-        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
-        $client->sendEmail(
-            "hello@lend-engine.com",
-            'chris@lend-engine.com',
-            "Overdue emails log / {$timeElapsed} sec.",
-            nl2br($resultString)
-        );
+//        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
+//        $client->sendEmail(
+//            "hello@lend-engine.com",
+//            'chris@lend-engine.com',
+//            "Overdue emails log / {$timeElapsed} sec.",
+//            nl2br($resultString)
+//        );
 
         return $resultString;
 

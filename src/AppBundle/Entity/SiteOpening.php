@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Helpers\DateTimeHelper;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -207,7 +208,13 @@ class SiteOpening
      */
     public function getFriendlyTimeFrom()
     {
-        $timeFrom = new \DateTime('2020-01-01 ' . $this->getTimeFrom());
+        $time = DateTimeHelper::parseTime($this->getTimeFrom());
+
+        if (!$time) {
+            return '';
+        }
+
+        $timeFrom = new \DateTime('2020-01-01 ' . $time);
         return $timeFrom->format("g:i a");
     }
 
@@ -216,7 +223,13 @@ class SiteOpening
      */
     public function getFriendlyTimeTo()
     {
-        $timeTo = new \DateTime('2020-01-01 ' . $this->getTimeTo());
+        $time = DateTimeHelper::parseTime($this->getTimeTo());
+
+        if (!$time) {
+            return '';
+        }
+
+        $timeTo = new \DateTime('2020-01-01 ' . $time);
         return $timeTo->format("g:i a");
     }
 }

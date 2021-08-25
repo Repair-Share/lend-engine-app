@@ -21,6 +21,9 @@ class AppSettingsController extends AbstractController
         /** @var \AppBundle\Services\Apps\AppService $appService */
         $appService = $this->get('service.apps');
 
+        /** @var \AppBundle\Services\SettingsService $settingService */
+        $settingService = $this->get('settings');
+
         if (!$user = $this->getUser()){
             $this->addFlash('error', "Please log in to access this page.");
             return $this->redirectToRoute('home');
@@ -96,6 +99,7 @@ class AppSettingsController extends AbstractController
                 $submittedValue = $form->get($key)->getData();
                 $appService->saveSetting($code, $key, $submittedValue);
             }
+
             $this->addFlash("success", "Setting saved OK");
             return $this->redirectToRoute('app_settings', ['code' => $code]);
         }

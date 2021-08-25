@@ -7,45 +7,73 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ItemLocationType extends AbstractType
 {
+    protected $em;
+    protected $id;
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $this->em = $options['em'];
+        $this->id = $options['id'];
+
         $builder->add('name', TextType::class, array(
-            'label' => 'Choose a name for the location',
+            'label'    => 'Choose a name for the location',
             'required' => true,
-            'attr' => array(
+            'attr'     => array(
                 'placeholder' => 'e.g. "Store room"',
-                'data-help' => '',
+                'data-help'   => '',
             )
         ));
 
         $builder->add('site', EntityType::class, array(
-            'label' => 'Which site is this location in?',
-            'class' => 'AppBundle:Site',
+            'label'        => 'Which site is this location in?',
+            'class'        => 'AppBundle:Site',
             'choice_label' => 'name',
-            'required' => true,
-            'attr' => array(
+            'required'     => true,
+            'attr'         => array(
                 'data-help' => "",
             )
         ));
 
         $builder->add('isAvailable', CheckboxType::class, array(
-            'label' => 'Items in this location are available to loan',
+            'label'    => 'Items in this location are available to loan',
             'required' => false
         ));
 
+        // Active field
+
+        $siteRepo = $this->em->getRepository('AppBundle:Site');
+        $sites = $siteRepo->findOneBy([
+            'defaultCheckInLocation' => $this->id
+        ]);
+
+        $activeFieldAttrs = array(
+            'placeholder' => '',
+            'data-help'   => "If you've used a location you can't delete it; you'd need to deactivate it.",
+        );
+
+        $activeFieldRequired = false;
+
+        if ($sites !== null) {
+            $activeFieldAttrs['onchange'] = 'if(!this.checked) { alert(\'This location is in use for ' . str_replace("'", ' ', $sites->getName()) . ' default check in location. Please change it before you deactivate this.\');};this.checked=true;';
+            $activeFieldRequired = true;
+        }
+
         $builder->add('isActive', CheckboxType::class, array(
-            'label' => 'Active?',
-            'required' => false,
-            'attr' => array(
-                'placeholder' => '',
-                'data-help' => "If you've used a location you can't delete it; you'd need to deactivate it.",
-            )
+            'label'    => 'Active?',
+            'required' => $activeFieldRequired,
+            'attr'     => $activeFieldAttrs
         ));
 
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setRequired('em');
+        $resolver->setRequired('id');
     }
 
 }

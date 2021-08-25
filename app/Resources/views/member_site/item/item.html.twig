@@ -161,6 +161,8 @@
 
         $(document).ready(function() {
 
+            var siteEvents = [];
+
             var sites = [];
             {% for site in sites %}
             sites[{{ site.id }}] = "{{ site.name }}";
@@ -229,6 +231,9 @@
                     right:  'prev,next'
                 },
                 dateClick: function(info) {
+
+                    {% if product.isReservable %}
+
                     if (currentUserId) {
                         if (sitesLoaded == false) {
                             loadSiteOpeningTimes();
@@ -239,6 +244,12 @@
                     } else {
                         alert("{% trans %}public_item.log_in_to_borrow{% endtrans %}");
                     }
+
+                    {% else %}
+
+                        alert("{% trans %}public_item.not_reservable{% endtrans %}");
+
+                    {% endif %}
                 },
                 eventClick: function(info) {
                     if (info.event.extendedProps.siteId) {
@@ -363,9 +374,12 @@
                 newTimeToPicker.html(moment(t).format("h:mm a"));
                 $("#newReturnTime").val(moment(t).format("HH:mm"));
 
-                var start = moment($("#loanStartAt").val());
                 var end   = moment($("#newReturnDate").val()+" "+$("#newReturnTime").val()+":00");
-                validateBookingPeriod(start, end);
+                var siteId = $("#newReturnSiteId").val();
+
+                // Do not check start time now, because loan start's siteId could be different. Also
+                // we change only the return date here
+                validateBookingPeriod(null, end, siteId, true);
             });
 
             page.on('click', '.button-borrow', function(event) {
@@ -380,7 +394,29 @@
 
             borrowModal.on('click', '#set-pickup-today', function () {
                 resetDates();
-                setPickup(moment(), null, null, itemSiteId, itemSiteName);
+
+                let today = null;
+
+                // Find today's opening hour
+                $(siteEvents).each(function (i, event) {
+
+                    if (!isNaN(parseInt(event.siteId)) && parseInt(event.siteId) === parseInt(itemSiteId)) {
+
+                        let shortDate  = event.start.substr(0, 10);
+                        let shortToday = moment().format('YYYY-MM-DD');
+
+                        if (shortDate === shortToday) {
+                            today = moment(event.start);
+                        }
+
+                    }
+
+                });
+
+                if (today) {
+                    setPickup(today, null, null, itemSiteId, itemSiteName);
+                }
+
             });
 
             {% if app.user and app.user.activeSite and product.itemType != 'stock' %}
@@ -575,7 +611,7 @@
                             // No changeover time, use the end of the slot
                             selectedTime = eventEnd;
                         }
-                        setReturn(selectedTime, eventStart, eventEnd, siteId, siteName, true);
+                        setReturn(selectedTime, eventStart, eventEnd, siteId, siteName, true, calEvent.extendedProps.changeover);
                     } else {
                         // We've not chosen a start date yet, user is selecting pick up
                         if (!selectedTime) {
@@ -583,7 +619,7 @@
                             selectedTime = eventStart;
                         }
                         // Set pickup time, allowing the system to auto-set the return time if there is a visible slot
-                        setPickup(selectedTime, eventStart, eventEnd, siteId, siteName, true);
+                        setPickup(selectedTime, eventStart, eventEnd, siteId, siteName, true, calEvent.extendedProps.changeover);
                         borrowModal.modal();
                     }
                 }
@@ -609,7 +645,10 @@
                     alert(alert_min_days);
                     return false;
                 }
-                if (!validateBookingPeriod(bookingStartFrom, selectedTime, siteId)) {
+
+                // Return site ID could be different than pick up siteID, therefore check only the return time with
+                // the return site ID
+                if (!validateBookingPeriod(null, selectedTime, siteId)) {
                     return false;
                 }
 
@@ -624,6 +663,55 @@
                 // Set the valid times on the time picker based on opening slot times
                 if (clickedSlotFrom && clickedSlotTo) {
                     timeToPicker.timepicker('option', { 'minTime': clickedSlotFrom.format("h:mma"), 'maxTime': clickedSlotTo.format("h:mma") });
+                } else if (siteId && siteEvents) {
+
+                    let minTime           = null;
+                    let maxTime           = null;
+                    let disableTimeRanges = [];
+
+                    $(siteEvents).each(function (i, event) {
+
+                        if (event.siteId === siteId) {
+
+                            if (moment(event.start).format('YYYY-MM-DD') === selectedTime.format('YYYY-MM-DD')) {
+
+                                if (maxTime === null) {
+                                    minTime = moment(event.start);
+                                    maxTime = moment(event.end);
+                                } else if (maxTime.format('x') < moment(event.end).format('x')) {
+
+                                    disableTimeRanges.push([
+                                        maxTime.format("h:mma"),
+                                        moment(event.start).format("h:mma")
+                                    ]);
+
+                                    maxTime = moment(event.end);
+
+                                } else if (minTime.format('x') > moment(event.start).format('x')) {
+
+                                    minTime = moment(event.start);
+
+                                }
+
+                            }
+
+                        }
+
+                    });
+
+                    if (minTime && maxTime) {
+
+                        console.log(disableTimeRanges); // TODO
+
+                        timeToPicker.timepicker(
+                            'option',
+                            {
+                                'minTime':         minTime.format("h:mma"),
+                                'maxTime':         maxTime.format("h:mma"),
+                                disableTimeRanges: disableTimeRanges,
+                            }
+                        );
+                    }
                 }
 
                 if (showModal == true) {
@@ -642,7 +730,7 @@
 
             }
 
-            function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName, autoSetReturn) {
+            function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName, autoSetReturn, changeOver) {
 
                 console.log("Setting pickup time to "+selectedTime.format("YYYY-MM-DD HH:mm"));
                 $("#booking-help").show();
@@ -695,6 +783,15 @@
                 } else {
                     returnTime = moment(selectedTime);
                     returnTime = returnTime.add(itemLoanDays, 'd');
+
+                    if (!changeOver && clickedSlotTo && clickedSlotTo.format('HH')) { // TODO yes
+                        returnTime = returnTime.set({
+                            hour: clickedSlotTo.format('HH'),
+                            minute: clickedSlotTo.format('mm')
+                        });
+                    }
+
+                    console.log(returnTime)
                 }
 
                 basketPickupTime = selectedTime;
@@ -736,26 +833,36 @@
                 return returnValue;
             }
 
-            function validateBookingPeriod(start, end, siteId) {
-                console.log("validateBookingPeriod: "+
-                        " From: "+start.format("YYYY-MM-DD HH:mm:00") +
-                        " To: "+end.format("YYYY-MM-DD HH:mm:00"));
+            function validateBookingPeriod(start, end, siteId, dateOnly) {
 
-                validateLoanPeriod({{ product.id }}, start.format("YYYY-MM-DD HH:mm:00"), end.format("YYYY-MM-DD HH:mm:00"), siteId);
+                console.log("validateBookingPeriod: " +
+                            " From: " + (start === null ? start : start.format("YYYY-MM-DD HH:mm:00")) +
+                            " To: " + end.format("YYYY-MM-DD HH:mm:00") +
+                            " siteId: " + siteId +
+                            " dateOnly: " + dateOnly
+                );
 
-                if (!isValidBookingTime(start, siteId)) {
+                if (dateOnly !== true) {
+                    dateOnly = false;
+                }
+
+                if (start !== null) {
+                    validateLoanPeriod({{ product.id }}, start.format("YYYY-MM-DD HH:mm:00"), end.format("YYYY-MM-DD HH:mm:00"), siteId);
+                }
+
+                if (start !== null && !isValidBookingTime(start, siteId, dateOnly)) {
                     console.log("validateBookingPeriod : start time is not within opening hours");
                     alert("Start time is not within opening hours");
                     return false;
                 }
 
-                if (!isValidBookingTime(end, siteId)) {
+                if (!isValidBookingTime(end, siteId, dateOnly)) {
                     console.log("validateBookingPeriod : end time is not within opening hours");
                     alert("End time is not within opening hours");
                     return false;
                 }
 
-                if (moment(end) < moment(start)) {
+                if (start !== null && moment(end) < moment(start)) {
                     alert(text_return_after_pickup+" ("+start.format("DD MMMM h:mm a")+")");
                     return false;
                 }
@@ -782,7 +889,55 @@
             }
 
             /** Returns the event that the time was found in */
-            function isValidBookingTime(time, siteId) {
+            function isValidBookingTime(time, siteId, dateOnly) {
+
+                if (dateOnly !== true) {
+                    dateOnly = false;
+                }
+
+                let opened = false;
+
+                let timeStr = time.format('YYYY-MM-DD HH:mm:ss');
+
+                if (dateOnly === true) {
+                    timeStr = time.format('YYYY-MM-DD');
+                }
+
+                // Check that this time is available for this time and site
+                $(siteEvents).each(function (i, event) {
+
+                    if (!isNaN(parseInt(event.siteId)) && parseInt(event.siteId) === parseInt(siteId)) {
+
+                        let eventStartStr = event.start;
+                        let eventEndStr   = event.end;
+
+                        if (dateOnly === true) {
+
+                            eventStartStr = moment(event.start).format('YYYY-MM-DD');
+                            eventEndStr   = moment(event.end).format('YYYY-MM-DD');
+
+                        }
+
+                        if (timeStr === eventStartStr || timeStr === eventEndStr) {
+                            opened = true;
+                        }
+
+                    }
+
+                });
+
+                console.group('Checking valid booking time');
+                console.log('time: ' + time);
+                console.log('timeStr: ' + timeStr);
+                console.log('siteId: ' + siteId);
+                console.log('dateOnly: ' + dateOnly);
+                console.log('opened: ' + opened);
+                console.groupEnd();
+
+                if (!opened) {
+                    return false;
+                }
+
                 // Currently have an issue where moving the calendar a month forwards replaces the array that we validate start time against
                 // Fix : move the events into a global non-calendar dataset as the calendar view is moved around and validate against that
                 return true;
@@ -848,9 +1003,9 @@
             function addSitesToCal(siteId) {
                 var url;
                 if (siteId == undefined) {
-                    url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}";
+                    url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}&extendLastDayOfMonth";
                 } else {
-                    url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}&siteId="+siteId;
+                    url = "{{ path('site_data') }}?itemId={{ product.id }}&excludeLoanRowId={{ app.request.get('extend') }}&extendLastDayOfMonth&siteId="+siteId;
                 }
 
                 calendar.addEventSource( {
@@ -862,6 +1017,32 @@
                     },
                     success: function(events) {
                         setBookableDays(events);
+                        siteEvents = events;
+
+                        let todayIsAvailable = false;
+
+                        $(siteEvents).each(function (i, event) {
+
+                            if (!isNaN(parseInt(event.siteId)) && parseInt(event.siteId) === parseInt(
+                                currentPickupSiteId)) {
+
+                                let shortDate  = event.start.substr(0, 10);
+                                let shortToday = moment().format('YYYY-MM-DD');
+
+                                if (shortDate === shortToday) {
+                                    todayIsAvailable = true;
+                                }
+
+                            }
+
+                        });
+
+                        if (!todayIsAvailable) {
+                            $('#set-pickup-today').hide();
+                        } else {
+                            $('#set-pickup-today').show();
+                        }
+
                     },
                     textColor: 'black',
                     className: 'siteOpening'

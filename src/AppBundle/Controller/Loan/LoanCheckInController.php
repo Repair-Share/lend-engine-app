@@ -168,6 +168,13 @@ class LoanCheckInController extends Controller
                         $this->addFlash('error', "You can't return more than you sold. Inventory was not added.");
                         continue;
                     }
+
+                    $qty = floatval($qty);
+
+                    if (!$qty) {
+                        continue;
+                    }
+
                     if ($inventoryService->addInventory($itemId, $qty, $toLocation->getId(), $noteText)) {
                         // Add a negative line to the loan
                         $item = $itemService->find($itemId);

@@ -116,6 +116,45 @@
             setUpSelectMenus();
         }
 
+        function handleTimeChange(input) {
+            let value   = input.value.trim();
+            let hours   = 0;
+            let minutes = 0;
+
+            if (!value) {
+                return false;
+            }
+
+            if (isNaN(parseInt(value))) {
+                return false;
+            }
+
+            if (value.length === 3) { // HMM format
+
+                hours   = parseInt(value.substr(0, 1));
+                minutes = parseInt(value.substr(1, 2));
+
+            } else { // HHMM format
+
+                hours   = parseInt(value.substr(0, 2));
+                minutes = parseInt(value.substr(2, 2));
+
+            }
+
+            if (isNaN(hours)) {
+                return false;
+            }
+
+            if (isNaN(minutes)) {
+                minutes = 0;
+            }
+
+            let hoursStr   = hours.toString().padStart(2, '0');
+            let minutesStr = minutes.toString().padStart(2, '0');
+
+            input.value = hoursStr + minutesStr;
+        }
+
     </script>
 {% endblock %}
 

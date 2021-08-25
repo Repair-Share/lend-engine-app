@@ -5,6 +5,7 @@ namespace AppBundle\Controller\MemberSite;
 use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
+use AppBundle\Helpers\DateTimeHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -43,6 +44,9 @@ class BasketAddItemController extends Controller
 
         /** @var \AppBundle\Services\BasketService $basketService */
         $basketService = $this->get('service.basket');
+
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
 
         // FIND THE ITEM
         /** @var \AppBundle\Entity\InventoryItem $product */
@@ -192,6 +196,7 @@ class BasketAddItemController extends Controller
         $basket->setCollectFromSite($siteFrom);
 
         if ($product->getItemType() == InventoryItem::TYPE_KIT) {
+
             /** @var \AppBundle\Entity\KitComponent $kitComponent */
             foreach ($product->getComponents() AS $kitComponent) {
                 // We don't mind WHICH component by name is added if there are a few

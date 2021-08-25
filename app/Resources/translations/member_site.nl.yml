@@ -3,8 +3,9 @@
 # Release: Working copy
 # Locale: nl-NL, Dutch (Netherlands)
 # Tagged: Member site
+# Status: Translated
 # Exported by: Chris
-# Exported at: Wed, 27 Nov 2019 10:05:11 +0000
+# Exported at: Wed, 13 Jan 2021 00:53:53 +0000
 ---
 Loan: Lening
 Loans: Leningen
@@ -13,18 +14,18 @@ Reservations: Reserveringen
 Brand: Merk
 Payment: Betaling
 Payments: Betalingen
-Fee: Vergoeding
+Fee: Prijs
 loan_status.pending: Hangende
 loan_status.on_loan: Uitgeleend
 loan_status.reserved: Gereserveerd
 loan_status.cancelled: Geannuleerd
-loan_status.overdue: Over tijd
+loan_status.overdue: Te laat
 loan_status.closed: Gesloten
-note_reservation_fee: Kosten voor reserveren
-note_reservation_fee_will_be_added: Kosten worden per reservering toegevoegd
+note_reservation_fee: Reserveringskosten
+note_reservation_fee_will_be_added: kosten worden per reservering toegevoegd
 th.date: Datum
 th.payment_method: Betaalmethode
-th.fee: Vergoeding
+th.fee: Prijs
 th.payment: Betaling
 th.ref: Referentie
 th.items: Artikelen
@@ -35,7 +36,7 @@ Reference: Referentie
 Items: Artikelen
 Status: Status
 STATUS_PENDING: In behandeling
-STATUS_ACTIVE: Bruikleen
+STATUS_ACTIVE: Uitgeleend
 STATUS_OVERDUE: Te laat
 STATUS_RESERVED: Gereserveerd
 STATUS_CANCELLED: Geannuleerd
@@ -45,7 +46,7 @@ per_day: per dag
 per_n_days: voor %count% dagen
 button_cancel: Annuleren
 button_cancel_reservation: Annuleer reservering
-button_add_credit: Krediet toevoegen
+button_add_credit: Tegoed toevoegen
 button_go: Gaan
 I forgot my password: Ik ben mijn wachtwoord vergeten
 Log out: Uitloggen
@@ -65,7 +66,7 @@ form.locale: Uw voorkeurstaal
 public_misc.link_admin: Admin
 public_misc.link_home: Home
 public_misc.link_recent_items: Onlangs toegevoegd
-public_misc.link_all_items: Alle artikels
+public_misc.link_all_items: Alle artikelen
 public_misc.search_items: Zoeken in onze artikelen
 public_misc.no_results: Niets gevonden
 public_misc.filter_items: Filter artikelen
@@ -79,12 +80,12 @@ public_account.contact_subtitle: Contact details
 public_account.membership_subtitle: Lidmaatschap details
 public_account.button_edit_details: Wijzig mijn gegevens
 public_account.button_change_password: Wijzig mijn wachtwoord
-public_item_list.pages: '%x% tot %y% van %z% artikels worden getoond'
+public_item_list.pages: '%x% tot %y% van %z% artikelen worden getoond'
 public_item.location: Locatie
 public_item.brand: Merk
 public_item.code: Code
 public_item.serial: Serie
-public_item.condition: Voorwaarde
+public_item.condition: Conditie
 public_item.contains: Bevat
 public_item.downloads: Downloads
 public_item.log_in_to_download: Log in om te downloaden
@@ -92,17 +93,17 @@ public_item.log_in_to_borrow: Log in om te lenen
 public_item.borrow_now: Nu lenen
 public_item.not_available: Niet beschikbaar
 public_item.available: Beschikbaar
-public_item.on_loan: Bruikleen
-public_item.pickup_date_error: De afhaaldatum van sommige artikels in uw winkelwagentje is in conflict met andere boekingen voor dit artikel. U kan dit artikel niet tezelfdertijd lenen.
-public_item.pickup_site_error: Dit artikel is niet beschikbaar op dezelfde locatie als de andere artikels in uw winkelmandje. U kan dit artikel niet op dezelfde lening plaatsen.
-public_item.basket_exists: U heeft al artikels in uw winkelmandje. U moet ze samen ophalen, dus hebben we de afhaaldatum voor u vastgesteld.
+public_item.on_loan: Uitgeleend
+public_item.pickup_date_error: De ophaaldatum van sommige artikelen in uw winkelwagentje is in conflict met andere boekingen voor dit artikel. U kan dit artikel niet tezelfdertijd reserveren.
+public_item.pickup_site_error: Dit artikel is niet beschikbaar op dezelfde locatie als de andere artikelen in uw winkelmandje. U kan dit artikel niet in dezelfde reservering plaatsen.
+public_item.basket_exists: U heeft al artikelen in uw winkelmandje. U moet ze samen ophalen, dus hebben we de ophaaldatum voor u aangepast.
 public_item.account_balance_is: Beschikbaar tegoed
-public_item.add_credit: Voeg krediet toe
+public_item.add_credit: Voeg tegoed toe
 public_item.pickup_at: Haal op om
 public_item.return_by: Breng terug tegen
-public_item.choose_pickup_first: Kies eerst ophaling
-public_item.button_choose_pickup: Kies tijd van ophaling
-public_item.button_choose_return: Kies retour tijd
+public_item.choose_pickup_first: Kies eerst een ophaalmoment
+public_item.button_choose_pickup: Kies een moment
+public_item.button_choose_return: Kies een moment
 public_item.cancel: Annuleer
 public_item.basket_add: Voeg artikel toe aan het winkelmandje
 public_item.locations: Beschikbare lokatie's
@@ -115,33 +116,33 @@ calendar.my_booking: MIJN RESERVERING
 calendar.reserved: GERESERVEERD
 calendar.on_loan: UITGELEEND
 calendar.text_clash_date: De door u geselecteerde periode is in conflict met een bestaande boeking. Graag een andere datum te kiezen.
-calendar.text_return_after_pickup: Graag een een retourdatum na uw afhaaldatum te kiezen
+calendar.text_return_after_pickup: Graag een een inleverdatum na uw ophaaldatum kiezen
 calendar.alert_already_booked: U kan deze datum niet selecteren vanwege een andere boeking.
 calendar.alert_not_your_booking: U kunt alleen de details van uw eigen boekingen bekijken.
-calendar.alert_day_warning: Dit artikel kan enkel geleend worden voor veelvouden van itemLoanDays dagen. \nGraag een andere retourdatum te kiezen.
+calendar.alert_day_warning: Dit artikel kan enkel geleend worden voor veelvouden van itemLoanDays dagen. \nGraag een andere inleverdatum te kiezen.
 calendar.alert_min_loan_days: U moet dit artikel voor minimum minLoanDays dagen lenen.
 calendar.alert_max_loan_days: U kunt dit item lenen voor maximaal maximaal dagen.
 public_basket.title: Winkelmandje
 public_basket.name: Winkelmandje
-public_basket.due_at: Terug te brengen tegen
+public_basket.due_at: Terug te brengen op
 public_basket.return_to: Terugbrengen naar
-public_basket.pickup_after: Afhalen na
+public_basket.pickup_after: Ophalen vanaf
 public_basket.from: van
-public_basket.add_credit_message: Voeg eerst credit toe.
+public_basket.add_credit_message: Voeg eerst tegoed toe.
 public_basket.empty: Leeg winkelmandje
 public_basket.confirm_reservation: Reserveren
 public_basket.remove_item: Verwijderen
 public_basket.total: Totaal
 public_basket.balance: Toe te rekenen
-public_basket.no_items: Geen artikels in het mandje. Zoek een object om toe te voegen.
+public_basket.no_items: Geen artikelen in het mandje. Zoek een artikel om toe te voegen.
 public_basket.full_charge: Wordt in rekening gebracht op uw account
-public_basket.delay_charge: Wordt nu in rekening gebracht op uw account. De rest is verschuldigd bij ophaling van de artikels.
-public_loan.title: lening
+public_basket.delay_charge: Wordt nu in rekening gebracht op uw account. Het resterende bedrag dient u te voldoen bij het ophalen van de artikelen.
+public_loan.title: Lening
 public_user_menu.contact_info: Contact informatie
-text_borrow_with_membership: Met volledig lidmaatschap kan u dit artikel online lenen en reserveren.
-text_no_membership: We hebben geen actief lidmaatschap voor u. Kom om ons bezoeken met een identiteitsfoto om uw lidmaatschap te voltooien.
-public_add_credit.title: Krediet toevoegen
-public_add_credit.choose_card: Kies hierboven een kaart of ga verder met het toevoegen van krediet hieronder om een nieuwe kaart te gebruiken
+text_borrow_with_membership: Met een lidmaatschap kunt u dit artikel online lenen en reserveren.
+text_no_membership: We hebben geen actief lidmaatschap voor u gevonden. Neem contact met ons op om uw inschrijving te voltooien.
+public_add_credit.title: Tegoed toevoegen
+public_add_credit.choose_card: Kies hierboven een kaart of ga hieronder verder met het toevoegen van tegoed door een nieuwe kaart te gebruiken
 public_add_credit.use_this_card: Gebruik deze kaart
 public_add_credit.amount_to_add: Toe te voegen bedrag
 public_add_credit.payment_method: Betaalmiddel
@@ -154,11 +155,11 @@ public_registration.newsletter: Abonneer u op onze nieuwsbrief
 public_registration.terms_link: Onze Algemene voorwaarden bekijken
 public_registration.terms_label: Ik ga akkoord met de Algemene Voorwaarden
 public_become_member.title: Lid worden
-msg_success.payment_ok: Betaling gemaakt OK. Uw account balans werd aangepast.
+msg_success.payment_ok: De betaling is voltooid. De balans van uw account is aangepast.
 msg_success.reservation_create: Gereserveerd! We hebben zojuist een email ter bevestiging gestuurd.
-msg_success.reservation_cancel: Uw reservering werd geannuleerd.
-msg_success.basket_item_removed: Het artikel werd uit uw winkelmandje verwijderd.
-msg_success.basket_item_added: werd aan uw winkelmandje toegevoegd.
+msg_success.reservation_cancel: Uw reservering is geannuleerd.
+msg_success.basket_item_removed: Het artikel is uit uw winkelmandje verwijderd.
+msg_success.basket_item_added: is aan uw winkelmandje toegevoegd.
 msg_success.basket_item_exists: ligt al in uw winkelmandje.
 msg_fail.general_fail: Sorry, er ging iets mis. Probeer het opnieuw of neem contact met ons op.
 msg_fail.reservation_create: Er is iets fout gegaan, we kunnen uw reservering niet aanmaken.
@@ -176,14 +177,14 @@ public_user.choose_membership_type: Kies een lidmaatschapstype
 public_item.discount: korting
 public_registration.membership_starts_today: Uw lidmaatschap gaat vandaag in
 public_registration.membership_deferred: Uw lidmaatschap wordt verlengd per
-public_registration.discount_on_fees: korting op lidmaatschapskosten
+public_registration.discount_on_fees: korting op uitleenprijs
 public_registration.button_renew: Verleng lidmaatschap
 public_registration.button_subscribe: Word lid
-public_registration.no_self_serve_memberships: Er zijn geen lidmaatschappen beschikbaar om online af te sluiten. U bent welkom om bij ons langs te komen met uw identificatie om uw lidmaatschap af te sluiten.
+public_registration.no_self_serve_memberships: 'Er is geen lidmaatschap beschikbaar om online af te sluiten. U wordt verzocht bij ons langs te komen om een lidmaatschap af te sluiten. '
 th.deposit: Tegoed
-public_misc.link_events: Events
-public_misc.show_items_from: Laat items zien die beschikbaar zijn in
-public_misc.credit_limit: Krediet limiet
+public_misc.link_events: Evenementen
+public_misc.show_items_from: Laat items zien die beschikbaar zijn in de periode
+public_misc.credit_limit: Tegoed limiet
 public_item.button_today: Vandaag
 public_item.see_parts: Bekijk onderdelen
 public_item.kit_containing: Dit item is een kit en bevat
@@ -196,17 +197,17 @@ public_loan.choose_new_date: Kies een nieuwe inleverdatum
 public_loan.button_complete_checks: Vul alle velden met een vinkje in
 public_loan.button_choose_payment_method: Kies betaalmethode om te betalen
 public_loan.button_deposits_require_payment: Tegoeden moeten nu betaald worden
-public_loan.cannot_check_out: Item(s) kunnen niet uitgecheckt worden
+public_loan.cannot_check_out: Artikelen kunnen niet uitgecheckt worden
 public_loan.no_payment_methods: Geen betaalmethodes beschikbaar om uit te checken
 public_loan.not_enough_credit: U heeft niet genoeg tegoed op uw account om dit uit te checken
 public_add_credit.remove_card: Verwijderen
 public_payments.no_payment_required: Geen betaling nodig
-public_user.subscription_payment: Betaling van abonnement
-events.event: Event
-events.page_title: Events
-events.bookings: Event boeking
-events.no_events: Er zijn geen events deze maand
-events.view_on_facebook: Bekijk dit event op Facebook
+public_user.subscription_payment: Betaling van lidmaatschap
+events.event: Evenement
+events.page_title: Evenement
+events.bookings: Evenement boeking
+events.no_events: Er zijn geen evenementen deze maand
+events.view_on_facebook: Bekijk dit evenement op Facebook
 events.location: Locatie
 events.time: Tijd
 events.cost: Kosten
@@ -215,6 +216,5 @@ events.book_now_button: Boek nu
 events.check_in_button: Check in
 events.check_in_help: Inchecken zorgt ervoor dat u toegevoegd wordt als deelnemer zonder dat er een bevestigingsmail verstuurd wordt
 events.contact_us_to_book: Neem contact met ons op om te boeken
-events.not_bookable: Dit event is niet online te boeken
+events.not_bookable: Dit evenement is niet online te boeken
 events.log_in_to_book: Log in om te boeken
-...

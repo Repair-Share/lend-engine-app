@@ -32,6 +32,14 @@ abstract class AuthenticatedControllerTest extends \Symfony\Bundle\FrameworkBund
         $this->helpers = new TestHelpers();
     }
 
+    public function getContainer()
+    {
+        $kernel = static::createKernel();
+        $kernel->boot();
+
+        return $kernel->getContainer();
+    }
+
     /**
      * @return Client
      */

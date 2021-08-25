@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use AppBundle\Helpers\DateTimeHelper;
 
 /**
  * Class SiteController
@@ -33,6 +34,13 @@ class SiteDataController extends Controller
 
         $dateFrom = $request->get('start');
         $dateTo   = $request->get('end');
+
+        // JS calendar passes the calendar's view last day+1 automatically, but we need the full month's
+        // opening data
+        if ($request->get('extendLastDayOfMonth') !== null) {
+            $dTo    = date('Y-m-t', strtotime($dateTo));
+            $dateTo = date('Y-m-d', strtotime($dTo . ' +1 day')); // Inclusive
+        }
 
         // We can pass in a loan row to allow slots for shortening an existing loan
         // Passed to getBookings
@@ -196,13 +204,13 @@ class SiteDataController extends Controller
 
                 /** @var $slot \AppBundle\Entity\Event */
 
-                $s_start = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeFrom(), 0, 2).':'.substr($slot->getTimeFrom(), 2, 2).':00';
-                $s_end   = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeTo(), 0, 2).':'.substr($slot->getTimeTo(), 2, 2).':00';
+                $s_start = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeFrom(), 0, 2).':'.substr($slot->getTimeFrom(), 3, 2).':00';
+                $s_end   = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeTo(), 0, 2).':'.substr($slot->getTimeTo(), 3, 2).':00';
 
                 // We've set a custom changeover time, use it for the start of the slot
                 // This allows same day return and pickup
                 if ($slot->getTimeChangeover()) {
-                    $s_changeover = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeChangeover(), 0, 2).':'.substr($slot->getTimeChangeover(), 2, 2).':00';
+                    $s_changeover = $slot->getDate()->format("Y-m-d").' '.substr($slot->getTimeChangeover(), 0, 2).':'.substr($slot->getTimeChangeover(), 3, 2).':00';
                     $s_start = $s_changeover;
                 } else {
                     $s_changeover = null;
@@ -244,7 +252,10 @@ class SiteDataController extends Controller
                     // Check all opening times loaded so far
                     foreach ($data AS $k => $openingTime) {
                         // If any opening time lies within closed custom slot, remove it
-                        if ($openingTime['start'] >= $s_start && $openingTime['end'] <= $s_end) {
+                        if ($openingTime['start'] >= $s_start
+                            && $openingTime['end'] <= $s_end
+                            && $openingTime['siteName'] === $slot->getSite()->getName()
+                        ) {
                             unset($data[$k]);
                         }
                     }

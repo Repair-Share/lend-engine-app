@@ -54,6 +54,7 @@
 
                 {% for row in tableRows %}
                     <tr id="tr{{ row.id }}" {% if row.class is defined %}class="{{ row.class }}"{% endif %}>
+                        <input type="hidden" id="siteIdForTest{{ row.id }}" name="siteID{{ row.id }}" value="{{ row.data[0]|raw }}" class="site-id"/>
                         {% if (sortable is defined) and sortable == true %}
                             <td class="drag-handle"><i class="fa fa-bars"></i></td>
                         {% endif %}

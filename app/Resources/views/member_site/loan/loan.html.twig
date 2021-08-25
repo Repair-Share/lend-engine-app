@@ -257,7 +257,7 @@
                         <br>{% trans %}public_item.each{% endtrans %}
                     {% endif %}
 
-                    {% if loan.loanRows|length > 1 and not row.isCheckedOut and loan.status in ['RESERVED', 'PENDING'] %}
+                    {% if not row.isCheckedOut and loan.status in ['RESERVED', 'PENDING'] and is_granted('ROLE_ADMIN')%}
                         <a href="{{ path('loan_item_remove', {rowId: row.id}) }}" style="margin-top: 4px; display: block">
                             {% trans %}public_basket.remove_item{% endtrans %}
                         </a>

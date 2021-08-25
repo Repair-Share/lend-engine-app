@@ -3,49 +3,49 @@
 # Release: Working copy
 # Locale: nl-NL, Dutch (Netherlands)
 # Tagged: Emails
+# Status: Translated
 # Exported by: Chris
-# Exported at: Wed, 27 Nov 2019 10:04:41 +0000
+# Exported at: Wed, 13 Jan 2021 00:52:42 +0000
 ---
 le_email.item_description: Beschrijving
 le_email.item_contains: Bevat
 le_email.see_attachment: Zie bijlage
-le_email.return_sites: Gelieve dit artikel terug te brengen naar de volgende plaats
+le_email.return_sites: Gelieve dit artikel terug te brengen naar de volgende locatie
 le_email.th_item: Artikel
-le_email.th_fee: Vergoeding
-le_email.th_due_back: Moet terug gebracht worden
+le_email.th_fee: Prijs
+le_email.th_due_back: Moet teruggebracht worden
 le_email.url: Aanmelding via URL
 le_email.email: E-mail
 le_email.password: Wachtwoord
 le_email.assign.title: Er werd u een artikel toegewezen
 le_email.assign.message: '%firstName%, het artikel "%itemName%" werd u toegewezen door %assignorName%.'
 le_email.assign.added_note: heeft ook een opmerking toegevoegd
-le_email.assign.all_items: Bekijk alle artikels die u werden toegewezen
+le_email.assign.all_items: Bekijk alle artikelen die u gereserveerd heeft
 le_email.assign.current_location: Huidige locatie
 le_email.checkout.subject: Informatie over uw lening
 le_email.checkout.title: Informatie over uw lening
-le_email.extend.subject: De retourdatum van uw lening werd bijgewerkt
-le_email.extend.title: We hebben de retourdatum van een artikel gewijzigd
+le_email.extend.subject: De inleverdatum van uw lening is bijgewerkt
+le_email.extend.title: We hebben de inleverdatum van een artikel gewijzigd
 le_email.extend.due_back: moet nu teruggebracht worden op
-le_email.reminder.subject: Het geleend artikel %loanId% moet morgen terugbezorgd worden
-le_email.reminder.title: Uw artikel(s) moet(en) spoedig teruggebracht worden
+le_email.reminder.subject: Het geleende artikel %loanId% moet morgen teruggebracht worden
+le_email.reminder.title: Uw artikel(en) moet(en) spoedig teruggebracht worden
 le_email.reservation_reminder.subject: Haal uw reservering morgen op
 le_email.reservation_reminder.title: Haal uw reservering morgen op
-le_email.membership_expired.subject: Uw lidmaatschap is vervallen
-le_email.membership_expired.title: Uw lidmaatschap is vervallen
-le_email.login_details.subject: Uw Inloggegevens voor %accountName%
+le_email.membership_expired.subject: Uw lidmaatschap is verlopen
+le_email.membership_expired.title: Uw lidmaatschap is verlopen
+le_email.login_details.subject: Uw inloggegevens voor %accountName%
 le_email.login_details.title: Inloggegevens
 le_email.login_details.message: Dit zijn uw inloggegevens voor ons uitleensysteem
-le_email.new_password.title: Uw nieuw wachtwoord
-le_email.new_password.message: Dit is het nieuw wachtwoord voor %accountName%
+le_email.new_password.title: Uw nieuwe wachtwoord
+le_email.new_password.message: Dit is het nieuwe wachtwoord voor %accountName%
 le_email.reservation_confirm.subject: Bevestiging van uw reservering
 le_email.reservation_confirm.title: Bevestiging van reservering
 le_email.site_welcome.subject: Welkom bij %accountName%
 le_email.site_welcome.title: Welkom
 le_email.login_to_view_this_loan: Bekijk je lening online
-le_email.booking_confirmation.title: Bevestiging van event boeking
-le_email.booking_confirmation.subject: 'Bevestiging van event boeking:'
+le_email.booking_confirmation.title: Bevestiging van inschrijving voor een evenement
+le_email.booking_confirmation.subject: 'Bevestiging van inschrijving voor een evenement :'
 le_email.donor_notify.subject: Je gedoneerde item wordt nu door iemand geleend
-le_email.overdue.subject: Een item is te laat
-le_email.overdue.title: Graag dit item weer inleveren
-le_email.membership_expired.renew_button: Klik hier om lidmaatschap te verlengen
-...
+le_email.overdue.subject: Een artikel is te laat
+le_email.overdue.title: Gelieve dit artikel zo spoedig mogelijk in te leveren
+le_email.membership_expired.renew_button: Klik hier om het lidmaatschap te verlengen

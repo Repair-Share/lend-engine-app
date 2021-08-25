@@ -225,13 +225,13 @@ class ExpireMemberships
         $resultString .= '  Total T: '.$timeElapsed.PHP_EOL;
 
         // And then finally send a log.
-        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
-        $client->sendEmail(
-            "hello@lend-engine.com",
-            'chris@lend-engine.com',
-            "Membership expiry log / {$timeElapsed} sec.",
-            nl2br($resultString)
-        );
+//        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
+//        $client->sendEmail(
+//            "hello@lend-engine.com",
+//            'chris@lend-engine.com',
+//            "Membership expiry log / {$timeElapsed} sec.",
+//            nl2br($resultString)
+//        );
 
         return $resultString;
 

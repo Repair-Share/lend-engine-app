@@ -317,6 +317,22 @@ class CheckOutService
 
         $reservationLoanRows = $this->reservationService->getBookings($filter);
 
+        $extendingLoan         = false;
+        $extendingLoanDueOutAt = null;
+
+        if ($loanId) {
+
+            foreach ($reservationLoanRows as $reservation) {
+
+                if ($loanId == $reservation->getLoan()->getId()) {
+                    $extendingLoan         = true;
+                    $extendingLoanDueOutAt = $reservation->getDueOutAt()->setTimezone($tz);
+                }
+
+            }
+
+        }
+
         // Find ALL reservations for this item
         foreach ($reservationLoanRows AS $reservation) {
 
@@ -374,6 +390,22 @@ class CheckOutService
                 $this->errors[] = $errorMsg;
                 $this->errors[] = "Requested {$from->format("d M H:i")} - {$to->format("d M H:i")} (CONTAINS)";
                 return true;
+            }
+
+            // Check that extending the loan to $requestTo would not contains a reservation
+            if ($extendingLoan) {
+
+                $extendingLoanFrom = $extendingLoanDueOutAt->format("Y-m-d H:i:s");
+                $extendingLoanTo   = $requestTo;
+
+                if ($dueOutAt_f >= $extendingLoanFrom && $dueOutAt_f <= $extendingLoanTo) {
+                    $this->errors[] = $errorMsg;
+                    return true;
+                } elseif ($dueInAt_f >= $extendingLoanFrom && $dueInAt_f <= $extendingLoanTo) {
+                    $this->errors[] = $errorMsg;
+                    return true;
+                }
+
             }
 
             // Now add buffer and try again
