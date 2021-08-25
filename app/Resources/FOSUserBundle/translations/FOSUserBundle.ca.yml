@@ -1,0 +1,54 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: ca-ES, Catalan (Spain)
+# Tagged: FOSUserBundle
+# Exported by: Andor Tamas
+# Exported at: Mon, 26 Apr 2021 13:58:19 +0200
+---
+group.edit.submit: Actualitzar grup
+group.show.name: Nom del grup
+group.new.submit: Crear un grup
+group.flash.updated: El grup ha estat actualitzat satisfactòriament
+group.flash.created: El grup ha estat creat satisfactòriament
+group.flash.deleted: El grup ha estat esborrat satisfactòriament
+Invalid credentials.: Nom d'usuari o contrassenya incorrectes
+security.login.username: 'Nom d''usuari:'
+security.login.password: Contrassenya
+security.login.remember_me: Recorda'm
+security.login.submit: Iniciar sessió
+profile.show.firstName: Nom
+profile.show.lastName: Cognom
+profile.show.email: Correu electrònic
+profile.edit.submit: Actualitzar
+profile.flash.updated: El vostre perfil ha estat actualitzat satisfactòriament
+change_password.submit: Canviar contrassenya
+change_password.flash.success: La vostra contrassenya ha estat canviada satisfactòriament
+registration.check_email: '... mira dins la teva safata d''entrada i mira aviam si hi és.'
+registration.confirmed: El vostre compte ha estat activat i heu iniciat sessió!
+registration.back: Continua...
+registration.submit: Registrar-se
+registration.flash.user_created: Se li ha enviat un correu electrònic. Conté un enllaç d'activació que ha de clicar per a activar el seu compte.
+registration.email.subject: Benvingut/da!
+registration.email.message: Per a acabar d'activar el seu compte, si us plau visiti <br> <br> %confirmationUrl%
+resetting.password_already_requested: La contrassenya d'aquest usuari ja ha estat demanada en les últimes 24 hores.
+resetting.check_email: 'Un correu electrònic amb un enllaç per a reiniciar la vostra contrassenya ha estat enviat. Si no rebeu un correu electrònic, reviseu la vostra safata de correu no desitjat. '
+resetting.request.invalid_username: El nom d'usuari o correu electrònic %username% no existeix.
+resetting.request.username: 'Nom d''usuari o correu electrònic:'
+resetting.request.submit: Reinicia la contrassenya
+resetting.reset.submit: Canvia la contrassenya
+resetting.flash.success: La contrassenya ha estat reiniciada satisfactòriament
+resetting.email.subject: Reiniciar Contrassenya
+resetting.email.message: <br> Per a reiniciar la vostra contrassenya - feu clic al següent enllaç:<br><br> <a href="%confirmationUrl%">%confirmationUrl%</a>
+layout.logout: Tancar sessió
+layout.login: Inicia sessió
+layout.register: Registrar-se
+layout.logged_in_as: 'Sessió iniciada com a: %username%'
+form.group_name: 'Nom del grup:'
+form.username: 'Nom d''usuari:'
+form.current_password: 'Contraseña actual:'
+form.password: contrasenya
+form.password_confirmation: Repetir contrasenya
+form.new_password: Nova contrasenya
+form.new_password_confirmation: Repetir nova contrasenya
+security.login.forgot_password: he oblidat la meva contrassenya

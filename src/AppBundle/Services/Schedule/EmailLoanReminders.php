@@ -126,12 +126,27 @@ class EmailLoanReminders
 
                     if ($dueLoanRows = $loanRowRepo->getLoanRowsDueInXDays($remindBeforeNDays)) {
 
+                        // Modify times to match local time
+                        $tz = $this->settings->getSettingValue('org_timezone');
+                        $timeZone = new \DateTimeZone($tz);
+                        $utc = new \DateTime('now', new \DateTimeZone("UTC"));
+                        $offSet = $timeZone->getOffset($utc)/3600;
+
+                        // Test only the last row
+                        if (getenv('APP_ENV') === 'test' && sizeof($dueLoanRows)) {
+                            $dueLoanRows = [array_pop($dueLoanRows)];
+                        }
+
                         foreach ($dueLoanRows AS $loanRow) {
 
                             /** @var $loanRow \AppBundle\Entity\LoanRow */
                             $loan = $loanRow->getLoan();
                             $contact = $loan->getContact();
                             $item = $loanRow->getInventoryItem();
+
+                            // Modify UTC database times to match local time
+                            $i = $loanRow->getDueInAt()->modify("{$offSet} hours");
+                            $loanRow->setDueInAt($i);
 
                             $resultString .= '  Loan: '.$loan->getId().' : '.$contact->getEmail(). PHP_EOL;
                             $resultString .= '  Item: '.$item->getName().PHP_EOL;
@@ -154,15 +169,22 @@ class EmailLoanReminders
                                     $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
                                     $loginUri .= '&r=/loan/'.$loan->getId();
 
+                                    $dueDateFormatted = date('d F Y g:i a', $loanRow->getDueInAt()->getTimestamp());
+
                                     $message = $this->twig->render(
                                         'emails/loan_reminder.html.twig',
                                         [
-                                            'dueDate' => $loanRow->getDueInAt(),
+                                            'dueDateFormatted' => $dueDateFormatted,
                                             'items' => $items,
                                             'schema' => $tenantDbSchema,
                                             'loginUri' => $loginUri
                                         ]
                                     );
+
+                                    // Returns the debug info to unit test
+                                    if (getenv('APP_ENV') === 'test') {
+                                        return $message;
+                                    }
 
                                     $subject = $this->container->get('translator')->trans('le_email.reminder.subject', [
                                         'loanId' => $loan->getId()],
@@ -210,13 +232,13 @@ class EmailLoanReminders
         $resultString .= '  Total T: '.$timeElapsed.PHP_EOL;
 
         // And then finally send a log.
-        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
-        $client->sendEmail(
-            "hello@lend-engine.com",
-            'chris@lend-engine.com',
-            "Loan reminder log / {$timeElapsed} sec.",
-            nl2br($resultString)
-        );
+//        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
+//        $client->sendEmail(
+//            "hello@lend-engine.com",
+//            'chris@lend-engine.com',
+//            "Loan reminder log / {$timeElapsed} sec.",
+//            nl2br($resultString)
+//        );
 
         return $resultString;
 

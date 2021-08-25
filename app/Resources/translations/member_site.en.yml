@@ -127,6 +127,7 @@ public_item:
   borrow_now: Borrow / reserve
   not_available: Not available
   available: Available
+  in_basket: In Basket
   on_loan: On loan
   stock_item: Stock item
   service_item: Service

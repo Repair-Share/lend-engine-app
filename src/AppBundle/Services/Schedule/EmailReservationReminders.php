@@ -117,12 +117,26 @@ class EmailReservationReminders
 
                 try {
 
+                    // Modify times to match local time
+                    $tz = $this->settings->getSettingValue('org_timezone');
+                    $timeZone = new \DateTimeZone($tz);
+                    $utc = new \DateTime('now', new \DateTimeZone("UTC"));
+                    $offSet = $timeZone->getOffset($utc)/3600;
+
                     /** @var $loanRepo \AppBundle\Repository\LoanRepository */
                     $loanRepo = $tenantEntityManager->getRepository('AppBundle:Loan');
 
                     if ($dueReservations = $loanRepo->getReservationsDue($remindDays)) {
 
+                        // Test only the last row
+                        if (getenv('APP_ENV') === 'test' && sizeof($dueReservations)) {
+                            $dueReservations = [array_pop($dueReservations)];
+                        }
+
                         foreach ($dueReservations AS $loan) {
+
+                            // Modify UTC database times to match local time
+                            $loan->getTimeOut()->modify("{$offSet} hours");
 
                             /** @var $loan \AppBundle\Entity\Loan */
                             $contact = $loan->getContact();
@@ -144,16 +158,23 @@ class EmailReservationReminders
                                 $sessionLocale = $this->container->get('translator')->getLocale();
                                 $this->container->get('translator')->setLocale($contact->getLocale());
 
+                                $dueDateFormatted = $loan->getTimeOut()->format('d F Y g:i a');
+
                                 $message = $this->twig->render(
                                     'emails/reservation_reminder.html.twig',
                                     array(
-                                        'dueDate' => $loan->getTimeOut(),
+                                        'dueDateFormatted' => $dueDateFormatted,
                                         'loanId' => $loan->getId(),
                                         'loanRows' => $loan->getLoanRows(),
                                         'schema' => $tenantDbSchema,
                                         'loginUri' => $loginUri
                                     )
                                 );
+
+                                // Returns the debug info to unit test
+                                if (getenv('APP_ENV') === 'test') {
+                                    return $message;
+                                }
 
                                 if (!$subject = $this->settings->getSettingValue('email_reservation_reminder_subject')) {
                                     $subject = $this->container->get('translator')->trans('le_email.reservation_reminder.subject',
@@ -201,13 +222,13 @@ class EmailReservationReminders
         $resultString .= '  Total T: '.$timeElapsed.PHP_EOL;
 
         // And then finally send a log.
-        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
-        $client->sendEmail(
-            "hello@lend-engine.com",
-            'chris@lend-engine.com',
-            "Reservation reminders log / {$timeElapsed} sec.",
-            nl2br($resultString)
-        );
+//        $client = new PostmarkClient(getenv('SYMFONY__POSTMARK_API_KEY'));
+//        $client->sendEmail(
+//            "hello@lend-engine.com",
+//            'chris@lend-engine.com',
+//            "Reservation reminders log / {$timeElapsed} sec.",
+//            nl2br($resultString)
+//        );
 
         return $resultString;
 

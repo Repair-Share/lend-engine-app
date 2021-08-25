@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Helpers\DateTimeHelper;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -243,7 +244,7 @@ class Event
      */
     public function getTimeFrom()
     {
-        return $this->timeFrom;
+        return DateTimeHelper::parseTime($this->timeFrom);
     }
 
     /**
@@ -267,7 +268,7 @@ class Event
      */
     public function getTimeChangeover()
     {
-        return $this->timeChangeover;
+        return DateTimeHelper::parseTime($this->timeChangeover);
     }
 
     /**
@@ -291,7 +292,7 @@ class Event
      */
     public function getTimeTo()
     {
-        return $this->timeTo;
+        return DateTimeHelper::parseTime($this->timeTo);
     }
 
     /**

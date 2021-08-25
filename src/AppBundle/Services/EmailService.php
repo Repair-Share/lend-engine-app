@@ -3,6 +3,7 @@
 namespace AppBundle\Services;
 
 use AppBundle\Services\Queue\MailQueueProducer;
+use Postmark\PostmarkClient;
 
 class EmailService
 {
@@ -30,7 +31,9 @@ class EmailService
     /** @var array */
     private $errors = [];
 
-    public function __construct(TenantService $tenantService, SettingsService $settings, MailQueueProducer $publisher)
+    public function __construct(TenantService $tenantService,
+                                SettingsService $settings,
+                                MailQueueProducer $publisher)
     {
         $this->tenantService = $tenantService;
         $this->settingsService = $settings;
@@ -54,8 +57,8 @@ class EmailService
             return false;
         }
 
-        // When sending mails synchronously in code, we have a tenant already
-        // When sending mails from a schedule, we have to set the sender parameters from the tenant we are working with
+        // When sending mails during user workflows, we have a tenant already
+        // When sending mails from a cron/schedule, we have to set the sender parameters from the tenant we are working with
         if (!$this->senderName) {
             $this->senderName = $this->tenantService->getCompanyName();
         }
@@ -69,19 +72,33 @@ class EmailService
             $this->postmarkApiKey = $this->tenantService->getSetting('postmark_api_key');
         }
 
-        // Send the email via queue
-        $payload = [
-            'postmarkApiKey' => $this->postmarkApiKey,
-            'replyToEmail' => $this->replyToEmail,
-            'fromEmail' => $this->fromEmail,
-            'fromName' => $this->senderName,
-            'toName' => $toName,
-            'toEmail' => $toEmail,
-            'subject' => $subject,
-            'message' => $message
-        ];
-
-        $this->publisher->publish(json_encode($payload));
+        if ($this->tenantService->getAccountCode() == "unit_test") {
+            // Send the email directly via PostMark. Any exceptions will crash the tests (intentionally)
+            $client = new PostmarkClient($this->postmarkApiKey);
+            $client->sendEmail(
+                "{$this->senderName} <{$this->fromEmail}>",
+                $toEmail,
+                $subject,
+                $message,
+                null,
+                null,
+                true,
+                $this->replyToEmail
+            );
+        } else {
+            // Send the email via queue
+            $payload = [
+                'postmarkApiKey' => $this->postmarkApiKey,
+                'replyToEmail' => $this->replyToEmail,
+                'fromEmail' => $this->fromEmail,
+                'fromName' => $this->senderName,
+                'toName' => $toName,
+                'toEmail' => $toEmail,
+                'subject' => $subject,
+                'message' => $message
+            ];
+            $this->publisher->publish(json_encode($payload));
+        }
 
         // Next we see if we have to send a CC to admin
 
@@ -106,19 +123,33 @@ class EmailService
                 $ccEmailAddress = $this->replyToEmail;
             }
 
-            // Send the email via queue
-            $payload = [
-                'postmarkApiKey' => $this->postmarkApiKey,
-                'replyToEmail' => $ccEmailAddress,
-                'fromEmail' => $this->fromEmail, // hello@lend-engine unless white labelled
-                'fromName' => $this->senderName,
-                'toName' => $this->senderName,
-                'toEmail' => $ccEmailAddress,
-                'subject' => '[Lend Engine CC] '.$subject,
-                'message' => $message
-            ];
+            if ($this->tenantService->getAccountCode() == "unit_test") {
+                $client = new PostmarkClient($this->postmarkApiKey);
+                $client->sendEmail(
+                    "{$this->senderName} <{$this->fromEmail}>",
+                    $ccEmailAddress,
+                    '[Lend Engine CC] '.$subject,
+                    $message,
+                    null,
+                    null,
+                    true,
+                    $ccEmailAddress
+                );
+            } else {
+                // Send the email via queue
+                $payload = [
+                    'postmarkApiKey' => $this->postmarkApiKey,
+                    'replyToEmail' => $ccEmailAddress,
+                    'fromEmail' => $this->fromEmail, // hello@lend-engine unless white labelled
+                    'fromName' => $this->senderName,
+                    'toName' => $this->senderName,
+                    'toEmail' => $ccEmailAddress,
+                    'subject' => '[Lend Engine CC] '.$subject,
+                    'message' => $message
+                ];
+                $this->publisher->publish(json_encode($payload));
+            }
 
-            $this->publisher->publish(json_encode($payload));
         }
 
         if (count($this->errors) > 0) {

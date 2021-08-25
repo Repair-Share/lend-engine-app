@@ -156,16 +156,23 @@ class BasketService
         $timeZone = new \DateTimeZone($tz);
         $utc = new \DateTime('now', new \DateTimeZone("UTC"));
         $offSet = -$timeZone->getOffset($utc)/3600;
+
         foreach ($basket->getLoanRows() AS $row) {
+
             /** @var $row \AppBundle\Entity\LoanRow */
             if (in_array($row->getInventoryItem()->getItemType(), [InventoryItem::TYPE_STOCK, InventoryItem::TYPE_SERVICE])) {
                 // No dates for stock or service items
                 continue;
             }
-            $i = $row->getDueInAt()->modify("{$offSet} hours");
+
+            $i = clone $row->getDueInAt();
+            $i->modify("{$offSet} hours");
             $row->setDueInAt($i);
-            $o = $row->getDueOutAt()->modify("{$offSet} hours");
+
+            $o = clone $row->getDueOutAt();
+            $o->modify("{$offSet} hours");
             $row->setDueOutAt($o);
+
         }
         // ----- Change times from local to UTC ----- //
 
@@ -517,4 +524,5 @@ class BasketService
 
         return $shipping;
     }
+
 }

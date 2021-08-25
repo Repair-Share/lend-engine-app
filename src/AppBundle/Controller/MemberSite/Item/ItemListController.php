@@ -185,6 +185,19 @@ class ItemListController extends Controller
             return $this->redirectToRoute('public_product', ['productId' => $item->getId()]);
         }
 
+        // Collect in basket info
+        $basketItemIDs = [];
+        $basketService = $this->get('service.basket');
+        if ($basket = $basketService->getBasket()) {
+
+            foreach ($basket->getLoanRows() as $row) {
+
+                $basketItemIDs[] = $row->getInventoryItem()->getId();
+
+            }
+
+        }
+
         // Turn into array of objects
         $items = [];
         foreach ($products AS $item) {
@@ -197,12 +210,6 @@ class ItemListController extends Controller
                 $itemLoanDays = $defaultLoanDays;
             }
 
-            // Multiply out for the UI
-            if ($minLoanDays > $itemLoanDays) {
-                $itemFee = $itemFee * $minLoanDays;
-                $itemLoanDays = $itemLoanDays * $minLoanDays;
-            }
-
             $item->setLoanFee($itemFee);
             $item->setMaxLoanDays($itemLoanDays);
 
@@ -210,6 +217,11 @@ class ItemListController extends Controller
                 $item->setQuantity(1);
                 $item->setQuantityAvailable(1);
             } else {
+
+                if (in_array($item->getId(), $basketItemIDs)) {
+                    $item->setInBasket(true);
+                }
+
                 $item->setQuantity($itemQuantity[strtolower($item->getName())]);
                 $item->setQuantityAvailable($itemQuantityAvailable[strtolower($item->getName())]);
             }

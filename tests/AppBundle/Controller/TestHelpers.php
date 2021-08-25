@@ -49,6 +49,11 @@ class TestHelpers extends AuthenticatedControllerTest
             $type = 'loan';
         }
 
+        $maxLoanDays = 4;
+        if (isset($options['maxLoanDays'])) {
+            $maxLoanDays = $options['maxLoanDays'];
+        }
+
         $crawler = $client->request('GET', '/admin/item?type='.$type);
         $this->assertContains('Add a ', $crawler->html());
 
@@ -57,7 +62,7 @@ class TestHelpers extends AuthenticatedControllerTest
             'item[name]'     => $itemName,
             'item[sku]'      => "SKU-".rand(),
             'item[loanFee]'  => $loanFee,
-            'item[maxLoanDays]' => 4,
+            'item[maxLoanDays]' => $maxLoanDays,
             'item[condition]'   => 1,
             'item[keywords]'    => 'Comma, separated, keywords',
             'item[priceCost]'   => 1.99,
@@ -172,7 +177,7 @@ class TestHelpers extends AuthenticatedControllerTest
      * @param Client $client
      * @return null|string
      */
-    public function createEvent(Client $client)
+    public function createEvent(Client $client, $maxAttendees = 10)
     {
         $crawler = $client->request('GET', '/admin/event');
         $this->assertContains('Create a new event', $crawler->html());
@@ -185,7 +190,7 @@ class TestHelpers extends AuthenticatedControllerTest
             'event[date]' => $date->format("Y-m-d"),
             'event[timeFrom]' => '09:00 am',
             'event[timeTo]'   => '11:00 am',
-            'event[maxAttendees]' => '10',
+            'event[maxAttendees]' => $maxAttendees,
             'event[price]' => '15',
             'event[description]' => "It's the event description.",
         ),'POST');
@@ -198,9 +203,9 @@ class TestHelpers extends AuthenticatedControllerTest
         $this->assertContains("This event is not published yet.", $crawler->html());
         $this->assertContains($eventTitle, $crawler->html());
         $this->assertEquals("15", $crawler->filter('#event_price')->attr('value'));
-        $this->assertEquals("10", $crawler->filter('#event_maxAttendees')->attr('value'));
-        $this->assertEquals("0900", $crawler->filter('#event_timeFrom')->attr('value'));
-        $this->assertEquals("1100", $crawler->filter('#event_timeTo')->attr('value'));
+        $this->assertEquals($maxAttendees, $crawler->filter('#event_maxAttendees')->attr('value'));
+        $this->assertEquals("09:00", $crawler->filter('#event_timeFrom')->attr('value'));
+        $this->assertEquals("11:00", $crawler->filter('#event_timeTo')->attr('value'));
 
         // Confirm the creator has been added as attendee
         $this->assertContains('hello@lend-engine.com', $crawler->html());
@@ -225,10 +230,14 @@ class TestHelpers extends AuthenticatedControllerTest
      * @param string $action
      * @return int
      */
-    public function createLoan(Client $client, $contactId, $itemIds = [1000], $action = 'checkout')
+    public function createLoan(Client $client, $contactId, $itemIds = [1000], $action = 'checkout', $dayOffset = 0)
     {
         // Add items to the basket
         $today = new \DateTime();
+
+        if ($dayOffset) {
+            $today = $today->modify($dayOffset . " day");
+        }
 
         $fees = [];
         foreach ($itemIds AS $itemId) {
@@ -409,6 +418,131 @@ class TestHelpers extends AuthenticatedControllerTest
         }
 
         return $createdId;
+    }
+
+    /**
+     * @param  Client  $client
+     * @return null|string
+     */
+    public function createSite(Client $client)
+    {
+        $crawler = $client->request('GET', '/admin/site/list');
+        $this->assertContains('Sites', $crawler->html());
+        $this->assertContains('Add a site', $crawler->html());
+
+        $button = $crawler
+            ->filter('a:contains("Add a site")') // find all buttons with the text "Add a site"
+            ->eq(0) // select the first button in the list
+            ->link() // and click it
+        ;
+
+        // Opened a modal
+        $crawler = $client->click($button);
+        $this->assertContains('Add a new site', $crawler->html());
+
+        $button = $crawler
+            ->filter('a:contains("Add opening hours")') // find all buttons with the text "Add a site"
+            ->eq(0) // select the first button in the list
+            ->link() // and click it
+        ;
+
+        $siteName = 'Test site ' . uniqid();
+
+        $form = $crawler->filter('form[name="site"]')->form(array(
+            'site[name]'      => $siteName,
+            'site[post_code]' => 'PO12345',
+
+            'site[siteOpenings][0][weekDay]'  => '1',
+            'site[siteOpenings][0][timeFrom]' => '0900',
+            'site[siteOpenings][0][timeTo]'   => '1700'
+        ), 'POST');
+
+        $client->submit($form);
+
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        $crawler = $client->followRedirect();
+
+        $this->assertContains("Site saved.", $crawler->html());
+        $this->assertContains($siteName, $crawler->html());
+
+        return $this->getSiteId($client, $siteName);
+    }
+
+    /**
+     * Extract the site ID for a selected value (eg a setup list for recently created thing)
+     * @param  Client  $client
+     * @param $siteName
+     * @return int|null
+     */
+    public function getSiteId(Client $client, $siteName)
+    {
+        $siteID = null;
+
+        $crawler = $client->request('GET', '/admin/site/list');
+
+        $crawler->filter('.site-id')->each(function ($node) use ($siteName, &$siteID) {
+            $id    = $node->attr('id');
+            $value = $node->attr('value');
+
+            if (trim($siteName) === trim($value)) {
+                $siteID = str_replace('siteIdForTest', '', $id);
+            }
+
+        });
+
+        return $siteID;
+    }
+
+    /**
+     * @param  Client  $client
+     * @param $siteID
+     * @param $date
+     * @param $timeFrom
+     * @param $timeTo
+     * @param $opened
+     * @return null|string
+     */
+    public function addSiteOpeningHours(Client $client, $siteID, $date, $timeFrom, $timeTo, $opened)
+    {
+        $crawler = $client->request('GET', '/admin/site/' . $siteID . '/event/list');
+        $this->assertContains('Custom opening hours', $crawler->html());
+
+        $button = $crawler
+            ->filter('a:contains("Add new")') // find all buttons with the text "Add a site"
+            ->eq(0) // select the first button in the list
+            ->link() // and click it
+        ;
+
+        $crawler = $client->click($button);
+        $this->assertContains('Add custom hours for', $crawler->html());
+
+        $form = $crawler->filter('form[name="opening_hours"]')->form(array(
+            'opening_hours[date]'     => $date->format('D M d Y'),
+            'opening_hours[type]'     => ($opened ? 'o' : 'c'),
+            'opening_hours[timeFrom]' => $timeFrom,
+            'opening_hours[timeTo]'   => $timeTo,
+            'opening_hours[site]'     => $siteID
+        ), 'POST');
+
+        $client->submit($form);
+
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+
+        $crawler = $client->followRedirect();
+        $this->assertContains('Saved.', $crawler->html());
+        $this->assertContains($date->format('l j F Y'), $crawler->html());
+    }
+
+    public function compressHtml($html)
+    {
+        $compressedHTML = $html;
+
+        $compressedHTML = preg_replace('/' . PHP_EOL . '+/', '', $compressedHTML);
+        $compressedHTML = preg_replace('/ /', '', $compressedHTML);
+
+        $compressedHTML = trim($compressedHTML);
+
+        return $compressedHTML;
     }
 
 }

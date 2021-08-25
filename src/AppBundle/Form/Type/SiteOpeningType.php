@@ -15,7 +15,8 @@ class SiteOpeningType extends AbstractType
         $builder->add('timeFrom', TextType::class, array(
             'label' => 'From',
             'attr' => [
-                'placeholder' => 'eg 0900'
+                'placeholder' => 'eg 0900',
+                'onblur'      => 'handleTimeChange(this)'
             ]
         ));
 
@@ -23,14 +24,16 @@ class SiteOpeningType extends AbstractType
             'label' => 'Changeover',
             'required' => false,
             'attr' => [
-                'placeholder' => 'eg 1100'
+                'placeholder' => 'eg 1100',
+                'onblur'      => 'handleTimeChange(this)'
             ]
         ));
 
         $builder->add('timeTo', TextType::class, array(
             'label' => 'To',
             'attr' => [
-                'placeholder' => 'eg 1700'
+                'placeholder' => 'eg 1700',
+                'onblur'      => 'handleTimeChange(this)'
             ]
         ));
 

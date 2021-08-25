@@ -21,13 +21,33 @@ class EventDeleteController extends Controller
 
         /** @var \AppBundle\Entity\Event $event */
         if ($event = $eventRepo->find($eventId)) {
+
+            $deleteInstructions = '';
+
+            // Check attendees
             $canDelete = $eventRepo->validateDelete($eventId);
+
+            if (!$canDelete) {
+                $deleteInstructions = 'Event cannot be deleted. Please remove all attendees first.';
+            }
+
+            // Check payments
+            if ($canDelete == true) {
+
+                $canDelete = $eventRepo->validateDeleteWithPayments($eventId);
+
+                if (!$canDelete) {
+                    $deleteInstructions = "You can't delete events which have payments. Please delete the payment(s) first.";
+                }
+
+            }
+
             if ($canDelete == true) {
                 $em->remove($event);
                 $em->flush();
                 $this->addFlash("success", "Your event has been deleted.");
             } else {
-                $this->addFlash("error", "Event cannot be deleted. Please remove all attendees first.");
+                $this->addFlash("error", $deleteInstructions);
             }
         } else {
             $this->addFlash("error", "Event {$eventId} not found.");
