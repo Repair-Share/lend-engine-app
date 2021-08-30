@@ -138,7 +138,7 @@
                     {% if row.inventoryItem.itemType == 'loan' %}
                         <div>
                             <i class="far fa-clock"></i>
-                            {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
+                            {% trans %}public_basket.due_at{% endtrans %} <strong data-id-time="{{ row.inventoryItem.id }} {{ row.dueInAt|date("g:i a") }}">{{ row.dueInAt|date("d F g:i a") }}</strong>
                             ( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
                         </div>
                         <div class="multi-site">

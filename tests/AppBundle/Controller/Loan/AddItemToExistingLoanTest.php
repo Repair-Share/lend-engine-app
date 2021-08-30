@@ -48,6 +48,7 @@ class AddItemToExistingLoanTest extends AuthenticatedControllerTest
         $this->assertContains('Item 1', $crawler->html());
         $this->assertContains('Item 2', $crawler->html());
         $this->assertContains('10.99', $crawler->html());
+        $this->assertContains($secondItemId . ' 5:00 pm', $crawler->html());
     }
 
 }
