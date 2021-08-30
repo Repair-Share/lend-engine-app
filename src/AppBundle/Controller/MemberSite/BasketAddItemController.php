@@ -174,6 +174,11 @@ class BasketAddItemController extends Controller
         $dFrom = new \DateTime($request->get('date_from').' '.$request->get('time_from'));
         $dTo   = new \DateTime($request->get('date_to').' '.$request->get('time_to'));
 
+        if ($basket->getId()) { // Adding to the existing loan doesn't run the set basket service with time corrections
+            $dFrom = DateTimeHelper::changeLocalTimeToUtc($settingsService->getSettingValue('org_timezone'), $dFrom);
+            $dTo   = DateTimeHelper::changeLocalTimeToUtc($settingsService->getSettingValue('org_timezone'), $dTo);
+        }
+
         if ($checkoutService->isItemReserved($product, $dFrom, $dTo, null)) {
             $this->addFlash('error', "This item is reserved or on loan for your selected dates");
             foreach ($checkoutService->errors AS $error) {
