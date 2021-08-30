@@ -87,6 +87,11 @@ class MaintenanceService
         $planRepo = $this->em->getRepository('AppBundle:MaintenancePlan');
         $locationRepo = $this->em->getRepository('AppBundle:InventoryLocation');
 
+        if (!$item = $itemRepo->find($itemId)) {
+            $this->errors[] = "Cannot find item with ID {$itemId}";
+            return false;
+        }
+
         if (isset($data['id']) && $data['id'] != null) {
 
             $id = $data['id'];
@@ -97,10 +102,7 @@ class MaintenanceService
 
         } else {
 
-            if (!$item = $itemRepo->find($itemId)) {
-                $this->errors[] = "Cannot find item with ID {$itemId}";
-                return false;
-            }
+
 
             /** @var $plan \AppBundle\Entity\MaintenancePlan */
             if (!$plan = $planRepo->find($planId)) {
@@ -132,6 +134,8 @@ class MaintenanceService
         $today = new \DateTime();
         if ($date < $today) {
             $maintenance->setStatus(Maintenance::STATUS_OVERDUE);
+        } elseif ($maintenance->getStatus() === Maintenance::STATUS_OVERDUE && $date >= $today) {
+            $maintenance->setStatus(Maintenance::STATUS_PLANNED);
         }
         
         $maintenance->setDueAt($date);
