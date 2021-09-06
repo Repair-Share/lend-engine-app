@@ -75,10 +75,6 @@ class AdminLoanListDataController extends Controller
             $filter['to_site'] = $request->get('to_site');
         }
 
-        $sort = [
-            'column'    => 'id',
-            'direction' => 'DESC'
-        ];
         if ($sortData = $request->get('order')) {
             $sortByColumnId = $sortData[0]['column']; // assumes single column sort
             $sort['direction'] = $sortData[0]['dir'];
@@ -93,6 +89,30 @@ class AdminLoanListDataController extends Controller
                     $sort['column'] = 'timeIn';
                     break;
             }
+        } else { // Default sorting options by the status
+
+            switch ($statusFilter) {
+                case 'ACTIVE': // On loan
+                    $sort = [
+                        'column'    => 'timeIn',
+                        'direction' => 'ASC'
+                    ];
+                    break;
+                case 'RESERVED': // Reservations
+                case 'PENDING': // Pending
+                case 'OVERDUE': // Overdue
+                    $sort = [
+                        'column'    => 'timeOut',
+                        'direction' => 'ASC'
+                    ];
+                    break;
+                default:
+                    $sort = [
+                        'column'    => 'id',
+                        'direction' => 'DESC'
+                    ];
+            }
+
         }
 
         $filter['excludeStockItems'] = true;
