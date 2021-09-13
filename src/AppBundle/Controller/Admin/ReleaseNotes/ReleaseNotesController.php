@@ -18,6 +18,8 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '133' => 'Order of Loan lists need changing',
+            '131' => 'Maintenance change date & location at once bug',
             '140' => 'Wrong basket time when lending a kit',
             '138' => 'Calendar allowed returning date despite the site is closed',
             '137' => 'Cannot auto-set end date as there is no opening hour slot for T+4',
