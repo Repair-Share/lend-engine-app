@@ -148,7 +148,7 @@ $ git commit -m "add mydomain config file"
 ```
 
 **Database setup**  
-The created mysql service comes with a default user and scheme, but we need an extra '_core' scheme to manage the different accounts
+The created mysql service comes with a default user and scheme, but we need an extra '_core' scheme to manage the different accounts. To manage multiple lendengine accounts, we also need an extra database (extratargetdb) for each account
 ```
 $ dokku mysql:enter lendenginedb
 root@fb51ccb6b6e0:/# env      # to retrieve root password
@@ -162,8 +162,8 @@ mysql> ...
 # insert extra row in account for our lendengine setup
 mysql> INSERT INTO `account` (`stub`, `name`, `db_schema`, `owner_name`, `owner_email`, `status`, `plan`, `domain`, `server_name`, `org_email`, `created_at`)
 VALUES
-	('lendengine','Dev lend engine','lendenginedb','Me TheDeployer','me@repairshare.be','DEPLOYING',
-  'plus','lendengine.repairshare.be','localhost','info@repairshare.be','2020-09-26 09:07:08');
+	('lendengine','Dev lend engine','extratargetdb','Me TheDeployer','me@repairshare.be','DEPLOYING',
+  'business','lendengine.repairshare.be','localhost','info@repairshare.be', current_timestamp());
 mysql> grant all privileges on lendenginedb.* to 'mysql'@'%';
 # create extra target db schema and corresponding user
 mysql> create database extratargetdb;
