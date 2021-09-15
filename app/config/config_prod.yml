@@ -46,7 +46,7 @@ monolog:
             # max number of log files to keep
             # defaults to zero, which means infinite files
             max_files: 10
-    
+
 staffim_rollbar:
     access_token: "%rollbar_access_token%"
     # PHP error level (see http://php.net/manual/en/function.error-reporting.php)

@@ -95,6 +95,9 @@ EOT;
     {
         $em = $this->getDoctrine()->getManager();
 
+        /** @var \AppBundle\Services\SettingsService $settingService */
+        $settingService = $this->get('settings');
+
         if ($id) {
             $membership = $this->getDoctrine()
                 ->getRepository('AppBundle:MembershipType')
@@ -119,6 +122,10 @@ EOT;
         if ($form->isSubmitted() && $form->isValid()) {
             if ($membership->getCreditLimit() < 0) {
                 $membership->setCreditLimit(-$membership->getCreditLimit());
+            }
+            if ($membership->getPrice() > 0 && !$settingService->getSettingValue('stripe_publishable_key')) {
+                $this->addFlash('error', 'Self serve memberships cannot have a price if you don\'t have Stripe configured. We have not saved your changes.');
+                return $this->redirectToRoute('membershipType_list');
             }
             $em->persist($membership);
             $em->flush();

@@ -23,7 +23,7 @@ class LoanCheckInControllerTest extends AuthenticatedControllerTest
 
         // Go to it
         $crawler = $this->client->request('GET', '/loan/'.$loanId);
-        $this->assertContains("loan/{$loanId}", $crawler->html()); // in the link to delete the pending loan
+        $this->assertContains("loan/{$loanId}", $crawler->html()); // We are on the loan page
 
         // Check it out
         $form = $crawler->filter('form[name="loan_check_out"]')->form(array(
