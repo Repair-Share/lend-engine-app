@@ -34,6 +34,7 @@ class MembershipTypeController extends Controller
             'Cost',
             'Credit limit',
             'Max items on loan',
+            'Max items reserved',
             'Duration',
             'Discount',
             ''
@@ -51,6 +52,7 @@ class MembershipTypeController extends Controller
                     $currencySymbol.$i->getPrice(),
                     $i->getCreditLimit() ? $currencySymbol.$i->getCreditLimit() : 'Unlimited',
                     $i->getMaxItems() ? $i->getMaxItems() : 'Unlimited',
+                    $i->getMaxItemsReserved() ? $i->getMaxItemsReserved() : 'Unlimited',
                     $i->getDuration().' days',
                     $i->getDiscount() ? $i->getDiscount().'%' : '',
                     ''

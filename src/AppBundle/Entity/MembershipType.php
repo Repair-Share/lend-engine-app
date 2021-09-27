@@ -72,6 +72,13 @@ class MembershipType
     private $maxItems = 0;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="max_items_reserved", type="integer", nullable=true)
+     */
+    private $maxItemsReserved = 0;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -349,6 +356,25 @@ class MembershipType
     public function getMaxItems()
     {
         return $this->maxItems;
+    }
+
+    /**
+     * @param $maxItemsReserved
+     * @return $this
+     */
+    public function setMaxItemsReserved($maxItemsReserved)
+    {
+        $this->maxItemsReserved = $maxItemsReserved;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItemsReserved()
+    {
+        return $this->maxItemsReserved;
     }
 
     /**
