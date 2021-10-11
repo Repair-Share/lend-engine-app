@@ -46,28 +46,4 @@ class ItemListControllerTest extends AuthenticatedControllerTest
             $this->helpers->compressHtml($crawler->html())
         );
     }
-
-    public function testSearchResults()
-    {
-        $itemName = 'aaaa bbbb cccc';
-
-        $this->helpers->createItem(
-            $this->client,
-            $itemName . rand()
-        );
-
-        foreach (['aaa', 'bbb', 'ccc', 'aaa bbb', 'aaa ccc', 'ccc bbb', 'bbb aaa', 'ccc aaa'] as $searchParam) {
-
-            $crawler = $this->client->request(
-                'GET',
-                '/products?search=' . $searchParam
-            );
-
-            $this->assertContains(
-                $itemName,
-                $crawler->html()
-            );
-
-        }
-    }
 }
