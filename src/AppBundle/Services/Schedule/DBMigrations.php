@@ -91,7 +91,7 @@ class DBMigrations
             $password = getenv('DEV_DB_PASS');
         }
 
-        $sql = '
+        $sql = "
         
             select
                 id,
@@ -104,11 +104,12 @@ class DBMigrations
             where
                 schema_version <> :expectedVersion
                 and server_name = :serverName
+                and status in ('LIVE', 'TRIAL')
                 
             limit
                 10
         
-        ';
+        ";
 
         $sqlParams = [
             ':expectedVersion' => $expectedMigrationVersion,
