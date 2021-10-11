@@ -91,7 +91,7 @@ class DBMigrations
             $password = getenv('DEV_DB_PASS');
         }
 
-        $basicSql = '
+        $sql = '
         
             select
                 db_schema,
@@ -103,6 +103,9 @@ class DBMigrations
             where
                 schema_version <> :expectedVersion
                 and server_name = :serverName
+                
+            limit
+                10
         
         ';
 
@@ -111,7 +114,7 @@ class DBMigrations
             ':serverName'      => $server
         ];
 
-        $stmt = $this->em->getConnection()->prepare($basicSql . ' limit 10');
+        $stmt = $this->em->getConnection()->prepare($sql);
 
         $stmt->execute($sqlParams);
 
