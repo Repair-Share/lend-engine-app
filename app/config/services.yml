@@ -436,6 +436,17 @@ services:
             - "@doctrine.orm.entity_manager"
             - "@logger"
 
+    service.schedule_db_migrations:
+        class: AppBundle\Services\Schedule\DBMigrations
+        arguments:
+            - "@twig"
+            - "@service_container"
+            - "@settings"
+            - "@service.contact"
+            - "@service.email"
+            - "@doctrine.orm.entity_manager"
+            - "@logger"
+
     ## END SCHEDULED ACTIONS
 
     app.locale_listener:
