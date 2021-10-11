@@ -94,6 +94,7 @@ class DBMigrations
         $sql = '
         
             select
+                id,
                 db_schema,
                 schema_version
                 
@@ -121,6 +122,10 @@ class DBMigrations
         $schemas = $stmt->fetchAll();
 
         foreach ($schemas as $schema) {
+
+            $id = $schema['id'];
+
+            $this->updateMigrationStarted($id);
 
             $tenantDbSchema        = $schema['db_schema'];
             $tenantDbSchemaVersion = $schema['schema_version'];
@@ -152,13 +157,14 @@ class DBMigrations
                 $resultString .= 'Migrated ' . $tenantDbSchema . ' schema to ' . $latestVersion . PHP_EOL;
             }
 
-            // Update the tenant's schema version
+            // Update the tenant's schema version and migration_completed
             $raw = '
                 update 
                     _core.account 
                      
                 set
-                    schema_version = :version
+                    schema_version = :version,
+                    migration_completed = now()
                      
                 where
                     db_schema = :schemap
@@ -175,6 +181,29 @@ class DBMigrations
 
         return $resultString;
 
+    }
+
+    private function updateMigrationStarted($id)
+    {
+        $sql = '
+        
+            update
+                _core.account
+                
+            set
+                migration_started = now(),
+                migration_completed = null
+                
+            where
+                id = :id
+        
+        ';
+
+        $statement = $this->em->getConnection()->prepare($sql);
+
+        $statement->execute([
+            ':id' => $id
+        ]);
     }
 
 }
