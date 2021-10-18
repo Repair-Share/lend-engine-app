@@ -103,14 +103,41 @@ class ItemService
             $builder->andWhere('item.name = :string');
             $builder->setParameter('string', trim($filter['search']));
         } else if (isset($filter['search']) && $filter['search']) {
-            $builder->andWhere('item.name LIKE :string
-                    OR item.sku LIKE :string
-                    OR item.id = :exact
-                    OR item.serial LIKE :string
-                    OR item.brand LIKE :string
-                    OR item.keywords LIKE :string');
-            $builder->setParameter('string', '%'.trim($filter['search']).'%');
-            $builder->setParameter('exact', trim($filter['search']));
+
+            $words = explode(' ', $filter['search']);
+
+            $andWhere = '';
+
+            for ($i = 0; $i < sizeof($words); $i++) {
+
+                $word = $words[$i];
+
+                if (!trim($word)) {
+                    continue;
+                }
+
+                if ($i > 0) {
+                    $andWhere .= ' OR ';
+                }
+
+                $andWhere .= "(
+                    item.name LIKE :string{$i}
+                    OR item.sku LIKE :string{$i}
+                    OR item.id = :exact{$i}
+                    OR item.serial LIKE :string{$i}
+                    OR item.brand LIKE :string{$i}
+                    OR item.keywords LIKE :string{$i}
+                )";
+
+                $builder->setParameter('string' . $i, '%' . trim($word) . '%');
+                $builder->setParameter('exact' . $i, trim($word));
+
+            }
+
+            if ($andWhere) {
+                $builder->andWhere($andWhere);
+            }
+
         }
 
         if (isset($filter['barcode']) && $filter['barcode']) {
