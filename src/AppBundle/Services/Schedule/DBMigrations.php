@@ -102,7 +102,10 @@ class DBMigrations
                 _core.account
                 
             where
-                schema_version <> :expectedVersion
+                (
+                    schema_version <> :expectedVersion
+                    or coalesce(schema_version, '') = ''
+                )
                 and server_name = :serverName
                 and status in ('LIVE', 'TRIAL')
                 
