@@ -106,20 +106,37 @@ class ItemService
 
             $words = explode(' ', $filter['search']);
 
-            foreach ($words as $word) {
+            $andWhere = '';
 
-                $builder->andWhere('item.name LIKE :string
-                    OR item.sku LIKE :string
-                    OR item.id = :exact
-                    OR item.serial LIKE :string
-                    OR item.brand LIKE :string
-                    OR item.keywords LIKE :string');
+            for ($i = 0; $i < sizeof($words); $i++) {
 
-                $builder->setParameter('string', '%' . trim($word) . '%');
-                $builder->setParameter('exact', trim($word));
+                $word = $words[$i];
+
+                if (!trim($word)) {
+                    continue;
+                }
+
+                if ($i > 0) {
+                    $andWhere .= ' OR ';
+                }
+
+                $andWhere .= "(
+                    item.name LIKE :string{$i}
+                    OR item.sku LIKE :string{$i}
+                    OR item.id = :exact{$i}
+                    OR item.serial LIKE :string{$i}
+                    OR item.brand LIKE :string{$i}
+                    OR item.keywords LIKE :string{$i}
+                )";
+
+                $builder->setParameter('string' . $i, '%' . trim($word) . '%');
+                $builder->setParameter('exact' . $i, trim($word));
 
             }
 
+            if ($andWhere) {
+                $builder->andWhere($andWhere);
+            }
 
         }
 
