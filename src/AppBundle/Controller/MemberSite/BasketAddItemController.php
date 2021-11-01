@@ -96,56 +96,35 @@ class BasketAddItemController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        // Count loan items in basket
-        $countLoanItemsInBasket = 0;
-        foreach ($basket->getLoanRows() as $row) {
-            if ($row->getInventoryItem()->getItemType() == "loan") {
-                $countLoanItemsInBasket++;
-            }
-        }
-
         // Verify user can borrow more items, if there's a limit on their membership type
         $maxItems = $contact->getActiveMembership()->getMembershipType()->getMaxItems();
         if ($maxItems > 0) {
 
-            /*$filter = [
+            // Count loan items in basket
+            $countLoanItemsInBasket = 0;
+            foreach ($basket->getLoanRows() AS $row) {
+                if ($row->getInventoryItem()->getItemType() == "loan") {
+                    $countLoanItemsInBasket++;
+                }
+            }
+
+            $filter = [
                 'status' => Loan::STATUS_ACTIVE,
                 'contact' => $basket->getContact(),
                 'isOnLoan' => true // make sure we only include loanable items which are still on loan (ie no kits)
             ];
-            $itemsOnLoan = $loanService->countLoanRows($filter);*/
+            $itemsOnLoan = $loanService->countLoanRows($filter);
 
-            /*$filter = [
+            $filter = [
                 'status' => Loan::STATUS_OVERDUE,
                 'contact' => $basket->getContact(),
                 'isOnLoan' => true // make sure we only include loanable items which are still on loan (ie no kits)
             ];
-            $itemOverdue = $loanService->countLoanRows($filter);*/
+            $itemOverdue = $loanService->countLoanRows($filter);
 
-            //$totalQty = $itemsOnLoan + $itemOverdue + $countLoanItemsInBasket;
-            $totalQty = $countLoanItemsInBasket;
-
+            $totalQty = $itemsOnLoan + $itemOverdue + $countLoanItemsInBasket;
             if ($totalQty >= $maxItems) {
-                $this->addFlash('error', "You've already got {$totalQty} items on loan and in basket. The maximum for your membership is {$maxItems} on-loan items");
-                return $this->redirectToRoute('home');
-            }
-
-        }
-
-        // Verify user can borrow more items RESERVED, if there's a limit on their membership type
-        $maxItemsReserved = $contact->getActiveMembership()->getMembershipType()->getMaxItemsReserved();
-        if ($maxItemsReserved > 0) {
-
-            $filter = [
-                'status' => Loan::STATUS_RESERVED,
-                'contact' => $basket->getContact()
-            ];
-            $itemsReserved = $loanService->countLoanRows($filter);
-
-            $totalQty = $itemsReserved + $countLoanItemsInBasket;
-
-            if ($totalQty >= $maxItemsReserved) {
-                $this->addFlash('error', "You've already got {$totalQty} items Reserved and in basket. The maximum for your membership is {$maxItemsReserved} reservations.");
+                $this->addFlash('error', "You've already got {$totalQty} items on loan and in basket. The maximum for your membership is {$maxItems}.");
                 return $this->redirectToRoute('home');
             }
 
