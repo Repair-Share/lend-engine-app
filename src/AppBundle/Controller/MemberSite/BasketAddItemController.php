@@ -105,7 +105,7 @@ class BasketAddItemController extends Controller
         }
 
         // Verify user can borrow more items, if there's a limit on their membership type
-        $maxItems = $contact->getActiveMembership()->getMembershipType()->getMaxItems();
+        /*$maxItems = $contact->getActiveMembership()->getMembershipType()->getMaxItems();
         if ($maxItems > 0) {
 
             $filter = [
@@ -129,7 +129,7 @@ class BasketAddItemController extends Controller
                 return $this->redirectToRoute('home');
             }
 
-        }
+        }*/
 
         // Verify user can borrow more items RESERVED, if there's a limit on their membership type
         $maxItemsReserved = $contact->getActiveMembership()->getMembershipType()->getMaxItemsReserved();
