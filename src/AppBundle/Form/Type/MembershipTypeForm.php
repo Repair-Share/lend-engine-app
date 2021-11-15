@@ -71,6 +71,14 @@ class MembershipTypeForm extends AbstractType
             )
         ));
 
+        $builder->add('maxItemsReserved', TextType::class, array(
+            'label' => 'Maximum items reserved',
+            'required' => false,
+            'attr' => array(
+                'data-help' => 'Leave blank for no limit.'
+            )
+        ));
+
         $builder->add('discount', TextType::class, array(
             'label' => 'Discount percentage',
             'required' => false,
