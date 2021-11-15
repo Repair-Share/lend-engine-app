@@ -60,7 +60,8 @@ class ContactType extends AbstractType
             'Slovak'      => 'sk',
             'Slovenščina' => 'sl',
             'Svenska'     => 'sv-SE',
-            'Cymraeg'     => 'cy'
+            'Cymraeg'     => 'cy',
+            'Ukrainian'   => 'uk-UA'
         ];
         $builder->add('locale', ChoiceType::class, array(
             'label' => 'Preferred language',

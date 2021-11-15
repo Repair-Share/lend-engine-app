@@ -1,0 +1,51 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: uk-UA, Ukrainian (Ukraine)
+# Tagged: Emails
+# Exported by: Andor Tamas
+# Exported at: Mon, 15 Nov 2021 17:18:04 +0100
+---
+le_email.item_description: Опис
+le_email.item_contains: Містить
+le_email.see_attachment: Переглянути файл
+le_email.return_sites: Будь ласка, поверніть цей товар до наступних місць
+le_email.th_item: Товар
+le_email.th_fee: Плата
+le_email.th_due_back: Певернути до
+le_email.url: URL-адреса для входу
+le_email.email: Адреса електронної скриньки
+le_email.password: Пароль
+le_email.assign.title: Вам призначено товар(и)
+le_email.assign.message: '%firstName%, вам призначений товар(и) %assignorName% : %itemName%'
+le_email.assign.added_note: додана примітка
+le_email.assign.all_items: Переглянути зарезервований товар
+le_email.assign.current_location: Поточне місцерозташування
+le_email.checkout.subject: Інформація про вашу позику
+le_email.checkout.title: Інформація про вашу позику
+le_email.extend.subject: Дата повернення позики оновлена
+le_email.extend.title: Ми змінили дату повернення товару
+le_email.extend.due_back: повернення
+le_email.reminder.subject: Термін вашої позики незабаром закінчується
+le_email.reminder.title: Час, відведений на використання взятої вами позики (позик), спливає
+le_email.reservation_reminder.subject: Заберіть ваше бронювання завтра
+le_email.reservation_reminder.title: Заберіть ваше бронювання завтра
+le_email.membership_expired.subject: Термін дії вашої підписки закінчився
+le_email.membership_expired.title: Термін дії вашої підписки закінчився
+le_email.login_details.subject: Ваші дані для входу %accountName%
+le_email.login_details.title: Деталі для входу
+le_email.login_details.message: Це ваші дані для входу в систему позичання
+le_email.new_password.title: Ваш новий пароль
+le_email.new_password.message: Це ваш новий пароль для %accountName%
+le_email.reservation_confirm.subject: Підтвердження бронювання
+le_email.reservation_confirm.title: Підтвердження бронювання
+le_email.site_welcome.subject: Вітаємо у/на %accountName%
+le_email.site_welcome.title: Ласкаво просимо!
+le_email.login_to_view_this_loan: Перегляньте цю позику онлайн
+le_email.booking_confirmation.title: Підтвердження бронювання події
+le_email.booking_confirmation.subject: 'Підтвердження бронювання події:'
+le_email.donor_notify.subject: 'Подарований вами товар був випозичений '
+le_email.overdue.subject: Одиниця прострочена
+le_email.overdue.title: Будь ласка, поверніть дану позику
+le_email.membership_expired.renew_button: Натисніть тут, щоб оновити членство
+...

@@ -18,7 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
-            '147' => 'Max items on loan attached to memberships include reservations',
+            '15ö' => 'Request to complete two languages Slovak (update) and Ukrainian (new)',
             '139' => 'Search box does not return results for multiple words',
             '133' => 'Order of Loan lists need changing',
             '131' => 'Maintenance change date & location at once bug',

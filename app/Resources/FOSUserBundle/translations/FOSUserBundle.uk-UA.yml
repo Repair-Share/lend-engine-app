@@ -1,0 +1,58 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: uk-UA, Ukrainian (Ukraine)
+# Tagged: FOSUserBundle
+# Exported by: Andor Tamas
+# Exported at: Mon, 15 Nov 2021 17:25:17 +0100
+---
+group.edit.submit: Оновити групу
+group.show.name: Ім'я групи
+group.new.submit: Створити групу
+group.flash.updated: Група оновлена
+group.flash.created: Групу створено
+group.flash.deleted: Групу видалено
+Invalid credentials.: Ім'я користувача або пароль не знайдено
+security.login.username: 'Ім''я користувача:'
+security.login.password: 'Пароль:'
+security.login.remember_me: Запам'ятати мене
+security.login.submit: Вхід
+profile.show.firstName: Ім'я
+profile.show.lastName: Прізвище
+profile.show.email: Адреса електронної скриньки
+profile.edit.submit: Оновити
+profile.flash.updated: Ваш обліковий запис оновлено
+change_password.submit: Змінити пароль
+change_password.flash.success: Ваш пароль змінено
+registration.check_email: '... перейдіть до папки "Вхідні" та перевірте лист.'
+registration.confirmed: Ваш обліковий запис активовано!
+registration.back: Продовжити...
+registration.submit: Зареєструватися
+registration.flash.user_created: Лист було надіслано. У ньому ви знайдете посилання для активації вашого облікового запису.
+registration.email.subject: Ласкаво просимо!
+registration.email.message: Для того, щоб завершити активацію вашого облікового запису, будь ласка, перейдіть за посиланням
+resetting.password_already_requested: Пароль для цього користувача вже запитували протягом останніх 24 годин.
+resetting.check_email: Лист було надіслано. У ньому ви знайдете посилання для активації вашого облікового запису. Якщо лист не прийшов, перевірте "Спам"
+resetting.request.invalid_username: Ім'я користувача або адресу електронної скриньки не знайдено.
+resetting.request.username: 'Ім''я користувача або адреса електронної скриньки:'
+resetting.request.submit: Скинути пароль
+resetting.reset.submit: Змінити пароль
+resetting.flash.success: Пароль було успішно скинуто
+resetting.email.subject: Скинути Пароль
+resetting.email.message: |-
+  <br>
+  Щоб скинути пароль, натисніть, будь ласка, на посилання нижче: <br><br>
+  <a href="%confirmationUrl%">%confirmationUrl%</a>
+layout.logout: Вийти
+layout.login: Увійти
+layout.register: Зареєструватися
+layout.logged_in_as: Ви увійшли як
+form.group_name: 'Ім''я групи:'
+form.username: 'Ім''я користувача:'
+form.current_password: 'Поточний пароль:'
+form.password: 'Пароль:'
+form.password_confirmation: 'Введіть пароль ще раз:'
+form.new_password: 'Новий пароль:'
+form.new_password_confirmation: 'Введіть новий пароль ще раз:'
+security.login.forgot_password: Не пам'ятаю пароль
+...

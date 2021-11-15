@@ -43,7 +43,8 @@ class SettingsMemberSiteType extends AbstractType
             'Slovak'      => 'sk',
             'Slovenščina' => 'sl',
             'Svenska'     => 'sv-SE',
-            'Cymraeg'     => 'cy'
+            'Cymraeg'     => 'cy',
+            'Ukrainian'   => 'uk-UA'
         ];
         $builder->add('org_locale', ChoiceType::class, array(
             'label' => 'Default language',

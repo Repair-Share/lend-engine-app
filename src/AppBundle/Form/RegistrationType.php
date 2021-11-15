@@ -95,7 +95,8 @@ class RegistrationType extends AbstractType
             'Slovak'      => 'sk',
             'Slovenščina' => 'sl',
             'Svenska'     => 'sv-SE',
-            'Cymraeg'     => 'cy'
+            'Cymraeg'     => 'cy',
+            'Ukrainian'   => 'uk-UA'
         ];
 
         // Only whitelist the ones we have configured in settings
