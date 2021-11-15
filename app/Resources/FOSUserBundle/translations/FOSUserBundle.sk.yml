@@ -3,8 +3,8 @@
 # Release: Working copy
 # Locale: sk-SK, Slovak (Slovakia)
 # Tagged: FOSUserBundle
-# Exported by: Chris
-# Exported at: Wed, 23 May 2018 10:17:43 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 15 Nov 2021 17:25:44 +0100
 ---
 group.edit.submit: Aktualizovať skupinu
 group.show.name: Názov skupiny
@@ -21,25 +21,28 @@ profile.show.firstName: Meno
 profile.show.lastName: Priezvisko
 profile.show.email: Email
 profile.edit.submit: Aktualizovať
-profile.flash.updated: Tvoj profil bol aktualizovaný
+profile.flash.updated: Profil bol aktualizovaný
 change_password.submit: Zmeniť heslo
-change_password.flash.success: Tvoje heslo bolo zmenené
-registration.check_email: '... skontroluj si svoju doručenú poštu '
-registration.confirmed: Tvoj účet bol aktivovaný a teraz si prihlásený!
+change_password.flash.success: Heslo bolo zmenené
+registration.check_email: '... skontroluj si svoju doručenú poštu.'
+registration.confirmed: Účet bol aktivovaný a teraz si prihlásený!
 registration.back: Pokračovať...
 registration.submit: Registrovať
-registration.flash.user_created: Bol ti odoslaný email v ktorom nájdeš aktivačný odkaz na ktorý je potrebné kliknúť.
+registration.flash.user_created: Bol ti odoslaný email, v ktorom nájdeš aktivačný odkaz na ktorý je potrebné kliknúť.
 registration.email.subject: Vitaj!
-registration.email.message: Pre dokončenie aktivácie tvojho konta prosím navštív %confirmationUrl%
+registration.email.message: Pre dokončenie aktivácie tvojho konta prosím navštív <br><br> %confirmationUrl%
 resetting.password_already_requested: Heslo pre tohoto používateľa už bolo vyžiadané v posledných 24h
-resetting.check_email: Email bol odoslaný. Obsahuje odkaz na ktorý je potrebné kliknúť pre nastavenie nového hesla.
+resetting.check_email: Email bol odoslaný. Obsahuje odkaz na ktorý je potrebné kliknúť pre nastavenie nového hesla. Ak si nedostal email, skontroluj si nevyžiadanú poštu (spam) alebo počkaj aspoň 5 minút a skús znova.
 resetting.request.invalid_username: Používateľské meno alebo email "%username%" neexistuje.
 resetting.request.username: 'Používateľské meno alebo email:'
-resetting.request.submit: Reset hesla
+resetting.request.submit: Obnovenie hesla
 resetting.reset.submit: Zmena hesla
-resetting.flash.success: Heslo bolo úspešne resetované.
-resetting.email.subject: Reset hesla
-resetting.email.message: 'Pre rest hesla - porosím klikni na odkaz nižšie: %confirmationUrl%'
+resetting.flash.success: Heslo bolo úspešne obnovené.
+resetting.email.subject: Obnovenie hesla
+resetting.email.message: |-
+  <br>
+  Pre obnovenie hesla je potrebné kliknúť na odkaz nižšie:<br><br>
+  <a href="%confirmationUrl%">%confirmationUrl%</a>
 layout.logout: Odhlásiť
 layout.login: Prihlásiť
 layout.register: Registrovať sa
@@ -52,3 +55,4 @@ form.password_confirmation: 'Zadaj heslo znova:'
 form.new_password: 'Nové heslo:'
 form.new_password_confirmation: 'Zopakuj nové heslo:'
 security.login.forgot_password: Zabudol som heslo
+...
