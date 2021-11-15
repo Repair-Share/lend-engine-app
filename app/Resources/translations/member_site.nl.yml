@@ -3,9 +3,8 @@
 # Release: Working copy
 # Locale: nl-NL, Dutch (Netherlands)
 # Tagged: Member site
-# Status: Translated
-# Exported by: Chris
-# Exported at: Wed, 13 Jan 2021 00:53:53 +0000
+# Exported by: Andor Tamas
+# Exported at: Mon, 15 Nov 2021 18:12:13 +0100
 ---
 Loan: Lening
 Loans: Leningen
@@ -121,7 +120,7 @@ calendar.alert_already_booked: U kan deze datum niet selecteren vanwege een ande
 calendar.alert_not_your_booking: U kunt alleen de details van uw eigen boekingen bekijken.
 calendar.alert_day_warning: Dit artikel kan enkel geleend worden voor veelvouden van itemLoanDays dagen. \nGraag een andere inleverdatum te kiezen.
 calendar.alert_min_loan_days: U moet dit artikel voor minimum minLoanDays dagen lenen.
-calendar.alert_max_loan_days: U kunt dit item lenen voor maximaal maximaal dagen.
+calendar.alert_max_loan_days: U kunt dit item lenen voor maximaal maxLoanDays dagen.
 public_basket.title: Winkelmandje
 public_basket.name: Winkelmandje
 public_basket.due_at: Terug te brengen op
