@@ -3,9 +3,8 @@
 # Release: Working copy
 # Locale: sk-SK, Slovak (Slovakia)
 # Tagged: Emails
-# Status: Translated
-# Exported by: Chris
-# Exported at: Wed, 13 Jan 2021 00:56:38 +0000
+# Exported by: Andor Tamas
+# Exported at: Mon, 15 Nov 2021 17:01:44 +0100
 ---
 le_email.item_description: Popis
 le_email.item_contains: Obsahuje
@@ -42,3 +41,11 @@ le_email.reservation_confirm.subject: Potvrdenie tvojej rezervácie
 le_email.reservation_confirm.title: Potvrdenie rezervácie
 le_email.site_welcome.subject: Vitaj v %accountName%
 le_email.site_welcome.title: Vitaj
+le_email.login_to_view_this_loan: Ukáž výpožičku online
+le_email.booking_confirmation.title: Potvrdenie rezervácie podujatia
+le_email.booking_confirmation.subject: 'Potvrdenie rezervácie podujatia:'
+le_email.donor_notify.subject: Tebou darovaný predmet bol vypožičaný
+le_email.overdue.subject: Doba výpožičky položky vypršala
+le_email.overdue.title: Prosím, vráť tento predmet
+le_email.membership_expired.renew_button: Klikni sem pre obnovenie členstva
+...
