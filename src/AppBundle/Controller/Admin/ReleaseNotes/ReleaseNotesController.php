@@ -20,6 +20,7 @@ class ReleaseNotesController extends Controller
         $bugfixes = [
             '161' => 'Dutch Language had an error with a variable',
             '150' => 'Request to complete two languages Slovak (update) and Ukrainian (new)',
+            '148' => 'Unable to add a loan item to existing loan with adjacent booking',
             '139' => 'Search box does not return results for multiple words',
             '133' => 'Order of Loan lists need changing',
             '131' => 'Maintenance change date & location at once bug',
