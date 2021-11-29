@@ -398,10 +398,10 @@ class CheckOutService
                 $extendingLoanFrom = $extendingLoanDueOutAt->format("Y-m-d H:i:s");
                 $extendingLoanTo   = $requestTo;
 
-                if ($dueOutAt_f >= $extendingLoanFrom && $dueOutAt_f <= $extendingLoanTo) {
+                if ($dueOutAt_f > $extendingLoanFrom && $dueOutAt_f < $extendingLoanTo) {
                     $this->errors[] = $errorMsg;
                     return true;
-                } elseif ($dueInAt_f >= $extendingLoanFrom && $dueInAt_f <= $extendingLoanTo) {
+                } elseif ($dueInAt_f > $extendingLoanFrom && $dueInAt_f < $extendingLoanTo) {
                     $this->errors[] = $errorMsg;
                     return true;
                 }

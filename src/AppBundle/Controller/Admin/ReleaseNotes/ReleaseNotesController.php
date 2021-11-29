@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '148' => 'Unable to add a loan item to existing loan with adjacent booking',
             '139' => 'Search box does not return results for multiple words',
             '133' => 'Order of Loan lists need changing',
             '131' => 'Maintenance change date & location at once bug',
