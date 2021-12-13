@@ -290,6 +290,18 @@ then the user will also be shown a button to continue to choose a membership.',
             )
         ));
 
+        // Search options
+        $builder->add('search_terms', ToggleType::class, array(
+            'expanded' => true,
+            'label' => 'Allow all search terms to match',
+            'data' => $dbData['search_terms'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => 'Yes will increase results displayed with more search terms used.',
+            ]
+        ));
+
     }
 
     /**
