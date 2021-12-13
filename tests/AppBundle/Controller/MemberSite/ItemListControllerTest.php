@@ -47,7 +47,7 @@ class ItemListControllerTest extends AuthenticatedControllerTest
         );
     }
 
-    public function testSearchResultsWithAnd()
+    public function testSearchResultsWithAndTerms()
     {
         $this->helpers->setSettingValue('search_terms', '1');
 
@@ -155,7 +155,7 @@ class ItemListControllerTest extends AuthenticatedControllerTest
 
     }
 
-    public function testSearchResultsWithOr()
+    public function testSearchResultsWithOrTerms()
     {
         $this->helpers->setSettingValue('search_terms', '0');
 
