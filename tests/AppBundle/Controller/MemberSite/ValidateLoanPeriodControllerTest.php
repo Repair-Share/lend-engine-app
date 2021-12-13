@@ -139,4 +139,83 @@ class ValidateLoanPeriodControllerTest extends AuthenticatedControllerTest
 
         $this->assertContains('["ok"]', $responseContent);
     }
+
+    public function testAdjacentBooking()
+    {
+        // Create a contact
+        $contactId = $this->helpers->createContact($this->client);
+
+        // Subscribe him
+        $this->helpers->subscribeContact($this->client, $contactId);
+
+        // Add credit
+        $this->helpers->addCredit($this->client, $contactId);
+
+        $itemId = $this->helpers->createItem($this->client, 'Adjacent Item ' . rand(1, 10000));
+
+        // Make a site with a changeover time
+        $siteID = $this->helpers->createSite($this->client);
+
+        $this->helpers->clearSiteOpening($this->client, $siteID);
+
+        // Monday
+        $this->helpers->addDbSiteOpeningHours(
+            $this->client,
+            $siteID,
+            1,
+            '1000',
+            '1700',
+            '1000'
+        );
+
+        // Tuesday
+        $this->helpers->addDbSiteOpeningHours(
+            $this->client,
+            $siteID,
+            2,
+            '1000',
+            '1700',
+            '1000'
+        );
+
+        // Makes three loans with adjacent times
+        $this->helpers->createLoan(
+            $this->client,
+            $contactId,
+            [$itemId],
+            'reserve',
+            0,
+            7,
+            '10:00:00',
+            '10:00:00'
+        );
+
+        $loanId2 = $this->helpers->createLoan(
+            $this->client,
+            $contactId,
+            [$itemId],
+            'reserve',
+            -7,
+            7,
+            '10:00:00',
+            '10:00:00'
+        );
+
+        $this->helpers->createLoan(
+            $this->client,
+            $contactId,
+            [$itemId],
+            'reserve',
+            -14,
+            7,
+            '10:00:00',
+            '10:00:00'
+        );
+
+        // Tries to checkout the second one
+        $this->helpers->checkoutLoan($this->client, $loanId2);
+        $crawler = $this->client->followRedirect();
+
+        $this->assertContains('Items are now checked out.', $crawler->html());
+    }
 }
