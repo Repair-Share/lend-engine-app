@@ -213,9 +213,9 @@ class ValidateLoanPeriodControllerTest extends AuthenticatedControllerTest
         );
 
         // Tries to checkout the second one
-        $html = $this->helpers->checkoutLoan($this->client, $loanId2, true);
+        $this->helpers->checkoutLoan($this->client, $loanId2);
+        $crawler = $this->client->followRedirect();
 
-        // Check the checkout
-        //$this->assertContains('Items are now checked out.', $html);
+        $this->assertContains('Items are now checked out.', $crawler->html());
     }
 }

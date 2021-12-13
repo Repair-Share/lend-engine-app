@@ -365,10 +365,9 @@ class TestHelpers extends AuthenticatedControllerTest
     /**
      * @param  Client  $client
      * @param $loanId
-     * @param $returnCrawler
      * @return bool
      */
-    public function checkoutLoan(Client $client, $loanId, $returnCrawler = false)
+    public function checkoutLoan(Client $client, $loanId)
     {
         $crawler = $client->request('GET', '/loan/' . $loanId);
         $this->assertContains("loan/{$loanId}", $crawler->html()); // in the link to delete the pending loan
@@ -380,10 +379,6 @@ class TestHelpers extends AuthenticatedControllerTest
         ), 'POST');
         $client->submit($form);
         $this->assertTrue($client->getResponse() instanceof RedirectResponse);
-
-        if ($returnCrawler === true) {
-            return $crawler->html();
-        }
 
         return true;
     }
