@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '168' => 'New Search capability not working for everyone',
             '161' => 'Dutch Language had an error with a variable',
             '150' => 'Request to complete two languages Slovak (update) and Ukrainian (new)',
             '148' => 'Unable to add a loan item to existing loan with adjacent booking',

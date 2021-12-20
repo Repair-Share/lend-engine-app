@@ -111,6 +111,7 @@ class SettingsService
         // For new as-yet-unset values
         $defaultSettings = [
             'group_similar_items' => 1,
+            'search_terms' => '1',
             'org_locale' => 'en',
             'label_type' => '11355',
             'org_timezone' => 'Europe/London',
@@ -307,6 +308,7 @@ class SettingsService
             'site_theme_name',
             'logo_image_name',
             'group_similar_items',
+            'search_terms',
 
             'registration_terms_uri',
             'auto_sku_stub',

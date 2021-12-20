@@ -104,23 +104,27 @@ class ItemService
             $builder->setParameter('string', trim($filter['search']));
         } else if (isset($filter['search']) && $filter['search']) {
 
-            $words = explode(' ', $filter['search']);
+            $searchTerms = $this->container->get('settings')->getSettingValue('search_terms');
 
-            $andWhere = '';
+            if ($searchTerms === '1') { // Searching with 'and' operator
 
-            for ($i = 0; $i < sizeof($words); $i++) {
+                $words = explode(' ', $filter['search']);
 
-                $word = $words[$i];
+                $andWhere = '';
 
-                if (!trim($word)) {
-                    continue;
-                }
+                for ($i = 0; $i < sizeof($words); $i++) {
 
-                if ($i > 0) {
-                    $andWhere .= ' OR ';
-                }
+                    $word = $words[$i];
 
-                $andWhere .= "(
+                    if (!trim($word)) {
+                        continue;
+                    }
+
+                    if ($i > 0) {
+                        $andWhere .= ' OR ';
+                    }
+
+                    $andWhere .= "(
                     item.name LIKE :string{$i}
                     OR item.sku LIKE :string{$i}
                     OR item.id = :exact{$i}
@@ -129,13 +133,26 @@ class ItemService
                     OR item.keywords LIKE :string{$i}
                 )";
 
-                $builder->setParameter('string' . $i, '%' . trim($word) . '%');
-                $builder->setParameter('exact' . $i, trim($word));
+                    $builder->setParameter('string' . $i, '%' . trim($word) . '%');
+                    $builder->setParameter('exact' . $i, trim($word));
 
-            }
+                }
 
-            if ($andWhere) {
-                $builder->andWhere($andWhere);
+                if ($andWhere) {
+                    $builder->andWhere($andWhere);
+                }
+
+            } else { // Searching with 'or' operator
+
+                $builder->andWhere('item.name LIKE :string
+                    OR item.sku LIKE :string
+                    OR item.id = :exact
+                    OR item.serial LIKE :string
+                    OR item.brand LIKE :string
+                    OR item.keywords LIKE :string');
+                $builder->setParameter('string', '%' . trim($filter['search']) . '%');
+                $builder->setParameter('exact', trim($filter['search']));
+
             }
 
         }
