@@ -561,6 +561,10 @@
 
                 if (calendarMode == 'extend') {
 
+                    if (calEvent.extendedProps.changeover) { // Use changeover on extending (it it has)
+                        eventEnd = moment(calEvent.extendedProps.changeover);
+                    }
+
                     console.log("Extending a loan");
                     if (!validateBookingPeriod(eventStart, eventEnd, siteId)) {
                         return false;

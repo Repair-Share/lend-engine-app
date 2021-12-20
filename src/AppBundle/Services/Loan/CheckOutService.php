@@ -372,7 +372,7 @@ class CheckOutService
             $errorMsg .= ' (ref '.$reservation->getLoan()->getId().', '.$dueOutAt->format("d M H:i").' - '.$dueInAt->format("d M H:i").')';
 
             // The requested START date is during another reservation
-            if ($requestFrom >= $dueOutAt_f && $requestFrom < $dueInAt_f) {
+            if (!$extendingLoan && $requestFrom >= $dueOutAt_f && $requestFrom < $dueInAt_f) {
                 $this->errors[] = $errorMsg;
                 $this->errors[] = "Requested {$from->format("d M H:i")} - {$to->format("d M H:i")} (STARTS)";
                 return true;
