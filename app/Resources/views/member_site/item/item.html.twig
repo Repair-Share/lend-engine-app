@@ -561,6 +561,8 @@
 
                 if (calendarMode == 'extend') {
 
+                    let eventEndOriginal = eventEnd;
+
                     if (calEvent.extendedProps.changeover) { // Use changeover on extending (it it has)
                         eventEnd = moment(calEvent.extendedProps.changeover);
                     }
@@ -588,8 +590,8 @@
                     $(".extend_days").html(days);
 
                     // Set the valid times on the time picker, if we are setting pickup from a time slot
-                    if (eventStart && eventEnd) {
-                        newTimeToPicker.timepicker('option', { 'minTime': eventStart.format("h:mma"), 'maxTime': eventEnd.format("h:mma") });
+                    if (eventStart && eventEndOriginal) {
+                        newTimeToPicker.timepicker('option', { 'minTime': eventStart.format("h:mma"), 'maxTime': eventEndOriginal.format("h:mma") });
                     }
 
                     if (dailyFee > 0) {
