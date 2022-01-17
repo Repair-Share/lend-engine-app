@@ -47,7 +47,7 @@ class ItemListControllerTest extends AuthenticatedControllerTest
         );
     }
 
-    public function testSearchResultsWithAndTerms()
+    public function testSearchResultsWithOrTerms()
     {
         $this->helpers->setSettingValue('search_terms', '1');
 
@@ -72,14 +72,66 @@ class ItemListControllerTest extends AuthenticatedControllerTest
 
         foreach (
             [
-                'aaa bbb ccc',
-                'aaa bbb',
-                'aaa ccc',
-                'bbb',
-                'bbb aaa',
-                'bbb ccc',
-                'ccc aaa',
-                'ccc bbb'
+                'aaaa bbbb cccc'
+            ] as $searchParam
+        ) {
+
+            $crawler = $this->client->request(
+                'GET',
+                '/products?search=' . $searchParam
+            );
+
+            $this->assertContains(
+                $itemName1,
+                $crawler->html()
+            );
+
+            $this->assertNotContains(
+                $itemName2,
+                $crawler->html()
+            );
+
+            $this->assertNotContains(
+                $itemName3,
+                $crawler->html()
+            );
+
+        }
+
+        foreach (
+            [
+                'aaaa',
+                'aaa',
+                'aaaa bbbb'
+            ] as $searchParam
+        ) {
+
+            $crawler = $this->client->request(
+                'GET',
+                '/products?search=' . $searchParam
+            );
+
+            $this->assertContains(
+                $itemName1,
+                $crawler->html()
+            );
+
+            $this->assertContains(
+                $itemName2,
+                $crawler->html()
+            );
+
+            $this->assertNotContains(
+                $itemName3,
+                $crawler->html()
+            );
+
+        }
+
+        foreach (
+            [
+                'bbbb',
+                'bbb'
             ] as $searchParam
         ) {
 
@@ -105,7 +157,13 @@ class ItemListControllerTest extends AuthenticatedControllerTest
 
         }
 
-        foreach (['aaa'] as $searchParam) {
+        foreach (
+            [
+                'cccc',
+                'ccc',
+                'bbbb cccc'
+            ] as $searchParam
+        ) {
 
             $crawler = $this->client->request(
                 'GET',
@@ -117,26 +175,31 @@ class ItemListControllerTest extends AuthenticatedControllerTest
                 $crawler->html()
             );
 
-            $this->assertContains(
+            $this->assertNotContains(
                 $itemName2,
                 $crawler->html()
             );
 
-            $this->assertNotContains(
+            $this->assertContains(
                 $itemName3,
                 $crawler->html()
             );
 
         }
 
-        foreach (['ccc'] as $searchParam) {
+        foreach (
+            [
+                'aaaa cccc',
+                'bbbb aaaa',
+            ] as $searchParam
+        ) {
 
             $crawler = $this->client->request(
                 'GET',
                 '/products?search=' . $searchParam
             );
 
-            $this->assertContains(
+            $this->assertNotContains(
                 $itemName1,
                 $crawler->html()
             );
@@ -146,7 +209,7 @@ class ItemListControllerTest extends AuthenticatedControllerTest
                 $crawler->html()
             );
 
-            $this->assertContains(
+            $this->assertNotContains(
                 $itemName3,
                 $crawler->html()
             );
@@ -155,7 +218,7 @@ class ItemListControllerTest extends AuthenticatedControllerTest
 
     }
 
-    public function testSearchResultsWithOrTerms()
+    public function testSearchResultsWithAndTerms()
     {
         $this->helpers->setSettingValue('search_terms', '0');
 
@@ -181,7 +244,8 @@ class ItemListControllerTest extends AuthenticatedControllerTest
         foreach (
             [
                 'one',
-                'one two'
+                'one two',
+                'two one'
             ] as $searchParam
         ) {
 
@@ -196,83 +260,6 @@ class ItemListControllerTest extends AuthenticatedControllerTest
             );
 
             $this->assertContains(
-                $itemName2,
-                $crawler->html()
-            );
-
-            $this->assertNotContains(
-                $itemName3,
-                $crawler->html()
-            );
-
-        }
-
-        foreach (['two'] as $searchParam) {
-
-            $crawler = $this->client->request(
-                'GET',
-                '/products?search=' . $searchParam
-            );
-
-            $this->assertContains(
-                $itemName1,
-                $crawler->html()
-            );
-
-            $this->assertContains(
-                $itemName2,
-                $crawler->html()
-            );
-
-            $this->assertContains(
-                $itemName3,
-                $crawler->html()
-            );
-
-        }
-
-        foreach (
-            [
-                'three',
-                'two three'
-            ] as $searchParam
-        ) {
-
-            $crawler = $this->client->request(
-                'GET',
-                '/products?search=' . $searchParam
-            );
-
-            $this->assertContains(
-                $itemName1,
-                $crawler->html()
-            );
-
-            $this->assertNotContains(
-                $itemName2,
-                $crawler->html()
-            );
-
-            $this->assertContains(
-                $itemName3,
-                $crawler->html()
-            );
-
-        }
-
-        foreach (['one three'] as $searchParam) {
-
-            $crawler = $this->client->request(
-                'GET',
-                '/products?search=' . $searchParam
-            );
-
-            $this->assertNotContains(
-                $itemName1,
-                $crawler->html()
-            );
-
-            $this->assertNotContains(
                 $itemName2,
                 $crawler->html()
             );
@@ -287,8 +274,94 @@ class ItemListControllerTest extends AuthenticatedControllerTest
         foreach (
             [
                 'one three',
+                'three one'
+            ] as $searchParam
+        ) {
+
+            $crawler = $this->client->request(
+                'GET',
+                '/products?search=' . $searchParam
+            );
+
+            $this->assertContains(
+                $itemName1,
+                $crawler->html()
+            );
+
+            $this->assertNotContains(
+                $itemName2,
+                $crawler->html()
+            );
+
+            $this->assertNotContains(
+                $itemName3,
+                $crawler->html()
+            );
+
+        }
+
+        foreach (
+            [
+                'two three',
                 'three two'
-            ] as $searchParam) {
+            ] as $searchParam
+        ) {
+
+            $crawler = $this->client->request(
+                'GET',
+                '/products?search=' . $searchParam
+            );
+
+            $this->assertContains(
+                $itemName1,
+                $crawler->html()
+            );
+
+            $this->assertNotContains(
+                $itemName2,
+                $crawler->html()
+            );
+
+            $this->assertContains(
+                $itemName3,
+                $crawler->html()
+            );
+
+        }
+
+        foreach (
+            [
+                'two'
+            ] as $searchParam
+        ) {
+
+            $crawler = $this->client->request(
+                'GET',
+                '/products?search=' . $searchParam
+            );
+
+            $this->assertContains(
+                $itemName1,
+                $crawler->html()
+            );
+
+            $this->assertContains(
+                $itemName2,
+                $crawler->html()
+            );
+
+            $this->assertContains(
+                $itemName3,
+                $crawler->html()
+            );
+
+        }
+
+        foreach (
+            [
+                'one two four'
+            ] as $searchParam
+        ) {
 
             $crawler = $this->client->request(
                 'GET',
