@@ -106,7 +106,7 @@ class ItemService
 
             $searchTerms = $this->container->get('settings')->getSettingValue('search_terms');
 
-            if ($searchTerms === '1') { // Searching with 'and' operator
+            if ($searchTerms === '0') { // Searching with 'and' operator
 
                 $words = explode(' ', $filter['search']);
 
@@ -121,17 +121,17 @@ class ItemService
                     }
 
                     if ($i > 0) {
-                        $andWhere .= ' OR ';
+                        $andWhere .= ' AND ';
                     }
 
                     $andWhere .= "(
-                    item.name LIKE :string{$i}
-                    OR item.sku LIKE :string{$i}
-                    OR item.id = :exact{$i}
-                    OR item.serial LIKE :string{$i}
-                    OR item.brand LIKE :string{$i}
-                    OR item.keywords LIKE :string{$i}
-                )";
+                        item.name LIKE :string{$i}
+                        OR item.sku LIKE :string{$i}
+                        OR item.id = :exact{$i}
+                        OR item.serial LIKE :string{$i}
+                        OR item.brand LIKE :string{$i}
+                        OR item.keywords LIKE :string{$i}
+                    )";
 
                     $builder->setParameter('string' . $i, '%' . trim($word) . '%');
                     $builder->setParameter('exact' . $i, trim($word));
