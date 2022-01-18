@@ -272,7 +272,7 @@ class BillingService
                 break;
 
             case 'plus':
-                return 100;
+                return 250;
                 break;
 
             case 'business':

@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '178' => 'Increase the max number of events to 250 for the plus plan',
             '169' => 'Changeover time on site causes problems when extending a loan with an existing booking',
             '168' => 'New Search capability not working for everyone',
             '161' => 'Dutch Language had an error with a variable',
