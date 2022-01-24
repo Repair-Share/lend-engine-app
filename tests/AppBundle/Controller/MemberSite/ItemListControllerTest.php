@@ -72,7 +72,9 @@ class ItemListControllerTest extends AuthenticatedControllerTest
 
         foreach (
             [
-                'aaaa bbbb cccc'
+                'aaaa bbbb cccc',
+                'aaaa bbbb',
+                'bbbb'
             ] as $searchParam
         ) {
 
@@ -86,12 +88,12 @@ class ItemListControllerTest extends AuthenticatedControllerTest
                 $crawler->html()
             );
 
-            $this->assertNotContains(
+            $this->assertContains(
                 $itemName2,
                 $crawler->html()
             );
 
-            $this->assertNotContains(
+            $this->assertContains(
                 $itemName3,
                 $crawler->html()
             );
@@ -101,8 +103,7 @@ class ItemListControllerTest extends AuthenticatedControllerTest
         foreach (
             [
                 'aaaa',
-                'aaa',
-                'aaaa bbbb'
+                'aaa'
             ] as $searchParam
         ) {
 
@@ -122,35 +123,6 @@ class ItemListControllerTest extends AuthenticatedControllerTest
             );
 
             $this->assertNotContains(
-                $itemName3,
-                $crawler->html()
-            );
-
-        }
-
-        foreach (
-            [
-                'bbbb',
-                'bbb'
-            ] as $searchParam
-        ) {
-
-            $crawler = $this->client->request(
-                'GET',
-                '/products?search=' . $searchParam
-            );
-
-            $this->assertContains(
-                $itemName1,
-                $crawler->html()
-            );
-
-            $this->assertContains(
-                $itemName2,
-                $crawler->html()
-            );
-
-            $this->assertContains(
                 $itemName3,
                 $crawler->html()
             );
@@ -160,8 +132,7 @@ class ItemListControllerTest extends AuthenticatedControllerTest
         foreach (
             [
                 'cccc',
-                'ccc',
-                'bbbb cccc'
+                'ccc'
             ] as $searchParam
         ) {
 
@@ -189,8 +160,7 @@ class ItemListControllerTest extends AuthenticatedControllerTest
 
         foreach (
             [
-                'aaaa cccc',
-                'bbbb aaaa',
+                'aaaax',
             ] as $searchParam
         ) {
 
