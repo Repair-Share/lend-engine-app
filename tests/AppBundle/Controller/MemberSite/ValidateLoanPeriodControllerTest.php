@@ -140,6 +140,44 @@ class ValidateLoanPeriodControllerTest extends AuthenticatedControllerTest
         $this->assertContains('["ok"]', $responseContent);
     }
 
+    public function testExtendingLoanChangeOverTime()
+    {
+        $itemId = $this->helpers->createItem($this->client, 'Item 1 / ' . rand(1, 10000));
+
+        // Loan #1 from today (t) to t+1
+        $contactId1 = $this->helpers->createContact($this->client);
+        $this->helpers->subscribeContact($this->client, $contactId1);
+        $this->helpers->addCredit($this->client, $contactId1);
+        $loanId1 = $this->helpers->createLoan($this->client, $contactId1, [$itemId], 'reserve', 0);
+        $this->helpers->checkoutLoan($this->client, $loanId1);
+
+        // Loan #2 from t+2 to t+3
+        $contactId2 = $this->helpers->createContact($this->client);
+        $this->helpers->subscribeContact($this->client, $contactId2);
+        $this->helpers->addCredit($this->client, $contactId2);
+        $loanId2 = $this->helpers->createLoan($this->client, $contactId2, [$itemId], 'reserve', 2);
+        $this->helpers->checkoutLoan($this->client, $loanId2);
+
+        // Try to extend the first loan to t+2
+        $time = new \DateTime();
+        $time = $time->modify('2 days');
+
+        $uri = '/validate-loan-period?itemId=' . $itemId
+               . '&timeFrom=' . $time->format('Y-m-d 09:00:00')
+               . '&timeTo=' . $time->format('Y-m-d 09:00:00')
+               . '&loanId=' . $loanId1;
+
+        $this->client->request('GET', $uri);
+        $response = $this->client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        // At this stage we only search in the response content and don't decode the JSON data to array
+        $responseContent = $response->getContent();
+
+        $this->assertContains('["ok"]', $responseContent);
+    }
+
     public function testAdjacentBooking()
     {
         // Create a contact
