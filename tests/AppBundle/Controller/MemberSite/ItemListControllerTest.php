@@ -74,7 +74,8 @@ class ItemListControllerTest extends AuthenticatedControllerTest
             [
                 'aaaa bbbb cccc',
                 'aaaa bbbb',
-                'bbbb'
+                'bbbb',
+                'aaaa bbbb bosch'
             ] as $searchParam
         ) {
 
