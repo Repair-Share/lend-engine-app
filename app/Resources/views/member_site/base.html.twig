@@ -74,7 +74,7 @@
         var pendingPaymentType = "{{ app.session.get('pendingPaymentType') }}";
         var currencyIsoCode = "{{ tenantInformation.currency }}";
         var currencySymbol = "{{ tenantInformation.currencySymbol }}";
-        var minimumPaymentAmount = {{ tenantInformation.minimumPaymentAmount|number_format(2) }};
+        var minimumPaymentAmount = {{ tenantInformation.minimumPaymentAmount|number_format(2, '.', '')  }};
         var orgName = "{{ tenantInformation.companyName }}";
         var isAdmin = {% if is_granted('ROLE_ADMIN') %}true{% else %}false{% endif %};
         var userType = '{% if is_granted('ROLE_ADMIN') %}admin{% else %}member{% endif %}';
