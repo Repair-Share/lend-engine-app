@@ -226,7 +226,7 @@ filter='uglifyjs2'
 <script src="{{ asset_url }}"></script>
 {% endjavascripts %}
 
-{% if tenantInformation.stripeAccessToken|length > 0 %}
+{% if tenantInformation.stripeAccessToken|length > 0 and app.request.isSecure %}
 <script src="https://js.stripe.com/v3/"></script>
 {% endif %}
 

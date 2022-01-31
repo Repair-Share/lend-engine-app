@@ -97,7 +97,7 @@
         {% endif %}
     </script>
 
-    {% if tenantInformation.stripeAccessToken|length > 0 %}
+    {% if app.request.isSecure %}
         <script src="https://js.stripe.com/v3/"></script>
     {% endif %}
 
