@@ -230,7 +230,7 @@
 
 {% block pagejs %}
     {#If we've not already included it (if organisation is using Stripe)#}
-    {% if tenantInformation.stripeAccessToken|length == 0 and (app.request.isSecure or app.environment != 'prod') %}
+    {% if server_name != 'lend-engine-eu' and tenantInformation.stripeAccessToken|length == 0 %}
         <script src="https://js.stripe.com/v3/"></script>
     {% endif %}
 {% endblock %}

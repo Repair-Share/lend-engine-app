@@ -97,7 +97,7 @@
         {% endif %}
     </script>
 
-    {% if app.request.isSecure or app.environment != 'prod' %}
+    {% if server_name != 'lend-engine-eu' %}
         <script src="https://js.stripe.com/v3/"></script>
     {% endif %}
 
