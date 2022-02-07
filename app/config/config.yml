@@ -46,6 +46,7 @@ twig:
         rollbar_client_token : "%rollbar_client_token%"
         billing_public_key: "%billing_public_key%"
         site_nav: "@service.site_nav"
+        server_name: "%env(LE_SERVER_NAME)%"
 
 # Assetic Configuration
 assetic:
