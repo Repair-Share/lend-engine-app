@@ -3,9 +3,8 @@
 # Release: Working copy
 # Locale: fr-FR, French (France)
 # Tagged: Member site
-# Status: Translated
-# Exported by: Chris
-# Exported at: Wed, 19 Jul 2017 10:18:41 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 07 Feb 2022 11:11:36 +0100
 ---
 Loan: Prêt
 Loans: Prêts
@@ -34,6 +33,7 @@ th:
   date_from: De
   date_to: À
   status: Statut
+  deposit: Caution
 Reference: Référence
 Items: Articles
 Status: Statut
@@ -72,9 +72,13 @@ public_misc:
   link_recent_items: Récemment ajouté
   link_all_items: Tous les articles
   search_items: Rechercher nos articles
-  no_results: Rien trouvé
+  no_results: Aucun résultat n'a été trouvé
   filter_items: Filtrer les articles
   any_site: N’importe quel site
+  log_in_first: Merci de vous connecter pour voir les articles
+  link_events: Evénements
+  show_items_from: Montrer seulement les objets disponibles depuis
+  credit_limit: Plafond de crédit
 public_footer:
   find_us: Nous trouver / heures d'ouverture
   choose_lang: Choisir la langue
@@ -86,6 +90,11 @@ public_account:
   membership_subtitle: Détails de l'adhésion
   button_edit_details: Modifier mes coordonnées
   button_change_password: Changer mon mot de passe
+  button_subscribe_now: Abonnez-vous
+  button_change_membership: Modifier / renouveler l'abonnement
+  current_member_type: Vous êtes actuellement un membre %type%.
+  membership_about_to_expire: Votre abonnement arrive bientôt à expiration.
+  membership_expires_on: Votre abonnement expire le
 public_item_list:
   pages: Affichage des articles %x% à %y% sur %z%
 public_item:
@@ -107,10 +116,10 @@ public_item:
   basket_exists: Vous avez déjà des articles dans votre panier. <br>Vous devrez les enlever ensemble, et nous avons dès lors défini une date d'enlèvement pour vous.
   account_balance_is: Le crédit disponible est de
   add_credit: Ajouter du crédit
-  pickup_at: Enlèvement à
+  pickup_at: Retrait à
   return_by: Retour à
-  choose_pickup_first: Choose pickup first
-  button_choose_pickup: Choisir
+  choose_pickup_first: Choisir d'abord le lieu de retrait
+  button_choose_pickup: Choisir le jour
   button_choose_return: Choisir le moment de retour
   cancel: Annuler
   basket_add: Ajouter un article au panier
@@ -119,6 +128,11 @@ public_item:
   similar_items: articles similaires disponibles
   see_all: Voir tout
   not_reservable: Cet article n'est pas disponible pour une réservation en ligne.
+  discount: réduction
+  button_today: Aujourd'hui
+  see_parts: Voir les parties
+  kit_containing: Cet article est un ensemble comprenant
+  borrow_help: Cliquer sur un jour, une heure ou un lieu pour modifier votre réservation
 calendar:
   pickup_day: Enlèvement
   my_booking: MA RÉSERVATION
@@ -130,13 +144,13 @@ calendar:
   alert_not_your_booking: Vous ne pouvez voir le détail que de vos propres réservations.
   alert_day_warning: Cet article ne peut être réservé que par multiple de itemLoanDays jours. \nMerci de choisir une autre date de retour.
   alert_min_loan_days: Vous devez emprunter cet article pour au minimum minLoanDays jours.
-  alert_max_loan_days: Vous pouvez emprunter cet article pour maximum maxLoanDays jours.
+  alert_max_loan_days: Vous pouvez emprunter cet article pour maxLoanDays jours maximum.
 public_basket:
   title: Panier
   name: Panier
   due_at: Dû à
-  return_to: Retourner à
-  pickup_after: Enlèvement après
+  return_to: Rendre à
+  pickup_after: Disponible après
   from: de
   add_credit_message: Merci d'ajouter du crédit d'abord.
   empty: Vider le panier
@@ -149,6 +163,17 @@ public_basket:
   delay_charge: sera chargé maintenant sur votre compte, et le solde sera dû à la collecte des articles
 public_loan:
   title: Prêt
+  charged: Imputé au compte
+  check_in: Retour
+  button_check_out: Emprunt
+  select_items_to_check_in: Sélectionner les articles à retourner
+  choose_new_date: Sélectionner une nouvelle date de retou
+  button_complete_checks: Merci de terminer les emprunts et retours
+  button_choose_payment_method: Sélectionner une méthode de paiement pour procéder au paiement
+  button_deposits_require_payment: Les cautions doivent être réglées dès à présent
+  cannot_check_out: L'objet ou les objets ne peu(ven)t pas être emrpunté(s), vérifier l'emplacement / les réservations
+  no_payment_methods: Aucun moyen de paiement n'est renseigné pour permettre l'emprunt
+  not_enough_credit: Vous ne disposez pas d'un crédit suffisant sur votre compte pour effectuer un emprunt.
 public_user_menu:
   contact_info: Profil
 text_borrow_with_membership: |
@@ -164,31 +189,56 @@ public_add_credit:
   payment_method: Mode de paiement
   min_amount: Montant minimum de la carte
   processing_fee: des frais de transaction seront ajoutés pour les règlements par carte
+  remove_card: Enlever
 public_loans:
   no_loans: Vous n’avez pas encore rien emprunté
 public_payments:
   no_payment: Encore aucune paiement ni aucun frais
   title: Frais et paiements
+  no_payment_required: Aucun paiement requis
 public_registration:
   newsletter: Vous affilier à notre newsletter
   terms_link: Voir nos Termes et Conditions
   terms_label: J'accepte les conditions générales
+  email_confirmed: Votre adresse email a bien été confirmée
+  membership_starts_today: L'abonnement commence aujourd'hui.
+  membership_deferred: L'abonnement sera renouvelé à partir du
+  discount_on_fees: réduction sur les frais de location
+  button_renew: Renouveler l'abonnement
+  button_subscribe: S'abonner
+  no_self_serve_memberships: L'inscription en libre-service n'est pas disponible. Pour finaliser votre adhésion, merci de venir nous voir et de vous munir d'une pièce d'identité avec photographie.
 public_become_member:
   title: Devenir membre
 msg_success:
   payment_ok: Paiement en ordre. Le solde de votre compte a été mis à jour.
-  reservation_create: Réservé! Nous venons de vous envoyer un courriel de confirmation.
+  reservation_create: Réservé ! Nous venons de vous envoyer un courriel de confirmation.
   reservation_cancel: Votre réservation a été annulée.
   basket_item_removed: L'article a été retiré de votre panier.
-  basket_item_added: a été ajoute à votre panier.
+  basket_item_added: a été ajouté à votre panier.
   basket_item_exists: est déjà dans votre panier.
 msg_fail:
   general_fail: Désolé, un problème est survenu. Merci de ré-essayer, ou de nous contacter.
   reservation_create: Un problème est survenu, nous n'avons pas pu créer votre réservation.
   reservation_cancel: Nous ne pouvons pas annuler votre réservation. Merci de nous contacter.
-shipping:
-  title: Livraison
-  per_item: par objet
-  per_loan: par prêt
-  collect: Recueillis depuis
-  post: Envoyer par courrier
+per-borrow: par emprunt
+per_borrow: par emprunt
+public_user:
+  choose_membership_type: Choisissez un type d'abonnement
+  subscription_payment: Paiement de l'abonnement
+events:
+  event: Un événement
+  page_title: Des événements
+  bookings: Réservation d'évenements
+  no_events: Il n'y a pas d'événement ce mois-ci
+  view_on_facebook: Voir cet événement sur Facebook
+  location: Emplacement
+  time: Heure
+  cost: Prix
+  you_are_attending: Vous participez
+  book_now_button: Réserver maintenant
+  check_in_button: Retours
+  check_in_help: L'enregistrement vous ajoute en tant que participant sans envoyer de mail de confirmation de réservation
+  contact_us_to_book: Contactez-nous pour réserver
+  not_bookable: Cet événement ne peut pas être réservé en ligne
+  log_in_to_book: Enregistrez-vous pour réserver
+...

@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '182' => 'Update the French language file',
             '181' => 'Live Stripe.js integrations must use HTTPS',
             '180' => 'JavaScript number format causes JS syntax error',
             '178' => 'Increase the max number of events to 250 for the plus plan',

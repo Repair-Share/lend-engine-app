@@ -1,0 +1,79 @@
+# Loco yaml export: Symfony YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: fr-FR, French (France)
+# Tagged: FOSUserBundle
+# Exported by: Andor Tamas
+# Exported at: Mon, 07 Feb 2022 11:12:06 +0100
+---
+group:
+  edit:
+    submit: Modifier le groupe
+  show:
+    name: Nom du groupe
+  new:
+    submit: Créer un groupe
+  flash:
+    updated: Le groupe a été mis à jour
+    created: Le groupe a été créé
+    deleted: Le groupe a été supprimé
+Invalid credentials:
+  "": Identifiant ou mot de passe invalide
+security:
+  login:
+    username: 'Identifiant :'
+    password: 'Mot de passe :'
+    remember_me: Se souvenir de moi
+    submit: Connection
+    forgot_password: J'ai oublié mon mot de passe
+profile:
+  show:
+    firstName: Prénom
+    lastName: Nom
+    email: Email
+  edit:
+    submit: Mettre à jour
+  flash:
+    updated: Votre profil a été mis à jour
+change_password:
+  submit: Modifier le mot de passe
+  flash:
+    success: Votre mot de passe a été modifier
+registration:
+  check_email: '... consultez votre boîte de réception pour voir s''il est arrivé.'
+  confirmed: Votre compte est activé et vous êtes connecté(e) !
+  back: Poursuivre...
+  submit: Créer un compte
+  flash:
+    user_created: Un email vous a été envoyé. Pour activer votre compte, vous devez cliquer sur le lien d'activation qu'il contient.
+  email:
+    subject: Bienvenue !
+    message: 'Pour activer votre compte, merci de cliquer sur ce lien : <br><br> %confirmationUrl% '
+resetting:
+  password_already_requested: Le mot de passe de cet utilisateur a déjà été demandé au cours des dernières 24 heures.
+  check_email: Un courriel vous a été envoyé, avec le lien de réinitialisation de votre mot de passe. Si vous ne le voyez pas en boîte de réception, pensez à vérifier dans vos spams...
+  request:
+    invalid_username: L'identifiant ou l'adresse email "%username%" n'existe pas.
+    username: 'Identifiant ou adresse email :'
+    submit: Modifier le mot de passe
+  reset:
+    submit: Changer le mot de passe
+  flash:
+    success: Le mot de passe a été réinitialisé avec succès
+  email:
+    subject: Réinitialiser le mot de passe
+    message: '<br> Pour réinitialiser votre mot de passe, merci de cliquer sur le lien ci-dessous :<br><br> <a href="%confirmationUrl%">%confirmationUrl%</a> '
+layout:
+  logout: Se déconnecter
+  login: Connection
+  register: Créer un compte
+  logged_in_as: Connecté en tant que  %username%
+form:
+  group_name: 'Nom du groupe :'
+  username: 'Identifiant :'
+  current_password: 'Mot de passe actuel :'
+  password: 'Mot de passe :'
+  password_confirmation: 'Répéter le mot de passe :'
+  new_password: 'Nouveau mot de passe :'
+  new_password_confirmation: 'Saisir le nouveau mot de passe :'
+...

@@ -3,9 +3,8 @@
 # Release: Working copy
 # Locale: fr-FR, French (France)
 # Tagged: Emails
-# Status: Translated
-# Exported by: Chris
-# Exported at: Wed, 19 Jul 2017 10:19:03 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 07 Feb 2022 11:10:56 +0100
 ---
 le_email:
   item_description: Description
@@ -40,6 +39,7 @@ le_email:
   membership_expired:
     subject: Votre abonnement a expiré
     title: Votre abonnement a expiré
+    renew_button: Cliquer ici pour renouveler l'abonnement
   login_details:
     subject: Vos informations de connexion pour %accountName%
     title: Informations de connexion
@@ -53,3 +53,13 @@ le_email:
   site_welcome:
     subject: Bienvenue sur %accountName%
     title: Bienvenue
+  login_to_view_this_loan: Voir ce prêt en ligne
+  booking_confirmation:
+    title: Confirmation d'inscription à l'événement
+    subject: 'Confirmation d''inscription à l''événement :'
+  donor_notify:
+    subject: L'objet que vous avez donné a été prêté
+  overdue:
+    subject: Un document est en retard
+    title: Merci de rendre cet objet
+...
