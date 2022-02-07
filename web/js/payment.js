@@ -2,7 +2,7 @@
 
 var paymentInitiated = false;
 
-if (stripePublicApiKey) {
+if (stripePublicApiKey && typeof Stripe !== 'undefined') {
     var stripe = Stripe(stripePublicApiKey);
     var elements = stripe.elements();
     var card = elements.create('card');
