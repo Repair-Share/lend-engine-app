@@ -97,7 +97,7 @@
         {% endif %}
     </script>
 
-    {% if server_name == 'dev' or server_name == 'lend-engine-eu-plus' %}
+    {% if server_name != 'lend-engine-eu' %}
         <script src="https://js.stripe.com/v3/"></script>
     {% endif %}
 
