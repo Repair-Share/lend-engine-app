@@ -280,6 +280,7 @@ services:
             - "@service.email"
             - "@twig"
             - "@service.tenant"
+            - "@translator.default"
             - "@settings"
 
     service.waiting_list:
