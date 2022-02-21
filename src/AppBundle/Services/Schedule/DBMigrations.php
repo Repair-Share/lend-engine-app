@@ -70,7 +70,7 @@ class DBMigrations
     public function migrate($server)
     {
         // Help https://symfony.com/doc/3.4/console.html
-        $expectedMigrationVersion = '20220221152719';
+        $expectedMigrationVersion = '20211223141517';
 
         $resultString = '';
 
@@ -143,7 +143,6 @@ class DBMigrations
                 'user'     => $username,
                 'password' => $password
             ];
-
             $conn   = new Connection($params, $driver);
             $config = new Configuration($conn);
 
