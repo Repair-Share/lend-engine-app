@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '175' => 'Checkout failure due to "delivery" item already "reserved" Payment taken and not recoded',
             '182' => 'Update the French language file',
             '181' => 'Live Stripe.js integrations must use HTTPS',
             '180' => 'JavaScript number format causes JS syntax error',
