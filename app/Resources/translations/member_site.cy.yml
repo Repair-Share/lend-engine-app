@@ -1,10 +1,10 @@
 # Loco yaml export: Symfony YAML object
 # Project: Lend Engine
 # Release: Working copy
-# Locale: cy-GB, Welsh (Wales)
+# Locale: cy-GB, Cymraeg (Wales)
 # Tagged: Member site
 # Exported by: Andor Tamas
-# Exported at: Mon, 21 Jun 2021 10:42:19 +0200
+# Exported at: Mon, 28 Feb 2022 15:24:49 +0100
 ---
 Loan: Benthyciad
 Loans: 'Benthyciadau '
@@ -79,6 +79,7 @@ public_misc:
   link_events: Digwyddiadau
   show_items_from: Dangos eitemau sydd ar gael yn unig o
   credit_limit: Terfyn credyd
+  search: Chwilio
 public_footer:
   find_us: Dewch o hyd i ni / oriau agor
   choose_lang: Dewiswch iaith
@@ -133,6 +134,11 @@ public_item:
   see_parts: Gweler rhannau
   kit_containing: Mae'r eitem hon yn becyn sy'n cynnwys
   borrow_help: Cliciwch ddyddiad, amser neu safle i newid eich archeb
+  stock_item: Eitem stoc
+  service_item: Gwasanaeth
+  each: yr un
+  alert_click_time_slot: Cliciwch slot amser
+  in_basket: ""
 calendar:
   pickup_day: Codi
   my_booking: FY ARCHEB
@@ -161,6 +167,9 @@ public_basket:
   no_items: <h3>Dim eitemau yn y fasged</h3> Chwiliwch am eitem i'w ychwanegu.
   full_charge: bydd yn cael eich godi ar eich cyfrif
   delay_charge: bydd yn cael ei godi ar eich cyfrif yn awr, gyda'r gweddill yn ddyledus pan yn casglu eitemau
+  button_checkout: Gwiriwch allan nawr
+  shipping: Dosbarthiad
+  remove_stock_items: I greu archeb ar gyfer eitemau benthyg, tynnwch eitemau stoc o'ch basged yn gyntaf.
 public_loan:
   title: Benthyciad
   charged: Cyhuddo i gyfrif
@@ -175,6 +184,7 @@ public_loan:
   cannot_check_out: Ni ellir gwirio eitem (au), gwirio lleoliad / archeb
   no_payment_methods: Nid oes unrhyw ddulliau talu ar gael i wirio allan
   not_enough_credit: Nid oes gennych ddigon o gredyd ar gyfrif i wirio.
+  quantity: Nifer
 public_user_menu:
   contact_info: Proffil
 text_borrow_with_membership: Gydag aelodaeth lawn, mi fyddwch yn gallu benthyg a chadw'r eitem yma ar-lein.
@@ -188,6 +198,7 @@ public_add_credit:
   min_amount: Swm lleiaf cerdyn
   processing_fee: Bydd ffi prosesu yn cael ei ychwanegu ar gyfer trafodion cerdyn
   remove_card: Tynnu
+  text_info: Ychwanegir y swm at falans eich cyfrif.
 public_loans:
   no_loans: Nid ydych wedi benthyg unrhyw beth eto
 public_payments:
@@ -205,6 +216,9 @@ public_registration:
   button_renew: Adnewyddu aelodaeth
   button_subscribe: Tanysgrifiwch
   no_self_serve_memberships: Nid oes unrhyw aelodaeth ar gael ar gyfer tanysgrifiad hunan-wasanaeth. Dewch i mewn i ymweld â ni gyda ID llun i gwblhau eich aelodaeth.
+  login_page_new_account: Cofrestrwch am gyfrif newydd
+  check_email_title: Gwiriwch eich e-bost.
+  check_email_body: Anfonwyd e-bost gyda dolen i gwblhau'r broses gofrestru.
 public_become_member:
   title: Dewch yn aelod
 msg_success:
@@ -239,4 +253,13 @@ events:
   contact_us_to_book: Cysylltwch â ni i archebu
   not_bookable: Nid oes modd archebu'r digwyddiad hwn ar-lein
   log_in_to_book: Mewngofnodi i archebu
+shipping:
+  title: 'Dosbarthiad '
+  per_item: yr eitem
+  per_loan: fesul benthyciad
+  collect: Casglu o
+  post: Dosbarthu
+  ship_to: Bydd eitemau'n cael eu danfon i
+  edit_address: Diweddaru'r cyfeiriad
+  delivery_options: Opsiynau cyflenwi
 ...
