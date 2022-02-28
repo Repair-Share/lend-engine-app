@@ -4,7 +4,7 @@
 # Locale: fr-FR, French (France)
 # Tagged: Member site
 # Exported by: Andor Tamas
-# Exported at: Mon, 07 Feb 2022 11:11:36 +0100
+# Exported at: Mon, 28 Feb 2022 15:50:16 +0100
 ---
 Loan: Prêt
 Loans: Prêts
@@ -79,6 +79,7 @@ public_misc:
   link_events: Evénements
   show_items_from: Montrer seulement les objets disponibles depuis
   credit_limit: Plafond de crédit
+  search: Rechercher
 public_footer:
   find_us: Nous trouver / heures d'ouverture
   choose_lang: Choisir la langue
@@ -133,6 +134,11 @@ public_item:
   see_parts: Voir les parties
   kit_containing: Cet article est un ensemble comprenant
   borrow_help: Cliquer sur un jour, une heure ou un lieu pour modifier votre réservation
+  stock_item: Article en stock
+  service_item: Service
+  each: chaque
+  alert_click_time_slot: Sélectionner un créneau horaire
+  in_basket: ""
 calendar:
   pickup_day: Enlèvement
   my_booking: MA RÉSERVATION
@@ -161,6 +167,9 @@ public_basket:
   no_items: <h3>Pas d'article dans le panier</h3>Cherchez un article à ajouter.
   full_charge: sera imputé sur votre compte
   delay_charge: sera chargé maintenant sur votre compte, et le solde sera dû à la collecte des articles
+  button_checkout: Régler maintenant
+  shipping: Envoi
+  remove_stock_items: Pour créer une réservation pour des articles en prêt, supprimez d'abord les articles en stock de votre panier.
 public_loan:
   title: Prêt
   charged: Imputé au compte
@@ -174,6 +183,7 @@ public_loan:
   cannot_check_out: L'objet ou les objets ne peu(ven)t pas être emrpunté(s), vérifier l'emplacement / les réservations
   no_payment_methods: Aucun moyen de paiement n'est renseigné pour permettre l'emprunt
   not_enough_credit: Vous ne disposez pas d'un crédit suffisant sur votre compte pour effectuer un emprunt.
+  quantity: Quantité
 public_user_menu:
   contact_info: Profil
 text_borrow_with_membership: |
@@ -190,6 +200,7 @@ public_add_credit:
   min_amount: Montant minimum de la carte
   processing_fee: des frais de transaction seront ajoutés pour les règlements par carte
   remove_card: Enlever
+  text_info: Le montant sera ajouté au solde de votre compte.
 public_loans:
   no_loans: Vous n’avez pas encore rien emprunté
 public_payments:
@@ -207,6 +218,9 @@ public_registration:
   button_renew: Renouveler l'abonnement
   button_subscribe: S'abonner
   no_self_serve_memberships: L'inscription en libre-service n'est pas disponible. Pour finaliser votre adhésion, merci de venir nous voir et de vous munir d'une pièce d'identité avec photographie.
+  login_page_new_account: Créer un nouveau compte
+  check_email_title: Merci de vérifier votre boîte mails.
+  check_email_body: Un mail vous a été envoyé avec un lien pour compléter l'inscription.
 public_become_member:
   title: Devenir membre
 msg_success:
@@ -241,4 +255,13 @@ events:
   contact_us_to_book: Contactez-nous pour réserver
   not_bookable: Cet événement ne peut pas être réservé en ligne
   log_in_to_book: Enregistrez-vous pour réserver
+shipping:
+  title: Livraison
+  per_item: par article
+  per_loan: par emprunt
+  collect: Recueillis depuis
+  post: Livrer / envoyer
+  ship_to: Les articles seront livrés à
+  edit_address: Mettre à jour l'adresse
+  delivery_options: Options de livraison
 ...
