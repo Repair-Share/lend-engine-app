@@ -4,7 +4,7 @@
 # Locale: ca-ES, Catalan (Spain)
 # Tagged: Emails
 # Exported by: Andor Tamas
-# Exported at: Mon, 26 Apr 2021 13:57:48 +0200
+# Exported at: Mon, 28 Feb 2022 15:12:16 +0100
 ---
 le_email.item_description: Descripción
 le_email.item_contains: Consta de
@@ -31,7 +31,7 @@ le_email.reminder.title: Tienes algún préstamo que vence pronto
 le_email.reservation_reminder.subject: Recoge tu reserva mañana
 le_email.reservation_reminder.title: Recoge tu reserva mañana
 le_email.membership_expired.subject: Tu suscripción se ha terminado.
-le_email.membership_expired.title: 'Tu suscripción se ha terminado. '
+le_email.membership_expired.title: Tu suscripción se ha terminado.
 le_email.login_details.subject: Información de inicio de sesión para %accountName%
 le_email.login_details.title: Detalles de inicio de sesión
 le_email.login_details.message: Ésta es la información para el inicio de sesión en nuestro sistema de préstamo
@@ -48,3 +48,10 @@ le_email.donor_notify.subject: L'article que vostè ha donat ha estat llogat
 le_email.overdue.subject: Un article té endarreriment
 le_email.overdue.title: Si us plau, retorni aquest article
 le_email.membership_expired.renew_button: Faci clic aquí per a renovar com a sòcia
+le_email.th_cost: Preu
+le_email.login_now_button: Inicia la sessió ara
+le_email.checkin.subject: S'ha registrat el seu article
+le_email.checkin.title: S'ha registrat el seu article
+le_email.checkin.checked_in_at: Registrat a
+le_email.checkin.checked_in_by: Registrat per
+...
