@@ -4,7 +4,7 @@
 # Locale: uk-UA, Ukrainian (Ukraine)
 # Tagged: Member site
 # Exported by: Andor Tamas
-# Exported at: Mon, 15 Nov 2021 17:18:13 +0100
+# Exported at: Mon, 28 Feb 2022 15:57:12 +0100
 ---
 Loan: Позика
 Loans: Позики
@@ -218,4 +218,26 @@ events.check_in_help: Реєстрація додає вас як учасник
 events.contact_us_to_book: Зв'яжіться з нами, щоб забронювати
 events.not_bookable: Ця подія недоступна для бронювання онлайн
 events.log_in_to_book: Увійти, щоб забронювати
+public_misc.search: |
+  Пошук
+public_item.stock_item: Товар у наявності
+public_item.service_item: Послуги
+public_item.each: кожен
+public_item.alert_click_time_slot: Натисніть, будь ласка, на часовий проміжок
+public_basket.button_checkout: Додати до кошика
+public_basket.shipping: Доставка
+public_basket.remove_stock_items: Для того, щоб зарезервувати товар для позики, видаліть його з вашого кошика спочатку.
+shipping.title: Доставка
+shipping.per_item: за кожну одиницю товару
+shipping.per_loan: за кожну позику
+shipping.collect: Обрати з
+shipping.post: Доставити
+shipping.ship_to: Товар буде доставлений
+shipping.edit_address: Оновити адресу
+shipping.delivery_options: Варіанти доставки
+public_loan.quantity: Кількість
+public_add_credit.text_info: Залишок буде додано на ваш рахунок.
+public_registration.login_page_new_account: Зареєструватися для нового облікового запису
+public_registration.check_email_title: Перевірте, будь ласка, свою електронну скриньку.
+public_registration.check_email_body: На вашу електронну скриньку надіслано лист із посиланням для завершення реєстрації.
 ...

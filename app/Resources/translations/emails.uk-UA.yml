@@ -4,7 +4,7 @@
 # Locale: uk-UA, Ukrainian (Ukraine)
 # Tagged: Emails
 # Exported by: Andor Tamas
-# Exported at: Mon, 15 Nov 2021 17:18:04 +0100
+# Exported at: Mon, 28 Feb 2022 15:57:01 +0100
 ---
 le_email.item_description: Опис
 le_email.item_contains: Містить
@@ -48,4 +48,10 @@ le_email.donor_notify.subject: 'Подарований вами товар бу�
 le_email.overdue.subject: Одиниця прострочена
 le_email.overdue.title: Будь ласка, поверніть дану позику
 le_email.membership_expired.renew_button: Натисніть тут, щоб оновити членство
+le_email.th_cost: Ціна
+le_email.login_now_button: Увійти зараз
+le_email.checkin.subject: Ваша позика повернена
+le_email.checkin.title: Ваша позика повернена
+le_email.checkin.checked_in_at: Перевірено
+le_email.checkin.checked_in_by: Перевірено
 ...
