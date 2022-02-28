@@ -70,7 +70,7 @@ class DBMigrations
     public function migrate($server)
     {
         // Help https://symfony.com/doc/3.4/console.html
-        $expectedMigrationVersion = '20211223141517';
+        $expectedMigrationVersion = '20220221152719';
 
         $resultString = '';
 
