@@ -3,8 +3,8 @@
 # Release: Working copy
 # Locale: es-ES, Spanish (Spain)
 # Tagged: Emails
-# Exported by: Chris
-# Exported at: Tue, 17 Oct 2017 21:53:43 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 15:26:29 +0100
 ---
 le_email.item_description: Descripción
 le_email.item_contains: Consta de
@@ -41,3 +41,4 @@ le_email.reservation_confirm.subject: Confirmación de tu reserva
 le_email.reservation_confirm.title: Confirmación de la reserva
 le_email.site_welcome.subject: Te damos la bienvenida a %accountName%
 le_email.site_welcome.title: Te damos la bienvenida!
+...
