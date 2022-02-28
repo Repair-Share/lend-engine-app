@@ -4,7 +4,7 @@
 # Locale: ca-ES, Catalan (Spain)
 # Tagged: FOSUserBundle
 # Exported by: Andor Tamas
-# Exported at: Mon, 26 Apr 2021 13:58:19 +0200
+# Exported at: Mon, 28 Feb 2022 14:12:57 +0100
 ---
 group.edit.submit: Actualitzar grup
 group.show.name: Nom del grup
@@ -52,3 +52,4 @@ form.password_confirmation: Repetir contrasenya
 form.new_password: Nova contrasenya
 form.new_password_confirmation: Repetir nova contrasenya
 security.login.forgot_password: he oblidat la meva contrassenya
+...

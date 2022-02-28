@@ -1,6 +1,11 @@
-# General
-
-# Entities
+# Loco yaml export: Symfony YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: en-GB, English (UK)
+# Tagged: Member site
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 14:06:07 +0100
+---
 Loan: Loan
 Loans: Loans
 Reservation: Reservation
@@ -9,8 +14,6 @@ Brand: Brand
 Payment: Payment
 Payments: Payments
 Fee: Fee
-
-# Loan statuses
 loan_status:
   pending: Pending
   on_loan: On loan
@@ -18,25 +21,19 @@ loan_status:
   cancelled: Cancelled
   overdue: Overdue
   closed: Closed
-
-# Localized data added to database (eg loan notes)
 note_reservation_fee: Reservation fee
 note_reservation_fee_will_be_added: fee will be added per reservation
-
-# Table headers
 th:
   date: Date
   payment_method: Payment method
   fee: Fee
-  deposit: Deposit
   payment: Payment
   ref: Reference
   items: Items
   date_from: From
   date_to: To
   status: Status
-
-# Loan-related
+  deposit: Deposit
 Reference: Reference
 Items: Items
 Status: Status
@@ -46,25 +43,18 @@ STATUS_OVERDUE: Overdue
 STATUS_RESERVED: Reserved
 STATUS_CANCELLED: Cancelled
 STATUS_CLOSED: Closed
-
-# number of days an item is on loan
-days: "{1}day|[2,Inf[days"
+days: '{1}day|[2,Inf[days'
 per_day: per day
-per_borrow: per borrow
 per_n_days: for %count% days
-
-# Actions
 button_cancel: Cancel
 button_cancel_reservation: Cancel reservation
 button_add_credit: Add money
 button_go: Go
-
-# Security / access
 I forgot my password: I forgot my password
 Log out: Log out
 My account: My account
-
-# Form labels
+Login with Facebook: Login with Facebook
+Login with Google: Login with Google
 form:
   firstName: First name
   lastName: Last Name
@@ -76,28 +66,25 @@ form:
   postcode: Postcode
   country: Country
   locale: Your preferred language
-
 public_misc:
   link_admin: Admin
-  link_events: Events
   link_home: Home
   link_recent_items: Recently added
   link_all_items: All items
   search_items: Search
-  search: Search
   no_results: Nothing found
   filter_items: Filter items
   any_site: Any site
   log_in_first: Please log in to view items
+  link_events: Events
   show_items_from: Show items only available from
   credit_limit: Credit limit
-
+  search: Search
 public_footer:
   find_us: Find us / opening hours
   choose_lang: Choose language
   powered_by: Powered by
   logged_in_as: You are logged in as
-
 public_account:
   title: My Account
   contact_subtitle: Contact details
@@ -109,11 +96,8 @@ public_account:
   current_member_type: You are currently a %type% member.
   membership_about_to_expire: Your membership is about to expire.
   membership_expires_on: Your membership expires on
-
 public_item_list:
   pages: Showing %x% to %y% of %z% items
-
-# Item related
 public_item:
   location: Location
   brand: Brand
@@ -127,10 +111,7 @@ public_item:
   borrow_now: Borrow / reserve
   not_available: Not available
   available: Available
-  in_basket: In Basket
   on_loan: On loan
-  stock_item: Stock item
-  service_item: Service
   pickup_date_error: Items in your basket define a pickup date that clashes with the bookings for this item. You won't be able to borrow this item on the same loan.
   pickup_site_error: This item is not available from the site that the other items in your basket are due to be collected from. You won't be able to borrow this item on the same loan.
   basket_exists: You already have items in your basket/loan, so we've preset dates for you.
@@ -138,23 +119,26 @@ public_item:
   add_credit: Add credit
   pickup_at: From
   return_by: To
+  choose_pickup_first: Choose pickup first
   button_choose_pickup: Choose date
   button_choose_return: Choose date
-  button_today: Today
   cancel: Cancel
   basket_add: Add to basket
   locations: Available locations
   maps_link: Open in Google maps
   similar_items: similar items
   see_all: See all
+  not_reservable: This item is not available for reservation online. Please contact us.
   discount: discount
-  not_reservable: "This item is not available for reservation online. Please contact us."
+  button_today: Today
   see_parts: See parts
   kit_containing: This item is a kit containing
   borrow_help: Click a date, time or site to change your booking
+  stock_item: Stock item
+  service_item: Service
   each: each
   alert_click_time_slot: Please click a time slot
-
+  in_basket: In Basket
 calendar:
   pickup_day: Pickup
   my_booking: MY BOOKING
@@ -165,10 +149,8 @@ calendar:
   alert_already_booked: You can't select this date due to another booking.
   alert_not_your_booking: You can only view details of your own bookings.
   alert_day_warning: This item can only be loaned for multiples of itemLoanDays days. \nPlease choose another return date.
-  alert_min_loan_days: "You must borrow this item for at least minLoanDays days."
-  alert_max_loan_days: "You can borrow this item for up to maxLoanDays days."
-
-# Member site : basket page
+  alert_min_loan_days: You must borrow this item for at least minLoanDays days.
+  alert_max_loan_days: You can borrow this item for up to maxLoanDays days.
 public_basket:
   title: Basket
   name: Basket
@@ -179,26 +161,15 @@ public_basket:
   add_credit_message: Please add credit first.
   empty: Empty basket
   confirm_reservation: Reserve
-  button_checkout: Check out now
   remove_item: Remove
   total: Total
-  shipping: Shipping
   balance: Due to charge
   no_items: <h3>No items in basket</h3> Search for an item to add.
-  full_charge: "will be charged to your account"
-  delay_charge: "will be charged to account now, with the remainder due at checkout"
-  remove_stock_items: "To create a reservation for loan items, remove stock items from your basket first."
-
-shipping:
-  title: Delivery
-  per_item: per item
-  per_loan: per loan
-  collect: Collect from
-  post: Deliver / ship
-  ship_to: Items will be delivered to
-  edit_address: Update address
-  delivery_options: Delivery options
-
+  full_charge: will be charged to your account
+  delay_charge: will be charged to account now, with the remainder due at checkout
+  button_checkout: Check out now
+  shipping: Shipping
+  remove_stock_items: To create a reservation for loan items, remove stock items from your basket first.
 public_loan:
   title: Loan
   charged: Charged to account
@@ -213,42 +184,27 @@ public_loan:
   no_payment_methods: No payment methods are available to check out
   not_enough_credit: You don't have enough credit on account to check out.
   quantity: Quantity
-
-# Member site : Logged in : Menu
 public_user_menu:
   contact_info: Profile
-
 text_borrow_with_membership: With a membership you will be able to borrow and reserve this item online. Visit "my account" to see memberships available.
-
 text_no_membership: We don't have an active membership for you.
-
-# Member site : Logged in : Add credit page
 public_add_credit:
   title: Add money
   choose_card: Choose an existing card above, or just continue below to use a new card
   use_this_card: Use this card
-  remove_card: Remove
   amount_to_add: Amount to add
   payment_method: Payment method
   min_amount: Minimum card amount
   processing_fee: processing fee will be added for card transactions
+  remove_card: Remove
   text_info: The amount will be added to your account balance.
-
-# Member site : Logged in : Loans list
 public_loans:
   no_loans: You've not borrowed anything yet
-
-# Member site : Logged in : Payments list
 public_payments:
   no_payment: No payments or fees yet
-  no_payment_required: No payment required
   title: Fees and Payments
-
-# Registration process
+  no_payment_required: No payment required
 public_registration:
-  login_page_new_account: Register for a new account
-  check_email_title: Please check your email.
-  check_email_body: An email has been sent with a link to complete the registration process.
   newsletter: Subscribe to our newsletter
   terms_link: View our Terms and Conditions
   terms_label: I agree to the Terms and Conditions
@@ -259,11 +215,27 @@ public_registration:
   button_renew: Renew membership
   button_subscribe: Subscribe
   no_self_serve_memberships: There are no memberships available for self serve subscription. Please come in to visit us with photo ID to complete your membership.
-
+  login_page_new_account: Register for a new account
+  check_email_title: Please check your email.
+  check_email_body: An email has been sent with a link to complete the registration process.
+public_become_member:
+  title: Become a member
+msg_success:
+  payment_ok: Payment made OK. Your account balance has been amended.
+  reservation_create: Reserved! We've just sent an email confirmation.
+  reservation_cancel: Your reservation was cancelled.
+  basket_item_removed: Item was removed from your basket.
+  basket_item_added: added to your basket.
+  basket_item_exists: is already in your basket.
+msg_fail:
+  general_fail: Sorry, something went wrong. Please try again or get in touch with us.
+  reservation_create: Something went wrong, we couldn't create your reservation.
+  reservation_cancel: We couldn't cancel your reservation. Please get in touch with us.
+per-borrow: per borrow
+per_borrow: per borrow
 public_user:
   choose_membership_type: Choose a membership type
   subscription_payment: Subscription payment
-
 events:
   event: Event
   page_title: Events
@@ -280,18 +252,13 @@ events:
   contact_us_to_book: Contact us to book
   not_bookable: This event is not bookable online
   log_in_to_book: Log in to book
-
-msg_success:
-  payment_ok: Payment made OK. Your account balance has been amended.
-  reservation_create: Reserved! We've just sent an email confirmation.
-  reservation_cancel: Your reservation was cancelled.
-  basket_item_removed: Item was removed from your basket.
-  basket_item_added: added to your basket.
-  basket_item_exists: is already in your basket.
-
-msg_fail:
-  general_fail: Sorry, something went wrong. Please try again or get in touch with us.
-  reservation_create: Something went wrong, we couldn't create your reservation.
-  reservation_cancel: We couldn't cancel your reservation. Please get in touch with us.
-
-
+shipping:
+  title: Delivery
+  per_item: per item
+  per_loan: per loan
+  collect: Collect from
+  post: Deliver / ship
+  ship_to: Items will be delivered to
+  edit_address: Update address
+  delivery_options: Delivery options
+...

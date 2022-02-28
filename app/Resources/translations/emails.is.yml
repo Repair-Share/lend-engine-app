@@ -3,8 +3,8 @@
 # Release: Working copy
 # Locale: is-IS, Icelandic (Iceland)
 # Tagged: Emails
-# Exported by: Chris
-# Exported at: Wed, 23 May 2018 10:13:35 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 15:52:04 +0100
 ---
 le_email.item_description: Lýsing
 le_email.item_contains: Innhald
@@ -41,3 +41,4 @@ le_email.reservation_confirm.subject: Staðfesting á pöntun þinni
 le_email.reservation_confirm.title: Pöntun staðfest
 le_email.site_welcome.subject: ' %accountName% býður þig velkomin/n'
 le_email.site_welcome.title: Velkomin/n
+...

@@ -4,7 +4,7 @@
 # Locale: nl-NL, Dutch (Netherlands)
 # Tagged: Member site
 # Exported by: Andor Tamas
-# Exported at: Mon, 21 Feb 2022 17:52:57 +0100
+# Exported at: Mon, 28 Feb 2022 15:53:44 +0100
 ---
 Loan: Lening
 Loans: Leningen
@@ -238,4 +238,5 @@ public_add_credit.text_info: Het bedrag zal op uw account in rekening gebracht w
 public_registration.login_page_new_account: Inschrijven / een account aanmaken
 public_registration.check_email_title: Controleer uw e-mail
 public_registration.check_email_body: Er is een e-mail naar u verzonden met daarin een link om de inschrijving te voltooien
+public_item.in_basket: In winkelmandje
 ...

@@ -4,7 +4,7 @@
 # Locale: sk-SK, Slovak (Slovakia)
 # Tagged: Member site
 # Exported by: Andor Tamas
-# Exported at: Mon, 15 Nov 2021 17:02:18 +0100
+# Exported at: Mon, 28 Feb 2022 15:55:25 +0100
 ---
 Loan: Výpožička
 Loans: Výpožičky
@@ -220,4 +220,25 @@ events.check_in_help: Vloženie ťa pridá ako záujemcu bez odoslania potvrdzuj
 events.contact_us_to_book: Pre rezerváciu nás kontaktuj
 events.not_bookable: Toto podujatie nie je rezervovateľné online
 events.log_in_to_book: Prihlás sa pre rezerváciu
+public_misc.search: Hľadať
+public_item.stock_item: Položka na sklade
+public_item.service_item: Servis
+public_item.each: každý
+public_item.alert_click_time_slot: Prosím, vyber časový údaj
+public_basket.button_checkout: Vložiť do košíka
+public_basket.shipping: Doprava
+public_basket.remove_stock_items: Na vytvorenie rezervácie pre zvolené položky, najprv  odstráňte položky zo svojho košíka.
+shipping.title: Doručenie
+shipping.per_item: na položku
+shipping.per_loan: na výpožičku
+shipping.collect: Vybrať z
+shipping.post: Doručenie / dodanie
+shipping.ship_to: Položky budú doručené na
+shipping.edit_address: Aktualizuj adresu
+shipping.delivery_options: Možnosti dodania
+public_loan.quantity: Množstvo
+public_add_credit.text_info: Čiastka bude pridaná na Tvoj účet
+public_registration.login_page_new_account: Registrácia nového účtu
+public_registration.check_email_title: Prosím, skontroluj si email
+public_registration.check_email_body: Na email Ti bol poslaný link na dokončenie registrácie.
 ...

@@ -4,7 +4,7 @@
 # Locale: sk-SK, Slovak (Slovakia)
 # Tagged: Emails
 # Exported by: Andor Tamas
-# Exported at: Mon, 15 Nov 2021 17:01:44 +0100
+# Exported at: Mon, 28 Feb 2022 15:55:13 +0100
 ---
 le_email.item_description: Popis
 le_email.item_contains: Obsahuje
@@ -48,4 +48,10 @@ le_email.donor_notify.subject: Tebou darovaný predmet bol vypožičaný
 le_email.overdue.subject: Doba výpožičky položky vypršala
 le_email.overdue.title: Prosím, vráť tento predmet
 le_email.membership_expired.renew_button: Klikni sem pre obnovenie členstva
+le_email.th_cost: Cena
+le_email.login_now_button: Prihlás sa
+le_email.checkin.subject: Tvoja položka bola vložená do košíka
+le_email.checkin.title: Tvoja položka bola vložená do košíka
+le_email.checkin.checked_in_at: Rezervované v
+le_email.checkin.checked_in_by: Rezervované od
 ...

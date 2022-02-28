@@ -3,8 +3,8 @@
 # Release: Working copy
 # Locale: es-ES, Spanish (Spain)
 # Tagged: Member site
-# Exported by: Chris
-# Exported at: Tue, 17 Oct 2017 21:55:24 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 15:27:03 +0100
 ---
 Loan: Préstamo
 Loans: Préstamos
@@ -42,7 +42,7 @@ STATUS_CANCELLED: Cancelado
 STATUS_CLOSED: Cerrado
 days: '{1}día|[2,Inf[días'
 per_day: por día
-per_n_days: durante %count% días
+per_n_days: durante %count% days
 button_cancel: Cancelar
 button_cancel_reservation: Cancelar reserva
 button_add_credit: Añadir crédito
@@ -163,3 +163,4 @@ msg_success.basket_item_exists: ya está en tu cesta.
 msg_fail.general_fail: Algo ha fallado, lo sentimos. Por favor Inténtalo de nuevo o ponte en contacto con nosotros.
 msg_fail.reservation_create: Algo ha fallado, no ha sido posible hacer tu reserva.
 msg_fail.reservation_cancel: No ha sido posible cancelar tu reserva. Por favor ponte en contacto con nosotros.
+...
