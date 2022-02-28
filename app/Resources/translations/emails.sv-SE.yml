@@ -3,8 +3,8 @@
 # Release: Working copy
 # Locale: sv-SE, Swedish (Sweden)
 # Tagged: Emails
-# Exported by: Chris
-# Exported at: Wed, 24 Jun 2020 09:40:42 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 16:00:59 +0100
 ---
 le_email.item_description: Beskrivning
 le_email.item_contains: Innehåller
@@ -26,8 +26,9 @@ le_email.checkout.title: Din låneinformation
 le_email.extend.subject: Ditt återlämningsdatum har uppdaterats
 le_email.extend.title: Vi har ändrat återlämningsdatumet för en artikel
 le_email.extend.due_back: 'förfaller nu på '
-le_email.reminder.subject: Ditt lån förfaller snart
-le_email.reminder.title: Ditt lån förfaller snart.
+le_email.reminder.subject: Ditt lån loanId förfaller snart
+le_email.reminder.title: |
+  Ditt lån förfaller snart.
 le_email.reservation_reminder.subject: Hämta din reservation i morgon
 le_email.reservation_reminder.title: Hämta din reservation i morgon
 le_email.membership_expired.subject: 'Ditt medlemskap har gått ut. '
@@ -48,3 +49,10 @@ le_email.donor_notify.subject: Din donerade artikel har lånats ut
 le_email.overdue.subject: En artikel är försenad
 le_email.overdue.title: Vänligen lämna tillbaka den här artikeln
 le_email.membership_expired.renew_button: Klicka här för att förnya medlemskap
+le_email.th_cost: Kostnad
+le_email.login_now_button: Logga in nu
+le_email.checkin.subject: Dina artiklar har checkats in
+le_email.checkin.title: Din artikel har checkats in
+le_email.checkin.checked_in_at: Checkad in på
+le_email.checkin.checked_in_by: Checkad in av
+...
