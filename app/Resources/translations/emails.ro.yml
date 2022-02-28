@@ -3,8 +3,8 @@
 # Release: Working copy
 # Locale: ro-RO, Romanian (Romania)
 # Tagged: Emails
-# Exported by: Chris
-# Exported at: Tue, 25 Jul 2017 22:23:32 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 15:59:27 +0100
 ---
 le_email.item_description: Descriere
 le_email.item_contains: Conține
@@ -41,3 +41,4 @@ le_email.reservation_confirm.subject: Confirmarea rezervării tale
 le_email.reservation_confirm.title: Confirmare de rezervare
 le_email.site_welcome.subject: Bun venit %accountName%
 le_email.site_welcome.title: Bine ai venit!
+...
