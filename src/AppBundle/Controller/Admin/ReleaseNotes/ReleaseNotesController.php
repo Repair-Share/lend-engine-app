@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '185' => 'Rollbar 184: Call to a member function getSite() on null',
             '183' => 'Check in email does not translate title or subject (Dutch)',
             '182' => 'Update the French language file',
             '181' => 'Live Stripe.js integrations must use HTTPS',
