@@ -250,8 +250,12 @@ class CheckOutService
 
                 // validate that the qty requested is actually in stock
                 $qtyChecked = false;
+                $qtyCheckedLocation = '';
+
                 $inventory = $this->itemService->getInventory($item);
                 foreach ($inventory AS $i) {
+                    $qtyCheckedLocation = $loanRow->getItemLocation()->getName();
+
                     if ($i['locationId'] == $loanRow->getItemLocation()->getId()) {
                         if ($i['qty'] < $loanRow->getProductQuantity()) {
                             $this->errors[] = 'Not enough stock of "'.$item->getName().'" in '.$i['locationName'];
@@ -263,8 +267,15 @@ class CheckOutService
                 }
 
                 if (!$qtyChecked) {
-                    $this->errors[] = '"' . $item->getName() . '" is not in stock';
+
+                    if ($qtyCheckedLocation) {
+                        $this->errors[] = 'No stock of "' . $item->getName() . '" in ' . $qtyCheckedLocation;
+                    } else {
+                        $this->errors[] = '"' . $item->getName() . '" is not in stock';
+                    }
+
                     return false;
+
                 }
 
             } else {
