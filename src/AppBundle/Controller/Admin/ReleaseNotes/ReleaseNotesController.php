@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '186' => 'Loading the DYMO Label printer stops the page loading',
             '185' => 'Rollbar 184: Call to a member function getSite() on null',
             '183' => 'Check in email does not translate title or subject (Dutch)',
             '182' => 'Update the French language file',
