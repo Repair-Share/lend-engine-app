@@ -256,16 +256,18 @@
             return true;
         }
 
-        // Create a label from the template
-        $.get("/label_templates/" + labelName + ".label", function (labelXml) {
-            label = f.openLabelXml(labelXml);
-        }, "text");
-
         $("#site-item-list").on('click', '.print-button', function(){
             var productId = $(this).attr('id').replace("id-", "");
             var productSku = $(this).attr('data-sku');
             console.log("printing label for product ... "+productId+"/"+productSku);
             try {
+
+                if (getPrintersFromFramework()) {
+                    // Create a label from the template
+                    $.get("/label_templates/"+labelName+".label", function(labelXml) {
+                        label = f.openLabelXml(labelXml);
+                    }, "text");
+                }
 
                 var printer = printers[0];
                 if (!printer) {
