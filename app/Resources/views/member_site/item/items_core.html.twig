@@ -267,8 +267,6 @@
             console.log("printing label for product ... "+productId+"/"+productSku);
             try {
 
-                getPrintersFromFramework();
-
                 var printer = printers[0];
                 if (!printer) {
                     throw new Error("Select printer");
