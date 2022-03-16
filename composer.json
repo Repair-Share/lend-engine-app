@@ -59,7 +59,8 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget",
-            "chown -R herokuishuser:herokuishuser /app/var/cache/prod"
+            "mkdir -p /app/var/cache",
+            "chown -R herokuishuser:herokuishuser /app/var/cache"
         ],
         "post-update-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
@@ -68,7 +69,8 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget",
-            "chown -R herokuishuser:herokuishuser /app/var/cache/prod"
+            "mkdir -p /app/var/cache",
+            "chown -R herokuishuser:herokuishuser /app/var/cache"
         ],
         "warmup": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
