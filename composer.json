@@ -53,6 +53,7 @@
     },
     "scripts": {
         "post-install-cmd": [
+            "echo running post-install-cmd",
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
@@ -63,6 +64,7 @@
             "chown -R herokuishuser:herokuishuser /app/var/cache"
         ],
         "post-update-cmd": [
+            "echo running post-update-cmd",
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
@@ -73,11 +75,14 @@
             "chown -R herokuishuser:herokuishuser /app/var/cache"
         ],
         "warmup": [
+            "echo running warmup",
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget",
+            "mkdir -p /app/var/cache",
+            "chown -R herokuishuser:herokuishuser /app/var/cache"
         ]
     },
     "extra": {
