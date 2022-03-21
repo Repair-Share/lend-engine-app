@@ -1,6 +1,7 @@
 {# app/Resources/views/settings/settings_templates.html.twig #}
 
 {% extends 'base.html.twig' %}
+{% trans_default_domain 'emails' %}
 
 {% block title %}Email templates{% endblock %}
 
@@ -54,7 +55,7 @@
             <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "reminder"}) }}">Send me a test email</a></p>
 
             <strong>Subject: </strong>
-            "Your loan is due tomorrow"<br><br>
+            "{{ 'le_email.reminder.subject'|trans({'%loanId%': '{loanID}'}) }}"<br><br>
 
             {{ form_row(form.email_loan_reminder_head) }}
             {{ form_row(form.email_loan_reminder_foot) }}

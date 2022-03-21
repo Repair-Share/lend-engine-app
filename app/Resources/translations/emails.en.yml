@@ -31,7 +31,7 @@ le_email:
     title: We've changed the return date of an item
     due_back: is now due back on
   reminder:
-    subject: Your loan loanId is due soon
+    subject: Pick up your reservation %loanId% soon
     title: Your item(s) are due back soon
   reservation_reminder:
     subject: Pick up your reservation tomorrow
