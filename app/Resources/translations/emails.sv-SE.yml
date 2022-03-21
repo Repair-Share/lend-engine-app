@@ -1,58 +1,73 @@
-# Loco yaml export: Simple YAML object
+# Loco yaml export: Symfony YAML object
 # Project: Lend Engine
 # Release: Working copy
 # Locale: sv-SE, Swedish (Sweden)
 # Tagged: Emails
 # Exported by: Andor Tamas
-# Exported at: Mon, 28 Feb 2022 16:00:59 +0100
+# Exported at: Mon, 21 Mar 2022 13:38:23 +0100
 ---
-le_email.item_description: Beskrivning
-le_email.item_contains: Innehåller
-le_email.see_attachment: Se bifogat
-le_email.return_sites: Vänligen lämna denna artikel på följande plats/platser
-le_email.th_item: artikel
-le_email.th_fee: Avgift
-le_email.th_due_back: Ska återlämnas
-le_email.url: Inlogg URL
-le_email.email: E-post
-le_email.password: Lösenord
-le_email.assign.title: Du har tilldelats en artikel
-le_email.assign.message: '%firstName%, du har tilldelats artikel "%itemName%" av %assignorName%.'
-le_email.assign.added_note: la också till en anteckning
-le_email.assign.all_items: Se alla artiklar som har tilldelats dig
-le_email.assign.current_location: Nuvarande plats
-le_email.checkout.subject: Din låneinformation
-le_email.checkout.title: Din låneinformation
-le_email.extend.subject: Ditt återlämningsdatum har uppdaterats
-le_email.extend.title: Vi har ändrat återlämningsdatumet för en artikel
-le_email.extend.due_back: 'förfaller nu på '
-le_email.reminder.subject: Ditt lån loanId förfaller snart
-le_email.reminder.title: |
-  Ditt lån förfaller snart.
-le_email.reservation_reminder.subject: Hämta din reservation i morgon
-le_email.reservation_reminder.title: Hämta din reservation i morgon
-le_email.membership_expired.subject: 'Ditt medlemskap har gått ut. '
-le_email.membership_expired.title: 'Ditt medlemskap har gått ut. '
-le_email.login_details.subject: Dinna inloggningsuppgifter för %accountName%
-le_email.login_details.title: Inloggningsuppgifter
-le_email.login_details.message: Här är dina inloggningsuppgifter för vårt lånesystem
-le_email.new_password.title: Ditt nya lösenord
-le_email.new_password.message: Detta är ditt nya lösenord för %accountName%
-le_email.reservation_confirm.subject: Din reservationsbekräftelse
-le_email.reservation_confirm.title: Bekräftelse på reservation
-le_email.site_welcome.subject: Välkommen till %accountName%
-le_email.site_welcome.title: Välkommen
-le_email.login_to_view_this_loan: Se det här lånet online.
-le_email.booking_confirmation.title: Bekräftelse på eventbokning
-le_email.booking_confirmation.subject: 'Bekräftelse på eventbokning:'
-le_email.donor_notify.subject: Din donerade artikel har lånats ut
-le_email.overdue.subject: En artikel är försenad
-le_email.overdue.title: Vänligen lämna tillbaka den här artikeln
-le_email.membership_expired.renew_button: Klicka här för att förnya medlemskap
-le_email.th_cost: Kostnad
-le_email.login_now_button: Logga in nu
-le_email.checkin.subject: Dina artiklar har checkats in
-le_email.checkin.title: Din artikel har checkats in
-le_email.checkin.checked_in_at: Checkad in på
-le_email.checkin.checked_in_by: Checkad in av
+le_email:
+  item_description: Beskrivning
+  item_contains: Innehåller
+  see_attachment: Se bifogat
+  return_sites: Vänligen lämna denna artikel på följande plats/platser
+  th_item: artikel
+  th_fee: Avgift
+  th_due_back: Ska återlämnas
+  url: Inlogg URL
+  email: E-post
+  password: Lösenord
+  assign:
+    title: Du har tilldelats en artikel
+    message: '%firstName%, du har tilldelats artikel "%itemName%" av %assignorName%.'
+    added_note: la också till en anteckning
+    all_items: Se alla artiklar som har tilldelats dig
+    current_location: Nuvarande plats
+  checkout:
+    subject: Din låneinformation
+    title: Din låneinformation
+  extend:
+    subject: Ditt återlämningsdatum har uppdaterats
+    title: Vi har ändrat återlämningsdatumet för en artikel
+    due_back: 'förfaller nu på '
+  reminder:
+    subject: Ditt lån %loanId% förfaller snart
+    title: |
+      Ditt lån förfaller snart.
+  reservation_reminder:
+    subject: Hämta din reservation i morgon
+    title: Hämta din reservation i morgon
+  membership_expired:
+    subject: 'Ditt medlemskap har gått ut. '
+    title: 'Ditt medlemskap har gått ut. '
+    renew_button: Klicka här för att förnya medlemskap
+  login_details:
+    subject: Dinna inloggningsuppgifter för %accountName%
+    title: Inloggningsuppgifter
+    message: Här är dina inloggningsuppgifter för vårt lånesystem
+  new_password:
+    title: Ditt nya lösenord
+    message: Detta är ditt nya lösenord för %accountName%
+  reservation_confirm:
+    subject: Din reservationsbekräftelse
+    title: Bekräftelse på reservation
+  site_welcome:
+    subject: Välkommen till %accountName%
+    title: Välkommen
+  login_to_view_this_loan: Se det här lånet online.
+  booking_confirmation:
+    title: Bekräftelse på eventbokning
+    subject: 'Bekräftelse på eventbokning:'
+  donor_notify:
+    subject: Din donerade artikel har lånats ut
+  overdue:
+    subject: En artikel är försenad
+    title: Vänligen lämna tillbaka den här artikeln
+  th_cost: Kostnad
+  login_now_button: Logga in nu
+  checkin:
+    subject: Dina artiklar har checkats in
+    title: Din artikel har checkats in
+    checked_in_at: Checkad in på
+    checked_in_by: Checkad in av
 ...
