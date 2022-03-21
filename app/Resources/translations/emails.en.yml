@@ -34,8 +34,8 @@ le_email:
     subject: Pick up your reservation %loanId% soon
     title: Your item(s) are due back soon
   reservation_reminder:
-    subject: Pick up your reservation tomorrow
-    title: Pick up your reservation tomorrow
+    subject: Pick up your reservation on %dueOutAt%
+    title: Pick up your reservation on %dueOutAt%
   membership_expired:
     subject: Your membership has expired
     title: Your membership has expired

@@ -177,8 +177,12 @@ class EmailReservationReminders
                                 }
 
                                 if (!$subject = $this->settings->getSettingValue('email_reservation_reminder_subject')) {
-                                    $subject = $this->container->get('translator')->trans('le_email.reservation_reminder.subject',
-                                        ['loanId' => $loan->getId()],
+                                    $subject = $this->container->get('translator')->trans(
+                                        'le_email.reservation_reminder.subject',
+                                        [
+                                            'loanId'     => $loan->getId(),
+                                            '%dueOutAt%' => $loan->getTimeOut()->format('Y-m-d')
+                                        ],
                                         'emails', $contact->getLocale()
                                     );
                                 }
