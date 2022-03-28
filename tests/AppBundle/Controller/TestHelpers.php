@@ -225,14 +225,14 @@ class TestHelpers extends AuthenticatedControllerTest
     }
 
     /**
-     * @param Client $client
+     * @param  Client  $client
      * @param $contactId
-     * @param array $itemIds
-     * @param string $action
-     * @param string $fromDateOffset
-     * @param string $toDateOffset
-     * @param string $pickupTime
-     * @param string $returnTime
+     * @param  array  $itemIds
+     * @param  string  $action
+     * @param  string  $fromDateOffset
+     * @param  string  $toDateOffset
+     * @param  string  $pickupTime
+     * @param  string  $returnTime
      * @return int
      */
     public function createLoan(
@@ -281,6 +281,56 @@ class TestHelpers extends AuthenticatedControllerTest
             'action'  => $action,
             'row_fee' => $fees
         ];
+        $client->request('POST', '/basket/confirm', $params);
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        $crawler = $client->followRedirect();
+
+        $loanId = (int)$crawler->filter('#loanIdForTest')->attr('value');
+        $this->assertGreaterThan(0, $loanId);
+
+        return $loanId;
+    }
+
+    /**
+     * @param  Client  $client
+     * @param  int  $stockItemId
+     * @param  string  $action
+     * @param  int  $quantity
+     * @return int
+     */
+    public function createBasket(
+        Client $client,
+        int $stockItemId,
+        int $quantity,
+        string $action = 'checkout'
+    ) {
+        $siteId = 1;
+
+        $params = [
+            'add_qty'       => [
+                $siteId => $quantity
+            ],
+            'add-to-basket' => 'basket',
+            'loan_id'       => null
+        ];
+
+        $client->request('POST', '/basket/add-stock/' . $stockItemId, $params);
+
+        $this->assertTrue($client->getResponse() instanceof RedirectResponse);
+        $crawler = $client->followRedirect();
+
+        $this->assertContains('basketDetails', $crawler->html());
+        $this->assertContains("product/{$stockItemId}", $crawler->html()); // contains the item
+
+
+        // Confirm the loan (will be set to pending)
+        $params = [
+            'action'  => $action,
+            'row_fee' => [
+                $stockItemId => 3
+            ]
+        ];
+
         $client->request('POST', '/basket/confirm', $params);
         $this->assertTrue($client->getResponse() instanceof RedirectResponse);
         $crawler = $client->followRedirect();
@@ -365,9 +415,10 @@ class TestHelpers extends AuthenticatedControllerTest
     /**
      * @param  Client  $client
      * @param $loanId
+     * @param $returnHtml
      * @return bool
      */
-    public function checkoutLoan(Client $client, $loanId)
+    public function checkoutLoan(Client $client, $loanId, $returnHtml = false)
     {
         $crawler = $client->request('GET', '/loan/' . $loanId);
         $this->assertContains("loan/{$loanId}", $crawler->html()); // in the link to delete the pending loan
@@ -377,7 +428,12 @@ class TestHelpers extends AuthenticatedControllerTest
             'loan_check_out[paymentMethod]' => 1,
             'loan_check_out[paymentAmount]' => 16.00,
         ), 'POST');
-        $client->submit($form);
+        $crawler = $client->submit($form);
+
+        if ($returnHtml) {
+            return $crawler->html();
+        }
+
         $this->assertTrue($client->getResponse() instanceof RedirectResponse);
 
         return true;
@@ -404,6 +460,38 @@ class TestHelpers extends AuthenticatedControllerTest
 
         $loanStatusText = $crawler->filter('#loanStatusLabel')->text();
         $this->assertEquals($loanStatusText, 'Closed');
+
+        return true;
+    }
+
+    public function updateLoanRowQuantity(Client $client, $loanId, $stockItemId, $quantity)
+    {
+        $kernel = $this->bootKernel();
+
+        /** @var \Doctrine\ORM\EntityManager $em */
+        $em = $kernel->getContainer()->get('doctrine')->getManager();
+
+        $sql = '
+            update
+                loan_row
+                
+            set
+                product_quantity = :quantity
+
+            where
+                loan_id = :loanId
+                and inventory_item_id = :inventory_item_id
+        ';
+
+        $sqlParams = [
+            ':quantity'          => $quantity,
+            ':loanId'            => $loanId,
+            ':inventory_item_id' => $stockItemId
+        ];
+
+        $stmt = $em->getConnection()->prepare($sql);
+
+        $stmt->execute($sqlParams);
 
         return true;
     }
@@ -566,11 +654,11 @@ class TestHelpers extends AuthenticatedControllerTest
         $this->assertContains('Add custom hours for', $crawler->html());
 
         $form = $crawler->filter('form[name="opening_hours"]')->form(array(
-            'opening_hours[date]'           => $date->format('D M d Y'),
-            'opening_hours[type]'           => ($opened ? 'o' : 'c'),
-            'opening_hours[timeFrom]'       => $timeFrom,
-            'opening_hours[timeTo]'         => $timeTo,
-            'opening_hours[site]'           => $siteID
+            'opening_hours[date]'     => $date->format('D M d Y'),
+            'opening_hours[type]'     => ($opened ? 'o' : 'c'),
+            'opening_hours[timeFrom]' => $timeFrom,
+            'opening_hours[timeTo]'   => $timeTo,
+            'opening_hours[site]'     => $siteID
         ), 'POST');
 
         $client->submit($form);

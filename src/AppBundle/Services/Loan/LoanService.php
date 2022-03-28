@@ -162,24 +162,22 @@ class LoanService
      */
     public function countLoans($status = '', \DateTime $dateTo = null)
     {
-        $repository = $this->em->getRepository('AppBundle:Loan');
-        $builder = $repository->createQueryBuilder('l');
-        $builder->add('select', 'COUNT(l) AS qty');
-        if ($status) {
-            $builder->andWhere('l.status LIKE :status');
-            $builder->setParameter('status', '%'.$status.'%');
-        }
-        if ($dateTo) {
-            $builder->andWhere("l.createdAt < :dateTo");
-            $builder->setParameter('dateTo', $dateTo->format("Y-m-01"));
-        }
-        $query = $builder->getQuery();
-        if ( $results = $query->getResult() ) {
-            $total = $results[0]['qty'];
-        } else {
-            $total = 0;
-        }
-        return $total;
+        $repository = $this->em->getRepository('AppBundle:LoanRow');
+
+        $builder = $repository->createQueryBuilder('lr');
+        $builder->select('lr');
+        $builder->leftJoin('lr.loan', 'l');
+        $builder->leftJoin('l.contact', 'c');
+        $builder->leftJoin('lr.inventoryItem', 'i');
+
+        $builder->andWhere('l.status = :status');
+        $builder->setParameter('status', $status);
+
+        // excludeStockItems
+        $builder->andWhere("i.itemType != 'stock'");
+
+        $queryTotalResults = $builder->getQuery();
+        return count($queryTotalResults->getResult());
     }
 
     /**

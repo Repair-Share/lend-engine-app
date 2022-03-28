@@ -8,6 +8,8 @@ use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\Payment;
 use AppBundle\Form\Type\LoanCheckOutType;
+use AppBundle\Helpers\UnitTestHelper;
+use phpDocumentor\Reflection\Types\True_;
 use Postmark\Models\PostmarkAttachment;
 use Postmark\PostmarkClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -117,6 +119,23 @@ class LoanController extends Controller
 
             // pre-check before we start creating payments
             if (!$checkoutService->validateCheckout($loan)) {
+
+                // Return error only for the unit test because it doesn't support flash bags
+                if (UnitTestHelper::isUnitTestEnvironment() && UnitTestHelper::isCommandLine()) {
+
+                    $message = "We can't check out:" . PHP_EOL;
+
+                    foreach ($checkoutService->errors as $error) {
+                        $message .= $error . PHP_EOL;
+                    }
+
+                    return $this->render('unit_test/display_message.html.twig', [
+                            'message' => $message
+                        ]
+                    );
+
+                }
+
                 $this->addFlash('error', "We can't check out:");
                 foreach ($checkoutService->errors AS $error) {
                     $this->addFlash('error', $error);

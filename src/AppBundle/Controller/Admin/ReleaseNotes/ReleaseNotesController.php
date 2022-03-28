@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '188' => 'Loan counter values at the top bar don\'t match with the loan\'s list filtering',
             '187' => 'Email wording changes',
             '185' => 'Rollbar 184: Call to a member function getSite() on null',
             '183' => 'Check in email does not translate title or subject (Dutch)',
