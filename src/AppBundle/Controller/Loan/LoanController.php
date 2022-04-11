@@ -117,32 +117,6 @@ class LoanController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // pre-check before we start creating payments
-            if (!$checkoutService->validateCheckout($loan)) {
-
-                // Return error only for the unit test because it doesn't support flash bags
-                if (UnitTestHelper::isUnitTestEnvironment() && UnitTestHelper::isCommandLine()) {
-
-                    $message = "We can't check out:" . PHP_EOL;
-
-                    foreach ($checkoutService->errors as $error) {
-                        $message .= $error . PHP_EOL;
-                    }
-
-                    return $this->render('unit_test/display_message.html.twig', [
-                            'message' => $message
-                        ]
-                    );
-
-                }
-
-                $this->addFlash('error', "We can't check out:");
-                foreach ($checkoutService->errors AS $error) {
-                    $this->addFlash('error', $error);
-                }
-                return $this->redirectToRoute('public_loan', ['loanId' => $loan->getId()]);
-            }
-
             // Until we have a fail, assume payment is OK
             $paymentOk = true;
             $cardDetails = null;
@@ -238,6 +212,32 @@ class LoanController extends Controller
                     }
                 }
 
+            }
+
+            // pre-check before we start creating payments
+            if (!$checkoutService->validateCheckout($loan)) {
+
+                // Return error only for the unit test because it doesn't support flash bags
+                if (UnitTestHelper::isUnitTestEnvironment() && UnitTestHelper::isCommandLine()) {
+
+                    $message = "We can't check out:" . PHP_EOL;
+
+                    foreach ($checkoutService->errors as $error) {
+                        $message .= $error . PHP_EOL;
+                    }
+
+                    return $this->render('unit_test/display_message.html.twig', [
+                            'message' => $message
+                        ]
+                    );
+
+                }
+
+                $this->addFlash('error', "We can't check out:");
+                foreach ($checkoutService->errors AS $error) {
+                    $this->addFlash('error', $error);
+                }
+                return $this->redirectToRoute('public_loan', ['loanId' => $loan->getId()]);
             }
 
             // We either have a successful charge, or no payment amount
