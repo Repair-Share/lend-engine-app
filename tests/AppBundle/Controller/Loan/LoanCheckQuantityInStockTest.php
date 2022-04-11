@@ -48,7 +48,7 @@ class LoanCheckQuantityInStockTest extends AuthenticatedControllerTest
             true
         );
 
-        $this->assertContains('not in stock', $html);
+        $this->assertContains('Not enough stock of', $html);
 
         // Step 5: Update the loan quantity to 1
         $this->helpers->updateLoanRowQuantity(
@@ -65,7 +65,7 @@ class LoanCheckQuantityInStockTest extends AuthenticatedControllerTest
             true
         );
 
-        $this->assertNotContains('not in stock', $html);
+        $this->assertContains('Redirecting to /loan/' . $loanId, $html);
 
     }
 }
