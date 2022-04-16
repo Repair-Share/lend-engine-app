@@ -246,15 +246,7 @@ class EmailTestController extends Controller
                 );
 
                 if (!$subject = $this->get('settings')->getSettingValue('email_reservation_reminder_subject')) {
-
-                    $subject = $this->container->get('translator')->trans(
-                        'le_email.reservation_reminder.subject',
-                        [
-                            '%dueOutAt%' => date('Y-m-d')
-                        ],
-                        'emails', $locale
-                    );
-
+                    $subject = "Pick up your reservation tomorrow";
                 }
 
                 break;
