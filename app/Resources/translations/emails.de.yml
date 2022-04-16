@@ -1,72 +1,46 @@
-# Loco yaml export: Symfony YAML object
+# Loco yaml export: Simple YAML object
 # Project: Lend Engine
 # Release: Working copy
 # Locale: de-DE, German (Germany)
 # Tagged: Emails
-# Exported by: Andor Tamas
-# Exported at: Mon, 21 Mar 2022 13:34:41 +0100
+# Status: Translated
+# Exported by: Chris
+# Exported at: Wed, 27 Nov 2019 10:07:11 +0000
 ---
-le_email:
-  item_description: Beschreibung
-  item_contains: Enthält
-  see_attachment: Siehe Anhang
-  return_sites: Bitte geben Sie diesen Artikel an den folgenden Ort zurück
-  th_item: Gegenstand
-  th_fee: Gebühr
-  th_due_back: Fällg am
-  url: Anmelde URL
-  email: E-Mail
-  password: Passwort
-  assign:
-    title: Dir wurde ein Gegenstand zugewiesen
-    message: '%firstName%, Ihnen wurde vom Element "%itemName%" der Befehl "%iassignorName%" zugewiesen.'
-    added_note: fügte eine Notiz hinzu
-    all_items: Alle Artikel anzeigen, die Ihnen zugewiesen wurden
-    current_location: Aktueller Standort
-  checkout:
-    subject: Ihre Darlehensinformationen
-    title: Ihre Darlehensinformationen
-  extend:
-    subject: Ihr Rückgabedatum für ihre Ausleihe wurde aktualisiert
-    title: Wir haben das Rückgabedatum des Artikels geändert
-    due_back: ist jetzt fällig am
-  reminder:
-    subject: Deine Leihe %loanId% ist morgen fällig
-    title: Deine Gegenstände sind bald fällig.
-  reservation_reminder:
-    subject: Hol deine Reservierung morgen ab.
-    title: Hol deine Reservierung morgen ab
-  membership_expired:
-    subject: Deine Mitgliedschaft ist abgelaufen
-    title: 'Deine Mitgliedschaft ist abgelaufen. '
-    renew_button: Hier klicken um die Mitgliedschaft zu erneuern
-  login_details:
-    subject: Ihre Anmeldedaten für %accountName%
-    title: Anmeldedaten
-    message: Hier sind Ihre Zugangsdaten für unser Leihsystem
-  new_password:
-    title: Dein neues Passwort
-    message: Dies ist Ihr neues Passwort für %accountName%
-  reservation_confirm:
-    subject: Deine Reservierungsbestätigung
-    title: Reservierungsbestätigung
-  site_welcome:
-    subject: Willkommen bei %accountName%
-    title: Willkommen
-  login_to_view_this_loan: Leihe online anschauen
-  booking_confirmation:
-    title: Buchungsbestätigung
-    subject: Buchungsbestätigung
-  donor_notify:
-    subject: Dein gespendeter Gegenstand ist ausgeliehen.
-  overdue:
-    subject: Der Gegenstand ist überfällig
-    title: Bitte diesen Gegenstand zurückbringen
-  th_cost: ""
-  login_now_button: ""
-  checkin:
-    subject: ""
-    title: ""
-    checked_in_at: ""
-    checked_in_by: ""
+le_email.item_description: Beschreibung
+le_email.item_contains: Enthält
+le_email.see_attachment: Siehe Anhang
+le_email.return_sites: Bitte geben Sie diesen Artikel an den folgenden Ort zurück
+le_email.th_item: Gegenstand
+le_email.th_fee: Gebühr
+le_email.th_due_back: Fällg am
+le_email.url: Anmelde URL
+le_email.email: E-Mail
+le_email.password: Passwort
+le_email.assign.title: Dir wurde ein Gegenstand zugewiesen
+le_email.assign.message: '%firstName%, Ihnen wurde vom Element "%itemName%" der Befehl "%iassignorName%" zugewiesen.'
+le_email.assign.added_note: fügte eine Notiz hinzu
+le_email.assign.all_items: Alle Artikel anzeigen, die Ihnen zugewiesen wurden
+le_email.assign.current_location: Aktueller Standort
+le_email.checkout.subject: Ihre Darlehensinformationen
+le_email.checkout.title: Ihre Darlehensinformationen
+le_email.extend.subject: Ihr Rückgabedatum für ihre Ausleihe wurde aktualisiert
+le_email.extend.title: Wir haben das Rückgabedatum des Artikels geändert
+le_email.extend.due_back: ist jetzt fällig am
+le_email.reminder.subject: Deine Leihe leihid ist morgen fällig
+le_email.reminder.title: Deine Gegenstände sind bald fällig.
+le_email.reservation_reminder.subject: Hol deine Reservierung morgen ab.
+le_email.reservation_reminder.title: Hol deine Reservierung morgen ab
+le_email.membership_expired.subject: Deine Mitgliedschaft ist abgelaufen
+le_email.membership_expired.title: 'Deine Mitgliedschaft ist abgelaufen. '
+le_email.login_details.subject: Ihre Anmeldedaten für %accountName%
+le_email.login_details.title: Anmeldedaten
+le_email.login_details.message: Hier sind Ihre Zugangsdaten für unser Leihsystem
+le_email.new_password.title: Dein neues Passwort
+le_email.new_password.message: Dies ist Ihr neues Passwort für %accountName%
+le_email.reservation_confirm.subject: Deine Reservierungsbestätigung
+le_email.reservation_confirm.title: Reservierungsbestätigung
+le_email.site_welcome.subject: Willkommen bei %accountName%
+le_email.site_welcome.title: Willkommen
+le_email.login_to_view_this_loan: Leihe online anschauen
 ...

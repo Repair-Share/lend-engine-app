@@ -1,72 +1,44 @@
-# Loco yaml export: Symfony YAML object
+# Loco yaml export: Simple YAML object
 # Project: Lend Engine
 # Release: Working copy
 # Locale: ro-RO, Romanian (Romania)
 # Tagged: Emails
 # Exported by: Andor Tamas
-# Exported at: Mon, 21 Mar 2022 13:36:04 +0100
+# Exported at: Mon, 28 Feb 2022 15:59:27 +0100
 ---
-le_email:
-  item_description: Descriere
-  item_contains: Conține
-  see_attachment: Vezi atașamentul
-  return_sites: Vă rugăm returnați acest articol la următoarea locație (următoarele locații)
-  th_item: Articol
-  th_fee: Taxă
-  th_due_back: Scadent la
-  url: Link-ul de autentificare
-  email: Email
-  password: Parola
-  assign:
-    title: Ți s-a atribuit un articol
-    message: '%firstName%, ți s-a atribuit articolul "%itemName%" de către %assignorName%.'
-    added_note: a adăugat de asemenea o notă
-    all_items: Vezi toate articolele atribuite ție
-    current_location: Locația curentă
-  checkout:
-    subject: Informații despre împrumuturile tale
-    title: Informații despre împrumuturile tale
-  extend:
-    subject: Data înapoierii articolului împrumutat a fost actualizată
-    title: Am modificat data returnării pentru un articol
-    due_back: este din acest moment întârziat ca scadență
-  reminder:
-    subject: Împrumutul tău %loanId% are ca scadență data de mâine.
-    title: Articolul (articolele) împrumutate de tine au scadența în curând
-  reservation_reminder:
-    subject: Ridică rezervarea făcută de tine mâine
-    title: Ridică rezervarea făcută de tine mâine
-  membership_expired:
-    subject: Drepturile tale de membru au expirat
-    title: Drepturile tale de membru au expirat
-    renew_button: ""
-  login_details:
-    subject: Detaliile tale de autentificare pentru %accountName%
-    title: Detalii de autentificare
-    message: Detaliile tale de autentificare pentru platforma noastră de împrumut
-  new_password:
-    title: Noua ta parolă
-    message: Aceasta este noua parola pentru %accountName%
-  reservation_confirm:
-    subject: Confirmarea rezervării tale
-    title: Confirmare de rezervare
-  site_welcome:
-    subject: Bun venit %accountName%
-    title: Bine ai venit!
-  login_to_view_this_loan: ""
-  booking_confirmation:
-    title: ""
-    subject: ""
-  donor_notify:
-    subject: ""
-  overdue:
-    subject: ""
-    title: ""
-  th_cost: ""
-  login_now_button: ""
-  checkin:
-    subject: ""
-    title: ""
-    checked_in_at: ""
-    checked_in_by: ""
+le_email.item_description: Descriere
+le_email.item_contains: Conține
+le_email.see_attachment: Vezi atașamentul
+le_email.return_sites: Vă rugăm returnați acest articol la următoarea locație (următoarele locații)
+le_email.th_item: Articol
+le_email.th_fee: Taxă
+le_email.th_due_back: Scadent la
+le_email.url: Link-ul de autentificare
+le_email.email: Email
+le_email.password: Parola
+le_email.assign.title: Ți s-a atribuit un articol
+le_email.assign.message: '%firstName%, ți s-a atribuit articolul "%itemName%" de către %assignorName%.'
+le_email.assign.added_note: a adăugat de asemenea o notă
+le_email.assign.all_items: Vezi toate articolele atribuite ție
+le_email.assign.current_location: Locația curentă
+le_email.checkout.subject: Informații despre împrumuturile tale
+le_email.checkout.title: Informații despre împrumuturile tale
+le_email.extend.subject: Data înapoierii articolului împrumutat a fost actualizată
+le_email.extend.title: Am modificat data returnării pentru un articol
+le_email.extend.due_back: este din acest moment întârziat ca scadență
+le_email.reminder.subject: Împrumutul tău loanId are ca scadență data de mâine.
+le_email.reminder.title: Articolul (articolele) împrumutate de tine au scadența în curând
+le_email.reservation_reminder.subject: Ridică rezervarea făcută de tine mâine
+le_email.reservation_reminder.title: Ridică rezervarea făcută de tine mâine
+le_email.membership_expired.subject: Drepturile tale de membru au expirat
+le_email.membership_expired.title: Drepturile tale de membru au expirat
+le_email.login_details.subject: Detaliile tale de autentificare pentru %accountName%
+le_email.login_details.title: Detalii de autentificare
+le_email.login_details.message: Detaliile tale de autentificare pentru platforma noastră de împrumut
+le_email.new_password.title: Noua ta parolă
+le_email.new_password.message: Aceasta este noua parola pentru %accountName%
+le_email.reservation_confirm.subject: Confirmarea rezervării tale
+le_email.reservation_confirm.title: Confirmare de rezervare
+le_email.site_welcome.subject: Bun venit %accountName%
+le_email.site_welcome.title: Bine ai venit!
 ...

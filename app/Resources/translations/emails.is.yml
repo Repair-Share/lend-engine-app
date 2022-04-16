@@ -1,72 +1,44 @@
-# Loco yaml export: Symfony YAML object
+# Loco yaml export: Simple YAML object
 # Project: Lend Engine
 # Release: Working copy
 # Locale: is-IS, Icelandic (Iceland)
 # Tagged: Emails
 # Exported by: Andor Tamas
-# Exported at: Mon, 21 Mar 2022 13:35:37 +0100
+# Exported at: Mon, 28 Feb 2022 15:52:04 +0100
 ---
-le_email:
-  item_description: Lýsing
-  item_contains: Innhald
-  see_attachment: Sjá viðhengi
-  return_sites: Vinsamlegast skilaðu þessum hlut á eftirfarandi stað/i
-  th_item: Hlutur
-  th_fee: Gjald
-  th_due_back: Skiladagsetning
-  url: innskráning URL
-  email: Netfang
-  password: Lykilorð
-  assign:
-    title: Hlutur hefur verið skráður á þig
-    message: '%firstName%, eftirfarandi hefur verið skráð á þig "%itemName%" af %assignorName%.'
-    added_note: bætti einnig við athugasemd
-    all_items: Sjá alla hluti sem eru skráðir á þig
-    current_location: Núverandi staðsetning
-  checkout:
-    subject: Lánaupplýsingar þínar
-    title: Lánaupplýsingar þínar
-  extend:
-    subject: Skilafrestur hefur verið uppfærður
-    title: Við höfum breytt skilafresti á hlut
-    due_back: skiladagsetning er núna
-  reminder:
-    subject: Skilafrestur á %loanId% rennur út á morgun
-    title: Nú styttist í að skila þurfi hlutum sem þú ert með í láni
-  reservation_reminder:
-    subject: Þú getur sótt pöntun þína á morgun
-    title: Þú getur sótt pöntun þína á morgun
-  membership_expired:
-    subject: Aðild þín hefur runnið út
-    title: Aðild þín hefur runnið út
-    renew_button: ""
-  login_details:
-    subject: Innskráningar upplýsingar fyrir %accountName%
-    title: Innskráningar upplýsingar
-    message: Hér eru innskráningar upplýsingar fyrir útláns kerfið okkar
-  new_password:
-    title: Nýtt lykilorð
-    message: Þetta er nýja lykilorðið þitt fyrir %accountName%
-  reservation_confirm:
-    subject: Staðfesting á pöntun þinni
-    title: Pöntun staðfest
-  site_welcome:
-    subject: ' %accountName% býður þig velkomin/n'
-    title: Velkomin/n
-  login_to_view_this_loan: ""
-  booking_confirmation:
-    title: ""
-    subject: ""
-  donor_notify:
-    subject: ""
-  overdue:
-    subject: ""
-    title: ""
-  th_cost: ""
-  login_now_button: ""
-  checkin:
-    subject: ""
-    title: ""
-    checked_in_at: ""
-    checked_in_by: ""
+le_email.item_description: Lýsing
+le_email.item_contains: Innhald
+le_email.see_attachment: Sjá viðhengi
+le_email.return_sites: Vinsamlegast skilaðu þessum hlut á eftirfarandi stað/i
+le_email.th_item: Hlutur
+le_email.th_fee: Gjald
+le_email.th_due_back: Skiladagsetning
+le_email.url: innskráning URL
+le_email.email: Netfang
+le_email.password: Lykilorð
+le_email.assign.title: Hlutur hefur verið skráður á þig
+le_email.assign.message: '%firstName%, eftirfarandi hefur verið skráð á þig "%itemName%" af %assignorName%.'
+le_email.assign.added_note: bætti einnig við athugasemd
+le_email.assign.all_items: Sjá alla hluti sem eru skráðir á þig
+le_email.assign.current_location: Núverandi staðsetning
+le_email.checkout.subject: Lánaupplýsingar þínar
+le_email.checkout.title: Lánaupplýsingar þínar
+le_email.extend.subject: Skilafrestur hefur verið uppfærður
+le_email.extend.title: Við höfum breytt skilafresti á hlut
+le_email.extend.due_back: skiladagsetning er núna
+le_email.reminder.subject: Skilafrestur á loanId rennur út á morgun
+le_email.reminder.title: Nú styttist í að skila þurfi hlutum sem þú ert með í láni
+le_email.reservation_reminder.subject: Þú getur sótt pöntun þína á morgun
+le_email.reservation_reminder.title: Þú getur sótt pöntun þína á morgun
+le_email.membership_expired.subject: Aðild þín hefur runnið út
+le_email.membership_expired.title: Aðild þín hefur runnið út
+le_email.login_details.subject: Innskráningar upplýsingar fyrir %accountName%
+le_email.login_details.title: Innskráningar upplýsingar
+le_email.login_details.message: Hér eru innskráningar upplýsingar fyrir útláns kerfið okkar
+le_email.new_password.title: Nýtt lykilorð
+le_email.new_password.message: Þetta er nýja lykilorðið þitt fyrir %accountName%
+le_email.reservation_confirm.subject: Staðfesting á pöntun þinni
+le_email.reservation_confirm.title: Pöntun staðfest
+le_email.site_welcome.subject: ' %accountName% býður þig velkomin/n'
+le_email.site_welcome.title: Velkomin/n
 ...
