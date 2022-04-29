@@ -232,6 +232,17 @@ then the user will also be shown a button to continue to choose a membership.',
             ]
         ));
 
+        $builder->add('hide_ga', ToggleType::class, array(
+            'expanded' => true,
+            'label' => 'Disable core Lend Engine Google Analytics',
+            'data' => (int)$dbData['hide_ga'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => "For GDPR compliance."
+            ]
+        ));
+
         $builder->add('site_allow_registration', ToggleType::class, array(
             'expanded' => true,
             'label' => 'Allow member registration via the public website',

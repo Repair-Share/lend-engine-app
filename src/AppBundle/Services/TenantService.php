@@ -534,6 +534,11 @@ class TenantService
         return $this->billingService->isEnabled($this->getPlan(), $feature);
     }
 
+    public function getHideGA()
+    {
+        return (int)$this->settings->getSettingValue('hide_ga');
+    }
+
     /**
      * @return bool|string
      */

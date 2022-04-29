@@ -269,6 +269,7 @@ class SettingsService
             'show_events_online',
             'self_checkout',
             'self_extend',
+            'hide_ga',
 
             // Web page header text
             'page_event_header',
