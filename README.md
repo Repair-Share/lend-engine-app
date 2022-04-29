@@ -60,6 +60,20 @@ or the account domain matches the URL host.
 
 Tenants are added to the `_core.account` table.
 
+**Asset management**
+
+We use Assetic to bundle JS and CSS files. Each time a JS/CSS file is changed, you'll 
+need to re-bundle using :
+
+```php bin/console assetic:dump --env=prod --no-debug```
+
+Node is needed to run assetic, so you might need to install that first if you don't already have it.
+You may also need to `npm install uglify-js -g`
+
+The resource files bundles into the combined asset are in
+
+```src/AppBundle/Resources/```
+
 **Environment variables required**
 
 ```
