@@ -68,6 +68,7 @@ LE_SERVER_NAME=dev/staging/prod etc
 SYMFONY__POSTMARK_API_KEY=xxx
 DEV_DB_USER=xxx
 DEV_DB_PASS=xxx
+CLOUDAMQP_URL=xxx
 ```
 
 **Required to upload images to an Amazon AWS bucket**
