@@ -21,6 +21,7 @@
 {{ site_nav.render()|raw }}
 
 <script>
+    {% if app.request.get('section') %}
     $(document).ready(function(){
         $("#{{ app.request.get('section') }}").collapse("show");
         window.setTimeout(setIcons, 400);
@@ -28,6 +29,7 @@
             window.setTimeout(setIcons, 400);
         });
     });
+    {% endif %}
 
     function setIcons() {
         $('ul.menu-child').each(function() {
