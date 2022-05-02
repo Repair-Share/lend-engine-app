@@ -8,6 +8,11 @@ parameters:
 
 services:
 
+    ## Register EventListener onKernelResponse
+    AppBundle\EventListener\RequestListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
     ## RABBITMQ / QUEUE RELATED ##
 
     AppBundle\Services\Queue\MailQueueProducer: '@old_sound_rabbit_mq.mail_queue_producer'
