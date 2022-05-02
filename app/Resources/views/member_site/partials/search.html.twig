@@ -1,7 +1,7 @@
 {% trans_default_domain 'member_site' %}
 
 <div id="search-box">
-    <form role="search" action="{{ path('public_products') }}">
+    <form method="get" role="search" action="{{ path('public_products') }}">
         <div class="input-group">
             <input type="text" name="search" id="search-text" class="form-control" value="{{ app.request.get('search') }}"
                    placeholder="{% trans %}public_misc.search_items{% endtrans %} ...">
