@@ -24,5 +24,31 @@ class RequestListener
          * requesting code from the given origin.
          */
         $response->headers->set('Access-Control-Allow-Origin', '<origin>');
+
+        /*
+         * The new Content-Security-Policy HTTP response header helps you reduce XSS risks on modern browsers by declaring,
+         * which dynamic resources are allowed to load.
+         * https://content-security-policy.com/
+         *
+         * default-src: The default policy for fetching resources such as JavaScript, Images, CSS, Fonts, AJAX requests,
+         * Frames, HTML5 Media
+         * script-src: Defines valid sources of JavaScript.
+         */
+        $allowedContents = [
+            '*.google-analytics.com',
+            '*.googletagmanager.com',
+            '*.googleapis.com',
+            'js.stripe.com',
+            'cdnjs.cloudflare.com',
+            '*.bootstrapcdn.com',
+            '*.fontawesome.com',
+            'code.ionicframework.com'
+        ];
+
+        $response->headers->set('Content-Security-Policy', "default-src 'self'");
+        $response->headers->set(
+            'Content-Security-Policy',
+            "script-src 'self' 'unsafe-inline' " . implode(' ', $allowedContents)
+        );
     }
 }
