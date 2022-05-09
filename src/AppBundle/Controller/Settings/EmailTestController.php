@@ -207,6 +207,7 @@ class EmailTestController extends Controller
                     'emails/loan_reminder.html.twig',
                     array(
                         'dueDate' => new \DateTime(),
+                        'dueDateFormatted'=>date('d F Y g:i a'),
                         'items' => $items,
                         'user_locale' => $locale,
                         'tenant'       => $tenant,
