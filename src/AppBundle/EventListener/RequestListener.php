@@ -40,6 +40,7 @@ class RequestListener
             '*.googleapis.com',
             'js.stripe.com',
             'cdnjs.cloudflare.com',
+            '*.cloudfront.net',
             '*.bootstrapcdn.com',
             '*.fontawesome.com',
             'code.ionicframework.com'
