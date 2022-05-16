@@ -43,7 +43,8 @@ class RequestListener
             '*.cloudfront.net',
             '*.bootstrapcdn.com',
             '*.fontawesome.com',
-            'code.ionicframework.com'
+            'code.ionicframework.com',
+            '*.rollbar.com'
         ];
 
         $response->headers->set(
