@@ -46,10 +46,9 @@ class RequestListener
             'code.ionicframework.com'
         ];
 
-        $response->headers->set('Content-Security-Policy', "default-src 'self'");
         $response->headers->set(
             'Content-Security-Policy',
-            "script-src 'self' 'unsafe-inline' " . implode(' ', $allowedContents)
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' " . implode(' ', $allowedContents)
         );
     }
 }
