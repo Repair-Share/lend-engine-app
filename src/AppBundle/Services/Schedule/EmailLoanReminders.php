@@ -187,7 +187,7 @@ class EmailLoanReminders
                                     }
 
                                     $subject = $this->container->get('translator')->trans('le_email.reminder.subject', [
-                                        'loanId' => $loan->getId()],
+                                        '%loanId%' => $loan->getId()],
                                         'emails', $contact->getLocale()
                                     );
 

@@ -1,57 +1,72 @@
-# Loco yaml export: Simple YAML object
+# Loco yaml export: Symfony YAML object
 # Project: Lend Engine
 # Release: Working copy
 # Locale: sl-SI, Slovenščina (Slovenia)
 # Tagged: Emails
 # Exported by: Andor Tamas
-# Exported at: Mon, 28 Feb 2022 16:01:36 +0100
+# Exported at: Mon, 16 May 2022 13:49:49 +0200
 ---
-le_email.item_description: Opis
-le_email.item_contains: Vsebuje
-le_email.see_attachment: Ogled datoteke
-le_email.return_sites: 'Prosimo, da predmet vrnete v:'
-le_email.th_item: Predmet
-le_email.th_fee: Strošek
-le_email.th_due_back: Vračilo
-le_email.url: Povezava za prijavo
-le_email.email: Elektronska pošta
-le_email.password: Geslo
-le_email.assign.title: Dodeljeni so vam bili predmeti
-le_email.assign.message: '%firstName%, %assignorName% vam je dodelil sledeče predmete: %itemName%'
-le_email.assign.added_note: je dodal še sporočilo
-le_email.assign.all_items: Ogled vseh dodeljenih predmetov
-le_email.assign.current_location: Trenutna lokacija
-le_email.checkout.subject: Podatki o izposoji
-le_email.checkout.title: Podatki o izposoji
-le_email.extend.subject: Datum vračila je bil posodobljen.
-le_email.extend.title: Spremenili smo datum vračila predmeta.
-le_email.extend.due_back: je sedaj treba vrniti
-le_email.reminder.subject: Vaša izposoja loanId be kmalu potekla
-le_email.reminder.title: Vaše predmete bo kmalu treba vrniti
-le_email.reservation_reminder.subject: Jutri prevzemite vaše rezervirane predmete
-le_email.reservation_reminder.title: Jutri prevzemite vaše rezervirane predmete
-le_email.membership_expired.subject: Vaša uporabnina je pretekla.
-le_email.membership_expired.title: Vaša uporabnina je pretekla.
-le_email.login_details.subject: Vpisni podatki za %accountName%
-le_email.login_details.title: Vpisni podatki
-le_email.login_details.message: Tukaj so vaši vpisni podatki za prijavo v naš sistem za izposojo
-le_email.new_password.title: Vaše novo geslo
-le_email.new_password.message: To je vaše novo geslo za %accountName%
-le_email.reservation_confirm.subject: Potrditev rezervacije
-le_email.reservation_confirm.title: Potrditev rezervacije
-le_email.site_welcome.subject: Dobrodošli v %accountName%
-le_email.site_welcome.title: Dobrodošli
-le_email.login_to_view_this_loan: Ogled izposoje na spletu
-le_email.booking_confirmation.title: Potrditev rezervacije dogodka
-le_email.booking_confirmation.subject: 'Potrdilo o rezervaciji dogodka: '
-le_email.donor_notify.subject: Predmet, ki ste ga donirali v knjižnico reči, je bil pravkar izposojen.
-le_email.overdue.subject: Rok izposoje je pretekel.
-le_email.overdue.title: Prosimo, da predmet čimprej vrnete.
-le_email.membership_expired.renew_button: Obnovitev uporabnine
-le_email.th_cost: Cena
-le_email.login_now_button: Prijava
-le_email.checkin.subject: Predmet sprejet v skladišče
-le_email.checkin.title: Predmet sprejet v skladišče
-le_email.checkin.checked_in_at: Predmet prejet
-le_email.checkin.checked_in_by: Predmet sprejel
+le_email:
+  item_description: Opis
+  item_contains: Vsebuje
+  see_attachment: Ogled datoteke
+  return_sites: 'Prosimo, da predmet vrnete v:'
+  th_item: Predmet
+  th_fee: Strošek
+  th_due_back: Vračilo
+  url: Povezava za prijavo
+  email: Elektronska pošta
+  password: Geslo
+  assign:
+    title: Dodeljeni so vam bili predmeti
+    message: '%firstName%, %assignorName% vam je dodelil sledeče predmete: %itemName%'
+    added_note: je dodal še sporočilo
+    all_items: Ogled vseh dodeljenih predmetov
+    current_location: Trenutna lokacija
+  checkout:
+    subject: Podatki o izposoji
+    title: Podatki o izposoji
+  extend:
+    subject: Datum vračila je bil posodobljen.
+    title: Spremenili smo datum vračila predmeta.
+    due_back: je sedaj treba vrniti
+  reminder:
+    subject: Vaša izposoja %loanId% be kmalu potekla
+    title: Vaše predmete bo kmalu treba vrniti
+  reservation_reminder:
+    subject: Jutri prevzemite vaše rezervirane predmete
+    title: Jutri prevzemite vaše rezervirane predmete
+  membership_expired:
+    subject: Vaša uporabnina je pretekla.
+    title: Vaša uporabnina je pretekla.
+    renew_button: Obnovitev uporabnine
+  login_details:
+    subject: Vpisni podatki za %accountName%
+    title: Vpisni podatki
+    message: Tukaj so vaši vpisni podatki za prijavo v naš sistem za izposojo
+  new_password:
+    title: Vaše novo geslo
+    message: To je vaše novo geslo za %accountName%
+  reservation_confirm:
+    subject: Potrditev rezervacije
+    title: Potrditev rezervacije
+  site_welcome:
+    subject: Dobrodošli v %accountName%
+    title: Dobrodošli
+  login_to_view_this_loan: Ogled izposoje na spletu
+  booking_confirmation:
+    title: Potrditev rezervacije dogodka
+    subject: 'Potrdilo o rezervaciji dogodka: '
+  donor_notify:
+    subject: Predmet, ki ste ga donirali v knjižnico reči, je bil pravkar izposojen.
+  overdue:
+    subject: Rok izposoje je pretekel.
+    title: Prosimo, da predmet čimprej vrnete.
+  th_cost: Cena
+  login_now_button: Prijava
+  checkin:
+    subject: Predmet sprejet v skladišče
+    title: Predmet sprejet v skladišče
+    checked_in_at: Predmet prejet
+    checked_in_by: Predmet sprejel
 ...

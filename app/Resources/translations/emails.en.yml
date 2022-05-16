@@ -4,7 +4,7 @@
 # Locale: en-GB, English (UK)
 # Tagged: Emails
 # Exported by: Andor Tamas
-# Exported at: Mon, 28 Feb 2022 14:07:13 +0100
+# Exported at: Mon, 16 May 2022 13:56:23 +0200
 ---
 le_email:
   item_description: Description
@@ -31,7 +31,7 @@ le_email:
     title: We've changed the return date of an item
     due_back: is now due back on
   reminder:
-    subject: Pick up your reservation %loanId% soon
+    subject: Your loan %loanId% is due back soon
     title: Your item(s) are due back soon
   reservation_reminder:
     subject: Pick up your reservation tomorrow
