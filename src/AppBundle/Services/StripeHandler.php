@@ -350,6 +350,8 @@ class StripeHandler
         $tenant->setPlan(null);
         $tenant->setStatus(Tenant::STATUS_CANCEL);
         $tenant->setSubscriptionId(null);
+        $tenant->setStripeCustomerId(null);
+
         $this->em->persist($tenant);
         try {
             $this->em->flush($tenant);
