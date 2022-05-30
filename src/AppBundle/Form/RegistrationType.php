@@ -19,6 +19,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Blank;
 use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Length;
 
 class RegistrationType extends AbstractType
 {
@@ -140,7 +141,13 @@ class RegistrationType extends AbstractType
         $builder->add('countryIsoCode', CountryType::class, array(
             'label' => 'form.country',
             'required' => true,
-            'data' => $this->container->get('service.tenant')->getCountry()
+            'data' => $this->container->get('service.tenant')->getCountry(),
+            'constraints' => [
+                new Length([
+                    'groups' => ['AppBundleSiteRegistration'],
+                    'max'    => 3
+                ]),
+            ]
         ));
 
         $label = $translator->trans('public_registration.newsletter');
