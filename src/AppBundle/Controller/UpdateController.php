@@ -170,10 +170,10 @@ class UpdateController extends Controller
         /** @var \Doctrine\DBAL\Driver\PDOStatement $s */
         $tenantName = $tenant->getName();
 
-        $raw = "REPLACE INTO setting (setup_key, setup_value) VALUES ('org_name', ':tenantName')";
+        $raw = "REPLACE INTO setting (setup_key, setup_value) VALUES ('org_name', :tenantName)";
         $s = $db->prepare($raw);
         $s->execute([
-            'tenantName' => $tenantName
+            ':tenantName' => $tenantName
         ]);
 
         $raw = "REPLACE INTO setting (setup_key, setup_value) VALUES ('org_email', '{$tenant->getOwnerEmail()}')";
