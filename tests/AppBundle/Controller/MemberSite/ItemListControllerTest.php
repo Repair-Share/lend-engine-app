@@ -356,4 +356,24 @@ class ItemListControllerTest extends AuthenticatedControllerTest
 
         }
     }
+
+    public function testSearchResultsWithSpaces()
+    {
+        $itemName = 'one two three ' . rand();
+
+        $this->helpers->createItem(
+            $this->client,
+            $itemName . ' ' . rand()
+        );
+
+        $crawler = $this->client->request(
+            'GET',
+            '/products?search=+one+two++' // Searching with spaces
+        );
+
+        $this->assertNotContains(
+            '[Syntax Error]',
+            $crawler->html()
+        );
+    }
 }

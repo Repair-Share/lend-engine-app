@@ -124,7 +124,7 @@ class ItemService
                     continue;
                 }
 
-                if ($i > 0) {
+                if ($where && $i > 0) {
                     $where .= ' ' . $searchOperator . ' ';
                 }
 

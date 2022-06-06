@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '196' => 'Rollbar #171',
             '191' => 'Update jQuery to latest version',
             '188' => 'Loan counter values at the top bar don\'t match with the loan\'s list filtering',
             '187' => 'Email wording changes',
