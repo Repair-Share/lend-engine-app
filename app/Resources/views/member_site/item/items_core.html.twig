@@ -6,6 +6,15 @@
 
 <h2>{{ categoryTitle|raw }}</h2>
 
+{% if app.session.get('active-loan') %}
+    <div class="alert alert-success">
+        Choose an item to add to {{ app.session.get('active-loan-type') }} {{ app.session.get('active-loan') }}
+        <a href="{{ path("unset_active_loan", { loanId : app.session.get('active-loan') }) }}"
+           class="btn btn-xs btn-default pull-right"
+        >Cancel</a>
+    </div>
+{% endif %}
+
 <div id="item-list-filter">
     {% if filter.sites|length > 1 %}
         <div class="multi-site">

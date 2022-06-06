@@ -3,7 +3,15 @@
 <a href="{{ path('home') }}" style="padding: 0 10px"><i class="fa fa-home"></i><span class="hidden-xs"> {% trans %}public_misc.link_home{% endtrans %}</span></a>
 
 {% if tenantInformation.basket is defined and tenantInformation.basket %}
-    <a href="{{ path('basket_show') }}" style="padding: 0 10px;" id="site-menu-basket"><i class="fa fa-shopping-basket"></i><span class="hidden-xs"> Basket</span> ({{ tenantInformation.basket.loanRows|length }} items)</a>
+
+    {% if app.session.get('active-loan') %}
+        {% set basket_url = path('public_loan', {loanId: app.session.get('active-loan')}) %}
+    {% else %}
+        {% set basket_url = path('basket_show') %}
+    {% endif %}
+
+    <a href="{{ basket_url }}" style="padding: 0 10px;" id="site-menu-basket"><i class="fa fa-shopping-basket"></i><span class="hidden-xs"> Basket</span> ({{ tenantInformation.basket.loanRows|length }} items)</a>
+
 {% endif %}
 
 {% if tenantInformation.setting('show_events_online') == 1 %}

@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '194' => 'Basket fails to open loan showing "no basket found"',
             '196' => 'Rollbar #171',
             '191' => 'Update jQuery to latest version',
             '188' => 'Loan counter values at the top bar don\'t match with the loan\'s list filtering',
