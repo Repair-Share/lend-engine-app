@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '198' => 'Rollbar #586: update org name error',
             '194' => 'Basket fails to open loan showing "no basket found"',
             '196' => 'Rollbar #171',
             '191' => 'Update jQuery to latest version',
