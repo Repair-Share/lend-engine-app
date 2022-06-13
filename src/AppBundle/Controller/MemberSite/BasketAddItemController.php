@@ -96,6 +96,16 @@ class BasketAddItemController extends Controller
             return $this->redirectToRoute('home');
         }
 
+        if (in_array(strtolower($basket->getStatus()), ['active', 'closed', 'cancelled', 'reserved', 'overdue'])) {
+            $errorStr = "You can't add an item to a loan when it's " . strtolower($basket->getStatus()) . ".";
+            $this->addFlash('error', $errorStr);
+
+            $this->get('session')->set('active-loan', null);
+            $this->get('session')->set('active-loan-type', null);
+
+            return $this->redirectToRoute('public_loan', ['loanId' => $loanId]);
+        }
+
         // Verify user can borrow more items, if there's a limit on their membership type
         $maxItems = $contact->getActiveMembership()->getMembershipType()->getMaxItems();
         if ($maxItems > 0) {
