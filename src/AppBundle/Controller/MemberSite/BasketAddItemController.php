@@ -96,7 +96,7 @@ class BasketAddItemController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        if (in_array(strtolower($basket->getStatus()), ['active', 'closed', 'cancelled', 'reserved', 'overdue'])) {
+        if (in_array(strtolower($basket->getStatus()), ['active', 'closed', 'cancelled', 'overdue'])) {
             $errorStr = "You can't add an item to a loan when it's " . strtolower($basket->getStatus()) . ".";
             $this->addFlash('error', $errorStr);
 
