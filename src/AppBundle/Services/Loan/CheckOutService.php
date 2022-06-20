@@ -372,6 +372,11 @@ class CheckOutService
                 }
             }
 
+            // Delivery 'product' doesn't need a reservation check
+            if ((int)$reservation->getInventoryItem()->getId() === (int)($this->settings->getSettingValue('postal_shipping_item'))) {
+                continue;
+            }
+
             $dueOutAt = $reservation->getDueOutAt()->setTimezone($tz);
 
             if ($reservation->getCheckedInAt()) {
