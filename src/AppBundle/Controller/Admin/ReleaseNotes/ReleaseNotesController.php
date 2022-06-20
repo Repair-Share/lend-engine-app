@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '141' => 'Pagination and count on Members report page',
             '201' => "Loan can't checkout because 'Shipping' is reserved",
             '197' => 'Able to add a loan item to a loan that is already checked out',
             '198' => 'Rollbar #586: update org name error',

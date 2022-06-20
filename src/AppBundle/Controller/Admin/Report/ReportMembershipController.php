@@ -71,7 +71,7 @@ class ReportMembershipController extends Controller
         ];
 
         $subscriptions = $repo->search($start, $length, $filter);
-        $totalRecords  = $repo->countAll();
+        $totalRecords  = sizeof($repo->search(null, null, $filter));
 
         foreach ($subscriptions AS $i) {
             /** @var $i \AppBundle\Entity\Membership */
