@@ -2,6 +2,7 @@
 
 namespace AppBundle\Services\Loan;
 
+use AppBundle\Entity\Contact;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\ItemMovement;
@@ -310,8 +311,13 @@ class CheckOutService
      * @param $loanId
      * @return bool
      */
-    public function isItemReserved(InventoryItem $item, $from, $to, $loanId = null)
+    public function isItemReserved(InventoryItem $item, $from, $to, $loanId = null, Contact $user = null)
     {
+        $adminRole = false;
+        if ($user && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_SUPER_USER'))) {
+            $adminRole = true;
+        }
+
         // Extend the booking in both directions to validate against other bookings
         $bufferPeriod = (int)$this->settings->getSettingValue('reservation_buffer'); // hours
         $fromWithBuffer = clone($from);
@@ -392,8 +398,13 @@ class CheckOutService
             $requestTo   = $to->format("Y-m-d H:i:s");
 
             $reservedItemId = $reservation->getInventoryItem()->getId();
-            $errorMsg = '"'.$reservation->getInventoryItem()->getName().'" (#'.$reservedItemId.') is reserved by '.$reservation->getLoan()->getContact()->getName();
-            $errorMsg .= ' (ref '.$reservation->getLoan()->getId().', '.$dueOutAt->format("d M H:i").' - '.$dueInAt->format("d M H:i").')';
+            $errorMsg       = '"' . $reservation->getInventoryItem()->getName() . '" (#' . $reservedItemId . ') is reserved';
+
+            if ($adminRole) {
+                $errorMsg .= ' by ' . $reservation->getLoan()->getContact()->getName();
+            }
+
+            $errorMsg .= ' (ref ' . $reservation->getLoan()->getId() . ', ' . $dueOutAt->format("d M H:i") . ' - ' . $dueInAt->format("d M H:i") . ')';
 
             // The requested START date is during another reservation
             if (!$extendingLoan && $requestFrom >= $dueOutAt_f && $requestFrom < $dueInAt_f) {

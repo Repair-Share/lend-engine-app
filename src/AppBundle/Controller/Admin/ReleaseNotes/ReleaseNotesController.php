@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '202' => 'GDPR issue, able to see the name of someone who has an item booked without being admin or staff, also a standard user can see checkout prompts which are for admin/staff only.',
             '141' => 'Pagination and count on Members report page',
             '201' => "Loan can't checkout because 'Shipping' is reserved",
             '197' => 'Able to add a loan item to a loan that is already checked out',

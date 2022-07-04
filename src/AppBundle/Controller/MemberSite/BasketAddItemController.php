@@ -189,7 +189,7 @@ class BasketAddItemController extends Controller
             $dTo   = DateTimeHelper::changeLocalTimeToUtc($settingsService->getSettingValue('org_timezone'), $dTo);
         }
 
-        if ($checkoutService->isItemReserved($product, $dFrom, $dTo, null)) {
+        if ($checkoutService->isItemReserved($product, $dFrom, $dTo, null, $this->getUser())) {
             $this->addFlash('error', "This item is reserved or on loan for your selected dates");
             foreach ($checkoutService->errors AS $error) {
                 $this->addFlash('error', $error);
@@ -247,7 +247,7 @@ class BasketAddItemController extends Controller
                 if ($qtyFulfilled == $qtyRequired) {
                     continue;
                 }
-                if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null)) {
+                if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null, $this->getUser())) {
                     $row = new LoanRow();
                     $row->setLoan($basket);
                     $row->setInventoryItem($item);
@@ -313,7 +313,7 @@ class BasketAddItemController extends Controller
 
         /** @var \AppBundle\Entity\InventoryItem $item */
         foreach ($itemRepo->findBy(['name' => $name]) AS $item) {
-            if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null)) {
+            if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null, $this->getUser())) {
                 return $item;
             }
         }
