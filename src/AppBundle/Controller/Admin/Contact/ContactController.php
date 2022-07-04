@@ -59,8 +59,9 @@ class ContactController extends Controller
         } else {
 
             // Check to see if user has exceeded contact count
-            $plan = $this->get('settings')->getTenant()->getPlan();
-            $maxContacts = $billingService->getMaxContacts($plan);
+            $tenant      = $this->get('settings')->getTenant();
+            $plan        = $tenant->getPlan();
+            $maxContacts = $billingService->getMaxContacts($plan, $tenant->getId());
 
             $count = $contactRepo->countActiveContacts();
             if ($count >= $maxContacts) {

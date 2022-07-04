@@ -196,13 +196,20 @@ class BillingService
 
     /**
      * @param $plan
+     * @param  int $tenantId
      * @return int
      */
-    public function getMaxContacts($plan)
+    public function getMaxContacts($plan, $tenantId = 0)
     {
         if (!$plan) {
             $plan = 'free';
         }
+
+        // Hard coded for the  westphiladelphiatoollibrary
+        if ($tenantId === 3238) {
+            return 5000;
+        }
+
         switch ($plan) {
             case 'free':
                 return 100;
