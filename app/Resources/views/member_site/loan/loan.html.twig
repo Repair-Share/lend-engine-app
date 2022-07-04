@@ -229,20 +229,21 @@
                     {% endif %}
 
                     {# CHECK OUT PROMPT #}
-                    {% if loan.status in ['RESERVED', 'PENDING'] %}
-                        {% if row.inventoryItem.checkOutPrompts|length > 0 %}
-                            {% for prompt in row.inventoryItem.checkOutPrompts %}
-                                {% set promptsExist = 1 %}
-                                <div>
-                                    <label style="padding: 10px 0 4px 0; font-weight: normal;">
-                                        <input type="checkbox" class="confirm-checkout">&nbsp;
-                                        {{ prompt.name }}
-                                    </label>
-                                </div>
-                            {% endfor %}
+                    {% if (tenantInformation.setting('self_checkout') or (app.user.hasRole('ROLE_ADMIN') or app.user.hasRole('ROLE_SUPER_USER'))) %}
+                        {% if loan.status in ['RESERVED', 'PENDING'] %}
+                            {% if row.inventoryItem.checkOutPrompts|length > 0 %}
+                                {% for prompt in row.inventoryItem.checkOutPrompts %}
+                                    {% set promptsExist = 1 %}
+                                    <div>
+                                        <label style="padding: 10px 0 4px 0; font-weight: normal;">
+                                            <input type="checkbox" class="confirm-checkout">&nbsp;
+                                            {{ prompt.name }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                         {% endif %}
                     {% endif %}
-
                 </td>
                 <td style="text-align: right">
 
