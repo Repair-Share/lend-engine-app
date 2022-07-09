@@ -4,7 +4,7 @@
 # Locale: fr-FR, French (France)
 # Tagged: Member site
 # Exported by: Andor Tamas
-# Exported at: Mon, 28 Feb 2022 15:50:16 +0100
+# Exported at: Sat, 09 Jul 2022 13:45:59 +0200
 ---
 Loan: Prêt
 Loans: Prêts
@@ -58,7 +58,7 @@ Login with Google: Connexion avec Google
 form:
   firstName: Prénom
   lastName: Nom de famille
-  email: Adresse de courriel
+  email: Adresse e-mail
   telephone: Téléphone
   address1: Adresse (rue / numéro)
   address2: Ville
@@ -108,12 +108,12 @@ public_item:
   downloads: Téléchargements
   log_in_to_download: connectez-vous pour télécharger
   log_in_to_borrow: Connectez-vous pour emprunter ou réserver
-  borrow_now: Emprunter/réserver
+  borrow_now: Emprunter / réserver
   not_available: Non disponible
   available: Disponible
   on_loan: En prêt
-  pickup_date_error: Des articles dans votre panier sont définis avec une date d'enlèvement qui entre en conflit avec les réservation de l'un d'entre eux. Vous ne serez pas capable d'emprunter cet article dans la même transaction.
-  pickup_site_error: Cet article n'est pas disponible sur le même site que les autres articles de votre panier. Vous ne serez pas capable d'emprunter cet article dans la même transaction.
+  pickup_date_error: Des articles dans votre panier sont définis avec une date d'enlèvement qui entre en conflit avec les réservation de l'un d'entre eux. Vous ne pourrez pas emprunter cet article dans la même transaction.
+  pickup_site_error: Cet article n'est pas disponible sur le même site que les autres articles de votre panier. Vous ne pourrez pas emprunter cet article dans la même transaction.
   basket_exists: Vous avez déjà des articles dans votre panier. <br>Vous devrez les enlever ensemble, et nous avons dès lors défini une date d'enlèvement pour vous.
   account_balance_is: Le crédit disponible est de
   add_credit: Ajouter du crédit
@@ -126,7 +126,7 @@ public_item:
   basket_add: Ajouter un article au panier
   locations: Localisations disponibles
   maps_link: Ouvrir dans Google Maps
-  similar_items: articles similaires disponibles
+  similar_items: articles similaires
   see_all: Voir tout
   not_reservable: Cet article n'est pas disponible pour une réservation en ligne.
   discount: réduction
@@ -138,7 +138,7 @@ public_item:
   service_item: Service
   each: chaque
   alert_click_time_slot: Sélectionner un créneau horaire
-  in_basket: ""
+  in_basket: Dans le panier
 calendar:
   pickup_day: Enlèvement
   my_booking: MA RÉSERVATION
@@ -163,10 +163,10 @@ public_basket:
   confirm_reservation: Réserver
   remove_item: Retirer
   total: Total
-  balance: A imputer
-  no_items: <h3>Pas d'article dans le panier</h3>Cherchez un article à ajouter.
-  full_charge: sera imputé sur votre compte
-  delay_charge: sera chargé maintenant sur votre compte, et le solde sera dû à la collecte des articles
+  balance: À imputer
+  no_items: <h3>Pas d'article dans le panier</h3> Cherchez un article à ajouter.
+  full_charge: sera facturé sur votre compte
+  delay_charge: sera facturé maintenant sur votre compte, et le solde sera dû à la collecte des articles
   button_checkout: Régler maintenant
   shipping: Envoi
   remove_stock_items: Pour créer une réservation pour des articles en prêt, supprimez d'abord les articles en stock de votre panier.
@@ -176,7 +176,7 @@ public_loan:
   check_in: Retour
   button_check_out: Emprunt
   select_items_to_check_in: Sélectionner les articles à retourner
-  choose_new_date: Sélectionner une nouvelle date de retou
+  choose_new_date: Sélectionner une nouvelle date de retour
   button_complete_checks: Merci de terminer les emprunts et retours
   button_choose_payment_method: Sélectionner une méthode de paiement pour procéder au paiement
   button_deposits_require_payment: Les cautions doivent être réglées dès à présent
@@ -202,7 +202,7 @@ public_add_credit:
   remove_card: Enlever
   text_info: Le montant sera ajouté au solde de votre compte.
 public_loans:
-  no_loans: Vous n’avez pas encore rien emprunté
+  no_loans: Vous n’avez encore rien emprunté
 public_payments:
   no_payment: Encore aucune paiement ni aucun frais
   title: Frais et paiements
@@ -211,7 +211,7 @@ public_registration:
   newsletter: Vous affilier à notre newsletter
   terms_link: Voir nos Termes et Conditions
   terms_label: J'accepte les conditions générales
-  email_confirmed: Votre adresse email a bien été confirmée
+  email_confirmed: Votre adresse e-mail a bien été confirmée
   membership_starts_today: L'abonnement commence aujourd'hui.
   membership_deferred: L'abonnement sera renouvelé à partir du
   discount_on_fees: réduction sur les frais de location
@@ -219,19 +219,19 @@ public_registration:
   button_subscribe: S'abonner
   no_self_serve_memberships: L'inscription en libre-service n'est pas disponible. Pour finaliser votre adhésion, merci de venir nous voir et de vous munir d'une pièce d'identité avec photographie.
   login_page_new_account: Créer un nouveau compte
-  check_email_title: Merci de vérifier votre boîte mails.
-  check_email_body: Un mail vous a été envoyé avec un lien pour compléter l'inscription.
+  check_email_title: Merci de vérifier votre boîte e-mail.
+  check_email_body: Un e-mail vous a été envoyé avec un lien pour compléter l'inscription.
 public_become_member:
   title: Devenir membre
 msg_success:
   payment_ok: Paiement en ordre. Le solde de votre compte a été mis à jour.
-  reservation_create: Réservé ! Nous venons de vous envoyer un courriel de confirmation.
+  reservation_create: Réservé ! Nous venons de vous envoyer un e-mail de confirmation.
   reservation_cancel: Votre réservation a été annulée.
   basket_item_removed: L'article a été retiré de votre panier.
   basket_item_added: a été ajouté à votre panier.
   basket_item_exists: est déjà dans votre panier.
 msg_fail:
-  general_fail: Désolé, un problème est survenu. Merci de ré-essayer, ou de nous contacter.
+  general_fail: Désolé, un problème est survenu. Merci de réessayer, ou de nous contacter.
   reservation_create: Un problème est survenu, nous n'avons pas pu créer votre réservation.
   reservation_cancel: Nous ne pouvons pas annuler votre réservation. Merci de nous contacter.
 per-borrow: par emprunt
@@ -251,7 +251,7 @@ events:
   you_are_attending: Vous participez
   book_now_button: Réserver maintenant
   check_in_button: Retours
-  check_in_help: L'enregistrement vous ajoute en tant que participant sans envoyer de mail de confirmation de réservation
+  check_in_help: L'enregistrement vous ajoute en tant que participant sans envoyer de e-mail de confirmation de réservation
   contact_us_to_book: Contactez-nous pour réserver
   not_bookable: Cet événement ne peut pas être réservé en ligne
   log_in_to_book: Enregistrez-vous pour réserver
