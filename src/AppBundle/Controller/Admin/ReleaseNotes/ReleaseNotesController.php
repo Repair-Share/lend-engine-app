@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '205' => 'Rollbar 201: setContact() must be an instance of AppBundle\Entity\Contact',
             '204' => 'Update the French language translation',
             '202' => 'GDPR issue, able to see the name of someone who has an item booked without being admin or staff, also a standard user can see checkout prompts which are for admin/staff only.',
             '141' => 'Pagination and count on Members report page',
