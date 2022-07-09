@@ -11,6 +11,33 @@ class DateTimeHelper
 
     /**
      * @param $string
+     * @return \DateTime (Default fallback is the current datetime)
+     */
+    public static function parseDateTime($string)
+    {
+        // Tries to parse in a standard way, if it's ok, yay
+        try {
+            return new \DateTime($string);
+        } catch (\Exception $e) {
+        }
+
+        // Error on the given param, tries to sanitize
+        try {
+
+            // Expected format YYYY-MM-DDThh:mm:ss
+            $dString = substr($string, 0, 19);
+            if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $dString, $matches)) {
+                return new \DateTime($dString);
+            }
+
+        } catch (\Exception $e) {
+        }
+
+        return new \DateTime();
+    }
+
+    /**
+     * @param $string
      * @return mixed
      */
     public static function parseTime($string)

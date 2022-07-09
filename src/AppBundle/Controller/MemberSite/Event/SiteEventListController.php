@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\MemberSite\Event;
 
 use AppBundle\Entity\Event;
+use AppBundle\Helpers\DateTimeHelper;
 use Doctrine\DBAL\DBALException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -45,8 +46,8 @@ class SiteEventListController extends Controller
         /** @var $eventService \AppBundle\Services\Event\EventService */
         $eventService = $this->get('service.event');
 
-        $dFrom = new \DateTime($dateFrom);
-        $dTo   = new \DateTime($dateTo);
+        $dFrom = DateTimeHelper::parseDateTime($dateFrom);
+        $dTo   = DateTimeHelper::parseDateTime($dateTo);
         $filter = [
             'from'    => $dFrom->format("Y-m-d"),
             'to'      => $dTo->format("Y-m-d"),
