@@ -4,7 +4,7 @@
 # Locale: en-GB, English (UK)
 # Tagged: Member site
 # Exported by: Andor Tamas
-# Exported at: Mon, 28 Feb 2022 14:06:07 +0100
+# Exported at: Mon, 08 Aug 2022 13:57:23 +0200
 ---
 Loan: Loan
 Loans: Loans
@@ -231,6 +231,7 @@ msg_fail:
   general_fail: Sorry, something went wrong. Please try again or get in touch with us.
   reservation_create: Something went wrong, we couldn't create your reservation.
   reservation_cancel: We couldn't cancel your reservation. Please get in touch with us.
+  recaptcha_error: Recaptcha validation failed. Please submit the form again!
 per-borrow: per borrow
 per_borrow: per borrow
 public_user:

@@ -38,6 +38,8 @@ class RequestListener
             '*.google-analytics.com',
             '*.googletagmanager.com',
             '*.googleapis.com',
+            '*.google.com',
+            '*.gstatic.com',
             'js.stripe.com',
             'cdnjs.cloudflare.com',
             '*.cloudfront.net',

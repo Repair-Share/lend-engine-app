@@ -131,6 +131,16 @@ services:
             - "@settings"
 
     # If email confirmation is enabled, this is used when email address is confirmed:
+    # User registration handler
+    fos_user.registration.controller:
+        class: UserBundle\Controller\RegistrationController
+        arguments:
+            - "@event_dispatcher"
+            - "@fos_user.registration.form.factory"
+            - "@fos_user.user_manager"
+            - "@security.token_storage"
+
+    # If email confirmation is enabled, this is used when email address is confirmed:
     fos_user.registration_complete:
         class: AppBundle\EventListener\RegistrationConfirmListener
         arguments:
@@ -319,6 +329,11 @@ services:
         arguments:
             - "@service.apps"
             - "@settings"
+
+    service.recaptcha:
+        class: AppBundle\Services\Apps\RecaptchaService
+        arguments:
+            - "@service.apps"
 
     ## REPORT SERVICES
 

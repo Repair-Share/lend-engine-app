@@ -4,9 +4,47 @@
     {{ tenantInformation.setting('page_registration_header')|raw }}
 {% endif %}
 
+{% if error %}
+    <div class="alert alert-error">{{ error|trans({}, 'member_site') }}</div>
+{% endif %}
+
+{% if recaptchaActive %}
+    <script src="https://www.google.com/recaptcha/api.js?render={{ siteKey }}"></script>
+
+    <script type="text/javascript">
+        $(function () {
+
+            // Recaptcha init
+            $('#registration-form').submit(function (event) {
+
+                let form = $(this);
+
+                event.preventDefault();
+
+                grecaptcha.ready(function () {
+                    grecaptcha
+                        .execute('{{ siteKey }}', {action: 'registration_form'})
+                        .then(function (token) {
+                            form.prepend('<input type="hidden" name="token" value="' + token + '">');
+                            form.unbind('submit').submit();
+                        });
+                });
+
+            });
+
+        });
+    </script>
+
+{% endif %}
+
 <div class="row">
     <div class="col-md-12">
-        <form action="{{ path('fos_user_registration_register') }}" method="POST" class="fos_user_registration_register">
+        <form action="{{ path('fos_user_registration_register') }}"
+              method="POST"
+              name="registration-form"
+              id="registration-form"
+              class="fos_user_registration_register"
+        >
 
             {{ form_start(form) }}
             {{ form_errors(form) }}
@@ -39,7 +77,9 @@
                     {{ form_row(form.terms) }}
 
                     <input type="submit" value="{{ 'registration.submit'|trans({}, 'FOSUserBundle') }}"
-                           class="btn btn-primary btn-block btn-flat pull-right" id="button-register"/>
+                           class="btn btn-primary btn-block btn-flat pull-right g-recaptcha"
+                           id="button-register"
+                    />
                 </div>
 
             </div>
