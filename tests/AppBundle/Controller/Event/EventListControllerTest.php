@@ -24,4 +24,17 @@ class EventListControllerTest extends AuthenticatedControllerTest
         $this->assertContains('Event settings', $crawler->html());
     }
 
+    /**
+     * Test events list in JSON format
+     */
+    public function testJsonList()
+    {
+        // Try to break with an invalid time
+        $this->client->request('GET', '/events/json?start=2021-06-27T00:00:00Z9712535');
+
+        $response = $this->client->getResponse();
+
+        $this->assertNotSame(500, $response->getStatusCode());
+    }
+
 }
