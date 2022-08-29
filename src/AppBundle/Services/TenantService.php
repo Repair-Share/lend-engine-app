@@ -140,6 +140,20 @@ class TenantService
         return $this->tenant->getServer();
     }
 
+    public function getShortServerName()
+    {
+        switch ($this->tenant->getServer()) {
+            case 'lend-engine-staging':
+                return 'beta';
+            case 'lend-engine-eu':
+                return 'standard';
+            case 'lend-engine-eu-plus':
+                return 'plus';
+            case 'lend-engine-3':
+                return 'vip';
+        }
+    }
+
     public function getAccountDomain($withHttp = false)
     {
         return $this->tenant->getDomain($withHttp);
