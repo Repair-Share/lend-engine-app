@@ -144,13 +144,13 @@ class TenantService
     {
         switch ($this->tenant->getServer()) {
             case 'lend-engine-staging':
-                return 'beta';
+                return 'Beta';
             case 'lend-engine-eu':
-                return 'standard';
+                return 'Standard';
             case 'lend-engine-eu-plus':
-                return 'plus';
+                return 'Plus';
             case 'lend-engine-3':
-                return 'vip';
+                return 'Vip';
         }
     }
 
