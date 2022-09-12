@@ -148,9 +148,9 @@ class TenantService
             case 'lend-engine-eu':
                 return 'Standard';
             case 'lend-engine-eu-plus':
-                return 'Plus';
+                return 'Plus 1';
             case 'lend-engine-3':
-                return 'Vip';
+                return 'Plus 2';
         }
     }
 
