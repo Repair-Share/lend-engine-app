@@ -20,23 +20,48 @@ class AddNoteController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        $contactId = $request->get('contactId');
+
+        /** @var \AppBundle\Repository\ContactRepository $contactRepo */
+        $contactRepo = $em->getRepository('AppBundle:Contact');
+        $contact = $contactRepo->find($contactId);
+        $preventBorrowing = $contact->getPreventBorrowing();
+
         /** @var \AppBundle\Entity\Note $note */
         $note = new Note();
 
         $user = $this->getUser();
         $note->setCreatedBy($user);
 
-        $contactId = $request->get('contactId');
         $loanId    = $request->get('loanId');
         $adminOnly = $request->get('adminOnly');
+        $flag      = $request->get('flag');
 
         if ($request->get('note_text') != '') {
 
             if ($contactId) {
-                /** @var \AppBundle\Repository\ContactRepository $contactRepo */
-                $contactRepo = $em->getRepository('AppBundle:Contact');
-                $contact = $contactRepo->find($contactId);
                 $note->setContact($contact);
+            }
+
+            $noteText = $request->get('note_text');
+
+            $preventBorrowing = (int)$request->get('preventBorrowing');
+
+            if ($preventBorrowing) {
+
+                if ($preventBorrowing === 1) {
+                    $contact->setPreventBorrowing(true);
+                    $em->persist($contact);
+
+                    $noteText = '<em>Updated the flag to prevent borrowing.</em>' . PHP_EOL . PHP_EOL . $noteText;
+
+                } elseif ($preventBorrowing === 2) {
+                    $contact->setPreventBorrowing(false);
+                    $em->persist($contact);
+
+                    $noteText = '<em>Updated the flag to allow borrowing.</em>' . PHP_EOL . PHP_EOL . $noteText;
+                }
+
             }
 
             if ($loanId) {
@@ -50,7 +75,6 @@ class AddNoteController extends Controller
                 $note->setAdminOnly(true);
             }
 
-            $noteText = $request->get('note_text');
             $note->setText($noteText);
 
             $em->persist($note);
@@ -81,8 +105,10 @@ class AddNoteController extends Controller
         return $this->render(
             'modals/add_note.html.twig',
             array(
-                'title' => 'Add a note',
-                'subTitle' => ''
+                'title'            => ($flag === 'preventBorrowing' ? 'Change borrowing flag' : 'Add a note'),
+                'subTitle'         => '',
+                'flag'             => $flag,
+                'preventBorrowing' => $preventBorrowing
             )
         );
 

@@ -285,6 +285,12 @@ class Contact extends BaseUser
      */
     private $subscriber = false;
 
+    /**
+     * @var boolean
+     * @ORM\Column(name="prevent_borrowing", type="boolean")
+     */
+    private $preventBorrowing = false;
+
     public function __construct()
     {
         parent::__construct();
@@ -943,6 +949,25 @@ class Contact extends BaseUser
     public function setStripeCustomerId($stripeCustomerId)
     {
         $this->stripeCustomerId = $stripeCustomerId;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getPreventBorrowing()
+    {
+        return $this->preventBorrowing;
+    }
+
+    /**
+     * @param $preventBorrowing
+     * @return $this
+     */
+    public function setPreventBorrowing($preventBorrowing)
+    {
+        $this->preventBorrowing = $preventBorrowing;
 
         return $this;
     }

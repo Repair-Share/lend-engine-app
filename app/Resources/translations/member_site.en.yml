@@ -4,7 +4,7 @@
 # Locale: en-GB, English (UK)
 # Tagged: Member site
 # Exported by: Andor Tamas
-# Exported at: Mon, 08 Aug 2022 13:57:23 +0200
+# Exported at: Mon, 12 Sep 2022 14:47:02 +0200
 ---
 Loan: Loan
 Loans: Loans
@@ -139,6 +139,7 @@ public_item:
   each: each
   alert_click_time_slot: Please click a time slot
   in_basket: In Basket
+  borrowing_prevented: The borrowing has been prevented in your account. Please contact us for further info.
 calendar:
   pickup_day: Pickup
   my_booking: MY BOOKING
