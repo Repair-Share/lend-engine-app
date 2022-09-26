@@ -44,6 +44,9 @@ class FileAttachmentController extends Controller
             // Set the content disposition
             $response->headers->set('Content-Disposition', $disposition);
 
+            // Set the content type
+            $response->headers->set('Content-Type', 'application/pdf');
+
             // Dispatch request
             return $response;
         } else {

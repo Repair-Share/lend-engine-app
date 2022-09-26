@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '212' => 'Downloading PDF issue on a mobile device',
             '208' => 'Flag user account with message and prevent borrowing until its cleared',
             '207' => 'Reduce fake accounts with a captcha on the sign up page',
             '206' => 'Rollbar 155: Failed to parse time string',
