@@ -198,6 +198,9 @@ class LoanService
         // excludeStockItems
         $builder->andWhere("i.itemType != 'stock'");
 
+        // excludeServiceItems
+        $builder->andWhere("i.itemType != 'service'");
+
         $queryTotalResults = $builder->getQuery();
         return count($queryTotalResults->getResult());
     }
