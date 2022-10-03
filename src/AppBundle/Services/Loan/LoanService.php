@@ -5,6 +5,7 @@ namespace AppBundle\Services\Loan;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\Note;
 use AppBundle\Entity\Payment;
+use AppBundle\Helpers\DateTimeHelper;
 use AppBundle\Services\SettingsService;
 use AppBundle\Services\TenantService;
 use Doctrine\ORM\EntityManager;
@@ -164,17 +165,41 @@ class LoanService
     {
         $repository = $this->em->getRepository('AppBundle:LoanRow');
 
+        $tz = $this->settings->getSettingValue('org_timezone');
+
+        $localNow = DateTimeHelper::getLocalTime($tz, new \DateTime());
+
         $builder = $repository->createQueryBuilder('lr');
         $builder->select('lr');
         $builder->leftJoin('lr.loan', 'l');
         $builder->leftJoin('l.contact', 'c');
         $builder->leftJoin('lr.inventoryItem', 'i');
 
-        $builder->andWhere('l.status = :status');
-        $builder->setParameter('status', $status);
+        if ($status === 'ACTIVE' || $status === 'OVERDUE') { // Check the items statuses in loan rows
+
+            $builder->andWhere('lr.checkedInAt is null');
+
+            $builder->andWhere('l.status in (:status)');
+            $builder->setParameter('status', ['ACTIVE', 'OVERDUE', 'CLOSED']);
+
+            if ($status === 'ACTIVE') {
+                $builder->andWhere('lr.dueInAt > :now');
+            } else { // Overdue
+                $builder->andWhere('lr.dueInAt <= :now');
+            }
+
+            $builder->setParameter('now', date('Y-m-d H:i:s', $localNow->getTimestamp()));
+
+        } else { // Check the loan status in the loan table
+            $builder->andWhere('l.status = :status');
+            $builder->setParameter('status', $status);
+        }
 
         // excludeStockItems
         $builder->andWhere("i.itemType != 'stock'");
+
+        // excludeServiceItems
+        $builder->andWhere("i.itemType != 'service'");
 
         $queryTotalResults = $builder->getQuery();
         return count($queryTotalResults->getResult());
