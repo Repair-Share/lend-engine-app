@@ -2,14 +2,13 @@
 
 namespace AppBundle\Repository;
 
-use AppBundle\Services\SettingsService;
-
 /**
  * LoanRowRepository
  *
  */
 class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 {
+
     /**
      * @param int $days
      * @return bool|mixed
@@ -80,15 +79,9 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
     }
 
 
-    public function search($start, $length, $filter = [], $sort = [], $tz = 'Europe/London')
+    public function search($start, $length, $filter = [], $sort = [])
     {
         $repository = $this->getEntityManager()->getRepository('AppBundle:LoanRow');
-
-        $timeZone = new \DateTimeZone($tz);
-        $utc      = new \DateTime('now', new \DateTimeZone("UTC"));
-        $offSet   = $timeZone->getOffset($utc) / 3600;
-        $localNow = new \DateTime();
-        $localNow->modify("{$offSet} hours");
 
         $builder = $repository->createQueryBuilder('lr');
         $builder->select('lr');
@@ -125,30 +118,8 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
         }
 
         if (isset($filter['status']) && $filter['status'] != '' && $filter['status'] != 'ALL') {
-
-            if ($filter['status'] === 'ACTIVE' || $filter['status'] === 'OVERDUE') { // Check the items statuses in loan rows
-
-                $builder->andWhere('lr.checkedInAt is null');
-
-                $builder->andWhere('l.status in (:status)');
-                $builder->setParameter('status', ['ACTIVE', 'OVERDUE', 'CLOSED']);
-
-                if ($filter['status'] === 'ACTIVE') {
-                    $builder->andWhere('lr.dueInAt > :now');
-                } else { // Overdue
-                    $builder->andWhere('lr.dueInAt <= :now');
-                }
-
-                $builder->setParameter('now', date('Y-m-d H:i:s', $localNow->getTimestamp()));
-
-            } else { // Check the loan status in the loan table
-                $builder->andWhere('l.status = :status');
-                $builder->setParameter('status', $filter['status']);
-            }
-
-            // excludeServiceItems
-            $builder->andWhere("i.itemType != 'service'");
-
+            $builder->andWhere('l.status = :status');
+            $builder->setParameter('status', $filter['status']);
         }
 
         if (isset($filter['current_site']) && $filter['current_site']) {

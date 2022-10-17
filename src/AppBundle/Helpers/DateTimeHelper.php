@@ -2,9 +2,6 @@
 
 namespace AppBundle\Helpers;
 
-use DateTime;
-use Exception;
-
 class DateTimeHelper
 {
     public static function leadingZero($string)
@@ -14,14 +11,14 @@ class DateTimeHelper
 
     /**
      * @param $string
-     * @return DateTime (Default fallback is the current datetime)
+     * @return \DateTime (Default fallback is the current datetime)
      */
     public static function parseDateTime($string)
     {
         // Tries to parse in a standard way, if it's ok, yay
         try {
-            return new DateTime($string);
-        } catch (Exception $e) {
+            return new \DateTime($string);
+        } catch (\Exception $e) {
         }
 
         // Error on the given param, tries to sanitize
@@ -30,13 +27,13 @@ class DateTimeHelper
             // Expected format YYYY-MM-DDThh:mm:ss
             $dString = substr($string, 0, 19);
             if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $dString, $matches)) {
-                return new DateTime($dString);
+                return new \DateTime($dString);
             }
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
 
-        return new DateTime();
+        return new \DateTime();
     }
 
     /**
@@ -108,7 +105,7 @@ class DateTimeHelper
     /**
      * Change local time to UTC
      */
-    public static function changeLocalTimeToUtc($settingsTimeZone, DateTime $time)
+    public static function changeLocalTimeToUtc($settingsTimeZone, \DateTime $time)
     {
         if (!$settingsTimeZone) {
             $settingsTimeZone = 'Europe/London';
@@ -116,30 +113,11 @@ class DateTimeHelper
 
         $tz = new \DateTimeZone($settingsTimeZone);
 
-        $utc    = new DateTime('now', new \DateTimeZone('UTC'));
+        $utc    = new \DateTime('now', new \DateTimeZone('UTC'));
         $offSet = $tz->getOffset($utc) / 3600 * -1;
 
         $time->modify("{$offSet} hours");
 
         return $time;
-    }
-
-    /**
-     * @param string $settingsTimeZone
-     * @param DateTime  $time
-     *
-     * @return DateTime
-     * @throws Exception
-     */
-    public static function getLocalTime($settingsTimeZone, DateTime $time)
-    {
-        $timeZone = new \DateTimeZone($settingsTimeZone);
-        $utc      = new DateTime('now', new \DateTimeZone('UTC'));
-        $offSet   = $timeZone->getOffset($utc) / 3600;
-
-        $localTime = new DateTime();
-        $localTime->modify("{$offSet} hours");
-
-        return $localTime;
     }
 }
