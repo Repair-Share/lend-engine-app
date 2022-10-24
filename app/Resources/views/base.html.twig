@@ -56,6 +56,12 @@
             payload: {
                 environment: "{{ app.environment }}",
                 tenant: "{{ tenantInformation.accountCode }}"
+            },
+            checkIgnore: function(isUncaught, args, payload) {
+                // Code here to determine whether or not to send the payload
+                // to the Rollbar API
+                // return true to ignore the payload
+                return true;
             }
         };
         // Rollbar Snippet
