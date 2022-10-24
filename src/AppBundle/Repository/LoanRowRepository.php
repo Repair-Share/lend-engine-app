@@ -146,6 +146,9 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
                 $builder->setParameter('status', $filter['status']);
             }
 
+            // excludeServiceItems
+            $builder->andWhere("i.itemType != 'service'");
+
         }
 
         if (isset($filter['current_site']) && $filter['current_site']) {
