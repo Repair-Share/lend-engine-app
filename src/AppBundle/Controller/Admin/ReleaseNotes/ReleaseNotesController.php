@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '199' => 'Overdue item did not appear on overdue list',
             '212' => 'Downloading PDF issue on a mobile device',
             '208' => 'Flag user account with message and prevent borrowing until its cleared',
             '207' => 'Reduce fake accounts with a captcha on the sign up page',
