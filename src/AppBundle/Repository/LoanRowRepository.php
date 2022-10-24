@@ -131,7 +131,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
                 $builder->andWhere('lr.checkedInAt is null');
 
                 $builder->andWhere('l.status in (:status)');
-                $builder->setParameter('status', ['ACTIVE', 'OVERDUE', 'CLOSED']);
+                $builder->setParameter('status', ['ACTIVE', 'OVERDUE']);
 
                 if ($filter['status'] === 'ACTIVE') {
                     $builder->andWhere('lr.dueInAt > :now');
