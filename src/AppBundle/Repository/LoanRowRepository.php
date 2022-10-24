@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Helpers\DateTimeHelper;
 use AppBundle\Services\SettingsService;
 
 /**
@@ -84,11 +85,9 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
     {
         $repository = $this->getEntityManager()->getRepository('AppBundle:LoanRow');
 
-        $timeZone = new \DateTimeZone($tz);
-        $utc      = new \DateTime('now', new \DateTimeZone("UTC"));
-        $offSet   = $timeZone->getOffset($utc) / 3600;
-        $localNow = new \DateTime();
-        $localNow->modify("{$offSet} hours");
+        $utc = new \DateTime('now', new \DateTimeZone("UTC"));
+
+        $localNow = DateTimeHelper::getLocalTime($tz, $utc);
 
         $builder = $repository->createQueryBuilder('lr');
         $builder->select('lr');
