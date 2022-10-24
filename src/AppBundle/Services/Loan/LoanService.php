@@ -180,7 +180,7 @@ class LoanService
             $builder->andWhere('lr.checkedInAt is null');
 
             $builder->andWhere('l.status in (:status)');
-            $builder->setParameter('status', ['ACTIVE', 'OVERDUE']);
+            $builder->setParameter('status', ['ACTIVE', 'OVERDUE', 'CLOSED']);
 
             if ($status === 'ACTIVE') {
                 $builder->andWhere('lr.dueInAt > :now');
