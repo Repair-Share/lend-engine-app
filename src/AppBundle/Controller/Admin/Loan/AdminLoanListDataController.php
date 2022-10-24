@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller\Admin\Loan;
 
-use AppBundle\Helpers\DateTimeHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -118,12 +117,14 @@ class AdminLoanListDataController extends Controller
 
         $filter['excludeStockItems'] = true;
 
+        $loanData = $repo->search($start, $length, $filter, $sort);
+
         // Modify times to match local time for UI
         // Not sure why DateTime format() here is not working
-        $tz       = $settingsService->getSettingValue('org_timezone');
-        $localNow = DateTimeHelper::getLocalTime($tz, new \DateTime());
-
-        $loanData = $repo->search($start, $length, $filter, $sort, $tz);
+        $tz = $settingsService->getSettingValue('org_timezone');
+        $timeZone = new \DateTimeZone($tz);
+        $utc = new \DateTime('now', new \DateTimeZone("UTC"));
+        $offSet = $timeZone->getOffset($utc)/3600;
 
         /** @var \AppBundle\Entity\LoanRow $loanRow */
         foreach ($loanData['data'] AS $loanRow) {
@@ -135,11 +136,11 @@ class AdminLoanListDataController extends Controller
 
             $editUrl   = $this->generateUrl('public_loan', array('loanId' => $loan->getId()));
 
-            if (($loan->getStatus() == Loan::STATUS_CLOSED && $localNow > $loanRow->getDueInAt()) || $loanRow->getCheckedInAt()) {
+            if ($loan->getStatus() == Loan::STATUS_CLOSED || $loanRow->getCheckedInAt()) {
                 $status = '<span class="label bg-dim">'.Loan::STATUS_CLOSED.'</span>';
             } else if ($loan->getStatus() == Loan::STATUS_PENDING) {
                 $status = '<span class="label bg-gray">'.Loan::STATUS_PENDING.'</span>';
-            } else if ($loan->getStatus() == Loan::STATUS_ACTIVE && $localNow < $loanRow->getDueInAt()) {
+            } else if ($loan->getStatus() == Loan::STATUS_ACTIVE) {
                 $status = '<span class="label bg-teal">ON LOAN</span>';
             } else if ($loan->getStatus() == Loan::STATUS_RESERVED) {
                 $status = '<span class="label bg-orange">'.Loan::STATUS_RESERVED.'</span>';
@@ -154,9 +155,9 @@ class AdminLoanListDataController extends Controller
             }
 
             // Modify UTC database times to match local time
-            $i = DateTimeHelper::getLocalTime($tz, $loanRow->getDueInAt());
+            $i = $loanRow->getDueInAt()->modify("{$offSet} hours");
             $loanRow->setDueInAt($i);
-            $o = DateTimeHelper::getLocalTime($tz, $loanRow->getDueOutAt());
+            $o = $loanRow->getDueOutAt()->modify("{$offSet} hours");
             $loanRow->setDueOutAt($o);
 
             $loanInfo = '<a href="'.$editUrl.'">'.$loanRow->getInventoryItem()->getName().'</a>';
