@@ -59,8 +59,8 @@ class SiteEventListController extends Controller
         foreach ($results['data'] AS $event) {
             /** @var $event \AppBundle\Entity\Event */
 
-            $s_start = $event->getDate()->format("Y-m-d").' '.substr($event->getTimeFrom(), 0, 2).':'.substr($event->getTimeFrom(), 2, 2).':00';
-            $s_end   = $event->getDate()->format("Y-m-d").' '.substr($event->getTimeTo(), 0, 2).':'.substr($event->getTimeTo(), 2, 2).':00';
+            $s_start = $event->getDate()->format("Y-m-d").' '.substr($event->getTimeFrom(), 0, 2).':'.substr($event->getTimeFrom(), 3, 2).':00';
+            $s_end   = $event->getDate()->format("Y-m-d").' '.substr($event->getTimeTo(), 0, 2).':'.substr($event->getTimeTo(), 3, 2).':00';
             $site = $event->getSite();
 
             if ($event->getType() != 'c') {
