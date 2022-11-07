@@ -125,8 +125,8 @@ class DateTimeHelper
     }
 
     /**
-     * @param string $settingsTimeZone
-     * @param DateTime  $time
+     * @param  string  $settingsTimeZone
+     * @param  DateTime  $time
      *
      * @return DateTime
      * @throws Exception
@@ -141,5 +141,24 @@ class DateTimeHelper
         $localTime->modify("{$offSet} hours");
 
         return $localTime;
+    }
+
+    /**
+     * Format date with handling the empty or invalid date formats
+     *
+     * @param $date
+     * @param $format
+     *
+     * @return string
+     */
+    public static function formatDate($date, $format)
+    {
+        if (!$date) {
+            return '';
+        }
+
+        $d = new DateTime($date);
+
+        return $d->format($format);
     }
 }
