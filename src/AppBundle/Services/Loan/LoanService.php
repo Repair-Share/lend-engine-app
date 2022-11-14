@@ -163,46 +163,19 @@ class LoanService
      */
     public function countLoans($status = '', \DateTime $dateTo = null)
     {
-        $repository = $this->em->getRepository('AppBundle:LoanRow');
+        /** @var $repo \AppBundle\Repository\LoanRowRepository */
+        $repo = $this->em->getRepository('AppBundle:LoanRow');
 
         $tz = $this->settings->getSettingValue('org_timezone');
 
-        $localNow = DateTimeHelper::getLocalTime($tz, new \DateTime());
+        $filter = [
+            'status' => $status
+        ];
 
-        $builder = $repository->createQueryBuilder('lr');
-        $builder->select('lr');
-        $builder->leftJoin('lr.loan', 'l');
-        $builder->leftJoin('l.contact', 'c');
-        $builder->leftJoin('lr.inventoryItem', 'i');
+        // Use the same repo search like on the admin list
+        $loanData = $repo->search(0, null, $filter, null, $tz);
 
-        if ($status === 'ACTIVE' || $status === 'OVERDUE') { // Check the items statuses in loan rows
-
-            $builder->andWhere('lr.checkedInAt is null');
-
-            $builder->andWhere('l.status in (:status)');
-            $builder->setParameter('status', ['ACTIVE', 'OVERDUE', 'CLOSED']);
-
-            if ($status === 'ACTIVE') {
-                $builder->andWhere('lr.dueInAt > :now');
-            } else { // Overdue
-                $builder->andWhere('lr.dueInAt <= :now');
-            }
-
-            $builder->setParameter('now', date('Y-m-d H:i:s', $localNow->getTimestamp()));
-
-        } else { // Check the loan status in the loan table
-            $builder->andWhere('l.status = :status');
-            $builder->setParameter('status', $status);
-        }
-
-        // excludeStockItems
-        $builder->andWhere("i.itemType != 'stock'");
-
-        // excludeServiceItems
-        $builder->andWhere("i.itemType != 'service'");
-
-        $queryTotalResults = $builder->getQuery();
-        return count($queryTotalResults->getResult());
+        return $loanData['totalResults'];
     }
 
     /**
