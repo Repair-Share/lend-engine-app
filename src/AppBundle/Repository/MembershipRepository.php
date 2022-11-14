@@ -19,14 +19,16 @@ class MembershipRepository extends \Doctrine\ORM\EntityRepository
      */
     public function search($start, $length, $filter)
     {
+        $joinMembership = false;
+
         $repository = $this->getEntityManager()->getRepository('AppBundle:Membership');
 
         $builder = $repository->createQueryBuilder('s');
         $builder->select('s, c');
-        $builder->leftJoin('s.contact', 'c');
-        $builder->leftJoin('s.membershipType', 'mt');
+        $builder->innerJoin('s.contact', 'c');
 
         if (isset($filter['search']) && $filter['search']) {
+            $joinMembership = true;
             $builder->andWhere('c.firstName LIKE :string');
             $builder->orWhere('c.lastName LIKE :string');
             $builder->orWhere('c.email LIKE :string');
@@ -53,6 +55,10 @@ class MembershipRepository extends \Doctrine\ORM\EntityRepository
         if (isset($filter['date_to']) && $filter['date_to']) {
             $builder->andWhere('s.expiresAt <= :dateTo');
             $builder->setParameter('dateTo', $filter['date_to'].' 23:59:59');
+        }
+
+        if ($joinMembership) {
+            $builder->innerJoin('s.membershipType', 'mt');
         }
 
         $builder->setFirstResult($start);
