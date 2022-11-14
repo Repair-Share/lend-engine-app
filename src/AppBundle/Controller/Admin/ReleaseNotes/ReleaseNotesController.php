@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '219' => 'Pagination on both Members and Reports_Memberships',
             '216' => 'CSV Exports are still not matching the data if you compare the report to the dashboard for one account',
             '199' => 'Overdue item did not appear on overdue list',
             '212' => 'Downloading PDF issue on a mobile device',
