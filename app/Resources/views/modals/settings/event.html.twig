@@ -12,11 +12,11 @@
     {% endif %}
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-7">
             {{ form_row(form.date) }}
             <div id="date-container"></div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
             {{ form_row(form.type) }}
             <div class="row">
                 <div class="col-md-4">
@@ -55,7 +55,7 @@
                 format: 'ddd MMM D YYYY',
                 autoClose: true,
                 singleDate: false,
-                singleMonth: true,
+                singleMonth: false,
                 showShortcuts: false,
                 inline: true,
                 alwaysOpen: true,
