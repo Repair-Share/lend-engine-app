@@ -165,6 +165,12 @@ EOT;
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            $repeat = (int)$request->get('opening_hours')['repeat'];
+
+            if (!$repeat) {
+                $repeat = 1;
+            }
+
             $d = $form->get('date')->getData();
 
             if (strpos($d, ' to ')) { // Multiple dates
@@ -188,15 +194,21 @@ EOT;
 
             for ($i = 0; $i <= $diff; $i++) {
 
-                $date = clone $dFrom;
-                $date->modify($i . ' day');
+                for ($j = 0; $j < $repeat; $j++) {
 
-                $event2 = clone $event;
+                    $date = clone $dFrom;
 
-                $event2->setDate($date);
-                $event2->setCreatedBy($this->getUser());
+                    $date->modify($i . ' day');
+                    $date->modify($j . ' year');
 
-                $em->persist($event2);
+                    $event2 = clone $event;
+
+                    $event2->setDate($date);
+                    $event2->setCreatedBy($this->getUser());
+
+                    $em->persist($event2);
+
+                }
 
             }
 

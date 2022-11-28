@@ -149,6 +149,7 @@ class Event
 
     private $utcFrom;
     private $utcTo;
+    private $repeat;
 
     /**
      * Gets triggered only on insert
@@ -538,6 +539,30 @@ class Event
         $this->isBookable = $isBookable;
 
         return $this;
+    }
+
+    /**
+     * Set repeat
+     *
+     * @param int $repeat
+     *
+     * @return int
+     */
+    public function setRepeat($repeat)
+    {
+        $this->repeat = $repeat;
+
+        return $this;
+    }
+
+    /**
+     * Get repeat
+     *
+     * @return int
+     */
+    public function getRepeat()
+    {
+        return $this->repeat;
     }
 
     /**
