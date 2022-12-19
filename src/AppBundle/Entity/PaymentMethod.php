@@ -92,4 +92,17 @@ class PaymentMethod
     {
         return $this->isActive;
     }
+
+    /**
+     * Get the debug array
+     *
+     * @return array
+     */
+    public function getDebug()
+    {
+        return [
+            'id'   => $this->getId(),
+            'name' => $this->getName()
+        ];
+    }
 }

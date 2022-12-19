@@ -49,6 +49,9 @@ class LoanController extends Controller
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
 
+        /** @var \AppBundle\Services\Debug\DebugService $debugService */
+        $debugService = $this->get('service.debug');
+
         /** @var \AppBundle\Repository\LoanRepository $repo */
         $repo = $em->getRepository('AppBundle:Loan');
 
@@ -117,6 +120,8 @@ class LoanController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            $debugService->stripeDebug('Payment form submitted', print_r($_REQUEST, true));
+
             // Until we have a fail, assume payment is OK
             $paymentOk = true;
             $cardDetails = null;
@@ -156,6 +161,8 @@ class LoanController extends Controller
                     } else {
                         // No existing payment exists
                         $payment = new Payment();
+
+                        $debugService->stripeDebug('Payment() initialized with empty (No psp code)');
                     }
 
                     $payment->setCreatedBy($user);
@@ -177,6 +184,13 @@ class LoanController extends Controller
 
                 // Create the deposits as separate payments
                 if ($paymentOk == true) {
+
+                    $debugService->stripeDebug(
+                        'Create the deposits as separate payments',
+                        [
+                            'deposits' => $request->request->get('deposits')
+                        ]
+                    );
 
                     if ($deposits = $request->request->get('deposits')) {
 

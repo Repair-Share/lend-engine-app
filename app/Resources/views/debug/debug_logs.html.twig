@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h4>
+        {{ type|upper }} debug logs
+        {% if log %}
+            <button type="button" class="btn bg-red" onclick="return clearLogs()">Clear log</button>
+        {% endif %}
+    </h4>
+    <div class="well">
+        {% if log %}
+            <pre>{{ log }}</pre>
+        {% else %}
+            Not found logs.
+        {% endif %}
+    </div>
+    <script type="text/javascript">
+        function clearLogs()
+        {
+            if (confirm('Are you sure?')) {
+                window.location = '/admin/debug_logs?action=clear';
+            }
+
+            return false;
+        }
+    </script>
+
+{% endblock %}

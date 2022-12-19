@@ -282,4 +282,17 @@ class Deposit
         return $this->payments;
     }
 
+    /**
+     * Get the debug array
+     *
+     * @return array
+     */
+    public function getDebug()
+    {
+        return [
+            'id'     => $this->getId(),
+            'amount' => $this->getAmount()
+        ];
+    }
+
 }

@@ -272,6 +272,7 @@ services:
             - "@settings"
             - "@service.stripe"
             - "@service.contact"
+            - "@service.debug"
 
     service.checkout:
         class: AppBundle\Services\Loan\CheckOutService
@@ -318,6 +319,7 @@ services:
         arguments:
             - "@doctrine.orm.entity_manager"
             - "@settings"
+            - "@service.debug"
 
     service.mailchimp:
         class: AppBundle\Services\Apps\MailchimpService
@@ -334,6 +336,12 @@ services:
         class: AppBundle\Services\Apps\RecaptchaService
         arguments:
             - "@service.apps"
+
+    service.debug:
+        class: AppBundle\Services\Debug\DebugService
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@settings"
 
     ## REPORT SERVICES
 
