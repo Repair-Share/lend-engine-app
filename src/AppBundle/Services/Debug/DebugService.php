@@ -34,6 +34,11 @@ class DebugService
         }
     }
 
+    public function isDebugOn()
+    {
+        return $this->debug;
+    }
+
     public function getLogDir()
     {
         return dirname(__DIR__, 4) . '/var/logs';

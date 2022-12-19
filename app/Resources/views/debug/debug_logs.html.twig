@@ -8,6 +8,13 @@
             <button type="button" class="btn bg-red" onclick="return clearLogs()">Clear log</button>
         {% endif %}
     </h4>
+
+    {% if not debugOn %}
+    <div class="alert alert-warning">
+        Please note that debug is not turned on for this client!
+    </div>
+
+    {% endif %}
     <div class="well">
         {% if log %}
             <pre>{{ log }}</pre>

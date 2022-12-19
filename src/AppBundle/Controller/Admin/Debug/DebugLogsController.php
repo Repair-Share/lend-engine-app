@@ -22,6 +22,7 @@ class DebugLogsController extends Controller
         $logContent = '';
         $logType    = DebugService::STRIPE;
         $logFile    = $debugService->getLogFile($logType);
+        $debugOn    = $debugService->isDebugOn();
 
         // Delete the log file
         if ($request->get('action') === 'clear' && file_exists($logFile)) {
@@ -38,8 +39,9 @@ class DebugLogsController extends Controller
         }
 
         return $this->render('debug/debug_logs.html.twig', [
-            'type' => DebugService::STRIPE,
-            'log'  => $logContent
+            'type'    => DebugService::STRIPE,
+            'log'     => $logContent,
+            'debugOn' => $debugOn
         ]);
     }
 
