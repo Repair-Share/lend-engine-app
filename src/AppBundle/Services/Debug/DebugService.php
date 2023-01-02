@@ -69,26 +69,30 @@ class DebugService
      * @param $key
      * @param  int  $first  Leaves the first x character unmasked
      * @param  int  $last  Leaves the last x character unmasked
-     * @return false|void
+     * @return array|object
      */
-    public function maskSensitiveInfo(&$params, $key, $first = 0, $last = 0)
+    public function maskSensitiveInfo($params, $key, $first = 0, $last = 0)
     {
-        /*if ($params instanceof PaymentIntent) {
+        if ($params instanceof PaymentIntent) {
+
+            $p = (clone $params); // Avoid overwriting the original params object
 
             $value = $params->{$key};
 
             $maskedValue = substr($value, 0, $first) . '...' . substr($value, strlen($value) - $last);
 
-            $params->{$key} = $maskedValue;
+            $p->{$key} = $maskedValue;
+
+            return $p;
 
         } else {
 
             if (!is_array($params)) {
-                return false;
+                return $params;
             }
 
             if (!isset($params[$key])) {
-                return false;
+                return $params;
             }
 
             $value = $params[$key];
@@ -96,7 +100,9 @@ class DebugService
             $maskedValue = substr($value, 0, $first) . '...' . substr($value, strlen($value) - $last);
 
             $params[$key] = $maskedValue . ' (' . strlen($value) . ')';
-        }*/
+
+            return $params;
+        }
     }
 
     public function getSeparator()
@@ -109,8 +115,8 @@ class DebugService
         if ($this->debug) {
 
             // Mask sensitive info
-            $this->maskSensitiveInfo($debugParams, 'client_secret', 3, 3);
-            $this->maskSensitiveInfo($debugParams, 'customer', 3, 3);
+            $debugParams = $this->maskSensitiveInfo($debugParams, 'client_secret', 3, 3);
+            $debugParams = $this->maskSensitiveInfo($debugParams, 'customer', 3, 3);
 
             $this->saveDebug(self::STRIPE, $title, $debugParams);
         }
