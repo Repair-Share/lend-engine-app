@@ -73,7 +73,7 @@ class DebugService
      */
     public function maskSensitiveInfo(&$params, $key, $first = 0, $last = 0)
     {
-        if ($params instanceof PaymentIntent) {
+        /*if ($params instanceof PaymentIntent) {
 
             $value = $params->{$key};
 
@@ -96,7 +96,7 @@ class DebugService
             $maskedValue = substr($value, 0, $first) . '...' . substr($value, strlen($value) - $last);
 
             $params[$key] = $maskedValue . ' (' . strlen($value) . ')';
-        }
+        }*/
     }
 
     public function getSeparator()
