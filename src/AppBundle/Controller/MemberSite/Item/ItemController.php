@@ -94,7 +94,11 @@ class ItemController extends Controller
         $loanPeriod = $itemLoanDays;
 
         // Pro-rate to get a DAILY fee which is used on the calendar for bookings
-        $dailyFee = round($itemFee / $itemLoanDays, 6);
+        $dailyFee = 0;
+        if ($itemLoanDays) {
+            $dailyFee = round($itemFee / $itemLoanDays, 6);
+        }
+
         $itemFee = round($itemFee, 2);
 
         $product->setLoanFee($itemFee);

@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '224' => 'No price or length of borrow when browsing',
             '220' => 'Repeating custom hours, span a period of days',
             '219' => 'Pagination on both Members and Reports_Memberships',
             '216' => 'CSV Exports are still not matching the data if you compare the report to the dashboard for one account',
