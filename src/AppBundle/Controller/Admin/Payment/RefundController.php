@@ -84,16 +84,26 @@ class RefundController extends Controller
 
                     $em = $this->getDoctrine()->getManager();
 
-                    $stripePaymentMethodId = $this->get('settings')->getSettingValue('stripe_payment_method');
+                    $debitAccount = $em->getRepository("AppBundle:PaymentMethod")->findOneBy(['name' => PaymentMethod::PAYMENT_METHOD_DEBIT_ACCOUNT]);
 
-                    $stripePaymentMethod = $em->getRepository("AppBundle:PaymentMethod")->find($stripePaymentMethodId);
+                    // Create the debit account if it doesn't exist yet
+                    if (!$debitAccount) {
+
+                        $debitAccount = new PaymentMethod();
+                        $debitAccount->setName(PaymentMethod::PAYMENT_METHOD_DEBIT_ACCOUNT);
+                        $debitAccount->setIsActive(false);
+
+                        $em->persist($debitAccount);
+                        $em->flush($debitAccount);
+
+                    }
 
                     $debit = new Payment();
                     $debit->setType(Payment::PAYMENT_TYPE_PAYMENT);
                     $debit->setAmount($amount);
                     $debit->setCreatedBy($this->getUser());
                     $debit->setContact($p->getContact());
-                    $debit->setPaymentMethod($stripePaymentMethod);
+                    $debit->setPaymentMethod($debitAccount);
                     $debit->setNote('Debit account with the refund');
                     $debit->setLoan($p->getLoan());
 

@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PaymentMethod
 {
+    const PAYMENT_METHOD_DEBIT_ACCOUNT = 'Debit Account';
+
     /**
      * @var integer
      *

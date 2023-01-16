@@ -77,7 +77,16 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if is_granted('ROLE_ADMIN') and (payment.type == 'PAYMENT' or payment.type == 'DEPOSIT') %}
+                        {% if is_granted('ROLE_ADMIN')
+                            and (payment.type == 'PAYMENT' or payment.type == 'DEPOSIT')
+                            and (
+                                not payment.paymentMethod
+                                or (
+                                    payment.paymentMethod
+                                    and payment.paymentMethod.name != 'Debit Account'
+                                )
+                            )
+                        %}
                             <a href="{{ path('refund', {id: payment.id, amount: payment.amount}) }}" class="modal-link" style="font-size: 11px">Refund</a>
                         {% endif %}
                     </td>
