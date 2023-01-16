@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -44,6 +45,11 @@ class RefundType extends AbstractType
             'attr' => [
                 'rows' => 2
             ]
+        ));
+
+        $builder->add('debitAccount', CheckboxType::class, array(
+            'label' => 'Debit account with the refund',
+            'required' => false
         ));
 
         $builder->add('paymentId', HiddenType::class, array(

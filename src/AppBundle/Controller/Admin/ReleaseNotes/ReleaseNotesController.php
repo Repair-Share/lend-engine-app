@@ -19,6 +19,7 @@ class ReleaseNotesController extends Controller
 
         $bugfixes = [
             '224' => 'No price or length of borrow when browsing',
+            '195' => 'Refund in Stripe should allow optional reduction in credit back on the account, default should be no change.',
             '220' => 'Repeating custom hours, span a period of days',
             '219' => 'Pagination on both Members and Reports_Memberships',
             '216' => 'CSV Exports are still not matching the data if you compare the report to the dashboard for one account',
