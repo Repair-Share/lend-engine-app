@@ -104,7 +104,7 @@ class RefundController extends Controller
                     $debit->setCreatedBy($this->getUser());
                     $debit->setContact($p->getContact());
                     $debit->setPaymentMethod($debitAccount);
-                    $debit->setNote('Refund: Debit to Account');
+                    $debit->setNote('Refund: Debit to LE Account');
                     $debit->setLoan($p->getLoan());
 
                     $em->persist($debit);
