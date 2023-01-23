@@ -80,7 +80,7 @@ class RefundController extends Controller
                 $this->addFlash('success', "Refunded {$chargeID} OK");
 
                 // Debit account with the refund
-                if ($form->get('debitAccount')->getData()) {
+                if (!$form->get('debitAccount')->getData()) {
 
                     $em = $this->getDoctrine()->getManager();
 
