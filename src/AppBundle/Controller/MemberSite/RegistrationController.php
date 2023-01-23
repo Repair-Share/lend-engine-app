@@ -31,6 +31,9 @@ class RegistrationController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        /** @var \AppBundle\Entity\Contact $user */
+        $user = $this->getUser();
+
         /** @var \AppBundle\Entity\Contact $contact */
         $contact = $this->getUser();
 
@@ -39,6 +42,12 @@ class RegistrationController extends Controller
 
         /** @var \AppBundle\Services\EmailService $emailService */
         $emailService = $this->get('service.email');
+
+        /** @var \AppBundle\Services\Payment\PaymentService $paymentService */
+        $paymentService = $this->get('service.payment');
+
+        /** @var \AppBundle\Services\Contact\ContactService $contactService */
+        $contactService = $this->get('service.contact');
 
         if (!$contact->getEmail()) {
             return $this->redirectToRoute('home');
@@ -57,7 +66,9 @@ class RegistrationController extends Controller
         $addedMembershipType = false;
 
         $proceedToChooseMembership = false;
+        $autoEnrolMembership = null;
         if (!$contact->getActiveMembership()) {
+
             // Auto-enrol in any self serve membership
             /** @var \AppBundle\Repository\MembershipTypeRepository $membershipTypeRepo */
             $membershipTypeRepo = $em->getRepository('AppBundle:MembershipType');
@@ -65,6 +76,24 @@ class RegistrationController extends Controller
             $selfServeMembershipTypes = $membershipTypeRepo->findBy(['isSelfServe' => true]);
             if (count($selfServeMembershipTypes) > 0) {
                 $proceedToChooseMembership = true;
+            }
+
+            $selfServeActiveMembershipTypes = $membershipTypeRepo->findBy([
+                'isSelfServe' => true,
+                'isActive'    => true
+            ]);
+
+            $selfServeFreeAndActiveMembershipTypes = $membershipTypeRepo->findBy([
+                'isSelfServe' => true,
+                'price'       => 0,
+                'isActive'    => true
+            ]);
+
+            // Auto-enrol if:
+            // - Only one active self serve membership is available and
+            // - That membership type is free
+            if (count($selfServeActiveMembershipTypes) === 1 && count($selfServeFreeAndActiveMembershipTypes) === 1) {
+                $autoEnrolMembership = $selfServeFreeAndActiveMembershipTypes[0];
             }
         }
 
@@ -88,6 +117,44 @@ class RegistrationController extends Controller
         // Send the email without showing member any failures
         $subject = "New registration on your member site : ".$contact->getName();
         $emailService->send($ownerEmail, $ownerName, $subject, $message, false);
+
+        if ($autoEnrolMembership && $autoEnrolMembership->getId()) {
+
+            $membership = new Membership();
+            $membership->setContact($contact);
+            $membership->setCreatedBy($user);
+            $membership->setMembershipType($autoEnrolMembership);
+            $membership->setPrice($autoEnrolMembership->getPrice());
+            $membership->calculateStartAndExpiryDates();
+
+            $em->persist($membership);
+
+            $flashBags = $membership->subscribe(
+                $em,
+                $contact,
+                $user,
+                $paymentService,
+                $autoEnrolMembership->getPrice(),
+                $autoEnrolMembership->getPrice(),
+                $request->get('paymentId'),
+                $this->get('settings')->getSettingValue('stripe_payment_method')
+            );
+
+            foreach ($flashBags as $flashBag) {
+                $this->addFlash($flashBag['type'], $flashBag['msg']);
+            }
+
+            $this->get('session')->set('pendingPaymentType', null);
+            $contactService->recalculateBalance($membership->getContact());
+
+            if ($user->hasRole('ROLE_ADMIN')) {
+                $this->addFlash('success', 'Subscribed OK');
+                return $this->redirectToRoute('contact', ['id' => $contact->getId()]);
+            } else {
+                $this->addFlash('success', 'Welcome! You are now a member.');
+                return $this->redirectToRoute('fos_user_profile_show');
+            }
+        }
 
         return $this->render('member_site/registration_welcome.html.twig', [
             'chooseMembership' => $proceedToChooseMembership

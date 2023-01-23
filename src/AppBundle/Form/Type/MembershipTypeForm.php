@@ -94,7 +94,7 @@ class MembershipTypeForm extends AbstractType
             'attr' => array(
                 'placeholder' => '',
                 'class' => 'input-100',
-                'data-help' => "Typically you'd create a membership type for temporary membership, which is automatically assigned to a user when they register. This allows them to add credit and reserve items."
+                'data-help' => "If there is only one self-serve membership, and it is zero cost, that it would auto-assign to the member and skip the enrollment side of signing up so that they can go straight to borrowing."
             )
         ));
 

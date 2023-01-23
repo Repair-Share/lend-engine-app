@@ -71,6 +71,7 @@ using the discount field. Each membership type can have a different duration or 
 <br><br>If a membership type is set as 'self serve', then it's available for members to choose from online (when they register, or in "My Account").
 <br><br>If a member already has a membership when choosing one online, the current one will be expired and the new one will start today.
 The <strong>end date</strong> of the new membership will be calculated from the existing membership expiry if it's due to expire within 14 days.
+<br><br>If you create a zero-cost membership and it's the only self-serve membership available, it will be automatically assigned to users when they register.
 EOT;
 
         return $this->render(
