@@ -48,8 +48,12 @@ class RefundType extends AbstractType
         ));
 
         $builder->add('debitAccount', CheckboxType::class, array(
-            'label' => 'Debit account with the refund',
-            'required' => false
+            'label'    => 'Create Debit to LE account',
+            'required' => false,
+
+            'attr' => [
+                'checked' => true
+            ]
         ));
 
         $builder->add('paymentId', HiddenType::class, array(
