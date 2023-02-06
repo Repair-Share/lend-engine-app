@@ -19,7 +19,7 @@ class RefundType extends AbstractType
         $this->em = $options['em'];
 
         $allowDebit = false;
-        if (strpos($options['action'], 'goToCheckInItem') !== false) {
+        if (strpos($options['action'], 'goToCheckInItem') === false) {
             $allowDebit = true;
         }
 

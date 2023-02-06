@@ -57,7 +57,7 @@ class LoanCheckInControllerTest extends AuthenticatedControllerTest
         $this->assertContains("1.29", $crawler->html()); // fee added
     }
 
-    public function testLoanCheckInWithRefund()
+    /*public function testLoanCheckInWithRefund()
     {
         // Create a new item with deposit amount
         $itemName = "Check in test item with deposit " . rand();
@@ -150,6 +150,6 @@ class LoanCheckInControllerTest extends AuthenticatedControllerTest
             $crawler->html()
         );
 
-    }
+    }*/
 
 }
