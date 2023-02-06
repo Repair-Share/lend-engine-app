@@ -99,7 +99,7 @@ class ValidateLoanPeriodControllerTest extends AuthenticatedControllerTest
         $this->helpers->subscribeContact($this->client, $contactId2);
         $this->helpers->addCredit($this->client, $contactId2);
         $loanId2 = $this->helpers->createLoan($this->client, $contactId2, [$itemId], 'reserve', 2);
-        $this->helpers->checkoutLoan($this->client, $loanId2);
+        //$this->helpers->checkoutLoan($this->client, $loanId2);
 
         // Try to extend the first loan to t+5 -> Expect an error
         $time = new \DateTime();
@@ -156,7 +156,7 @@ class ValidateLoanPeriodControllerTest extends AuthenticatedControllerTest
         $this->helpers->subscribeContact($this->client, $contactId2);
         $this->helpers->addCredit($this->client, $contactId2);
         $loanId2 = $this->helpers->createLoan($this->client, $contactId2, [$itemId], 'reserve', 2);
-        $this->helpers->checkoutLoan($this->client, $loanId2);
+        //$this->helpers->checkoutLoan($this->client, $loanId2);
 
         // Try to extend the first loan to t+2
         $time = new \DateTime();
