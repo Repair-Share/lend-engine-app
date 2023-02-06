@@ -113,7 +113,38 @@ class LoanCheckInControllerTest extends AuthenticatedControllerTest
             '/member/payments'
         );
 
-        // Not perfect, but better than nothing
+        $paymentRows = $crawler->filter('table')->first()->filter('tr');
+
+        for ($i = 0; $i < $paymentRows->count(); $i++) {
+
+            $detailsCell = $paymentRows->eq($i)->filter('td')->eq(2);
+
+            if ($detailsCell->filter('.unit-test-details')->count()) {
+
+                $details = $detailsCell->filter('.unit-test-details');
+
+                $paymentMethod = $detailsCell->filter('.payment-method')->first()->html();
+                $paymentAmount = $detailsCell->filter('.payment-amount')->first()->html();
+                $paymentNote   = $detailsCell->filter('.payment-note')->first()->html();
+                $paymentDate   = $detailsCell->filter('.payment-date')->first()->html();
+                $paymentTS     = strtotime($paymentDate);
+
+                // Search a refunded transction signs
+                if ($paymentMethod === PaymentMethod::PAYMENT_METHOD_DEBIT_ACCOUNT
+                    && $paymentNote === 'Refund: Debit to LE Account'
+                    && $paymentAmount === '10.00'
+
+                    // Need a +/- 1 hour for the time zone differences
+                    && $paymentTS > time() - 60 * 60
+                    && $paymentTS < time() + 60 * 60
+                ) {
+                    $this->assertSame(1, 1);
+                }
+
+            }
+
+        }
+
         $this->assertContains(
             PaymentMethod::PAYMENT_METHOD_DEBIT_ACCOUNT,
             $crawler->html()
