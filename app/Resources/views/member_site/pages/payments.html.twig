@@ -53,6 +53,14 @@
                     <td>
                         {% if payment.paymentMethod %}
                             {{ payment.paymentMethod.name }}
+                            {% if app.environment == "test" %}
+                                <span class="unit-test-details">
+                                    <span class="payment-method">{{ payment.paymentMethod.name }}</span>
+                                    <span class="payment-amount">{{ payment.amount }}</span>
+                                    <span class="payment-note">{{ payment.note }}</span>
+                                    <span class="payment-date">{{ payment.createdAt|date("Y-m-d H:i:s") }}</span>
+                                </span>
+                            {% endif %}
                             {% if is_granted("ROLE_ADMIN") %}
                                 <div style="font-size: 11px; color: #ccc;">{{ payment.pspCode }}</div>
                             {% endif %}
@@ -83,7 +91,7 @@
                                 not payment.paymentMethod
                                 or (
                                     payment.paymentMethod
-                                    and payment.paymentMethod.name != 'Debit Account'
+                                    and payment.paymentMethod.name != 'Debit LE account'
                                 )
                             )
                         %}

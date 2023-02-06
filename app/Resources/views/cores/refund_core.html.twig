@@ -37,7 +37,9 @@
 
         {{ form_row(form.note) }}
 
-        {{ form_row(form.debitAccount) }}
+        {% if form.debitAccount is defined %}
+            {{ form_row(form.debitAccount) }}
+        {% endif %}
 
         <button type="submit" class="btn btn-success">Refund</button>
 

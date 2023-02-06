@@ -18,6 +18,11 @@ class RefundType extends AbstractType
     {
         $this->em = $options['em'];
 
+        $allowDebit = false;
+        if (strpos($options['action'], 'goToCheckInItem') === false) {
+            $allowDebit = true;
+        }
+
         $activePaymentMethods = $this->em->getRepository("AppBundle:PaymentMethod")->findAllOrderedByName();
         $builder->add('paymentMethod', EntityType::class, array(
             'label' => 'Refund with',
@@ -47,10 +52,18 @@ class RefundType extends AbstractType
             ]
         ));
 
-        $builder->add('debitAccount', CheckboxType::class, array(
-            'label' => 'Debit account with the refund',
-            'required' => false
-        ));
+        if ($allowDebit) {
+
+            $builder->add('debitAccount', CheckboxType::class, array(
+                'label'    => 'Create Debit to LE account',
+                'required' => false,
+
+                'attr' => [
+                    'checked' => true
+                ]
+            ));
+
+        }
 
         $builder->add('paymentId', HiddenType::class, array(
             'label' => 'paymentId',

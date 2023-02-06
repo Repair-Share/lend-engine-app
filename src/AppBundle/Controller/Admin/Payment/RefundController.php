@@ -80,7 +80,8 @@ class RefundController extends Controller
                 $this->addFlash('success', "Refunded {$chargeID} OK");
 
                 // Debit account with the refund
-                if ($form->get('debitAccount')->getData()) {
+                $allowDebit = $form->has('debitAccount');
+                if ($allowDebit && !$form->get('debitAccount')->getData()) {
 
                     $em = $this->getDoctrine()->getManager();
 
@@ -104,7 +105,7 @@ class RefundController extends Controller
                     $debit->setCreatedBy($this->getUser());
                     $debit->setContact($p->getContact());
                     $debit->setPaymentMethod($debitAccount);
-                    $debit->setNote('Debit account with the refund');
+                    $debit->setNote('Refund: Debit to LE Account');
                     $debit->setLoan($p->getLoan());
 
                     $em->persist($debit);
