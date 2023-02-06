@@ -53,7 +53,7 @@
                     <td>
                         {% if payment.paymentMethod %}
                             {{ payment.paymentMethod.name }}
-                            {% if app.environment == "dev" %}
+                            {% if app.environment == "test" %}
                                 <span class="unit-test-details">
                                     <span class="payment-method">{{ payment.paymentMethod.name }}</span>
                                     <span class="payment-amount">{{ payment.amount }}</span>
