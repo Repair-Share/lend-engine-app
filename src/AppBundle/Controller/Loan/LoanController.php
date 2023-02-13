@@ -166,7 +166,11 @@ class LoanController extends Controller
                     }
 
                     $payment->setCreatedBy($user);
-                    $payment->setPaymentMethod($paymentMethod);
+
+                    if ($paymentMethod !== null) {
+                        $payment->setPaymentMethod($paymentMethod);
+                    }
+
                     $payment->setAmount($loanAmount);
                     $paymentNote = Payment::TEXT_PAYMENT_RECEIVED.'. '.$form->get('paymentNote')->getData();
                     $payment->setNote($paymentNote);
