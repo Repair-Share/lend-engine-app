@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '236' => 'Include stock items into the admin loans list',
             '228' => 'Auto-enrolling in memberships',
             '224' => 'No price or length of borrow when browsing',
             '195' => 'Refund in Stripe should allow optional reduction in credit back on the account, default should be no change.',

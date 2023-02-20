@@ -116,7 +116,7 @@ class AdminLoanListDataController extends Controller
 
         }
 
-        $filter['excludeStockItems'] = true;
+        $filter['excludeStockItems'] = false;
 
         // Modify times to match local time for UI
         // Not sure why DateTime format() here is not working
