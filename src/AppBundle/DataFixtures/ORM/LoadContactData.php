@@ -16,8 +16,8 @@ class LoadContactData implements FixtureInterface
         $userAdmin = new Contact();
         $userAdmin->setFirstName('Admin');
         $userAdmin->setLastName('Admin');
-        $userAdmin->setUsername('hello@lend-engine.com');
-        $userAdmin->setEmail('hello@lend-engine.com');
+        $userAdmin->setUsername('tech@lend-engine.com');
+        $userAdmin->setEmail('tech@lend-engine.com');
         $userAdmin->setPlainPassword('unit_test');
         $userAdmin->setEnabled(true);
         $userAdmin->addRole("ROLE_ADMIN");

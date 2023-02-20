@@ -14,7 +14,7 @@ class ResetController extends Controller
      */
     public function changeLogAction(Request $request)
     {
-        if ($this->getUser()->getEmail() != 'hello@lend-engine.com') {
+        if ($this->getUser()->getEmail() != 'tech@lend-engine.com') {
             $this->addFlash("error", "Reset is not allowed for this user.");
             return $this->redirectToRoute('homepage');
         }

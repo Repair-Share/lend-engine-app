@@ -140,8 +140,8 @@ class UpdateController extends Controller
         //@TODO set the primary admin email to a server env variable for flexible deployment
         $user->setFirstName('Admin');
         $user->setLastName('Admin');
-        $user->setUsername('hello@lend-engine.com');
-        $user->setEmail('hello@lend-engine.com');
+        $user->setUsername('tech@lend-engine.com');
+        $user->setEmail('tech@lend-engine.com');
         $user->addRole("ROLE_ADMIN");
         $user->addRole("ROLE_SUPER_USER");
         $user->setEnabled(true);
