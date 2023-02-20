@@ -15,7 +15,7 @@ class DBMigrationsCommand extends ContainerAwareCommand
     const SERVER_STAGING = 'lend-engine-staging';
     const SERVER_EU = 'lend-engine-eu';
     const SERVER_EU_PLUS = 'lend-engine-eu-plus';
-    const SERVER_EU_3 = 'lend-engine-eu-3';
+    const SERVER_EU_3 = 'lend-engine-3';
 
     protected static $defaultName = 'app:db-migrations';
 
