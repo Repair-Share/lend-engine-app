@@ -46,7 +46,7 @@ abstract class AuthenticatedControllerTest extends \Symfony\Bundle\FrameworkBund
     protected function createAuthorizedClient()
     {
         $client = static::createClient([], [
-            'PHP_AUTH_USER' => 'hello@lend-engine.com',
+            'PHP_AUTH_USER' => 'tech@lend-engine.com',
             'PHP_AUTH_PW'   => 'unit_test',
         ]);
 
