@@ -76,8 +76,8 @@ class LoanExportController extends Controller
                     inner join inventory_item ii on lr.inventory_item_id = ii.id
                     inner join contact c on c.id = l.contact_id
                 
-                where
-                    ii.item_type <> 'stock' -- excludeStockItems
+                -- where
+                --    ii.item_type <> 'stock' -- excludeStockItems
     
                 order by
                     l.id
