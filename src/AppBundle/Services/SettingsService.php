@@ -11,6 +11,8 @@ use AppBundle\Entity\Setting;
 use AppBundle\Entity\Tenant;
 use AppBundle\Entity\TenantSite;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+
 
 class SettingsService
 {
@@ -30,10 +32,12 @@ class SettingsService
         $this->em = $em;
         $this->db = $this->em->getConnection()->getDatabase();
 
-        $tenant = $this->em->getRepository('AppBundle:Tenant')->findOneBy(['dbSchema' => $this->db]);
+        $tenant = $this->loadWithCache();
+
         if (!$tenant) {
             throw new \Exception("No tenant found when getting settings");
         }
+
         $this->setTenant($tenant);
     }
 
@@ -374,6 +378,35 @@ class SettingsService
         );
 
         return $validKeys;
+    }
+
+    public function loadWithCache($refreshCache = false)
+    {
+        $tenant = null;
+
+        $cachePool = new FilesystemAdapter();
+
+        $cacheKey = 'tenant_' . $this->db;
+
+        if ($refreshCache) {
+            $cachePool->deleteItem($cacheKey);
+        }
+
+        $cache = $cachePool->getItem($cacheKey);
+
+        if (!$cache->isHit()) {
+            $tenant = $this->em->getRepository('AppBundle:Tenant')->findOneBy(['dbSchema' => $this->db]);
+            $cache->set(serialize($tenant));
+            $cache->expiresAfter(3600); // 1 hour
+            $cachePool->save($cache);
+        }
+
+        if ($cachePool->hasItem($cacheKey)) {
+            $cacheObject = $cachePool->getItem($cacheKey);
+            $tenant      = unserialize($cacheObject->get());
+        }
+
+        return $tenant;
     }
 
 }

@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\ConnectionFactory;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Driver\PDOException;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpFoundation\Request;
 
 class CustomConnectionFactory extends ConnectionFactory
@@ -124,26 +125,11 @@ class CustomConnectionFactory extends ConnectionFactory
         $leServerName = getenv('LE_SERVER_NAME');
 
         try {
-            if ( $stmt = $this->db->query("SELECT
-              stub,
-              domain,
-              db_schema,
-              name,
-              owner_name,
-              owner_email,
-              status,
-              trial_expires_at,
-              plan,
-              server_name,
-              time_zone,
-              subscription_id
-              FROM account
-              WHERE stub = '{$account_code}' OR domain = '{$domain}'
-              AND server_name = '{$leServerName}'
-              ORDER BY domain DESC
-              LIMIT 1
-              ") ){
-                return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $accountInfo = $this->loadWithCache($account_code, $domain, $leServerName);
+
+            if ($accountInfo) {
+                return $accountInfo;
             } else {
                 die("Query failed for account {$account_code} on DB {$this->database}");
             }
@@ -181,6 +167,65 @@ EOL;
 
         return $html;
 
+    }
+
+    public function loadWithCache($accountCode, $domain, $leServerName, $refreshCache = false)
+    {
+        $account = null;
+
+        $cachePool = new FilesystemAdapter();
+
+        $cacheKey = md5('account_' . $accountCode . '_' . $domain . '_' . $leServerName);
+
+        if ($refreshCache) {
+            $cachePool->deleteItem($cacheKey);
+        }
+
+        $cache = $cachePool->getItem($cacheKey);
+
+        if (!$cache->isHit()) {
+
+            $stmt = $this->db->query("
+                SELECT
+                    stub,
+                    domain,
+                    db_schema,
+                    name,
+                    owner_name,
+                    owner_email,
+                    status,
+                    trial_expires_at,
+                    plan,
+                    server_name,
+                    time_zone,
+                    subscription_id
+                
+                FROM 
+                    account
+              
+                WHERE 
+                    stub = '{$accountCode}' OR domain = '{$domain}'
+                    AND server_name = '{$leServerName}'
+              
+                ORDER BY domain DESC
+              
+                LIMIT 1
+
+              ");
+
+            $account = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            $cache->set(serialize($account));
+            $cache->expiresAfter(3600); // 1 hour
+            $cachePool->save($cache);
+        }
+
+        if ($cachePool->hasItem($cacheKey)) {
+            $cacheObject = $cachePool->getItem($cacheKey);
+            $account     = unserialize($cacheObject->get());
+        }
+
+        return $account;
     }
 
 }
