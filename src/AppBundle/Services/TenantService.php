@@ -60,7 +60,7 @@ class TenantService
         $this->postmarkApiKey = $postmarkApiKey;
         
         // Tenant is set in settings when first constructed
-        $this->tenant = $this->settings->getTenant();
+        $this->tenant = $this->settings->getTenant(false);
 
     }
 
@@ -77,8 +77,11 @@ class TenantService
     /**
      * @return \AppBundle\Entity\Tenant
      */
-    public function getTenant()
+    public function getTenant($returnObject = true)
     {
+        if ($returnObject) {
+            $this->tenant = $this->settings->getTenant($returnObject);
+        }
         return $this->tenant;
     }
 

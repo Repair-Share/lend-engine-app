@@ -38,7 +38,7 @@ class BillingListener
                 'clear_site'
             ])) {
 
-            if (!$tenant = $this->settings->getTenant()) {
+            if (!$tenant = $this->settings->getTenant(false)) {
                 die('We could not find your account');
             } else {
                 // If cancelled, redirect to home

@@ -318,7 +318,7 @@ class LoanController extends Controller
             /** @var \AppBundle\Services\SettingsService $settingsService */
             $settingsService = $this->get('settings');
 
-            if ($tenant = $settingsService->getTenant()) {
+            if ($tenant = $settingsService->getTenant(false)) {
                 foreach ($loan->getLoanRows() AS $row) {
                     /** @var $row \AppBundle\Entity\LoanRow */
                     $item = $row->getInventoryItem();
@@ -414,7 +414,7 @@ class LoanController extends Controller
 
         $token = $contactService->generateAccessToken($loan->getContact());
 
-        $loginUri = $tenantService->getTenant()->getDomain(true);
+        $loginUri = $tenantService->getTenant(false)->getDomain(true);
         $loginUri .= '/access?t='.$token.'&e='.urlencode($loan->getContact()->getEmail());
         $loginUri .= '&r=/loan/'.$loan->getId();
 

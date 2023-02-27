@@ -18,7 +18,7 @@ class DashController extends Controller
 
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
-        $tenant = $settingsService->getTenant();
+        $tenant = $settingsService->getTenant(false);
 
         // Update Core (_core DB)
         $settingsService->updateCore($tenant->getStub());

@@ -191,7 +191,7 @@ class CheckInService
         $token = $this->contactService->generateAccessToken($contact);
         $user = $this->tokenStorage->getToken()->getUser();
 
-        $loginUri = $this->tenantService->getTenant()->getDomain(true);
+        $loginUri = $this->tenantService->getTenant(false)->getDomain(true);
         $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
         $loginUri .= '&r=/loan/'.$loanRow->getLoan()->getId();
 

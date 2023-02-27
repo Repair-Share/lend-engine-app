@@ -463,7 +463,7 @@ class BasketService
         $contact = $loan->getContact();
         $token = $this->contactService->generateAccessToken($contact);
 
-        $loginUri = $this->tenantService->getTenant()->getDomain(true);
+        $loginUri = $this->tenantService->getTenant(false)->getDomain(true);
         $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
         $loginUri .= '&r=/loan/'.$loan->getId();
 

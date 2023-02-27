@@ -26,7 +26,7 @@ class ChooseItemSectorController extends Controller
         /** @var $billingService \AppBundle\Services\BillingService */
         $billingService = $this->get('billing');
 
-        $plan = $settingsService->getTenant()->getPlan();
+        $plan = $settingsService->getTenant(false)->getPlan();
         $maxItems = $billingService->getMaxItems($plan);
 
         $count = $repo->countItems();

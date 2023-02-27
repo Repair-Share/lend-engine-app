@@ -32,7 +32,7 @@ class SettingsService
         $this->em = $em;
         $this->db = $this->em->getConnection()->getDatabase();
 
-        $tenant = $this->loadWithCache();
+        $tenant = $this->loadWithCache(false);
 
         if (!$tenant) {
             throw new \Exception("No tenant found when getting settings");
@@ -58,8 +58,11 @@ class SettingsService
     /**
      * @return Tenant
      */
-    public function getTenant()
+    public function getTenant($returnObject = true)
     {
+        if ($returnObject) {
+            $this->tenant = $this->loadWithCache($returnObject);
+        }
         return $this->tenant;
     }
 
@@ -380,13 +383,17 @@ class SettingsService
         return $validKeys;
     }
 
-    public function loadWithCache($refreshCache = false)
+    public function loadWithCache($returnObject = true, $refreshCache = false)
     {
         $tenant = null;
 
         $cachePool = new FilesystemAdapter();
 
         $cacheKey = 'tenant_' . $this->db;
+
+        if ($returnObject) {
+            $refreshCache = true;
+        }
 
         if ($refreshCache) {
             $cachePool->deleteItem($cacheKey);
@@ -399,6 +406,10 @@ class SettingsService
             $cache->set(serialize($tenant));
             $cache->expiresAfter(3600); // 1 hour
             $cachePool->save($cache);
+        }
+
+        if ($returnObject) {
+            return $tenant;
         }
 
         if ($cachePool->hasItem($cacheKey)) {

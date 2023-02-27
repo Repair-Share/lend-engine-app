@@ -49,7 +49,7 @@ class SendEmailController extends Controller
             $messageSubject = $request->get('email_subject');
 
             $token = $contactService->generateAccessToken($contact);
-            $loginUri = $tenantService->getTenant()->getDomain(true);
+            $loginUri = $tenantService->getTenant(false)->getDomain(true);
             $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
             $loginUri .= '&r=/profile/';
 

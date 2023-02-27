@@ -220,7 +220,7 @@ class LoanCheckInController extends Controller
                 $toName        = $provider->getName();
 
                 $token = $contactService->generateAccessToken($provider);
-                $loginUri = $tenantService->getTenant()->getDomain(true);
+                $loginUri = $tenantService->getTenant(false)->getDomain(true);
                 $loginUri .= '/access?t='.$token.'&e='.urlencode($provider->getEmail());
                 $loginUri .= '&r=/admin/maintenance/list&assignedTo='.$provider->getId();
 

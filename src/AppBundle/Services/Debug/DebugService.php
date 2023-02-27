@@ -46,7 +46,7 @@ class DebugService
 
     public function getLogFile($type)
     {
-        $dbSchema = $this->settingsService->getTenant()->getDbSchema();
+        $dbSchema = $this->settingsService->getTenant(false)->getDbSchema();
         return $this->getLogDir() . '/debug-' . $type . '-' . $dbSchema . '.log';
     }
 

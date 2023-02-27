@@ -265,7 +265,7 @@ class MaintenanceService
 
         $contact = $maintenance->getAssignedTo();
         $token = $this->contactService->generateAccessToken($contact);
-        $loginUri = $this->tenantService->getTenant()->getDomain(true);
+        $loginUri = $this->tenantService->getTenant(false)->getDomain(true);
         $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
         $loginUri .= '&r=/admin/maintenance/list&assignedTo='.$contact->getId();
 
