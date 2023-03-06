@@ -17,7 +17,7 @@ class PaymentMethodListController extends Controller
      */
     public function listAction(Request $request)
     {
-        echo '<pre>https:' . print_r($_SERVER['HTTPS'], true) . '</pre>';
+        echo '<pre>https:' . print_r($_SERVER, true) . '</pre>';
         $tableRows = array();
         $em   = $this->getDoctrine()->getManager();
         $paymentMethods = $em->getRepository('AppBundle:PaymentMethod')->findAllOrderedByName(true);
