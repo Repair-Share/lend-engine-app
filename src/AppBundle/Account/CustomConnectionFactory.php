@@ -76,6 +76,7 @@ class CustomConnectionFactory extends ConnectionFactory
             $dbName         = $result[0]['db_schema'];
             $account_status = $result[0]['status'];
             $customDomain   = $result[0]['domain'];
+            $serverName     = $result[0]['server_name'];
             if ($account_status == 'ARCHIVED' || $account_status == 'DELETED') {
                 die("The account '{$account_code}' has expired.");
             }
@@ -101,7 +102,12 @@ class CustomConnectionFactory extends ConnectionFactory
         }
 
         // Redirect the http:// to https://
-        if ($customDomain && getenv('APP_ENV') === 'prod' && $_SERVER['HTTP_HOST'] && $_SERVER['HTTPS'] !== 'on') {
+        if ($customDomain
+            && getenv('APP_ENV') === 'prod'
+            && $serverName !== 'lend-engine-staging'
+            && $_SERVER['HTTP_HOST']
+            && $_SERVER['HTTPS'] !== 'on'
+        ) {
 
             $url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
