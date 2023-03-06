@@ -100,6 +100,26 @@ class CustomConnectionFactory extends ConnectionFactory
             }
         }
 
+        // Redirect the http:// to https://
+        if ($customDomain && getenv('APP_ENV') === 'prod' && $_SERVER['HTTP_HOST'] && $_SERVER['HTTPS'] !== 'on') {
+
+            $url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
+            if (!isset($_GET['redirectedFromHTTP'])) {
+
+                if (strpos($_SERVER['REQUEST_URI'], '?')) {
+                    $url .= '&redirectedFromHTTP';
+                } else {
+                    $url .= '?redirectedFromHTTP';
+                }
+
+                header('Location: ' . $url);
+                die();
+
+            }
+
+        }
+
         //continue with regular connection creation using new params
         return parent::createConnection($params, $config, $eventManager, $mappingTypes);
 
