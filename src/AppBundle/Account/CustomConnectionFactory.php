@@ -106,7 +106,8 @@ class CustomConnectionFactory extends ConnectionFactory
             && getenv('APP_ENV') === 'prod'
             && $serverName !== 'lend-engine-staging'
             && $_SERVER['HTTP_HOST']
-            && $_SERVER['HTTPS'] !== 'on'
+            && isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
+            && $_SERVER['HTTP_X_FORWARDED_PROTO'] !== 'https'
         ) {
 
             $url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
