@@ -115,9 +115,9 @@ class CustomConnectionFactory extends ConnectionFactory
             if (!isset($_GET['redirectedFromHTTP2'])) {
 
                 if (strpos($_SERVER['REQUEST_URI'], '?')) {
-                    $url .= '&redirectedFromHTTP2';
+                    $url .= '&redirectedFromHTTP2=' . $_SERVER['HTTP_X_FORWARDED_PROTO'];
                 } else {
-                    $url .= '?redirectedFromHTTP2';
+                    $url .= '?redirectedFromHTTP2' . $_SERVER['HTTP_X_FORWARDED_PROTO'];
                 }
 
                 header('Location: ' . $url);
