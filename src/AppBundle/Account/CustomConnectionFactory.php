@@ -112,12 +112,12 @@ class CustomConnectionFactory extends ConnectionFactory
 
             $url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
-            if (!isset($_GET['redirectedFromHTTP'])) {
+            if (!isset($_GET['redirectedFromHTTP2'])) {
 
                 if (strpos($_SERVER['REQUEST_URI'], '?')) {
-                    $url .= '&redirectedFromHTTP';
+                    $url .= '&redirectedFromHTTP2';
                 } else {
-                    $url .= '?redirectedFromHTTP';
+                    $url .= '?redirectedFromHTTP2';
                 }
 
                 header('Location: ' . $url);
