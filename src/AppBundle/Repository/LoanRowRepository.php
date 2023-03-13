@@ -90,7 +90,13 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
         $localNow = DateTimeHelper::getLocalTime($tz, $utc);
 
         $builder = $repository->createQueryBuilder('lr');
-        $builder->select('lr');
+
+        if ($countOnly) {
+            $builder->select('count(l.id)');
+        } else {
+            $builder->select('lr');
+        }
+
         $builder->leftJoin('lr.loan', 'l');
         $builder->leftJoin('l.contact', 'c');
         $builder->leftJoin('lr.inventoryItem', 'i');
@@ -186,6 +192,15 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             $builder->setParameter('date_to', $filter['date_to'].' 23:59:59');
         }
 
+        if ($countOnly) {
+            $queryTotalResults = $builder->getQuery()->getSingleScalarResult();
+
+            return [
+                'totalResults' => $queryTotalResults,
+                'data'         => []
+            ];
+        }
+
         // Run without pages to get total results:
         $queryTotalResults = $builder->getQuery();
         $totalResults = count($queryTotalResults->getResult());
@@ -199,15 +214,6 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             $builder->addOrderBy("l.".$sort['column'], $sort['direction']);
         } else {
             $builder->addOrderBy("lr.id", "DESC");
-        }
-
-        if ($countOnly) {
-
-            return [
-                'totalResults' => $totalResults,
-                'data'         => []
-            ];
-
         }
 
         // Get the data

@@ -36,7 +36,7 @@ class DashController extends Controller
             'pending'   => $loanService->countLoans('PENDING'),
             'active'    => $loanService->countLoans('ACTIVE'),
             'overdue'   => $loanService->countLoans('OVERDUE'),
-            'closed'    => $loanService->countLoans('CLOSED'),
+            //'closed'    => $loanService->countLoans('CLOSED'),
             'reserved'  => $loanService->countLoans('RESERVED'),
         ];
 
