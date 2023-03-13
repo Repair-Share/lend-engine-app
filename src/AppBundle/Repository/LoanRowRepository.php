@@ -81,7 +81,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
     }
 
 
-    public function search($start, $length, $filter = [], $sort = [], $tz = 'Europe/London')
+    public function search($start, $length, $filter = [], $sort = [], $tz = 'Europe/London', $countOnly = false)
     {
         $repository = $this->getEntityManager()->getRepository('AppBundle:LoanRow');
 
@@ -199,6 +199,15 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             $builder->addOrderBy("l.".$sort['column'], $sort['direction']);
         } else {
             $builder->addOrderBy("lr.id", "DESC");
+        }
+
+        if ($countOnly) {
+
+            return [
+                'totalResults' => $totalResults,
+                'data'         => []
+            ];
+
         }
 
         // Get the data

@@ -173,7 +173,7 @@ class LoanService
         ];
 
         // Use the same repo search like on the admin list
-        $loanData = $repo->search(0, null, $filter, null, $tz);
+        $loanData = $repo->search(0, null, $filter, null, $tz, true);
 
         return $loanData['totalResults'];
     }
