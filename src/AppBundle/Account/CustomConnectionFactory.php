@@ -102,7 +102,7 @@ class CustomConnectionFactory extends ConnectionFactory
         }
 
         // Redirect the http:// to https://
-        if ($customDomain
+        /*if ($customDomain
             && getenv('APP_ENV') === 'prod'
             && $serverName !== 'lend-engine-staging'
             && $_SERVER['HTTP_HOST']
@@ -125,7 +125,7 @@ class CustomConnectionFactory extends ConnectionFactory
 
             }
 
-        }
+        }*/
 
         //continue with regular connection creation using new params
         return parent::createConnection($params, $config, $eventManager, $mappingTypes);
