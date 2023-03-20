@@ -28,17 +28,6 @@ class ItemListController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        echo '<pre style="display: none">';
-
-        echo print_r([
-            @$_SERVER['HTTP_HOST'],
-            @$_SERVER['HTTP_X_FORWARDED_PORT'],
-            @$_SERVER['HTTP_X_FORWARDED_PROTO'],
-            @$_SERVER['HTTP_X_FORWARDED_FOR']
-        ]);
-
-        echo '</pre>';
-
         $pageSize = 50;
         $pageTitle = '';
 
