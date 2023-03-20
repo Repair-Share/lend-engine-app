@@ -120,7 +120,8 @@ class CustomConnectionFactory extends ConnectionFactory
                     $url .= '?redirectedFromHTTP';
                 }
 
-                header('Location: ' . $url);
+                header('Location: ' . $url, true, 301);
+
                 die();
 
             }

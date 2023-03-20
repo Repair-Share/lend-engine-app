@@ -22,24 +22,6 @@ class SettingsController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        echo '<pre style="display: none">';
-
-        if (true
-            && getenv('APP_ENV') === 'prod'
-            //&& $serverName !== 'lend-engine-staging'
-            && $_SERVER['HTTP_HOST']
-            && isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
-            && $_SERVER['HTTP_X_FORWARDED_PROTO'] !== 'https'
-        ) {
-            echo 'REDIRECTION';
-        }else{
-            echo 'NO Redirection';
-        }
-
-        echo print_r($_SERVER);
-
-        echo '</pre>';
-
         /** @var $tenantService \AppBundle\Services\TenantService */
         $tenantService = $this->get('service.tenant');
 
