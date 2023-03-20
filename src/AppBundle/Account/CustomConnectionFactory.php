@@ -94,7 +94,7 @@ class CustomConnectionFactory extends ConnectionFactory
 
         // If we have an SSL domain for this user and it's not being used, redirect to it
         // But only if we're not coming back from Stripe which needs the SSL heroku domain
-        /*if ($customDomain && isset($_SERVER['HTTP_HOST']) && !strstr($_SERVER['HTTP_HOST'], $customDomain)) {
+        if ($customDomain && isset($_SERVER['HTTP_HOST']) && !strstr($_SERVER['HTTP_HOST'], $customDomain)) {
             if (!isset($_GET['state'])) {
                 header("Location: https://".$customDomain.'/?redirectedFromHTTP');
                 die();
@@ -125,7 +125,7 @@ class CustomConnectionFactory extends ConnectionFactory
 
             }
 
-        }*/
+        }
 
         //continue with regular connection creation using new params
         return parent::createConnection($params, $config, $eventManager, $mappingTypes);
