@@ -108,6 +108,7 @@ class CustomConnectionFactory extends ConnectionFactory
             && $_SERVER['HTTP_HOST']
             && isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
             && $_SERVER['HTTP_X_FORWARDED_PROTO'] !== 'https'
+            && $customDomain !== 'library.bicestergreen.org.uk'
         ) {
 
             $url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
