@@ -36,7 +36,7 @@ class SettingsController extends Controller
             echo 'NO Redirection';
         }
 
-        //echo print_r($_SERVER);
+        echo print_r($_SERVER);
 
         echo '</pre>';
 
