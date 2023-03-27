@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '135' => 'Card payment system fails to submit after any error occurs',
             '239' => 'Admin dashboard causes an error',
             '238' => 'Pages with custom domains have to use https',
             '236' => 'Include stock items into the admin loans list',

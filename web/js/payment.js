@@ -66,8 +66,6 @@ function processPaymentForm(e) {
         return false;
     }
 
-    paymentInitiated = true;
-
     if ( paymentMethod.val() == stripePaymentMethodId
         && paymentMethod.val()
         && paymentAmount.val() > 0 ) {
@@ -136,15 +134,18 @@ function handleServerResponse(response) {
     console.log("handleServerResponse:");
     console.log(response);
     if (response.error) {
+        paymentInitiated = false;
         $("#paymentErrorMessage").html(response.error);
         $("#paymentError").show();
         unWaitButton($('.payment-submit'));
     } else if (response.requires_action) {
         // Use Stripe.js to handle required card action
+        paymentInitiated = true;
         handleAction(response);
     } else {
         // Add the charge and payment ID into the form and submit it
         // The form POST controller will update the payment with loan/membership/event info
+        paymentInitiated = true;
         $("#chargeId").val(response.charge_id);
         $("#paymentId").val(response.payment_id);
         $("#paymentForm").submit();
