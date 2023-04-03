@@ -25,7 +25,7 @@ class BillingPlansController extends Controller
         $plans = $billingService->getPlans();
 
         /** @var \AppBundle\Entity\Tenant $tenant */
-        $tenant = $settingsService->getTenant(false);
+        $tenant = $settingsService->getTenant();
 
         $subscription = null;
         if ($subscriptionId = $tenant->getSubscriptionId()) {
