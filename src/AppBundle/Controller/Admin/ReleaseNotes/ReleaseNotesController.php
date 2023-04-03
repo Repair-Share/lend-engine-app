@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '103' => "All loans created in DST for a period in BST don't fit with changeover times.",
             '135' => 'Card payment system fails to submit after any error occurs',
             '239' => 'Admin dashboard causes an error',
             '238' => 'Pages with custom domains have to use https',

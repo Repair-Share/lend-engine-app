@@ -85,9 +85,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
     {
         $repository = $this->getEntityManager()->getRepository('AppBundle:LoanRow');
 
-        $utc      = new \DateTime('now', new \DateTimeZone("UTC"));
-
-        $localNow = DateTimeHelper::getLocalTime($tz, $utc);
+        $localNow = DateTimeHelper::getLocalTime($tz);
 
         $builder = $repository->createQueryBuilder('lr');
 

@@ -116,7 +116,7 @@ class DateTimeHelper
 
         $tz = new \DateTimeZone($settingsTimeZone);
 
-        $utc    = new DateTime('now', new \DateTimeZone('UTC'));
+        $utc    = new DateTime($time->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
         $offSet = $tz->getOffset($utc) / 3600 * -1;
 
         $time->modify("{$offSet} hours");
@@ -131,11 +131,41 @@ class DateTimeHelper
      * @return DateTime
      * @throws Exception
      */
-    public static function getLocalTime($settingsTimeZone, DateTime $time)
+    public static function changeUtcTimeToLocal($settingsTimeZone, DateTime $time)
     {
-        $timeZone = new \DateTimeZone($settingsTimeZone);
+        if (!$settingsTimeZone) {
+            $settingsTimeZone = 'Europe/London';
+        }
+
+        $tz = new \DateTimeZone($settingsTimeZone);
+
+        $utc      = new DateTime($time->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
+        $offSet   = $tz->getOffset($utc) / 3600;
+
+        $localTime = $time;
+        $localTime->modify("{$offSet} hours");
+
+        return $localTime;
+    }
+
+    /**
+     * @param  string  $settingsTimeZone
+     *
+     * @return DateTime
+     * @throws Exception
+     */
+    public static function getLocalTime($settingsTimeZone)
+    {
+        if (!$settingsTimeZone) {
+            $settingsTimeZone = 'Europe/London';
+        }
+
+        $time = new \DateTime();
+
+        $tz = new \DateTimeZone($settingsTimeZone);
+
         $utc      = new DateTime('now', new \DateTimeZone('UTC'));
-        $offSet   = $timeZone->getOffset($utc) / 3600;
+        $offSet   = $tz->getOffset($utc) / 3600;
 
         $localTime = $time;
         $localTime->modify("{$offSet} hours");

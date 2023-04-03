@@ -181,8 +181,15 @@ class BasketAddItemController extends Controller
             throw new \Exception("Cannot find site ".$request->get('to_site'));
         }
 
-        $dFrom = new \DateTime($request->get('date_from').' '.$request->get('time_from'));
-        $dTo   = new \DateTime($request->get('date_to').' '.$request->get('time_to'));
+        if (!$tz = $settingsService->getSettingValue('org_timezone')) {
+            $tz = 'Europe/London';
+        }
+
+        $timeZone = new \DateTimeZone($tz);
+
+        // Local time
+        $dFrom = new \DateTime($request->get('date_from').' '.$request->get('time_from'), $timeZone);
+        $dTo   = new \DateTime($request->get('date_to').' '.$request->get('time_to'), $timeZone);
 
         if ($basket->getId()) { // Adding to the existing loan doesn't run the set basket service with time corrections
             $dFrom = DateTimeHelper::changeLocalTimeToUtc($settingsService->getSettingValue('org_timezone'), $dFrom);

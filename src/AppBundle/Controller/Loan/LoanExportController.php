@@ -49,7 +49,7 @@ class LoanExportController extends Controller
 
             // Modify times to match local time
             $tz       = $settingsService->getSettingValue('org_timezone');
-            $localNow = DateTimeHelper::getLocalTime($tz, new \DateTime());
+            $localNow = DateTimeHelper::getLocalTime($tz);
 
             $sql = "
                 select

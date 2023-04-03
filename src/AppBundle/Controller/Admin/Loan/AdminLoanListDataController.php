@@ -121,7 +121,7 @@ class AdminLoanListDataController extends Controller
         // Modify times to match local time for UI
         // Not sure why DateTime format() here is not working
         $tz       = $settingsService->getSettingValue('org_timezone');
-        $localNow = DateTimeHelper::getLocalTime($tz, new \DateTime());
+        $localNow = DateTimeHelper::getLocalTime($tz);
 
         $loanData = $repo->search($start, $length, $filter, $sort, $tz);
 
@@ -154,9 +154,9 @@ class AdminLoanListDataController extends Controller
             }
 
             // Modify UTC database times to match local time
-            $i = DateTimeHelper::getLocalTime($tz, $loanRow->getDueInAt());
+            $i = DateTimeHelper::changeUtcTimeToLocal($tz, $loanRow->getDueInAt());
             $loanRow->setDueInAt($i);
-            $o = DateTimeHelper::getLocalTime($tz, $loanRow->getDueOutAt());
+            $o = DateTimeHelper::changeUtcTimeToLocal($tz, $loanRow->getDueOutAt());
             $loanRow->setDueOutAt($o);
 
             $loanInfo = '<a href="'.$editUrl.'">'.$loanRow->getInventoryItem()->getName().'</a>';
