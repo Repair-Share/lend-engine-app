@@ -116,9 +116,11 @@
                         {% endif %}
                     </div>
 
-                    {% if not row.isCheckedOut and row.inventoryItem.inventoryLocation %}
                     {#A field checked via validateCheckout to prevent checkout for non-available items#}
-                    <input type="hidden" class="item-location" value="{{ row.inventoryItem.inventoryLocation.isAvailable }}">
+                    {% if not row.isCheckedOut and row.itemLocation %}
+                        <input type="hidden" class="item-location" value="{{ row.itemLocation.isAvailable }}">
+                    {% elseif not row.isCheckedOut and row.inventoryItem.inventoryLocation %}
+                        <input type="hidden" class="item-location" value="{{ row.inventoryItem.inventoryLocation.isAvailable }}">
                     {% endif %}
 
                     {% if row.inventoryItem.sku %}
