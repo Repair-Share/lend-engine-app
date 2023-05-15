@@ -35,6 +35,7 @@
                     </div>
                     {% else %}
                     <div>
+                        {{ dump(row.dueInAt) }}
                         {{ row.dueOutAt|date('d F Y g:i a') }} - {{ row.dueInAt|date('d F Y g:i a') }}
                     </div>
                     {% endif %}
