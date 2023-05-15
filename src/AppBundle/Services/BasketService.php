@@ -266,7 +266,7 @@ class BasketService
             /** @var $row \AppBundle\Entity\LoanRow */
 
             // Set the time to UTC
-            if ($row->getDueOutAt() ) {
+            /*if ($row->getDueOutAt() ) {
                 $i = DateTimeHelper::changeLocalTimeToUtc($tz, $row->getDueOutAt());
                 $row->getDueOutAt($i);
             }
@@ -275,7 +275,7 @@ class BasketService
             if ($row->getDueInAt() ) {
                 $i = DateTimeHelper::changeLocalTimeToUtc($tz, $row->getDueInAt());
                 $row->getDueInAt($i);
-            }
+            }*/
 
             // Get the DB entity
             $itemId = $row->getInventoryItem()->getId();
