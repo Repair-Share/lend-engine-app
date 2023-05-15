@@ -266,7 +266,7 @@ class BasketService
             /** @var $row \AppBundle\Entity\LoanRow */
 
             // Set the time to UTC
-            /*if ($row->getDueOutAt() ) {
+            if ($row->getDueOutAt() ) {
                 $i = DateTimeHelper::changeLocalTimeToUtc($tz, $row->getDueOutAt());
                 $row->getDueOutAt($i);
             }
@@ -275,7 +275,7 @@ class BasketService
             if ($row->getDueInAt() ) {
                 $i = DateTimeHelper::changeLocalTimeToUtc($tz, $row->getDueInAt());
                 $row->getDueInAt($i);
-            }*/
+            }
 
             // Get the DB entity
             $itemId = $row->getInventoryItem()->getId();
@@ -439,6 +439,27 @@ class BasketService
             // Save and switch locale for sending the email (it should be the same as the UI anyway)
             $sessionLocale = $this->translator->getLocale();
             $this->translator->setLocale($locale);
+
+            // Get the client's time zone from the db
+            if (!$tz = $this->settings->getSettingValue('org_timezone')) {
+                $tz = 'Europe/London';
+            }
+
+            foreach ($loan->getLoanRows() AS $row) {
+
+                // Set the time back to local
+                if ($row->getDueOutAt() ) {
+                    $i = DateTimeHelper::changeUtcTimeToLocal($tz, $row->getDueOutAt());
+                    $row->getDueOutAt($i);
+                }
+
+                // Set the time back to local
+                if ($row->getDueInAt() ) {
+                    $i = DateTimeHelper::changeUtcTimeToLocal($tz, $row->getDueInAt());
+                    $row->getDueInAt($i);
+                }
+
+            }
 
             // Build the message content
             $message = $this->twig->render(
