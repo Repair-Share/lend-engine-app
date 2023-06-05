@@ -213,6 +213,11 @@ class TenantService
         return $this->getSetting('org_name');
     }
 
+    public function getCompanyNameAsSender()
+    {
+        return str_replace(',', '', $this->getSetting('org_name'));
+    }
+
     public function getCompanyEmail()
     {
         return $this->settings->getSettingValue('org_email');

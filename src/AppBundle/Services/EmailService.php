@@ -60,7 +60,7 @@ class EmailService
         // When sending mails during user workflows, we have a tenant already
         // When sending mails from a cron/schedule, we have to set the sender parameters from the tenant we are working with
         if (!$this->senderName) {
-            $this->senderName = $this->tenantService->getCompanyName();
+            $this->senderName = $this->tenantService->getCompanyNameAsSender();
         }
         if (!$this->replyToEmail) {
             $this->replyToEmail = $this->tenantService->getReplyToEmail();

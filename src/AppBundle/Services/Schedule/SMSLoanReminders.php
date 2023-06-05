@@ -108,7 +108,7 @@ class SMSLoanReminders
                 $this->settings->setTenant($tenant, $tenantEntityManager);
                 $tenantService->setTenant($tenant);
 
-                $senderName     = $tenantService->getSetting('org_name');
+                $senderName     = $tenantService->getCompanyNameAsSender();
                 $replyToEmail   = $tenantService->getReplyToEmail();
                 $fromEmail      = $tenantService->getSenderEmail();
                 $postmarkApiKey = $tenantService->getSetting('postmark_api_key');

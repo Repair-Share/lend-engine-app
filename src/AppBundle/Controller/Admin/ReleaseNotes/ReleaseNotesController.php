@@ -18,7 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
-
+            '248' => 'Email reminders fail when organisation name contains comma',
             '245' => 'Wrong inventory item location on the checkout',
             '103' => "All loans created in DST for a period in BST don't fit with changeover times.",
             '135' => 'Card payment system fails to submit after any error occurs',
