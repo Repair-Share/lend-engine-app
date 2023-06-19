@@ -176,7 +176,9 @@ function handleAction(response) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    paymentIntentId: result.paymentIntent.id
+                    paymentIntentId: result.paymentIntent.id,
+                    amount: $(".payment-amount").val(),
+                    contactId: $("#contactId").val()
                 })
             }).then(function(confirmResult) {
                 return confirmResult.json();
