@@ -42,7 +42,11 @@ class StripePaymentIntentController extends Controller
 
         $data = json_decode($request->getContent(), true);
 
-        $amount = $data['amount']; // in pence
+        if (isset($data['amount'])) {
+            $amount = $data['amount'];
+        } else {
+            $amount = 0;
+        }
 
         // Used to insert a note for pending payments which is removed when the payment is linked to a form submission
         if (isset($data['paymentType'])) {
