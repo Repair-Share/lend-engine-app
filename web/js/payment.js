@@ -16,6 +16,11 @@ $(document).delegate(".payment-submit", "click", function(e) {
     return processPaymentForm(e);
 });
 
+$(document).delegate(".pay-membership-at-pickup", "click", function(e) {
+    $('#membership_subscribe_payMembershipAtPickup').val(1);
+    return $("#paymentForm").submit();
+});
+
 // Show the card fields when a user (or onLoad) selects the Stripe payment method.
 function setupPaymentFields() {
     if ($(".payment-method").val() == stripePaymentMethodId && stripePublicApiKey) {

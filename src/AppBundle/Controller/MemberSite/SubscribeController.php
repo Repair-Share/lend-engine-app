@@ -48,6 +48,12 @@ class SubscribeController extends Controller
             $contact = $this->getUser();
         }
 
+        $payMembershipAtPickupAllowed = false;
+
+        if ($this->get('settings')->getSettingValue('pay_membership_at_pickup')) {
+            $payMembershipAtPickupAllowed = true;
+        }
+
         // Create the form
         $form = $this->createForm(MembershipSubscribeType::class, null, [
             'em' => $em,
@@ -69,6 +75,10 @@ class SubscribeController extends Controller
             if (!$membershipType = $form->get('membershipType')->getData()) {
                 $this->addFlash("error", "Please choose a membership type");
                 return $this->redirectToRoute('choose_membership');
+            }
+
+            if ($payMembershipAtPickupAllowed && $form->get('payMembershipAtPickup')->getData()) {
+                $amountPaid = 0;
             }
 
             $membership = new Membership();
@@ -133,7 +143,8 @@ class SubscribeController extends Controller
                 'user'    => $contact,
                 'contact' => $contact,
                 'itemId'  => $request->get('itemId'),
-                'membershipTypePrices' => $membershipTypePrices
+                'membershipTypePrices' => $membershipTypePrices,
+                'payMembershipAtPickup' => $payMembershipAtPickupAllowed
             ]
         );
 

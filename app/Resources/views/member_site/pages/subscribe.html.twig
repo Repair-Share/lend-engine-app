@@ -60,6 +60,10 @@
 
             <button type="button" class="btn btn-success payment-submit" data-text="Subscribe">{% trans %}public_registration.button_subscribe{% endtrans %}</button>
 
+            {% if payMembershipAtPickup %}
+                <button type="button" class="btn btn-primary pay-membership-at-pickup" data-text="Pay membership at pickup" style="float: right">{% trans %}public_registration.button_pay_later{% endtrans %}</button>
+            {% endif %}
+
             {{ form_end(form) }}
 
             {% if is_granted("ROLE_ADMIN") %}
