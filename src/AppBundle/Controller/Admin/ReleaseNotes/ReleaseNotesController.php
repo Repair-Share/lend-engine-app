@@ -18,7 +18,6 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
-            '240' => 'Pay membership at pickup on and allow account to go into debt.',
             '100' => 'Refund on Membership payments using Stripe in users "Charges and Payments"',
             '248' => 'Email reminders fail when organisation name contains comma',
             '245' => 'Wrong inventory item location on the checkout',

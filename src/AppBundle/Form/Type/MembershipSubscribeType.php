@@ -2,7 +2,6 @@
 namespace AppBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -60,11 +59,6 @@ class MembershipSubscribeType extends AbstractType
             'required' => false,
             'mapped' => false
         ));
-
-        if ($this->em->getRepository('AppBundle:Setting')->findOneBy(['setupKey' => 'pay_membership_at_pickup'])->getSetupValue()) {
-            $builder->add('payMembershipAtPickup', HiddenType::class);
-        }
-
     }
 
     /**

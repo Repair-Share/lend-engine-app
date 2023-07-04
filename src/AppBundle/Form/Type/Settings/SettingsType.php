@@ -350,18 +350,6 @@ EOT;
             ]
         ));
 
-        $yesNoChoices = ['Yes' => '1', 'No' => '0',];
-        $builder->add('pay_membership_at_pickup', ToggleType::class, array(
-            'expanded' => true,
-            'choices'  => $yesNoChoices,
-            'label'    => 'Allow to pay the membership at the site with the first reservation.',
-            'data'     => (int)$dbData['pay_membership_at_pickup'],
-            'attr'     => [
-                'class'     => 'input-100',
-                'data-help' => ''
-            ]
-        ));
-
     }
 
     /**

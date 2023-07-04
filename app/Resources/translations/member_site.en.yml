@@ -215,7 +215,6 @@ public_registration:
   discount_on_fees: discount on loan fees
   button_renew: Renew membership
   button_subscribe: Subscribe
-  button_pay_later: Pay membership at pickup
   no_self_serve_memberships: There are no memberships available for self serve subscription. Please come in to visit us with photo ID to complete your membership.
   login_page_new_account: Register for a new account
   check_email_title: Please check your email.

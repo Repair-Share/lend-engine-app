@@ -369,8 +369,6 @@ class SettingsService
             'enable_waiting_list',
             'google_tracking_id',
 
-            'pay_membership_at_pickup',
-
             'reservation_fee',
             'reservation_buffer',
             'max_reservations',
