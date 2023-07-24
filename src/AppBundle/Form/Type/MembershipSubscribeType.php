@@ -61,7 +61,9 @@ class MembershipSubscribeType extends AbstractType
             'mapped' => false
         ));
 
-        if ($this->em->getRepository('AppBundle:Setting')->findOneBy(['setupKey' => 'pay_membership_at_pickup'])->getSetupValue()) {
+        if ($this->em->getRepository('AppBundle:Setting')->findOneBy(['setupKey' => 'pay_membership_at_pickup']) &&
+            $this->em->getRepository('AppBundle:Setting')->findOneBy(['setupKey' => 'pay_membership_at_pickup'])->getSetupValue()
+        ) {
             $builder->add('payMembershipAtPickup', HiddenType::class);
         }
 
