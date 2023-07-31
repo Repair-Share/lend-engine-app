@@ -4,6 +4,7 @@ namespace AppBundle\Form\Type\Settings;
 
 use AppBundle\Form\Type\ToggleType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -184,6 +185,36 @@ then the user will also be shown a button to continue to choose a membership.',
             'required' => false,
             'attr' => [
                 'placeholder' => 'eg "hire.mylibrary.com"',
+                'data-help' => '',
+            ]
+        ]);
+
+        $builder->add('site_domain_provider', TextType::class, [
+            'label' => 'Domain provider',
+            'data' => $dbData['site_domain_provider'],
+            'required' => false,
+            'attr' => [
+                'placeholder' => '',
+                'data-help' => 'eg GoDaddy, Amazon, 123 Reg, etc...',
+            ]
+        ]);
+
+        $builder->add('site_domain_req_name', TextType::class, [
+            'label' => 'Your Name',
+            'data' => $dbData['site_domain_req_name'],
+            'required' => false,
+            'attr' => [
+                'placeholder' => '',
+                'data-help' => '',
+            ]
+        ]);
+
+        $builder->add('site_domain_req_email', EmailType::class, [
+            'label' => 'Your E-mail',
+            'data' => $dbData['site_domain_req_email'],
+            'required' => false,
+            'attr' => [
+                'placeholder' => '',
                 'data-help' => '',
             ]
         ]);

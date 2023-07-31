@@ -23,61 +23,14 @@ class SettingsMemberSiteController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        if (!$apiKey = getenv('H_API_KEY')) {
-            $this->addFlash('debug', "We can't connect to the custom domain provider.");
-            $apiKey = 'none';
-        }
-
-        $heroku = new HerokuClient([
-            'apiKey' => $apiKey
-        ]);
-
         /** @var $tenantService \AppBundle\Services\TenantService */
         $tenantService = $this->get('service.tenant');
 
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
 
-        $herokuResult = null;
-        $domainOk = false;
-        $domainParts = [];
-
-        if ($requestedDomain = $settingsService->getSettingValue('site_domain')) {
-            $domainParts = explode('.', $requestedDomain);
-            try {
-                $herokuResult = $heroku->get('apps/lend-engine-eu-plus/domains/'.$requestedDomain);
-                if ($herokuResult->hostname == $requestedDomain && $herokuResult->acm_status == 'cert issued') {
-                    $domainOk = true;
-                } else {
-                    $this->addFlash('debug', 'Domain status : '.$herokuResult->acm_status);
-                }
-            } catch (\Exception $e) {
-                if (strstr($e->getMessage(), 'HTTP code 404')) {
-                    $this->addFlash('success', "Setting up");
-                    $this->createDomain($requestedDomain);
-                } else {
-                    $this->addFlash('debug', $e->getMessage());
-                }
-            }
-        }
-
-        if ($request->get('customDomain') == 'activate') {
-            $tenant = $tenantService->getTenant();
-            $tenant->setDomain($requestedDomain);
-            $tenant->setServer('lend-engine-eu-plus');
-            $em->persist($tenant);
-            $em->flush();
-            $this->addFlash("success", "Your domain is now activated");
-            return $this->redirectToRoute('settings_member_site');
-        } else if ($request->get('customDomain') == 'deactivate') {
-            $tenant = $tenantService->getTenant();
-            $tenant->setDomain(null);
-            $tenant->setServer('lend-engine-eu');
-            $em->persist($tenant);
-            $em->flush();
-            $this->addFlash("success", "Your domain is now de-activated");
-            return $this->redirectToRoute('settings_member_site');
-        }
+        /** @var \AppBundle\Services\EmailService $emailService */
+        $emailService = $this->get('service.email');
 
         // Pass tenant info in so we can control settings based on pay plan
         $options = [
@@ -98,6 +51,47 @@ class SettingsMemberSiteController extends Controller
         $locale = $tenantService->getLocale();
 
         if ($form->isSubmitted()) {
+
+            $reqs = $request->get('settings_member_site');
+
+            if (array_key_exists('site_domain', $reqs)) {
+
+                $domain         = $reqs['site_domain'];
+                $domainProvider = $reqs['site_domain_provider'];
+                $domainReqName  = $reqs['site_domain_req_name'];
+                $domainReqEmail = $reqs['site_domain_req_email'];
+
+                $subject = 'Custom domain request for ' . $tenantService->getCompanyName();
+
+                $message = '
+                
+                    Dear Support,
+                    
+                    ' . $domainReqName . ' is requested to set up a custom domain to ' . $tenantService->getCompanyName() . '.
+                    
+                    <strong>Request Details</strong>
+                    Custom Domain: <strong>' . $domain . '</strong>
+                    Domain Provider: ' . $domainProvider . '
+                    Name: ' . $domainReqName . '
+                    E-mail: ' . $domainReqEmail . '
+                    
+                    <strong>The client details:</strong>
+                    Company Name: ' . $tenantService->getCompanyName() . '
+                    Owner Name: ' . $tenantService->getAccountOwnerName() . '
+                    Owner Email: ' . $tenantService->getAccountOwnerEmail() . '
+                    Account Domain: ' . $tenantService->getAccountDomain() . '     
+                ';
+
+                $message = nl2br($message);
+
+                $emailService->send(
+                    'support@lend-engine.com',
+                    'Lend Engine Support',
+                    $subject,
+                    $message
+                );
+
+            }
 
             foreach ($request->get('settings_member_site') AS $setup_key => $setup_data) {
                 if ($settingsService->isValidSettingsKey($setup_key)) {
@@ -133,10 +127,7 @@ class SettingsMemberSiteController extends Controller
         }
 
         return $this->render('settings/settings_member_site.html.twig', [
-            'form' => $form->createView(),
-            'domainStatus' => $herokuResult,
-            'domainParts' => $domainParts,
-            'domainOk' => $domainOk
+            'form' => $form->createView()
         ]);
     }
 

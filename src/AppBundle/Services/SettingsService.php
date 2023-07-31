@@ -300,6 +300,9 @@ class SettingsService
 
             // Member site
             'site_domain',
+            'site_domain_provider',
+            'site_domain_req_name',
+            'site_domain_req_email',
             'site_is_private',
             'site_welcome',
             'site_welcome_user',
