@@ -162,7 +162,7 @@ class EmailOverdueLoans
                                 $sessionLocale = $this->container->get('translator')->getLocale();
                                 $this->container->get('translator')->setLocale($contact->getLocale());
 
-                                $loginUri = $tenant->getDomain(true).$tenantService->getAccountDomain();
+                                $loginUri = $tenant->getDomain(true);
                                 $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
                                 $loginUri .= '&r=/loan/'.$loan->getId();
 
