@@ -51,6 +51,11 @@ class LoginController extends Controller
         $event = new InteractiveLoginEvent($request, $token);
         $this->get("event_dispatcher")->dispatch("security.interactive_login", $event);
 
+        // Remove the token once it is used
+        $user->setSecureAccessToken(null);
+        $em->persist($user);
+        $em->flush();
+
         if ($r = $request->get('r')) {
             return $this->redirect($r);
         }
