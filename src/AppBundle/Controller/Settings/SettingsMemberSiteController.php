@@ -75,8 +75,7 @@ class SettingsMemberSiteController extends Controller
             $message = nl2br($message);
 
             $emailService->send(
-                'andordev@gmail.com',
-                //'support@lend-engine.com',
+                'support@lend-engine.com',
                 'Lend Engine Support',
                 $subject,
                 $message
@@ -135,8 +134,7 @@ class SettingsMemberSiteController extends Controller
                 $message = nl2br($message);
 
                 $emailService->send(
-                    'andordev@gmail.com',
-                    //'support@lend-engine.com',
+                    'support@lend-engine.com',
                     'Lend Engine Support',
                     $subject,
                     $message
