@@ -58,9 +58,26 @@
                         your domain provider and on you.
                     </div>
 
+                    <div class="text-right margin-bottom">
+                        <button class="btn btn-warning btn-sm"
+                                type="button"
+                                onclick="if(confirm('Are you sure?')){ window.location = '/admin/settings/member_site?customDomainCancel'; }"
+                        >Cancel Request
+                        </button>
+                    </div>
+
                 {% endif %}
 
                 <div style="display: {% if tenantInformation.feature('CustomDomain') %}block{% else %}none{% endif %}">
+                    <div class="form-group">
+                        {{ form_label(form.site_domain) }}
+                        <div style="position: absolute;margin-top: 0.5em;">
+                            https://
+                        </div>
+                        <div style="padding-left: 4em;">
+                            {{ form_widget(form.site_domain) }}
+                        </div>
+                    </div>
                     {{ form_row(form.site_domain) }}
                     {{ form_row(form.site_domain_provider) }}
                     {{ form_row(form.site_domain_req_name) }}

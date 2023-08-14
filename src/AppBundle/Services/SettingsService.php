@@ -303,6 +303,7 @@ class SettingsService
             'site_domain_provider',
             'site_domain_req_name',
             'site_domain_req_email',
+            'site_domain_req_time',
             'site_is_private',
             'site_welcome',
             'site_welcome_user',

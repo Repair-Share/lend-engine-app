@@ -34,8 +34,8 @@ class SettingsMemberSiteController extends Controller
 
         // Pass tenant info in so we can control settings based on pay plan
         $options = [
-            'em' => $em,
-            'tenantService' => $tenantService,
+            'em'              => $em,
+            'tenantService'   => $tenantService,
             'settingsService' => $settingsService
         ];
 
@@ -46,9 +46,71 @@ class SettingsMemberSiteController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         /** @var $repo \AppBundle\Repository\SettingRepository */
-        $repo =  $em->getRepository('AppBundle:Setting');
+        $repo = $em->getRepository('AppBundle:Setting');
 
         $locale = $tenantService->getLocale();
+
+        // Cancel the custom domain request
+        if (isset($_REQUEST['customDomainCancel'])) {
+
+            $subject = 'Custom domain CANCEL request for ' . $tenantService->getCompanyName();
+
+            $reqs = [
+                'site_domain'           => $settingsService->getSettingValue('site_domain'),
+                'site_domain_provider'  => $settingsService->getSettingValue('site_domain_provider'),
+                'site_domain_req_name'  => $settingsService->getSettingValue('site_domain_req_name'),
+                'site_domain_req_email' => $settingsService->getSettingValue('site_domain_req_email'),
+            ];
+
+            $domainReqName = $reqs['site_domain_req_name'];
+
+            $message = '
+                
+                    Dear Support,
+                    
+                    ' . $domainReqName . ' is requested to CANCEL a custom domain to ' . $tenantService->getCompanyName() . '.
+                    
+                    ' . $this->emailRequestDetails($reqs, $tenantService);
+
+            $message = nl2br($message);
+
+            $emailService->send(
+                'andordev@gmail.com',
+                //'support@lend-engine.com',
+                'Lend Engine Support',
+                $subject,
+                $message
+            );
+
+            $this->clearSiteDomainDetails();
+
+            $this->addFlash('success', 'Your custom domain request has been cancelled.');
+
+            return $this->redirectToRoute('settings_member_site');
+
+        } elseif ( // Check if the custom domain is already set up
+            !$form->isSubmitted()
+            && !isset($_REQUEST['customDomainAdded']) // Avoid infinity loop if data was not saved
+        ) {
+
+            $currentDomain   = $tenantService->getAccountDomain(false);
+            $requestedDomain = $settingsService->getSettingValue('site_domain');
+
+            if ($requestedDomain) {
+                $requestedDomain = str_ireplace(['http://', 'https://', 'www.'], '', $requestedDomain);
+            }
+
+            if ($currentDomain && $requestedDomain && $currentDomain === $requestedDomain) {
+
+                $this->clearSiteDomainDetails();
+
+                $this->addFlash('success', 'Your custom domain has been set up.');
+
+                return $this->redirectToRoute('settings_member_site', ['customDomainAdded' => true]);
+
+            }
+
+        }
 
         if ($form->isSubmitted()) {
 
@@ -56,10 +118,9 @@ class SettingsMemberSiteController extends Controller
 
             if (array_key_exists('site_domain', $reqs)) {
 
-                $domain         = $reqs['site_domain'];
-                $domainProvider = $reqs['site_domain_provider'];
                 $domainReqName  = $reqs['site_domain_req_name'];
-                $domainReqEmail = $reqs['site_domain_req_email'];
+
+                $reqs['site_domain_req_time'] = date('c');
 
                 $subject = 'Custom domain request for ' . $tenantService->getCompanyName();
 
@@ -67,25 +128,15 @@ class SettingsMemberSiteController extends Controller
                 
                     Dear Support,
                     
-                    ' . $domainReqName . ' is requested to set up a custom domain to ' . $tenantService->getCompanyName() . '.
+                    ' . $domainReqName . ' is requested to SET UP a custom domain to ' . $tenantService->getCompanyName() . '.
                     
-                    <strong>Request Details</strong>
-                    Custom Domain: <strong>' . $domain . '</strong>
-                    Domain Provider: ' . $domainProvider . '
-                    Name: ' . $domainReqName . '
-                    E-mail: ' . $domainReqEmail . '
-                    
-                    <strong>The client details:</strong>
-                    Company Name: ' . $tenantService->getCompanyName() . '
-                    Owner Name: ' . $tenantService->getAccountOwnerName() . '
-                    Owner Email: ' . $tenantService->getAccountOwnerEmail() . '
-                    Account Domain: ' . $tenantService->getAccountDomain() . '     
-                ';
+                    ' . $this->emailRequestDetails($reqs, $tenantService);
 
                 $message = nl2br($message);
 
                 $emailService->send(
-                    'support@lend-engine.com',
+                    'andordev@gmail.com',
+                    //'support@lend-engine.com',
                     'Lend Engine Support',
                     $subject,
                     $message
@@ -93,7 +144,7 @@ class SettingsMemberSiteController extends Controller
 
             }
 
-            foreach ($request->get('settings_member_site') AS $setup_key => $setup_data) {
+            foreach ($reqs as $setup_key => $setup_data) {
                 if ($settingsService->isValidSettingsKey($setup_key)) {
                     if (!$setting = $repo->findOneBy(['setupKey' => $setup_key])) {
                         $setting = new Setting();
@@ -119,9 +170,9 @@ class SettingsMemberSiteController extends Controller
             }
             try {
                 $em->flush();
-                $this->addFlash('success','Settings updated.');
+                $this->addFlash('success', 'Settings updated.');
             } catch (\PDOException $e) {
-                $this->addFlash('error','Error updating settings.');
+                $this->addFlash('error', 'Error updating settings.');
             }
             return $this->redirectToRoute('settings_member_site');
         }
@@ -169,13 +220,60 @@ class SettingsMemberSiteController extends Controller
         $heroku = new HerokuClient([
             'apiKey' => getenv('H_API_KEY')
         ]);
-        $data = ['hostname' => $domain];
+        $data   = ['hostname' => $domain];
         try {
             $heroku->post('apps/lend-engine-eu-plus/domains/', $data);
             return true;
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    private function clearSiteDomainDetails()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var $repo \AppBundle\Repository\SettingRepository */
+        $repo = $em->getRepository('AppBundle:Setting');
+
+        foreach (
+            [
+                'site_domain',
+                'site_domain_provider',
+                'site_domain_req_name',
+                'site_domain_req_email',
+                'site_domain_req_time'
+            ] as $setup_key
+        ) {
+
+            if (!$setting = $repo->findOneBy(['setupKey' => $setup_key])) {
+                $setting = new Setting();
+                $setting->setSetupKey($setup_key);
+            }
+
+            $setting->setSetupValue('');
+            $em->persist($setting);
+
+        }
+
+        $em->flush();
+    }
+
+    private function emailRequestDetails(array $reqs, $tenantService)
+    {
+        return '
+            <strong>Request Details</strong>
+            Custom Domain: <strong>' . $reqs['site_domain'] . '</strong>
+            Domain Provider: ' . $reqs['site_domain_provider'] . '
+            Name: ' . $reqs['site_domain_req_name'] . '
+            E-mail: ' . $reqs['site_domain_req_email'] . '
+            
+            <strong>The client details:</strong>
+            Company Name: ' . $tenantService->getCompanyName() . '
+            Owner Name: ' . $tenantService->getAccountOwnerName() . '
+            Owner Email: ' . $tenantService->getAccountOwnerEmail() . '
+            Account Domain: ' . $tenantService->getAccountDomain() . '
+        ';
     }
 
 }
