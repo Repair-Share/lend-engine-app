@@ -27,7 +27,6 @@ class ReleaseNotesController extends Controller
             '135' => 'Card payment system fails to submit after any error occurs',
             '239' => 'Admin dashboard causes an error',
             '238' => 'Pages with custom domains have to use https',
-            '236' => 'Include stock items into the admin loans list',
             '228' => 'Auto-enrolling in memberships',
             '224' => 'No price or length of borrow when browsing',
             '195' => 'Refund in Stripe should allow optional reduction in credit back on the account, default should be no change.',

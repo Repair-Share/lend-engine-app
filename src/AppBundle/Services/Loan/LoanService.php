@@ -169,7 +169,8 @@ class LoanService
         $tz = $this->settings->getSettingValue('org_timezone');
 
         $filter = [
-            'status' => $status
+            'status'            => $status,
+            'excludeStockItems' => true
         ];
 
         // Use the same repo search like on the admin list
