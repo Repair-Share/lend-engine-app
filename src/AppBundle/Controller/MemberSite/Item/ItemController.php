@@ -69,7 +69,7 @@ class ItemController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        if (!$security->isGranted('ROLE_ADMIN') && !$product->getIsActive()) {
+        if (!$security->isGranted('ROLE_ADMIN') && !$security->isGranted('ROLE_SUPER_USER') && !$product->getIsActive()) {
             $this->addFlash("error", "Item with ID {$productId} is not available.");
             return $this->redirectToRoute('home');
         }
