@@ -63,14 +63,14 @@ class ItemController extends Controller
             return $this->redirectToRoute('home');
         }
 
-        if (!$product->getIsActive()) {
-            $this->addFlash("error", "Item with ID {$productId} is not available.");
-            return $this->redirectToRoute('home');
-        }
-
         // Check permissions to access
         if (!$security->isGranted('ROLE_ADMIN') && $product->getShowOnWebsite() == false) {
             $this->addFlash("error", "This item listing is not available for members.");
+            return $this->redirectToRoute('home');
+        }
+
+        if (!$security->isGranted('ROLE_ADMIN') && !$product->getIsActive()) {
+            $this->addFlash("error", "Item with ID {$productId} is not available.");
             return $this->redirectToRoute('home');
         }
 
