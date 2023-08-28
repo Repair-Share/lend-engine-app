@@ -15,6 +15,13 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class TestHelpers extends AuthenticatedControllerTest
 {
+    /**
+     * @param  Client  $client
+     */
+    public function subscribeAdmin(Client $client)
+    {
+        $this->subscribeContact($client, 1);
+    }
 
     /**
      * @param  Client  $client

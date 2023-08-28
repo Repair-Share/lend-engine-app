@@ -19,6 +19,8 @@ class LoanCheckQuantityInStockTest extends AuthenticatedControllerTest
             $contactId
         );*/
 
+        $this->helpers->subscribeAdmin($this->client);
+
         // Step 1: Create a new stock item
         $stockItemName = "Quantity stock test " . rand();
         $stockItemId   = $this->helpers->createItem($this->client, $stockItemName, [
