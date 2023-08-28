@@ -6,6 +6,42 @@ use Tests\AppBundle\Controller\AuthenticatedControllerTest;
 
 class CheckTopCounterFiguresTest extends AuthenticatedControllerTest
 {
+    public function setUp()
+    {
+        parent::setUp();
+
+        foreach (['RESERVED', 'ACTIVE', 'OVERDUE'] as $status) {
+
+            $contactId = $this->helpers->createContact(
+                $this->client,
+                'Test contact ' . uniqid()
+            );
+
+            $this->helpers->subscribeContact(
+                $this->client,
+                $contactId
+            );
+
+            $itemId = $this->helpers->createItem($this->client);
+
+            switch ($status) {
+                case 'RESERVED':
+                    $this->helpers->createLoan($this->client, $contactId, [$itemId], 'reserve', 1);
+                    break;
+                case 'ACTIVE':
+                    $loanId = $this->helpers->createLoan($this->client, $contactId, [$itemId], 'checkout', 1);
+                    $this->helpers->checkoutLoan($this->client, $loanId);
+                    break;
+                case 'OVERDUE':
+                    $loanId = $this->helpers->createLoan($this->client, $contactId, [$itemId], 'checkout', -10);
+                    $this->helpers->checkoutLoan($this->client, $loanId);
+                    break;
+            }
+
+        }
+
+    }
+
     public function testTopCounter()
     {
         $crawler = $this->client->request('GET', '/admin/loan/list');
