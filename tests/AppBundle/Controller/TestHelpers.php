@@ -6,6 +6,7 @@
 
 namespace Tests\AppBundle\Controller;
 
+use AppBundle\Entity\MembershipType;
 use AppBundle\Entity\Setting;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -251,8 +252,7 @@ class TestHelpers extends AuthenticatedControllerTest
         $toDateOffset = 1,
         $pickupTime = '09:00:00',
         $returnTime = '17:00:00'
-    )
-    {
+    ) {
         // Add items to the basket
         $today = new \DateTime();
 
@@ -431,7 +431,7 @@ class TestHelpers extends AuthenticatedControllerTest
         $this->assertContains("loan/{$loanId}", $crawler->html()); // in the link to delete the pending loan
 
         // Check it out
-        $form = $crawler->filter('form[name="loan_check_out"]')->form(array(
+        $form    = $crawler->filter('form[name="loan_check_out"]')->form(array(
             'loan_check_out[paymentMethod]' => 1,
             'loan_check_out[paymentAmount]' => 16.00,
         ), 'POST');
@@ -743,6 +743,41 @@ class TestHelpers extends AuthenticatedControllerTest
         $compressedHTML = trim($compressedHTML);
 
         return $compressedHTML;
+    }
+
+    public function addMembership($name, $price, $duration, $selfServe = true)
+    {
+        $kernel = $this->bootKernel();
+
+        /** @var \Doctrine\ORM\EntityManager $em */
+        $em   = $kernel->getContainer()->get('doctrine')->getManager();
+        $repo = $em->getRepository("AppBundle:MembershipType");
+
+        /** @var \AppBundle\Entity\MembershipType $membershipType */
+        if (!$membershipType = $repo->findOneBy(['name' => $name])) {
+            $membershipType = new MembershipType();
+        }
+
+        $membershipType->setName($name);
+        $membershipType->setPrice($price);
+        $membershipType->setDuration($duration);
+        $membershipType->setIsSelfServe($selfServe);
+
+        $em->persist($membershipType);
+        $em->flush();
+
+        return $membershipType->getId();
+    }
+
+    public function setupFakeStripe()
+    {
+        $this->setSettingValue('stripe_access_token', 'sk_test_12345');
+        $this->setSettingValue('stripe_publishable_key', 'pk_test_12345');
+        $this->setSettingValue('stripe_payment_method', 6);
+        $this->setSettingValue('stripe_debug', '1');
+        $this->setSettingValue('stripe_fee', '');
+        $this->setSettingValue('stripe_minimum_payment', '');
+        $this->setSettingValue('stripe_use_saved_cards', 1);
     }
 
 }
