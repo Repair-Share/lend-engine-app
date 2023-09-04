@@ -22,6 +22,11 @@ abstract class AuthenticatedControllerTest extends \Symfony\Bundle\FrameworkBund
     protected $client = null;
 
     /**
+     * @var Client
+     */
+    protected $unAuthClient = null;
+
+    /**
      * @var TestHelpers
      */
     protected $helpers;
@@ -29,6 +34,7 @@ abstract class AuthenticatedControllerTest extends \Symfony\Bundle\FrameworkBund
     public function setUp()
     {
         $this->client = $this->createAuthorizedClient();
+        $this->unAuthClient = $this->createUnAuthorizedClient();
         $this->helpers = new TestHelpers();
     }
 
@@ -49,6 +55,16 @@ abstract class AuthenticatedControllerTest extends \Symfony\Bundle\FrameworkBund
             'PHP_AUTH_USER' => 'tech@lend-engine.com',
             'PHP_AUTH_PW'   => 'unit_test',
         ]);
+
+        return $client;
+    }
+
+    /**
+     * @return Client
+     */
+    protected function createUnAuthorizedClient()
+    {
+        $client = static::createClient([], []);
 
         return $client;
     }
