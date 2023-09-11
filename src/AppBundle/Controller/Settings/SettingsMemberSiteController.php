@@ -115,7 +115,7 @@ class SettingsMemberSiteController extends Controller
 
             $reqs = $request->get('settings_member_site');
 
-            if (array_key_exists('site_domain', $reqs)) {
+            if (array_key_exists('site_domain', $reqs) && $reqs['site_domain_req_name']) {
 
                 $domainReqName  = $reqs['site_domain_req_name'];
 
