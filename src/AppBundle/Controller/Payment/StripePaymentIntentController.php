@@ -192,6 +192,8 @@ class StripePaymentIntentController extends Controller
 
             // When the payment is linked to the request, the pendingPaymentType is cleared
             $this->get('session')->set('pendingPaymentType', $paymentType);
+        } else {
+            $payment->setNote("Pending payment");
         }
 
         try  {

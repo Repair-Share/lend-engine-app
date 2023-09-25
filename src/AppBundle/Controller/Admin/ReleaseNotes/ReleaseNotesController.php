@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '256' => 'Errors appearing with Stripe transactions not matching with LE',
             '253' => 'Archived items can be accessed if you have the URL (i.e. google link)',
             '252' => 'Overdue email sends a link button to open loan, but the URL is wrong',
             '240' => 'Pay membership at pickup on and allow account to go into debt.',

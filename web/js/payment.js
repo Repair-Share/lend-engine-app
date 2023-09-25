@@ -182,7 +182,7 @@ function handleAction(response) {
                 },
                 body: JSON.stringify({
                     paymentIntentId: result.paymentIntent.id,
-                    amount: $(".payment-amount").val(),
+                    amount: $(".payment-amount").val() * 100,
                     contactId: $("#contactId").val()
                 })
             }).then(function(confirmResult) {
