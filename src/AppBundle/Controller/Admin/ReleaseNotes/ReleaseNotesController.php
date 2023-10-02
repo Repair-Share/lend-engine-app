@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '262' => 'Enhancement 9 browsing as - more visible',
             '261' => 'Enhancement 9 browsing as - more visible',
             '256' => 'Errors appearing with Stripe transactions not matching with LE',
             '253' => 'Archived items can be accessed if you have the URL (i.e. google link)',

@@ -16,7 +16,6 @@ class LoanItemRemoveController extends Controller
      * @param $rowId int
      * @return Response
      * @Route("loan/remove-item/{rowId}", name="loan_item_remove")
-     * @Security("has_role('ROLE_ADMIN')")
      */
     public function loanItemRemoveAction(Request $request, $rowId)
     {
