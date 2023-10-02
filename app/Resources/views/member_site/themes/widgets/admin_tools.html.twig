@@ -61,7 +61,13 @@
 
         <div class="col-md-6">
             {% if user is defined and user.id != app.user.id %}
-                <i class="fa fa-user"></i> Browsing as <strong><a title="Edit contact" class="edit-contact" data-toggle="tooltip" href="{{ path('contact', {id: user.id}) }}">{{ user.name }}</a></strong>
+                <span class="admin-tools-highlight">
+                    <i class="fa fa-user"></i>
+                    Browsing as <strong><a title="Edit contact" class="edit-contact" data-toggle="tooltip" href="{{ path('contact', {id: user.id}) }}">{{ user.name }}</a></strong>
+                </span>
+                <small>
+                    <a href="{{ path('switch_contact', {contactId: app.user.id}) }}">Cancel</a>
+                </small>
                 <div class="help-block" style="font-size: 11px">
                     Change user with the search box above.
                 </div>
