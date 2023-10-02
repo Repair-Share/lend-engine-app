@@ -11,10 +11,7 @@ class BrowseAsControllerTest extends AuthenticatedControllerTest
         $contactName = 'Sample Test';
 
         // Create a new contact
-        //$contactID = $this->helpers->createContact($this->client, $contactName);
-
-        // TODO
-        $contactID = 6;
+        $contactID = $this->helpers->createContact($this->client, $contactName);
 
         // Search for the contact
         $crawler = $this->client->request(
