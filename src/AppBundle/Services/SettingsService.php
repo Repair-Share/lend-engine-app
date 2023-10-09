@@ -265,6 +265,7 @@ class SettingsService
             'automate_email_reservation_reminder',
             'automate_email_membership',
             'automate_email_overdue_days',
+            'automate_email_overdue_until_loan_returned',
 
             // Feature toggles
             'ft_events',

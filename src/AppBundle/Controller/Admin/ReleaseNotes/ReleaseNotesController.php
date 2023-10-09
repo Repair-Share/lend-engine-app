@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '260' => 'Enhancement 7 loan overdue reminders',
             '263' => 'Enhancement 13 loan reminder emails incorrect',
             '262' => 'Enhancement 9 browsing as - more visible',
             '261' => 'Enhancement 9 browsing as - more visible',

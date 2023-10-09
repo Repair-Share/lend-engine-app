@@ -47,33 +47,58 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
     /**
      * For the nightly scheduled reminders
      * @param $daysOverdue
+     * @param $overdueReminderRepeat
      * @return bool|mixed
      */
-    public function getOverdueItems($daysOverdue)
+    public function getOverdueItems($daysOverdue, $overdueReminderRepeat)
     {
         $dueIn = new \DateTime();
         $dueIn->modify("-{$daysOverdue} days");
 
         $repository = $this->getEntityManager()->getRepository('AppBundle:LoanRow');
-        $qb = $repository->createQueryBuilder('lr');
+        $qb         = $repository->createQueryBuilder('lr');
         $qb->select('lr')
             ->leftJoin('lr.loan', 'l')
-            ->leftJoin('lr.inventoryItem', 'i')
-            ->where('lr.dueInAt > :dateStart')
-            ->andWhere('lr.dueInAt < :dateEnd')
+            ->leftJoin('lr.inventoryItem', 'i');
+
+        if ($overdueReminderRepeat) {
+
+            $reminder = new \DateTime();
+            $reminder->modify("-{$overdueReminderRepeat} days");
+
+            $qb->where("
+                (
+                    lr.dueInAt > :dateStart
+                    and lr.dueInAt < :dateEnd
+                    and l.reminderLastSentAt is null
+                ) or (
+                    l.reminderLastSentAt < :reminder
+                )
+            ")
+                ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
+                ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"))
+                ->setParameter('reminder', $reminder->format("Y-m-d 23:59:59"));
+
+        } else {
+
+            $qb->where('lr.dueInAt > :dateStart')
+                ->andWhere('lr.dueInAt < :dateEnd')
+                ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
+                ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"));
+
+        }
+
+        $qb
             ->andWhere('lr.checkedInAt IS NULL')
             ->andWhere('lr.checkedOutAt IS NOT NULL')
             ->andWhere('l.status != :statusReserved')
             ->andWhere('i.itemType = :itemType')
-            ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
-            ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"))
             ->setParameter('itemType', 'loan')
-            ->setParameter('statusReserved', 'RESERVED')
-        ;
+            ->setParameter('statusReserved', 'RESERVED');
 
         $query = $qb->getQuery();
 
-        if ( $results = $query->getResult() ) {
+        if ($results = $query->getResult()) {
             return $results;
         } else {
             return false;

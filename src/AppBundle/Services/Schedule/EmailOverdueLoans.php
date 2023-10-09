@@ -123,6 +123,12 @@ class EmailOverdueLoans
 
                 $resultString .= " ... finding items {$overdueDays} days overdue".PHP_EOL;
 
+                $overdueReminderRepeat = (int)$this->settings->getSettingValue('automate_email_overdue_until_loan_returned');
+
+                if ($overdueReminderRepeat) {
+                    $resultString .= " ... Send reminders every {$overdueReminderRepeat} days until loan is returned" . PHP_EOL;
+                }
+
                 try {
 
                     // Mark loans as overdue
@@ -133,7 +139,7 @@ class EmailOverdueLoans
                     /** @var $loanRowRepo \AppBundle\Repository\LoanRowRepository */
                     $loanRowRepo = $tenantEntityManager->getRepository('AppBundle:LoanRow');
 
-                    if ($overdueLoanRows = $loanRowRepo->getOverdueItems($overdueDays)) {
+                    if ($overdueLoanRows = $loanRowRepo->getOverdueItems($overdueDays, $overdueReminderRepeat)) {
 
                         // Test only the last row
                         if (getenv('APP_ENV') === 'test' && sizeof($overdueLoanRows)) {
@@ -185,6 +191,10 @@ class EmailOverdueLoans
                                     ['loanId' => $loan->getId()],
                                     'emails', $contact->getLocale()
                                 );
+
+                                // Set the reminder last sent flag
+                                $loan->setReminderLastSentAt(new \DateTime());
+                                $this->em->persist($loan);
 
                                 $this->emailService->postmarkApiKey = $postmarkApiKey;
                                 $this->emailService->senderName = $senderName;

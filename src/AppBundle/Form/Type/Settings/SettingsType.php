@@ -225,6 +225,7 @@ EOT;
             $dbData['automate_email_reservation_reminder'] = 0;
             $dbData['automate_email_membership'] = false;
             $dbData['automate_email_overdue_days'] = null;
+            $dbData['automate_email_overdue_until_loan_returned'] = null;
             $choices = ['No'  => '0',];
         }
 
@@ -282,6 +283,17 @@ EOT;
                 'class' => 'input-100',
                 'placeholder' => '',
                 'data-help' => 'Leave blank or zero to disable automated overdue emails. '.$emailHelp,
+                'disabled' => $emailDisabled
+            )
+        ));
+
+        $builder->add('automate_email_overdue_until_loan_returned', TextType::class, array(
+            'label' => 'Send reminders every X days until loan is returned',
+            'data' => $dbData['automate_email_overdue_until_loan_returned'],
+            'required' => false,
+            'attr' => array(
+                'class' => 'input-100',
+                'placeholder' => '',
                 'disabled' => $emailDisabled
             )
         ));

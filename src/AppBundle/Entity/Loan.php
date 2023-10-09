@@ -74,6 +74,13 @@ class Loan
     /**
      * @var \DateTime
      *
+     * @ORM\Column(name="reminder_last_sent_at", type="datetime", nullable=true)
+     */
+    protected $reminderLastSentAt;
+
+    /**
+     * @var \DateTime
+     *
      * @ORM\Column(name="datetime_out", type="datetime")
      */
     protected $timeOut;
@@ -297,6 +304,30 @@ class Loan
     public function getCreatedAtSite()
     {
         return $this->createdAtSite;
+    }
+
+    /**
+     * Set reminderLastSentAt
+     *
+     * @param \DateTime $reminderLastSentAt
+     *
+     * @return Loan
+     */
+    public function setReminderLastSentAt($reminderLastSentAt)
+    {
+        $this->reminderLastSentAt = $reminderLastSentAt;
+
+        return $this;
+    }
+
+    /**
+     * Get reminderLastSentAt
+     *
+     * @return \DateTime
+     */
+    public function getReminderLastSentAt()
+    {
+        return $this->reminderLastSentAt;
     }
 
     /**
