@@ -170,7 +170,7 @@ class EmailOverdueLoans
                                     'emails/overdue_reminder.html.twig',
                                     array(
                                         'loanId'   => $loan->getId(),
-                                        'loanRows' => $loan->getLoanRows(),
+                                        'loanRows' => $overdueLoanRows,
                                         'tenant'   => $tenant,
                                         'loginUri' => $loginUri
                                     )
