@@ -76,11 +76,12 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
                     )
                     or
                     (
-                        current_timestamp() >= date_add(l.reminderLastSentAt, :overdueReminderRepeat, 'day')
+                        :night >= date_add(l.reminderLastSentAt, :overdueReminderRepeat, 'day')
                         and l.reminderLastSentAt is not null
                     )
                 )
             ")
+                ->setParameter('night', date('Y-m-d 23:59:59'))
                 ->setParameter('overdueReminderRepeat', $overdueReminderRepeat)
                 ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
                 ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"));
