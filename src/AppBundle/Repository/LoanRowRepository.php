@@ -89,6 +89,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 
             $qb->where('lr.dueInAt > :dateStart')
                 ->andWhere('lr.dueInAt < :dateEnd')
+                ->andWhere('l.reminderLastSentAt is null')
                 ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
                 ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"));
 
