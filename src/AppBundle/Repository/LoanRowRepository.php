@@ -12,7 +12,7 @@ use AppBundle\Services\SettingsService;
 class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 {
     /**
-     * @param int $days
+     * @param  int  $days
      * @return bool|mixed
      */
     public function getLoanRowsDueInXDays($days = 1)
@@ -21,7 +21,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
         $tomorrow->modify("+{$days} day");
 
         $repository = $this->getEntityManager()->getRepository('AppBundle:LoanRow');
-        $qb = $repository->createQueryBuilder('lr');
+        $qb         = $repository->createQueryBuilder('lr');
         $qb->select('lr')
             ->leftJoin('lr.loan', 'l')
             ->leftJoin('lr.inventoryItem', 'i')
@@ -37,7 +37,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 
         $query = $qb->getQuery();
 
-        if ( $results = $query->getResult() ) {
+        if ($results = $query->getResult()) {
             return $results;
         } else {
             return false;
@@ -52,32 +52,38 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
      */
     public function getOverdueItems($daysOverdue, $overdueReminderRepeat)
     {
+        $daysOverdue = (int)$daysOverdue;
+        $overdueReminderRepeat = (int)$overdueReminderRepeat;
+
         $dueIn = new \DateTime();
         $dueIn->modify("-{$daysOverdue} days");
 
         $repository = $this->getEntityManager()->getRepository('AppBundle:LoanRow');
         $qb         = $repository->createQueryBuilder('lr');
+
         $qb->select('lr')
             ->leftJoin('lr.loan', 'l')
             ->leftJoin('lr.inventoryItem', 'i');
 
         if ($overdueReminderRepeat) {
 
-            $reminder = new \DateTime();
-            $reminder->modify("-{$overdueReminderRepeat} days");
-
             $qb->where("
                 (
-                    lr.dueInAt > :dateStart
-                    and lr.dueInAt < :dateEnd
-                    and l.reminderLastSentAt is null
-                ) or (
-                    l.reminderLastSentAt < :reminder
+                    (
+                        lr.dueInAt > :dateStart
+                        and lr.dueInAt < :dateEnd
+                        and l.reminderLastSentAt is null
+                    )
+                    or
+                    (
+                        current_timestamp() >= date_add(l.reminderLastSentAt, :overdueReminderRepeat, 'day')
+                        and l.reminderLastSentAt is not null
+                    )
                 )
             ")
+                ->setParameter('overdueReminderRepeat', $overdueReminderRepeat)
                 ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
-                ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"))
-                ->setParameter('reminder', $reminder->format("Y-m-d 23:59:59"));
+                ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"));
 
         } else {
 
@@ -145,7 +151,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             $builder->orWhere('i.name LIKE :string');
             $builder->orWhere('i.sku LIKE :string');
 
-            $builder->setParameter('string', '%'.$filter['search'].'%');
+            $builder->setParameter('string', '%' . $filter['search'] . '%');
         }
 
         if (isset($filter['excludeStockItems']) && $filter['excludeStockItems'] == true) {
@@ -203,7 +209,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             } else {
                 $builder->andWhere('lr.dueInAt >= :date_from');
             }
-            $builder->setParameter('date_from', $filter['date_from'].' 00:00:00');
+            $builder->setParameter('date_from', $filter['date_from'] . ' 00:00:00');
         }
 
         if (isset($filter['date_to']) && $filter['date_to']) {
@@ -212,7 +218,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             } else {
                 $builder->andWhere('lr.dueInAt <= :date_to');
             }
-            $builder->setParameter('date_to', $filter['date_to'].' 23:59:59');
+            $builder->setParameter('date_to', $filter['date_to'] . ' 23:59:59');
         }
 
         if ($countOnly) {
@@ -226,7 +232,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 
         // Run without pages to get total results:
         $queryTotalResults = $builder->getQuery();
-        $totalResults = count($queryTotalResults->getResult());
+        $totalResults      = count($queryTotalResults->getResult());
 
         // Add pages:
         $builder->setFirstResult($start);
@@ -234,7 +240,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 
         // Add order by:
         if (is_array($sort) && count($sort) > 0 && $this->validateSort($sort)) {
-            $builder->addOrderBy("l.".$sort['column'], $sort['direction']);
+            $builder->addOrderBy("l." . $sort['column'], $sort['direction']);
         } else {
             $builder->addOrderBy("lr.id", "DESC");
         }
@@ -244,12 +250,12 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 
         return [
             'totalResults' => $totalResults,
-            'data' => $query->getResult()
+            'data'         => $query->getResult()
         ];
     }
 
     /**
-     * @param array $sort
+     * @param  array  $sort
      * @return bool
      */
     private function validateSort($sort = [])
