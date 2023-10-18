@@ -133,7 +133,7 @@ class BasketService
         // Only add reservation fee if not admin
         if (!$this->user->hasRole('ROLE_ADMIN')) {
             $bookingFee = $this->settings->getSettingValue('reservation_fee');
-            $basket->setReservationFee($bookingFee);
+            $basket->setReservationFee($bookingFee, $contact);
         }
 
         $this->setSessionUser($basketContactId);

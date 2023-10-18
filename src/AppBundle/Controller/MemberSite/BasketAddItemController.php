@@ -171,7 +171,7 @@ class BasketAddItemController extends Controller
 
         // Reservation fee
         $reservationFee = $request->get('booking_fee');
-        $basket->setReservationFee($reservationFee);
+        $basket->setReservationFee($reservationFee, $contact);
 
         if (!$siteFrom = $siteRepo->find($request->get('from_site'))) {
             throw new \Exception("Cannot find site ".$request->get('from_site'));

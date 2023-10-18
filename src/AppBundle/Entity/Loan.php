@@ -584,9 +584,16 @@ class Loan
 
     /**
      * @param $fee
+     * @param Contact $contact
      * @return $this
      */
-    public function setReservationFee($fee) {
+    public function setReservationFee($fee, $contact = null) {
+
+        // Do not charge reservation fee if it's turned off
+        if ($contact && !$contact->getChargeReservationFee()) {
+            $fee = 0;
+        }
+
         $this->reservationFee = $fee;
         return $this;
     }

@@ -285,11 +285,6 @@ class ItemService
             }
         }
 
-        // Charge reservation fee is turned off
-        if ($contact && !$contact->getChargeReservationFee()) {
-            $fee = 0;
-        }
-
         return $fee;
     }
 
