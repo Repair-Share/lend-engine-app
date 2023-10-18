@@ -282,6 +282,14 @@ class ContactType extends AbstractType
                     'data-help' => 'All users can log in and create reservations, if you allow online reservations.'
                 ]
             ));
+
+            $builder->add('chargeReservationFee', CheckboxType::class, array(
+                'label' => 'Charge reservation fee',
+                'required' => false,
+                'attr' => array(
+                    "autocomplete" => "off"
+                )
+            ));
         }
 
     }

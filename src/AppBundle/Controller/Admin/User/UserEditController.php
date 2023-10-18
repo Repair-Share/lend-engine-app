@@ -120,6 +120,14 @@ class UserEditController extends Controller
             )
         ));
 
+        $formBuilder->add('chargeReservationFee', CheckboxType::class, array(
+            'label' => 'Charge reservation fee',
+            'required' => false,
+            'attr' => array(
+                "autocomplete" => "off"
+            )
+        ));
+
         $form = $formBuilder->getForm();
 
         $form->handleRequest($request);

@@ -291,6 +291,12 @@ class Contact extends BaseUser
      */
     private $preventBorrowing = false;
 
+    /**
+     * @var boolean
+     * @ORM\Column(name="charge_reservation_fee", type="boolean")
+     */
+    private $chargeReservationFee = true;
+
     public function __construct()
     {
         parent::__construct();
@@ -968,6 +974,29 @@ class Contact extends BaseUser
     public function setPreventBorrowing($preventBorrowing)
     {
         $this->preventBorrowing = $preventBorrowing;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getChargeReservationFee()
+    {
+        if ($this->chargeReservationFee !== false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $chargeReservationFee
+     * @return $this
+     */
+    public function setChargeReservationFee($chargeReservationFee)
+    {
+        $this->chargeReservationFee = $chargeReservationFee;
 
         return $this;
     }
