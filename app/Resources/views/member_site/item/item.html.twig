@@ -165,7 +165,6 @@
         var openingTimesByDate = [];
         var closingTimesByDate = [];
 
-
         $(document).ready(function() {
 
             var siteEvents = [];
@@ -393,8 +392,12 @@
 
             page.on('click', '.button-borrow', function(event) {
                 borrowModal.modal();
-                $("#modalContent").hide();
-                $("#modalWait").show();
+                if (hasBasket == 1) {
+                    $("#modalContent").hide();
+                    $("#modalWait").show();
+                } else {
+                    showModalContentForManualBooking();
+                }
                 loadSiteOpeningTimes();
             });
 
@@ -519,6 +522,7 @@
                 }
             }
 
+            // Prepare the underlying page for interaction when modal closes
             function loadSiteOpeningTimes() {
                 sitesLoaded = true;
                 addSitesToCal();
@@ -800,7 +804,6 @@
                 var pickupCell = $(".fc-bg").find("[data-date='"+selectedTime.format("YYYY-MM-DD")+"']");
                 pickupCell.html('<div class="label label-xs label-default pickup-day">'+text_pickup_day+'</div>');
 
-
                 var returnTime;
                 if (basketPickupTime) {
                     autoSetReturn = true;
@@ -832,6 +835,8 @@
                         console.log("Auto-setting return time based on item loan period.");
                         setReturn(returnTime, null, null, siteId, siteName, false);
                     }
+                } else {
+                    console.log("Not setting return");
                 }
             }
 
@@ -1092,6 +1097,7 @@
 
             // Used for selectAllow logic (create greyed-out days outside of site hours)
             function setBookableDays(events) {
+                console.log("Setting bookable days");
                 var date;
 
                 // remove all existing greyed out events

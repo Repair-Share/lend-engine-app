@@ -15,7 +15,7 @@
     </div>
 {% endif %}
 
-<div id="item-list-filter">
+<div id="item-list-filter" style="overflow: scroll">
     {% if filter.sites|length > 1 %}
         <div class="multi-site">
             <ul>
@@ -41,7 +41,7 @@
         </div>
     {% endif %}
 
-    <form method="GET">
+    <form method="GET" id="filterForm">
         <input type="hidden" name="tagId" value="{{ app.request.get('tagId') }}">
         <input type="hidden" name="section" value="{{ app.request.get('section') }}">
         <input type="hidden" name="search" value="{{ app.request.get('search') }}">
@@ -50,17 +50,30 @@
         <input type="hidden" name="from" id="from-date" value="{{ app.request.get('from') }}">
         <input type="hidden" name="to" id="to-date" value="{{ app.request.get('to') }}">
 
-        <div class="row item-filter-dates hidden-xs">
-            <div class="col-md-10">
+        <div class="item-filter-dates">
+            <div style="padding-bottom: 6px;">
                 {% trans %}public_misc.show_items_from{% endtrans %}
                 <a href="javascript:void(0);" id="from-date-picker">{% if dateFrom %}{{ dateFrom|date("l j F") }}{% else %}[ choose ]{% endif %}</a>
                 -
                 <a href="javascript:void(0);" id="to-date-picker">{% if dateTo %}{{ dateTo|date("l j F") }}{% else %}[ choose ]{% endif %}</a>
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-default btn-sm pull-right">{% trans %}public_misc.filter_items{% endtrans %}</button>
+            <div class="row">
+                <div class="col-xs-4">
+                    <button type="button" id="clearDateFilter" class="btn btn-default btn-sm pull-left">{% trans %}public_misc.clear_filter_items{% endtrans %}</button>
+                </div>
+                <div class="col-xs-4">
+                    {% if tenantInformation.basket.loanRows is defined
+                    and tenantInformation.basket.loanRows|length > 0
+                    and tenantInformation.basket.collectFromSite %}
+                        <button type="button" id="useBasketDates" class="btn btn-default btn-sm">{% trans %}public_misc.use_basket_dates{% endtrans %}</button>
+                    {% endif %}
+                </div>
+                <div class="col-xs-4">
+                    <button type="submit" class="btn btn-default btn-sm pull-right">{% trans %}public_misc.filter_items{% endtrans %}</button>
+                </div>
             </div>
         </div>
+
     </form>
 
 </div>
@@ -301,6 +314,24 @@
 <script>
     $(document).ready(function () {
 
+        $("#clearDateFilter").on("click", function() {
+            $("#from-date").val("");
+            $("#to-date").val("");
+            $("#filterForm").submit();
+        });
+
+        $("#useBasketDates").on("click", function() {
+            {% if tenantInformation.basket.loanRows is defined
+            and tenantInformation.basket.loanRows|length > 0
+            and tenantInformation.basket.collectFromSite %}
+            $("#from-date-picker").text("{{ tenantInformation.basket.loanRows|first.dueOutAt|date("D d M") }}");
+            $("#from-date").val("{{ tenantInformation.basket.loanRows|first.dueOutAt|date("Y-m-d") }}");
+            $("#to-date-picker").text("{{ tenantInformation.basket.loanRows|first.dueInAt|date("D d M") }}");
+            $("#to-date").val("{{ tenantInformation.basket.loanRows|first.dueInAt|date("Y-m-d") }}");
+            $("#filterForm").submit();
+            {% endif %}
+        });
+
         var fromDate = $("#from-date-picker");
         fromDate.dateRangePicker({
             format: 'YYYY-MM-DD',
@@ -310,7 +341,7 @@
             showShortcuts: true
         }).bind('datepicker-change', function (event, obj) {
             $("#from-date").val(moment(obj.date1).format('YYYY-MM-DD'));
-            $("#from-date-picker").text(moment(obj.date1).format('dddd D MMMM'));
+            $("#from-date-picker").text(moment(obj.date1).format('ddd D MMM'));
         });
 
         var toDate = $("#to-date-picker");
@@ -322,9 +353,18 @@
             showShortcuts: true
         }).bind('datepicker-change', function (event, obj) {
             $("#to-date").val(moment(obj.date1).format('YYYY-MM-DD'));
-            $("#to-date-picker").text(moment(obj.date1).format('dddd D MMMM'));
+            $("#to-date-picker").text(moment(obj.date1).format('ddd D MMM'));
         });
 
-        {#dateExtendField.data('dateRangePicker').setDateRange('{{ membership.expiresAt|date('D M d Y') }}', '{{ membership.expiresAt|date('D M d Y') }}', true);#}
+        // Set the pickup time and location if we already have a basket
+        {% if app.request.get('from') %}
+            $("#from-date").val(moment("{{ app.request.get('from') }}").format('YYYY-MM-DD'));
+            $("#from-date-picker").text(moment("{{ app.request.get('from') }}").format('ddd D MMM'));
+            $("#to-date").val(moment("{{ app.request.get('to') }}").format('YYYY-MM-DD'));
+            $("#to-date-picker").text(moment("{{ app.request.get('to') }}").format('ddd D MMM'));
+        {% else %}
+
+        {% endif %}
+
     });
 </script>

@@ -73,6 +73,8 @@ public_misc:
   link_all_items: All items
   search_items: Search
   no_results: Nothing found
+  clear_filter_items: Clear filter
+  use_basket_dates: Use basket dates
   filter_items: Filter items
   any_site: Any site
   log_in_first: Please log in to view items
