@@ -96,8 +96,6 @@
 
     {% endif %}
 
-    {{ include('member_site/partials/modal_wait.html.twig') }}
-
     <br>
     <div class="row" id="calendar-key">
         {% for site in sites %}
@@ -127,7 +125,7 @@
         var dailyFee = {{ dailyFee|number_format(6) }};
         var itemFee = {{ itemFee|number_format(6) }};
         var fixedFeePricing = "{{ tenantInformation.fixedFeePricing }}";
-        var basketQuickAdd = "{{ tenantInformation.basketQuickAdd }}";
+        var basketQuickAdd = "{{ tenantInformation.setting('basket_quick_add') }}";
         var bufferHours = {{ tenantInformation.setting('reservation_buffer')|number_format(0) }};
         var itemType = "{{ product.itemType }}";
         var itemLocationIsAvailable = "{{ product.inventoryLocation.isAvailable }}";
