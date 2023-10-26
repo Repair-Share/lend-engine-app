@@ -751,7 +751,7 @@
                 $(".borrow-modal-confirm").show();
 
                 console.log("Auto-add ready");
-                if (basketQuickAdd == 1) {
+                if (basketQuickAdd == 1 && hasBasket == 1) {
                     $("#borrowModalConfirm").click(); // click the hidden button
                 } else {
                     showModalContentForManualBooking();

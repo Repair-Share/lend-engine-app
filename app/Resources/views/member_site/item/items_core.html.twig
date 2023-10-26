@@ -200,9 +200,11 @@
                         and tenantInformation.basket.loanRows|length > 0
                         and tenantInformation.setting('basket_quick_add') == 1
                         and product.inventoryLocation
+                        and product.itemType != 'stock'
+                        and not app.session.get('active-loan')
                         and product.inventoryLocation.isAvailable == 1 %}
                             <div class="item-list-quickadd">
-                                <button id="addButton{{ product.id }}" data-id="{{ product.id }}" class="btn btn-xs btn-primary btn-quickadd">Add to basket</button>
+                                <button id="addButton{{ product.id }}" data-id="{{ product.id }}" class="btn btn-xs btn-primary btn-quickadd">{% trans %}public_item.basket_add{% endtrans %}</button>
                             </div>
                         {% elseif not product.inventoryLocation %}
                             {#see parts#}
