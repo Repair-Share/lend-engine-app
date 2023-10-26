@@ -123,14 +123,16 @@ EOH;
         ));
 
         $helpText = <<<EOH
-Auto-add items to an existing basket when clicking "borrow" if there are no date conflicts. 
-First item added to a basket needs the user to choose dates.
+<strong>On the item page</strong>: Auto-add items to an existing basket when clicking "borrow" if there are no date conflicts. 
+For the first item added to a basket, the user needs to choose dates.<br>
+<strong>On the item listing</strong>: Adds an "add to basket" button which adds to the basket in the background, if 
+a basket exists and there is no clash with dates, locations or membership restrictions.
 EOH;
 
         $builder->add('basket_quick_add', ToggleType::class, array(
             'expanded' => true,
             'multiple' => false,
-            'label' => 'Quick add basket mode',
+            'label' => 'Quick add basket mode (beta)',
             'data' => (int)$dbData['basket_quick_add'],
             'required' => true,
             'attr' => [

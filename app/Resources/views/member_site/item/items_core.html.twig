@@ -198,6 +198,7 @@
                         {% elseif tenantInformation.basket is defined
                         and tenantInformation.basket
                         and tenantInformation.basket.loanRows|length > 0
+                        and tenantInformation.setting('basket_quick_add') == 1
                         and product.inventoryLocation
                         and product.inventoryLocation.isAvailable == 1 %}
                             <div class="item-list-quickadd">
