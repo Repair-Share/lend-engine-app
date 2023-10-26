@@ -153,6 +153,10 @@
                             <button type="button" class="btn btn-success" id="buttonSave" style="display:none">Save changes</button>
                         {% endif %}
 
+                        <a href="/products?show=recent" class="btn btn-default">
+                            {% trans %}public_basket.add_items{% endtrans %}
+                        </a>
+
                         {% if tenantInformation.selfCheckout %}
                             <button type="button" class="btn btn-success hideOnFormChange" id="buttonCheckOut">
                                 {% trans %}public_basket.button_checkout{% endtrans %}

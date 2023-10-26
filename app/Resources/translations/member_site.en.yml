@@ -171,6 +171,7 @@ public_basket:
   full_charge: will be charged to your account
   delay_charge: will be charged to account now, with the remainder due at checkout
   button_checkout: Check out now
+  add_items: Add more items
   shipping: Shipping
   remove_stock_items: To create a reservation for loan items, remove stock items from your basket first.
 public_loan:
