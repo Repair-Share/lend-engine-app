@@ -10,7 +10,8 @@
         {% set basket_url = path('basket_show') %}
     {% endif %}
 
-    <a href="{{ basket_url }}" style="padding: 0 10px;" id="site-menu-basket"><i class="fa fa-shopping-basket"></i><span class="hidden-xs"> Basket</span> ({{ tenantInformation.basket.loanRows|length }} items)</a>
+    <a href="{{ basket_url }}" style="padding: 0 10px;" id="site-menu-basket"><i class="fa fa-shopping-basket"></i><span class="hidden-xs"> Basket</span>
+        (<span id="basketItemCount">{{ tenantInformation.basket.loanRows|length }}</span> items)</a>
 
 {% endif %}
 

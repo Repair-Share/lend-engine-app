@@ -1,0 +1,23 @@
+<!-- modal loaded after successful items list basket add -->
+{% trans_default_domain 'member_site' %}
+<div id="itemAddedModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Success</h2>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-success" id="modalItemSuccess">
+                    Item added to basket OK
+                </div>
+                <div class="alert alert-danger" id="modalItemDanger" style="display: none">
+                    Error
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Continue browsing</button>
+                <a href="{{ path('basket_show') }}" class="btn btn-success" >Go to basket</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -89,6 +89,8 @@
     }
 </style>
 
+{% include('member_site/partials/modal_item_added.html.twig') %}
+
 {% if products|length > 0 %}
     <div class="row products" id="site-item-list">
         {% for product in products %}
@@ -122,7 +124,7 @@
                         </span>
                     </div>
 
-                    <div class="text" style="min-height: 120px">
+                    <div class="text" style="min-height: 140px">
 
                         <div style="padding: 10px 0">
 
@@ -181,12 +183,31 @@
                                     {{ product.quantityAvailable }} of {{ product.quantity }} {% trans %}public_item.available{% endtrans %}
                                 </div>
                             {% endif %}
+
                             <div class="item-list-serial">
                                 {% if product.serial and product.quantity == 1 %}
                                     {% trans %}public_item.serial{% endtrans %}: {{ product.serial }}
                                 {% endif %}
                             </div>
                         </strong>
+
+                        {% if product.inBasket %}
+                            {#in basket already#}
+                        {% elseif product.inventoryLocation and product.inventoryLocation.id == 1 %}
+                            {#on loan#}
+                        {% elseif tenantInformation.basket is defined
+                        and tenantInformation.basket
+                        and tenantInformation.basket.loanRows|length > 0
+                        and product.inventoryLocation
+                        and product.inventoryLocation.isAvailable == 1 %}
+                            <div class="item-list-quickadd">
+                                <button id="addButton{{ product.id }}" data-id="{{ product.id }}" class="btn btn-xs btn-primary btn-quickadd">Add to basket</button>
+                            </div>
+                        {% elseif not product.inventoryLocation %}
+                            {#see parts#}
+                        {% else %}
+                            {#not available#}
+                        {% endif %}
                     </div>
                     <!-- /.text -->
                 </div>
@@ -314,10 +335,27 @@
 <script>
     $(document).ready(function () {
 
+        var itemAddedModal = $("#itemAddedModal");
+
         $("#clearDateFilter").on("click", function() {
             $("#from-date").val("");
             $("#to-date").val("");
             $("#filterForm").submit();
+        });
+
+        $(".btn-quickadd").on('click', function() {
+            $.getJSON("/basket/add/"+$(this).data('id')+"?qa=1", function(data) {
+                if (data.status == "OK") {
+                    $("#modalItemSuccess").html(data.message).show();
+                    $("#modalItemDanger").hide();
+                    $("#addButton"+data.itemId).text("Added").css('backgroundColor', "#5cb85c").css("borderColor", "#5cb85c");
+                    $("#basketItemCount").text(data.items); // update the menu at top of page
+                } else {
+                    $("#modalItemSuccess").hide();
+                    $("#modalItemDanger").html(data.status).show();
+                }
+                itemAddedModal.modal();
+            });
         });
 
         $("#useBasketDates").on("click", function() {
