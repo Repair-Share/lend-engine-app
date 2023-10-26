@@ -184,6 +184,19 @@ EOH;
             ]
         ));
 
+        $builder->add('forward_picking', ToggleType::class, array(
+            'expanded' => true,
+            'multiple' => false,
+            'label' => 'Enable reservation forward picking locations at sites. Setup location and edit site to include a forward picking location',
+            'data' => (int)$dbData['forward_picking'],
+            'required' => true,
+            'disabled'=>true,
+            'attr' => [
+                'class' => 'input-100 toggle-switch',
+                'disabled'=>true
+            ]
+        ));
+
         // POSTAL LOANS
 
         $builder->add('postal_loans', ToggleType::class, array(

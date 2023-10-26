@@ -77,6 +77,14 @@ class Site
     private $defaultCheckInLocation;
 
     /**
+     * @var InventoryLocation
+     *
+     * @ORM\OneToOne(targetEntity="InventoryLocation")
+     * @ORM\JoinColumn(name="default_forward_pick_location", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     */
+    private $defaultForwardPickLocation;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="colour", type="string", length=7, nullable=true)
@@ -273,6 +281,30 @@ class Site
     public function getDefaultCheckInLocation()
     {
         return $this->defaultCheckInLocation;
+    }
+
+    /**
+     * Set defaultForwardPickLocation
+     *
+     * @param InventoryLocation $forwardPickLocation
+     *
+     * @return Site
+     */
+    public function setDefaultForwardPickLocation($defaultForwardPickLocation)
+    {
+        $this->defaultForwardPickLocation = $defaultForwardPickLocation;
+
+        return $this;
+    }
+
+    /**
+     * Get defaultForwardPickLocation
+     *
+     * @return InventoryLocation
+     */
+    public function getDefaultForwardPickLocation()
+    {
+        return $this->defaultForwardPickLocation;
     }
 
     /**

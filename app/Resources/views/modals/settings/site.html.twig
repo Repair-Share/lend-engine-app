@@ -27,6 +27,9 @@
             {% if site.id %}
                 {{ form_row(form.isActive) }}
                 {{ form_row(form.default_check_in_location) }}
+                {% if forwardPicking %}
+                    {{ form_row(form.default_forward_pick_location) }}
+                {% endif %}
             {% else %}
                 <p>
                     We'll create the first location for this site automatically called "in stock".

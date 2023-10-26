@@ -1,0 +1,32 @@
+{% extends 'modal.html.twig' %}
+
+{% block modalTitle %}{{ title }}{% endblock %}
+
+{% block modalBody %}
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% else %}
+        Moving item <span style="color: #ff6519">{{ itemName }} </span>
+        to forward picking location <span style="color: #ff6519">{{ location }}</span>
+        at Site <span style="color: #ff6519">{{ site }}</span>
+    {% endif %}
+
+    <script type="text/javascript">
+        $(function () {
+            $('.modal-dialog').css('width', '600px');
+        })
+    </script>
+{% endblock %}
+
+{% block modalFooter %}
+    <button type="button"
+            class="btn btn-default pull-left"
+            data-dismiss="modal"
+            {% if error %}onclick="window.location.reload()"{% endif %}
+    >Cancel</button>
+    {% if not error %}
+        <button class="modal-submit btn bg-green" onclick="window.location='{{ forwardPickUrl }}'">Confirm</button>
+    {% endif %}
+{% endblock %}
+

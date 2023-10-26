@@ -381,6 +381,7 @@ class SettingsService
             'max_reservations',
             'charge_daily_fee',
             'fixed_fee_pricing',
+            'forward_picking',
 
             'open_days', // legacy, now done per site
 

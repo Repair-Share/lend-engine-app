@@ -21,6 +21,8 @@ class AdminLoanListDataController extends Controller
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
 
+        $forwardPicking = $settingsService->getSettingValue('forward_picking');
+
         $em = $this->getDoctrine()->getManager();
         $data = array();
 
@@ -162,9 +164,36 @@ class AdminLoanListDataController extends Controller
             $loanInfo = '<a href="'.$editUrl.'">'.$loanRow->getInventoryItem()->getName().'</a>';
             $loanInfo .= '<div class="sub-text">'.$loan->getContact()->getFirstName().' '.$loan->getContact()->getLastName().' : '.$loan->getContact()->getEmail().'</div>';
 
+            $needsMoving     = false;
+            $isOnForwardPick = false;
+
             if ($loan->getStatus() == Loan::STATUS_RESERVED && $loanRow->getInventoryItem()->getInventoryLocation()) {
                 if ($loanRow->getInventoryItem()->getInventoryLocation()->getSite() != $loanRow->getSiteFrom()) {
+
                     $loanInfo .= '<span style="color: #de7c34">Item needs moving from ' .$loanRow->getInventoryItem()->getInventoryLocation()->getSite()->getName().'</span>';
+                    $needsMoving = true;
+
+                } elseif ($forwardPicking) {
+
+                    $inventoryLocationID = $loanRow->getInventoryItem()->getInventoryLocation()->getId();
+
+                    // Get the site's default forward pick location
+                    $siteRepo = $em->getRepository('AppBundle:Site');
+
+                    $site = $siteRepo->findOneBy([
+                        'id' => $loanRow->getInventoryItem()->getInventoryLocation()->getSite()->getId()
+                    ]);
+
+                    if ($site) {
+
+                        $defaultForwardPickLocationID = $site->getDefaultForwardPickLocation()->getId();
+
+                        if ($defaultForwardPickLocationID && $inventoryLocationID === $defaultForwardPickLocationID) {
+                            $loanInfo        .= '<span style="color: #408233">Forward picked to ' . $site->getDefaultForwardPickLocation()->getName() . '</span>';
+                            $isOnForwardPick = true;
+                        }
+
+                    }
                 }
             }
 
@@ -193,6 +222,12 @@ class AdminLoanListDataController extends Controller
                 $deleteUrl = $this->generateUrl('loan_delete', array('id' => $loan->getId()));
                 $links .= '<li role="separator" class="divider"></li>';
                 $links .= '<li><a href="'.$deleteUrl.'" class="delete-link">Delete</a></li>';
+            }
+
+            if ($forwardPicking && !$needsMoving && !$isOnForwardPick) {
+                $forwardPickConfirmUrl = $this->generateUrl('forward_pickup_move_confirm', array('id' => $loanRow->getId()));
+                $links .= '<li role="separator" class="divider"></li>';
+                $links .= '<li><a href="'.$forwardPickConfirmUrl.'" class="modal-link">Forward pick</a></li>';
             }
 
             $linkHtml = '
