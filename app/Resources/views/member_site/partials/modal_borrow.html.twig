@@ -2,7 +2,22 @@
 {% trans_default_domain 'member_site' %}
 <div id="borrowModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" id="modalWait">
+            <div class="modal-body">
+                Checking availability ...
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="" class="btn btn-default borrowModalCancel pull-left">{% trans %}button_cancel{% endtrans %}</a>
+                    </div>
+                    <div class="col-md-6">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-content" id="modalContent" style="display: none;">
             <div class="modal-body">
                 <div class="alert alert-danger" id="modalWarning" style="display: none"></div>
                 <div style="padding-bottom: 10px; border-bottom: 1px dotted #ccc;">
@@ -139,10 +154,10 @@
 
             <div class="modal-footer">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-xs-6">
                         <a href="" class="btn btn-default borrowModalCancel pull-left">{% trans %}button_cancel{% endtrans %}</a>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-xs-6">
                         {% if similarItemCount > 1 %}
                         <span class="input-group borrow-modal-confirm" style="display: none;">
                             <span class="input-group-addon">Qty:</span>

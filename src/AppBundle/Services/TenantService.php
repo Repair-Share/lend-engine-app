@@ -524,6 +524,7 @@ class TenantService
         /** @var $basket \AppBundle\Entity\Loan */
         if ($basket = $this->session->get('basket')) {
             // Two parameters added, which we have to deal with for in-flight baskets
+            // I think this was here to deal with the params added and then released while users had baskets in session
             if (!isset($basket['collectFrom'])) {
                 $pickupSiteId = null;
                 foreach ($basket['loanRows'] AS $loanRow) {

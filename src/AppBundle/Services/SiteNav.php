@@ -61,6 +61,8 @@ class SiteNav
         $uri = $this->router->generate('public_products', [
             'show' => 'recent',
             'locationId' => $request->get('locationId'),
+            'from' => $request->get('from'),
+            'to' => $request->get('to'),
         ]);
 
         if ($request->get('show') == 'recent') {
@@ -112,6 +114,8 @@ class SiteNav
                     'tagId' => $tag->getId(),
                     'section' => $sectionId,
                     'locationId' => $request->get('locationId'),
+                    'from' => $request->get('from'),
+                    'to' => $request->get('to'),
                 ]);
 
                 if ($request->get('tagId') == $tag->getId()) {

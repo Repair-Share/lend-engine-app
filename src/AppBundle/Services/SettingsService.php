@@ -118,6 +118,7 @@ class SettingsService
         // For new as-yet-unset values
         $defaultSettings = [
             'group_similar_items' => 1,
+            'basket_quick_add' => 0,
             'search_terms' => '1',
             'org_locale' => 'en',
             'label_type' => '11355',
@@ -236,6 +237,7 @@ class SettingsService
             'default_checkin_location',
             'default_loan_fee',
             'default_loan_days',
+            'basket_quick_add',
             'min_loan_days',
             'max_loan_days',
             'daily_overdue_fee',

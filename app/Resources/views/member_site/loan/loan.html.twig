@@ -304,13 +304,11 @@
 
         {% if tenantInformation.feature('StockItems') and loan.status in ['RESERVED', 'PENDING']%}
             <tr>
-                <td class="hidden-xs"></td>
-                <td>
+                <td colspan="3">
                     <a class="btn btn-xs btn-primary" href="{{ path('add_stock_item', {loanId: loan.id}) }}" id="add-stock-item">Add stock item</a>
                     <a class="btn btn-xs btn-primary" href="{{ path('add_loan_item', {loanId: loan.id}) }}" id="add-loan-item">Add loan item</a>
                     <a class="btn btn-xs btn-primary" href="{{ path('add_service_item', {loanId: loan.id}) }}" id="add-service-item">Add service item</a>
                 </td>
-                <td></td>
             </tr>
         {% endif %}
 
@@ -481,11 +479,6 @@
     {% if loan.status == 'RESERVED' or loan.status == 'PENDING' %}
     <div class="row well" id="checkoutButtonRow">
         <div class="col-md-12">
-            {% if loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_PENDING') and is_granted('ROLE_ADMIN') %}
-                <a class="btn btn-xs btn-danger buttonDelete pull-left" href="{{ path('loan_delete', {id: loan.id}) }}">
-                    Delete this loan
-                </a>
-            {% endif %}
             {% if loan.status == 'RESERVED' %}
                 <a href="{{ path('reservation_cancel', {id: loan.id}) }}" id="buttonCancelReservation" class="btn btn-xs btn-danger pull-left">
                     {% trans %}button_cancel_reservation{% endtrans %}
@@ -573,6 +566,13 @@
                 </div>
 
             </form>
+
+            {% if loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_PENDING') and is_granted('ROLE_ADMIN') %}
+                <br><br><br>
+                <a class="btn btn-xs btn-danger buttonDelete pull-left" href="{{ path('loan_delete', {id: loan.id}) }}">
+                    Delete this loan
+                </a>
+            {% endif %}
         </div>
     </div>
 

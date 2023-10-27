@@ -73,11 +73,13 @@ public_misc:
   link_all_items: All items
   search_items: Search
   no_results: Nothing found
+  clear_filter_items: Clear filter
+  use_basket_dates: Use basket dates
   filter_items: Filter items
   any_site: Any site
   log_in_first: Please log in to view items
   link_events: Events
-  show_items_from: Show items only available from
+  show_items_from: Available from
   credit_limit: Credit limit
   search: Search
 public_footer:
@@ -169,6 +171,7 @@ public_basket:
   full_charge: will be charged to your account
   delay_charge: will be charged to account now, with the remainder due at checkout
   button_checkout: Check out now
+  add_items: Add more items
   shipping: Shipping
   remove_stock_items: To create a reservation for loan items, remove stock items from your basket first.
 public_loan:
