@@ -380,6 +380,7 @@ class SettingsService
 
             'reservation_fee',
             'reservation_buffer',
+            'reservation_buffer_override',
             'max_reservations',
             'charge_daily_fee',
             'fixed_fee_pricing',

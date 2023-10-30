@@ -61,6 +61,18 @@ class SettingsReservationsType extends AbstractType
             )
         ));
 
+        $builder->add('reservation_buffer_override', ToggleType::class, array(
+            'expanded' => true,
+            'multiple' => false,
+            'label' => 'Allow Admin and Staff to override the buffer hours',
+            'data' => (int)$dbData['reservation_buffer_override'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100 toggle-switch',
+                'data-help' => 'Admin and Staff is able to bypass the buffer hours and the system allows booking at any time where buffer hours exist or change bookings to enable overriding of buffer hours.'
+            ]
+        ));
+
         $builder->add('default_loan_fee', TextType::class, array(
             'label' => 'Loan fee',
             'data' => $dbData['default_loan_fee'],

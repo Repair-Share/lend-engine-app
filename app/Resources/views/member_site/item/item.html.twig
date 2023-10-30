@@ -127,6 +127,13 @@
         var fixedFeePricing = "{{ tenantInformation.fixedFeePricing }}";
         var basketQuickAdd = "{{ tenantInformation.setting('basket_quick_add') }}";
         var bufferHours = {{ tenantInformation.setting('reservation_buffer')|number_format(0) }};
+
+        {% if is_granted("ROLE_SUPER_USER") or is_granted("ROLE_ADMIN") %}
+            var bufferHoursOverride = {{ tenantInformation.setting('reservation_buffer_override')|number_format(0) }};
+        {% else %}
+            var bufferHoursOverride = false;
+        {% endif %}
+
         var itemType = "{{ product.itemType }}";
         var itemLocationIsAvailable = "{{ product.inventoryLocation.isAvailable }}";
 
@@ -164,6 +171,8 @@
         var bookableDays = []; // an array of YYYY-mm-dd for selectAllow
         var openingTimesByDate = [];
         var closingTimesByDate = [];
+
+        var alertClash = false;
 
         $(document).ready(function() {
 
@@ -351,7 +360,8 @@
                         // loaded, render a preset pickup time
                         if (basketPickupTime) {
                             console.log("Cal loaded");
-                            setPickup(basketPickupTime, null, null, basketSiteFromId, basketSiteFromName);
+                            setPickup(basketPickupTime, null, null, basketSiteFromId, basketSiteFromName, true, false, alertClash);
+                            alertClash = true;
                         }
                     }
                 }
@@ -759,15 +769,29 @@
 
             }
 
-            function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName, autoSetReturn, changeOver) {
+            function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName, autoSetReturn, changeOver, alertClash) {
 
                 console.log("Setting pickup time to "+selectedTime.format("YYYY-MM-DD HH:mm"));
                 $("#booking-help").show();
 
+                if (typeof alertClash === 'undefined') {
+                    alertClash = false;
+                }
+
                 if (!validatePickupDate(selectedTime)) {
-                    $("#button-borrow").remove();
-                    alert(text_clash_date);
-                    return false;
+
+                    if (bufferHoursOverride) { // Alert, but allow
+
+                        if (alertClash) {
+                            alert(text_clash_date);
+                        }
+
+                    } else {
+                        alert(text_clash_date);
+                        $("#button-borrow").remove();
+                        return false;
+                    }
+
                 }
 
                 if (!validatePickupSite(siteId)) {

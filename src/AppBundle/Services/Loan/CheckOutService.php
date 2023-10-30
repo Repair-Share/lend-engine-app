@@ -443,29 +443,35 @@ class CheckOutService
 
             }
 
+            $reservationBufferOverride = false;
+
+            if ($adminRole && $this->settings->getSettingValue('reservation_buffer_override')) {
+                $reservationBufferOverride = true;
+            }
+
             // Now add buffer and try again
-            if ($bufferPeriod > 0) {
+            if ($bufferPeriod > 0 && !$reservationBufferOverride) {
                 $requestFromWithBuffer = $fromWithBuffer->format("Y-m-d H:i:s");
                 $requestToWithBuffer   = $toWithBuffer->format("Y-m-d H:i:s");
 
                 // The requested START date is during another reservation
                 if ($requestFromWithBuffer >= $dueOutAt_f && $requestFromWithBuffer < $dueInAt_f) {
                     $this->errors[] = $errorMsg;
-                    $this->errors[] = "Buffer clash : Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (STARTS)";
+                    $this->errors[] = "Buffer clash: Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (STARTS)";
                     return true;
                 }
 
                 // The requested END date is during or matches the end of another reservation
                 if ($requestToWithBuffer > $dueOutAt_f && $requestToWithBuffer <= $dueInAt_f) {
                     $this->errors[] = $errorMsg;
-                    $this->errors[] = "Buffer clash : Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (ENDS)";
+                    $this->errors[] = "Buffer clash: Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (ENDS)";
                     return true;
                 }
 
                 // The requested date period CONTAINS a reservation
                 if ($requestFromWithBuffer < $dueOutAt_f && $requestToWithBuffer > $dueInAt_f) {
                     $this->errors[] = $errorMsg;
-                    $this->errors[] = "Buffer clash : Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (CONTAINS)";
+                    $this->errors[] = "Buffer clash: Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (CONTAINS)";
                     return true;
                 }
             }
