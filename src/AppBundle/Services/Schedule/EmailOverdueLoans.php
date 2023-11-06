@@ -101,6 +101,8 @@ class EmailOverdueLoans
 
             $resultString .= PHP_EOL;
 
+            $contactSent = [];
+
             // Connect to the tenant to get overdue loan rows
             try {
 
@@ -152,6 +154,15 @@ class EmailOverdueLoans
                             $loan    = $loanRow->getLoan();
                             $contact = $loan->getContact();
 
+                            $contactID = $contact->getId();
+
+                            // Email already sent to this contact in the previous loop
+                            if (in_array($contactID, $contactSent)) {
+                                continue;
+                            }
+
+                            $contactSent[] = $contactID;
+
                             // Modify UTC database times to match local time
                             $loanRow->getDueInAt()->modify("{$offSet} hours");
 
@@ -176,7 +187,7 @@ class EmailOverdueLoans
                                     'emails/overdue_reminder.html.twig',
                                     array(
                                         'loanId'   => $loan->getId(),
-                                        'loanRows' => $overdueLoanRows,
+                                        'loanRows' => $loanRowRepo->getOverdueItems($overdueDays, $overdueReminderRepeat, $contact->getId()),
                                         'tenant'   => $tenant,
                                         'loginUri' => $loginUri
                                     )

@@ -48,9 +48,10 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
      * For the nightly scheduled reminders
      * @param $daysOverdue
      * @param $overdueReminderRepeat
+     * @param $contactID
      * @return bool|mixed
      */
-    public function getOverdueItems($daysOverdue, $overdueReminderRepeat)
+    public function getOverdueItems($daysOverdue, $overdueReminderRepeat, $contactID = null)
     {
         $daysOverdue = (int)$daysOverdue;
         $overdueReminderRepeat = (int)$overdueReminderRepeat;
@@ -63,7 +64,9 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 
         $qb->select('lr')
             ->leftJoin('lr.loan', 'l')
-            ->leftJoin('lr.inventoryItem', 'i');
+            ->leftJoin('lr.inventoryItem', 'i')
+            ->leftJoin('l.contact', 'c')
+        ;
 
         if ($overdueReminderRepeat) {
 
@@ -103,6 +106,14 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             ->andWhere('i.itemType = :itemType')
             ->setParameter('itemType', 'loan')
             ->setParameter('statusReserved', 'RESERVED');
+
+        if ($contactID) {
+
+            $qb
+                ->andWhere('c.id = :contactID')
+                ->setParameter('contactID', $contactID);
+
+        }
 
         $query = $qb->getQuery();
 
