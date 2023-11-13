@@ -33,7 +33,7 @@ class SiteListController extends Controller
 
         return $this->render('member_site/pages/sites.html.twig', [
             'sites'  => $sites,
-            'apiKey' => getenv('GOOGLE_MAPS_API_KEY')
+            'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY'))
         ]);
     }
 
