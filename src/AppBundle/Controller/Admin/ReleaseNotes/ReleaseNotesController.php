@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '266' => "Google maps plug in doesn't display correctly",
             '144' => 'Admin and Staff to be able to override buffer hours',
             '264' => 'Enhancement 15 TBC reservation fees - only for the selected contacts',
             '260' => 'Enhancement 7 loan overdue reminders',

@@ -2,7 +2,12 @@
 {% trans_default_domain 'member_site' %}
 
 {% block pageCss %}
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>
+    <script>
+        (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+            key: "{{ apiKey }}",
+            v: "weekly"
+        });
+    </script>
 {% endblock %}
 
 {% block body %}
@@ -24,64 +29,83 @@
                 }
             </style>
 
-            <div class="sites_map" id="sites_map"></div>
+            <div class="sites_map" id="map"></div>
 
-            <script>
-                window.onload = function() {
+            <script type="text/javascript">
+
+                let map;
+                let geocoder;
+                let marker;
+                let sites = [];
+
+                async function initMap()
+                {
+                    const {Map} = await google.maps.importLibrary("maps");
+
+                    map = new Map(document.getElementById("map"), {
+                        zoom: 8,
+                    });
+                }
+
+                initMap();
+
+                window.onload = () => {
+                    geocoder      = new google.maps.Geocoder();
+                    window.bounds = new google.maps.LatLngBounds();
+
                     addMap();
                 };
 
-                var sites = [];
+                function addMap()
+                {
+                    geocoder.geocode(
+                        {
+                            'address': '{{ sites[0].address }}, {{ sites[0].postCode }}, {{ sites[0].country }}'
+                        },
+                        function (results, status) {
 
-                window.map = new google.maps.Map(document.getElementById('sites_map'), { zoom: 12 });
-
-                var geocoder = new google.maps.Geocoder();
-                window.bounds = new google.maps.LatLngBounds();
-                var marker;
-
-                function addMap () {
-                    geocoder.geocode({'address': '{{ sites[0].address }}, {{ sites[0].postCode }}, {{ sites[0].country }}'}, function(results, status) {
-
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            //var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
-                            console.log(status);
-                        } else {
-                            console.log(status);
-                        }
-
-                        {% for site in sites %}
-                        {% if site.isActive %}
-                        geocoder.geocode({'address': '{{ site.address }}, {{ site.postCode }}, {{ site.country }}'}, function(results, status) {
                             if (status == google.maps.GeocoderStatus.OK) {
-                                var location = {};
-                                location.lat = results[0].geometry.location.lat();
-                                location.lng = results[0].geometry.location.lng();
-                                sites.push(location);
+                                //var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
+                                console.log(status);
                             } else {
                                 console.log(status);
                             }
+
+                            {% for site in sites %}
+                            {% if site.isActive %}
+                            geocoder.geocode({'address': '{{ site.address }}, {{ site.postCode }}, {{ site.country }}'},
+                                function (results, status) {
+                                    if (status == google.maps.GeocoderStatus.OK) {
+                                        var location = {};
+                                        location.lat = results[0].geometry.location.lat();
+                                        location.lng = results[0].geometry.location.lng();
+                                        sites.push(location);
+                                    } else {
+                                        console.log(status);
+                                    }
+                                });
+                            {% endif %}
+                            {% endfor %}
+
+
                         });
-                        {% endif %}
-                        {% endfor %}
 
-
-                    });
                     window.setTimeout(setBounds, 1000);
                 }
 
-                function setBounds() {
+                function setBounds()
+                {
                     console.log("sites:");
                     for (i = 0; i < sites.length; i++) {
                         marker = new google.maps.Marker({
                             position: new google.maps.LatLng(sites[i].lat, sites[i].lng),
-                            map: window.map
+                            map:      map
                         });
-                        console.log("Adding site at "+sites[i].lat+", "+sites[i].lng);
+                        console.log("Adding site at " + sites[i].lat + ", " + sites[i].lng);
                         window.bounds.extend(marker.position);
                     }
-                    window.map.fitBounds(window.bounds);
+                    map.fitBounds(window.bounds);
                 }
-
             </script>
 
         </div>

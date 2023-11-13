@@ -83,6 +83,7 @@ SYMFONY__POSTMARK_API_KEY=xxx
 DEV_DB_USER=xxx
 DEV_DB_PASS=xxx
 CLOUDAMQP_URL=xxx
+GOOGLE_MAPS_API_KEY=xxx
 ```
 
 **Required to upload images to an Amazon AWS bucket**
