@@ -209,6 +209,9 @@ EOT;
             if (!$id && isset($inventoryLocation)) {
                 $em->persist($inventoryLocation);
             }
+
+            $site->geocodeAddress();
+
             $em->persist($site);
             $em->flush();
             $this->addFlash('success', 'Site saved.');

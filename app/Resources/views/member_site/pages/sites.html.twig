@@ -64,37 +64,28 @@
 
                 function addMap()
                 {
-                    geocoder.geocode(
-                        {
-                            'address': '{{ sites[0].address }}, {{ sites[0].postCode }}, {{ sites[0].country }}'
-                        },
-                        function (results, status) {
+                    let location = {};
+                    {% for site in sites %}
 
-                            if (status == google.maps.GeocoderStatus.OK) {
-                                //var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
-                                console.log(status);
-                            } else {
-                                console.log(status);
-                            }
+                        {% if site.isActive %}
 
-                            {% for site in sites %}
-                            {% if site.isActive %}
-                            geocoder.geocode({'address': '{{ site.address }}, {{ site.postCode }}, {{ site.country }}'},
-                                function (results, status) {
-                                    if (status == google.maps.GeocoderStatus.OK) {
-                                        var location = {};
-                                        location.lat = results[0].geometry.location.lat();
-                                        location.lng = results[0].geometry.location.lng();
-                                        sites.push(location);
-                                    } else {
-                                        console.log(status);
-                                    }
-                                });
+                            {% if site.lat and site.lng %}
+
+                                location = {};
+                                location.lat = {{ site.lat }};
+                                location.lng = {{ site.lng }};
+                                sites.push(location);
+
+                            {% else %}
+
+                                location = {};
+                                sites.push(location);
+
                             {% endif %}
-                            {% endfor %}
 
+                        {% endif %}
 
-                        });
+                    {% endfor %}
 
                     window.setTimeout(setBounds, 1000);
                 }

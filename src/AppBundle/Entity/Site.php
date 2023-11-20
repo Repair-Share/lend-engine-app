@@ -60,14 +60,35 @@ class Site
      * @ORM\Column(name="country", type="string", length=2)
      */
     private $country;
-    
+
+    /**
+     * @var numeric
+     *
+     * @ORM\Column(name="lat", type="decimal", scale=8, nullable=true)
+     */
+    private $lat;
+
+    /**
+     * @var numeric
+     *
+     * @ORM\Column(name="lng", type="decimal", scale=8, nullable=true)
+     */
+    private $lng;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="geocoded_string", type="string", nullable=true)
+     */
+    private $geocodedString;
+
     /**
      * @var string
      *
      * @ORM\Column(name="post_code", type="string", length=16, nullable=true)
      */
     private $postCode;
-    
+
     /**
      * @var InventoryLocation
      *
@@ -142,7 +163,7 @@ class Site
     /**
      * Set name
      *
-     * @param string $name
+     * @param  string  $name
      *
      * @return Site
      */
@@ -166,7 +187,7 @@ class Site
     /**
      * Set isActive
      *
-     * @param boolean $isActive
+     * @param  boolean  $isActive
      *
      * @return Site
      */
@@ -190,7 +211,7 @@ class Site
     /**
      * Set isListed
      *
-     * @param boolean $isListed
+     * @param  boolean  $isListed
      *
      * @return Site
      */
@@ -214,7 +235,7 @@ class Site
     /**
      * Set address
      *
-     * @param string $address
+     * @param  string  $address
      *
      * @return Site
      */
@@ -238,7 +259,7 @@ class Site
     /**
      * Set country
      *
-     * @param string $country
+     * @param  string  $country
      *
      * @return Site
      */
@@ -262,7 +283,7 @@ class Site
     /**
      * Set defaultCheckInLocation
      *
-     * @param InventoryLocation $defaultCheckInLocation
+     * @param  InventoryLocation  $defaultCheckInLocation
      *
      * @return Site
      */
@@ -286,7 +307,7 @@ class Site
     /**
      * Set defaultForwardPickLocation
      *
-     * @param InventoryLocation $forwardPickLocation
+     * @param  InventoryLocation  $forwardPickLocation
      *
      * @return Site
      */
@@ -310,7 +331,7 @@ class Site
     /**
      * Set postCode
      *
-     * @param string $postCode
+     * @param  string  $postCode
      *
      * @return Site
      */
@@ -332,7 +353,79 @@ class Site
     }
 
     /**
-     * @param InventoryItem $inventoryItems
+     * Set lat
+     *
+     * @param  numeric  $lat
+     *
+     * @return Site
+     */
+    public function setLat($lat)
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    /**
+     * Get lat
+     *
+     * @return numeric
+     */
+    public function getLat()
+    {
+        return $this->lat;
+    }
+
+    /**
+     * Set lng
+     *
+     * @param  numeric  $lng
+     *
+     * @return Site
+     */
+    public function setLng($lng)
+    {
+        $this->lng = $lng;
+
+        return $this;
+    }
+
+    /**
+     * Get lng
+     *
+     * @return numeric
+     */
+    public function getLng()
+    {
+        return $this->lng;
+    }
+
+    /**
+     * Set geocodedString
+     *
+     * @param  string  $geocodedString
+     *
+     * @return Site
+     */
+    public function setGeocodedString($geocodedString)
+    {
+        $this->geocodedString = $geocodedString;
+
+        return $this;
+    }
+
+    /**
+     * Get lng
+     *
+     * @return numeric
+     */
+    public function getGeocodedString()
+    {
+        return $this->geocodedString;
+    }
+
+    /**
+     * @param  InventoryItem  $inventoryItems
      */
     public function addInventoryItem(InventoryItem $inventoryItems)
     {
@@ -350,7 +443,7 @@ class Site
     /**
      * Remove inventory item
      *
-     * @param \AppBundle\Entity\InventoryItem $inventoryItem
+     * @param  \AppBundle\Entity\InventoryItem  $inventoryItem
      */
     public function removeInventoryItem(InventoryItem $inventoryItem)
     {
@@ -358,7 +451,7 @@ class Site
     }
 
     /**
-     * @param InventoryLocation $inventoryLocation
+     * @param  InventoryLocation  $inventoryLocation
      */
     public function addInventoryLocation(InventoryLocation $inventoryLocation)
     {
@@ -387,7 +480,7 @@ class Site
     /**
      * Remove site opening
      *
-     * @param SiteOpening $siteOpening
+     * @param  SiteOpening  $siteOpening
      */
     public function removeSiteOpening(SiteOpening $siteOpening)
     {
@@ -395,7 +488,7 @@ class Site
     }
 
     /**
-     * @param SiteOpening $siteOpening
+     * @param  SiteOpening  $siteOpening
      */
     public function addSiteOpening(SiteOpening $siteOpening)
     {
@@ -411,14 +504,14 @@ class Site
         // Put the opening hours into a sensible sequence
         if (is_array($this->siteOpenings) && count($this->siteOpenings) > 0) {
             $keyed = [];
-            foreach ($this->siteOpenings AS $o) {
+            foreach ($this->siteOpenings as $o) {
                 /** @var $o \AppBundle\Entity\SiteOpening */
-                $keyed[$o->getWeekDay().$o->getTimeFrom()] = $o;
+                $keyed[$o->getWeekDay() . $o->getTimeFrom()] = $o;
             }
             ksort($keyed);
 
             $this->siteOpenings = new ArrayCollection();
-            foreach ($keyed AS $o) {
+            foreach ($keyed as $o) {
                 $this->addSiteOpening($o);
             }
         }
@@ -433,9 +526,9 @@ class Site
     {
         // Re-key by date
         $sorted = [];
-        foreach ($this->events AS $ote) {
+        foreach ($this->events as $ote) {
             /** @var $ote \AppBundle\Entity\Event */
-            $d = $ote->getDate()->format("Y-m-d");
+            $d          = $ote->getDate()->format("Y-m-d");
             $sorted[$d] = $ote;
         }
         ksort($sorted);
@@ -445,7 +538,7 @@ class Site
     public function getClosedTimes()
     {
         $closed = [];
-        foreach ($this->getEvents() AS $ote) {
+        foreach ($this->getEvents() as $ote) {
             /** @var $ote \AppBundle\Entity\Event */
             if ($ote->getType() == 'c') {
                 $closed[] = $ote;
@@ -455,20 +548,22 @@ class Site
     }
 
     /**
-     * @param string $type
+     * @param  string  $type
      * @return array
      */
     public function getOpenTimes($type = 'all')
     {
         $open = [];
-        foreach ($this->getEvents() AS $ote) {
+        foreach ($this->getEvents() as $ote) {
             /** @var $ote \AppBundle\Entity\Event */
             if ($ote->getType() == 'o') {
                 if ($type == 'all') {
                     $open[] = $ote;
-                } else if ($type == 'published'
-                    && ($ote->getStatus() == Event::STATUS_PUBLISHED || $ote->getTitle() == null)) {
-                    $open[] = $ote;
+                } else {
+                    if ($type == 'published'
+                        && ($ote->getStatus() == Event::STATUS_PUBLISHED || $ote->getTitle() == null)) {
+                        $open[] = $ote;
+                    }
                 }
             }
         }
@@ -492,6 +587,62 @@ class Site
     public function getColour()
     {
         return $this->colour;
+    }
+
+    /*
+     * Geocode latitude/longitude in Google maps
+     */
+    public function geoCodeAddress()
+    {
+        $lat = $lng = null;
+
+        $addressLookup = '';
+
+        if ($this->getAddress()) {
+            $addressLookup .= $this->getAddress() . ',';
+        }
+
+        if ($this->getPostCode()) {
+            $addressLookup .= $this->getPostCode() . ',';
+        }
+
+        if ($this->getCountry()) {
+            $addressLookup .= $this->getCountry() . ',';
+        }
+
+        $addressLookup = rtrim($addressLookup, ',');
+
+        // Address has not changed since the last geocode, do not lookup now
+        if ($addressLookup === $this->getGeocodedString()) {
+            return;
+        }
+
+        if ($addressLookup) {
+
+            $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($addressLookup) . '&key=' . getenv('GOOGLE_MAPS_API_KEY');
+
+            $json = file_get_contents($url);
+
+            $details = json_decode($json);
+
+            if ($details) {
+
+                if (isset($details->results[0])) {
+
+                    $geometry = $details->results[0]->geometry->location;
+
+                    $lat = $geometry->lat;
+                    $lng = $geometry->lng;
+
+                }
+
+            }
+
+        }
+
+        $this->setLat($lat);
+        $this->setLng($lng);
+        $this->setGeocodedString($addressLookup);
     }
 }
 
