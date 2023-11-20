@@ -598,22 +598,22 @@ class Site
 
         $addressLookup = '';
 
-        if ($this->getAddress()) {
-            $addressLookup .= $this->getAddress() . ',';
+        if (trim($this->getAddress())) {
+            $addressLookup .= trim($this->getAddress()) . ',';
         }
 
-        if ($this->getPostCode()) {
-            $addressLookup .= $this->getPostCode() . ',';
+        if (trim($this->getPostCode())) {
+            $addressLookup .= trim($this->getPostCode()) . ',';
         }
 
-        if ($this->getCountry()) {
-            $addressLookup .= $this->getCountry() . ',';
+        if (trim($this->getCountry())) {
+            $addressLookup .= trim($this->getCountry()) . ',';
         }
 
         $addressLookup = rtrim($addressLookup, ',');
 
         // Address has not changed since the last geocode, do not lookup now
-        if ($addressLookup === $this->getGeocodedString()) {
+        if (trim($addressLookup) === trim($this->getGeocodedString())) {
             return;
         }
 
