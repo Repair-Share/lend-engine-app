@@ -30,6 +30,7 @@ class SiteEventListController extends Controller
             'member_site/pages/event_list.html.twig',
             [
                 'user' => $user,
+                'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY_JS'))
             ]
         );
     }

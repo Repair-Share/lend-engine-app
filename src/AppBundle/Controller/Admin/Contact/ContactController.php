@@ -268,7 +268,8 @@ class ContactController extends Controller
             'title' => $pageTitle,
             'customFieldsExist' => $customFieldsExist,
             'customFields' => $customFields,
-            'contact' => $contact
+            'contact' => $contact,
+            'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY_JS'))
         ));
     }
 

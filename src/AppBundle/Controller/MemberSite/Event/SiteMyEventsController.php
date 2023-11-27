@@ -32,7 +32,8 @@ class SiteMyEventsController extends Controller
         return $this->render(
             'member_site/pages/my_events.html.twig',
             [
-                'user' => $user
+                'user' => $user,
+                'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY_JS'))
             ]
         );
     }

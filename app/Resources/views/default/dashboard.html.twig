@@ -1,24 +1,20 @@
 {% extends 'base.html.twig' %}
 
 {% block pageCss %}
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>
+    {{ include('partials/google-maps.html.twig', {initMapElement: true}) }}
     <script type="text/javascript">
+        let geocoder;
 
         function add_markers() {
-
-            var geocoder = new google.maps.Geocoder();
-            var marker;
 
             geocoder.geocode({'address': '{{ tenantInformation.orgPostcode }}, {{ tenantInformation.country }}'}, function(results, status)
             {
                 if (status == google.maps.GeocoderStatus.OK) {
 
-                    var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
-                    var mapOptions = {
-                        zoom: 12,
-                        center: _position
-                    };
-                    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+                    let _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
+
+                    map.setZoom(12);
+                    map.setCenter(_position);
 
                     {% for location in contactLocations %}
                     addMarker(map, {{ location.lat }}, {{ location.lng }});
@@ -46,7 +42,8 @@
             }
         }
 
-        window.onload = function() {
+        window.onload =  () => {
+            geocoder = new google.maps.Geocoder();
             add_markers();
         }
     </script>

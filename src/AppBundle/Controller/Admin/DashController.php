@@ -186,7 +186,8 @@ class DashController extends Controller
             'eventFeesByMonth' => implode(',', $eventFeesByMonth),
             'otherFeesByMonth' => implode(',', $otherFeesByMonth),
             'isMultiSite' => $isMultiSite,
-            'activeSite' => $activeSite
+            'activeSite' => $activeSite,
+            'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY_JS'))
         ));
     }
 }
