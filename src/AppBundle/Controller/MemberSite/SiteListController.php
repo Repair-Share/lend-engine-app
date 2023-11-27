@@ -45,6 +45,8 @@ class SiteListController extends Controller
 
         }
 
+        echo getenv('GOOGLE_MAPS_API_KEY_JS');
+
         return $this->render('member_site/pages/sites.html.twig', [
             'sites'  => $sites,
             'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY_JS'))
