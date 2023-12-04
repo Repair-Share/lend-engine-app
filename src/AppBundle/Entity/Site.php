@@ -602,7 +602,7 @@ class Site
             $this->getGeocodedString()
         );
 
-        if ($geo) {
+        if ($geo && $geo['lat'] && $geo['lng']) {
             $this->setLat($geo['lat']);
             $this->setLng($geo['lng']);
             $this->setGeocodedString($geo['lookedUpAddress']);
