@@ -1,47 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block pageCss %}
-    {{ include('partials/google-maps.html.twig', {initMapElement: true}) }}
-    <script type="text/javascript">
-        function add_markers() {
-            map.setZoom(12);
-            map.setCenter({
-                lat: {{ tenantLat }},
-                lng: {{ tenantLng }}
-            });
-
-            {% for location in contactLocations %}
-            addMarker(map, {{ location.lat }}, {{ location.lng }});
-            {% endfor %}
-
-            function addMarker(map, lat, long) {
-                var position = {lat: lat, lng: long};
-                console.log(position);
-                marker = new google.maps.Marker({
-                    position: position,
-                    map: map,
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 6,
-                        strokeColor: '#CC0000',
-                        strokeWeight: 1,
-                        fillColor: '#CC0000',
-                        fillOpacity: 0.2
-                    }
-                });
-            }
-        }
-
-        window.onload = () => {
-
-            window.setTimeout(() => {
-                add_markers();
-            }, 1000)
-
-        }
-    </script>
-{% endblock %}
-
 {% block pageTitle %}Dashboard{% endblock %}
 
 {% block body %}
@@ -220,6 +178,46 @@
             <div id="map"></div>
         </div>
     </div>
+
+    {{ include('partials/google-maps.html.twig', {initMapElement: true}) }}
+    <script type="text/javascript">
+        function add_markers() {
+            map.setZoom(12);
+            map.setCenter({
+                lat: {{ tenantLat }},
+                lng: {{ tenantLng }}
+            });
+
+            {% for location in contactLocations %}
+            addMarker(map, {{ location.lat }}, {{ location.lng }});
+            {% endfor %}
+
+            function addMarker(map, lat, long) {
+                var position = {lat: lat, lng: long};
+                console.log(position);
+                marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 6,
+                        strokeColor: '#CC0000',
+                        strokeWeight: 1,
+                        fillColor: '#CC0000',
+                        fillOpacity: 0.2
+                    }
+                });
+            }
+        }
+
+        window.onload = () => {
+
+            window.setTimeout(() => {
+                add_markers();
+            }, 1000)
+
+        }
+    </script>
 
 {% endblock %}
 
