@@ -155,13 +155,6 @@ class Contact extends BaseUser
     /**
      * @var string
      *
-     * @ORM\Column(name="geocodedString", type="string", nullable=true)
-     */
-    private $geocodedString;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="gender", type="string", length=1, nullable=true)
      */
     private $gender;
@@ -1212,30 +1205,6 @@ class Contact extends BaseUser
     public function getLongitude()
     {
         return $this->longitude;
-    }
-
-    /**
-     * Set geocodedString
-     *
-     * @param string $geocodedString
-     *
-     * @return Contact
-     */
-    public function setGetGeocodedString($geocodedString)
-    {
-        $this->geocodedString = $geocodedString;
-
-        return $this;
-    }
-
-    /**
-     * Get geocodedString
-     *
-     * @return string
-     */
-    public function getGeocodedString()
-    {
-        return $this->geocodedString;
     }
 
     /**
