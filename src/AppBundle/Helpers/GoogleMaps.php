@@ -59,8 +59,14 @@ class GoogleMaps
         ];
     }
 
-    public static function geocodeAddressLines($addressLine1, $addressLine2, $addressLine3, $addressLine4, $country)
-    {
+    public static function geocodeAddressLines(
+        $addressLine1,
+        $addressLine2,
+        $addressLine3,
+        $addressLine4,
+        $country,
+        $lookedUpAddress
+    ) {
         $lat = $lng = null;
 
         $addressLookup = '';
@@ -87,6 +93,11 @@ class GoogleMaps
 
         $addressLookup = rtrim($addressLookup, ',');
 
+        // Address has not changed since the last geocode, do not lookup now
+        if (trim($addressLookup) === trim($lookedUpAddress)) {
+            return null;
+        }
+
         if ($addressLookup) {
 
             $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($addressLookup) . '&key=' . getenv('GOOGLE_MAPS_API_KEY');
@@ -97,7 +108,11 @@ class GoogleMaps
 
             if ($details) {
 
-                if (isset($details->results[0])) {
+                if (isset($details->error_message) && isset($details->status)) {
+
+                    throw new \Exception($details->error_message);
+
+                } elseif (isset($details->results[0])) {
 
                     $geometry = $details->results[0]->geometry->location;
 

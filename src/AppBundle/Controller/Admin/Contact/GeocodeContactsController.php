@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class GeocodeContactsController extends Controller
 {
-
     /**
      * @Route("admin/geocode/contacts/", name="geocode_contacts")
      * @Security("has_role('ROLE_SUPER_USER')")
@@ -22,36 +21,61 @@ class GeocodeContactsController extends Controller
 
         $this->em = $this->getDoctrine()->getManager();
 
-        $repo = $this->em->getRepository('AppBundle:Contact');
+        $builder = $this->em->getRepository('AppBundle:Contact')->createQueryBuilder('c')
+            ->where('c.geocodedString is null')
+            ->andWhere('c.latitude is null')
+            ->andWhere('c.longitude is null')
+            ->andWhere('c.addressLine1 is not null')
+            ->andWhere('c.addressLine4 is not null') // Postcode
+        ;
 
-        $contacts = $repo->findAll();
+        $builder->setMaxResults(50);
+
+        $query    = $builder->getQuery();
+        $contacts = $query->getResult();
 
         foreach ($contacts as $contact) {
 
             /** @var \AppBundle\Entity\Contact $contact */
             if ((!$contact->getLatitude() || !$contact->getLongitude()) && $contact->getAddressLine1()) {
 
-                $geo = GoogleMaps::geocodeAddressLines(
-                    $contact->getAddressLine1(),
-                    $contact->getAddressLine2(),
-                    $contact->getAddressLine3(),
-                    $contact->getAddressLine4(),
-                    $contact->getCountryIsoCode()
-                );
+                try {
 
-                if ($geo && $geo['lat'] && $geo['lng']) {
+                    $geo = GoogleMaps::geocodeAddressLines(
+                        $contact->getAddressLine1(),
+                        $contact->getAddressLine2(),
+                        $contact->getAddressLine3(),
+                        $contact->getAddressLine4(),
+                        $contact->getCountryIsoCode(),
+                        $contact->getGeocodedString()
+                    );
 
-                    $contact->setLatitude($geo['lat']);
-                    $contact->setLongitude($geo['lng']);
+                    if ($geo && $geo['lat'] && $geo['lng']) {
+
+                        $contact->setLatitude($geo['lat']);
+                        $contact->setLongitude($geo['lng']);
+
+                        $geocodedOK++;
+
+                    } else {
+
+                        $geocodedFailed++;
+
+                    }
+
+                    $contact->setGetGeocodedString($geo['lookedUpAddress']);
 
                     $this->em->persist($contact);
                     $this->em->flush();
 
-                    $geocodedOK++;
+                } catch (\Exception $e) {
 
-                } else {
+                    $this->addFlash(
+                        'error',
+                        'Geocoding service error. ' . $e->getMessage()
+                    );
 
-                    $geocodedFailed++;
+                    break;
 
                 }
 
