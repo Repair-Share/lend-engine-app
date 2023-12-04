@@ -9,6 +9,7 @@
     <a href="{{ path('contact') }}" class="btn bg-green pull-right">Add a contact</a>
     {% if is_granted('ROLE_SUPER_USER') %}
         <a class="btn btn-default pull-right" href="{{ path('export_contacts') }}" style="margin-right: 10px">Export</a>
+        <a class="btn btn-flat pull-right" href="{{ path('geocode_contacts') }}" style="margin-right: 10px">Geocode Contacts</a>
     {% endif %}
 {% endblock %}
 
