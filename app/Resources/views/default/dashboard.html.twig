@@ -3,10 +3,7 @@
 {% block pageCss %}
     {{ include('partials/google-maps.html.twig', {initMapElement: true}) }}
     <script type="text/javascript">
-        let geocoder;
-
         function add_markers() {
-
             map.setZoom(12);
             map.setCenter({
                 lat: {{ tenantLat }},
@@ -35,9 +32,12 @@
             }
         }
 
-        window.onload =  () => {
-            geocoder = new google.maps.Geocoder();
-            add_markers();
+        window.onload = () => {
+
+            window.setTimeout(() => {
+                add_markers();
+            }, 1000)
+
         }
     </script>
 {% endblock %}
