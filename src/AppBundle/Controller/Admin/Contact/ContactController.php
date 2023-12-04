@@ -269,7 +269,7 @@ class ContactController extends Controller
             'customFieldsExist' => $customFieldsExist,
             'customFields' => $customFields,
             'contact' => $contact,
-            'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY_JS'))
+            'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY'))
         ));
     }
 
