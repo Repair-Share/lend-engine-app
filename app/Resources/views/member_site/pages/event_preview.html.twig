@@ -8,24 +8,18 @@
 {% block modalBody %}
     <script type="text/javascript">
         function add_markers() {
-            var geocoder = new google.maps.Geocoder();
+
             var marker;
 
-            geocoder.geocode({'address': '{{ event.site.address|replace({"\r\n": ", "}) }}, {{ event.site.postcode }}, {{ tenantInformation.country }}'}, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    var _position = {lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
-                    var mapOptions = {
-                        zoom: 12,
-                        center: _position,
-                        controlSize: 32
-                    };
-                    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            var _position = {lat: {{ event.site.lat }}, lng: {{ event.site.lng }}};
+            var mapOptions = {
+                zoom: 12,
+                center: _position,
+                controlSize: 32
+            };
+            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-                    addMarker(map, _position);
-                } else {
-                    console.log(status);
-                }
-            });
+            addMarker(map, _position);
 
             function addMarker(map, position) {
                 marker = new google.maps.Marker({

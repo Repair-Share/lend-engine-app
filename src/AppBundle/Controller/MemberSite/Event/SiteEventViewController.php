@@ -76,6 +76,16 @@ class SiteEventViewController extends Controller
             $hasSpaces = false;
         }
 
+        $site = $event->getSite();
+        if (!$site->getLng() || !$site->getLat()) {
+
+            $site->geoCodeAddress();
+
+            $em->persist($site);
+            $em->flush();
+
+        }
+
         return $this->render(
             'member_site/pages/event_preview.html.twig',
             [

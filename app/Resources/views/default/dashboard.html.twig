@@ -7,22 +7,15 @@
 
         function add_markers() {
 
-            geocoder.geocode({'address': '{{ tenantInformation.orgPostcode }}, {{ tenantInformation.country }}'}, function(results, status)
-            {
-                if (status == google.maps.GeocoderStatus.OK) {
-
-                    let _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
-
-                    map.setZoom(12);
-                    map.setCenter(_position);
-
-                    {% for location in contactLocations %}
-                    addMarker(map, {{ location.lat }}, {{ location.lng }});
-                    {% endfor %}
-                } else {
-                    console.log(status);
-                }
+            map.setZoom(12);
+            map.setCenter({
+                lat: {{ tenantLat }},
+                lng: {{ tenantLng }}
             });
+
+            {% for location in contactLocations %}
+            addMarker(map, {{ location.lat }}, {{ location.lng }});
+            {% endfor %}
 
             function addMarker(map, lat, long) {
                 var position = {lat: lat, lng: long};

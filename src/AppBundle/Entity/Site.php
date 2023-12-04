@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Helpers\GoogleMaps;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -594,55 +595,18 @@ class Site
      */
     public function geoCodeAddress()
     {
-        $lat = $lng = null;
+        $geo = GoogleMaps::geocodeAddress(
+            $this->getAddress(),
+            $this->getPostCode(),
+            $this->getCountry(),
+            $this->getGeocodedString()
+        );
 
-        $addressLookup = '';
-
-        if (trim($this->getAddress())) {
-            $addressLookup .= trim($this->getAddress()) . ',';
+        if ($geo) {
+            $this->setLat($geo['lat']);
+            $this->setLng($geo['lng']);
+            $this->setGeocodedString($geo['lookedUpAddress']);
         }
-
-        if (trim($this->getPostCode())) {
-            $addressLookup .= trim($this->getPostCode()) . ',';
-        }
-
-        if (trim($this->getCountry())) {
-            $addressLookup .= trim($this->getCountry()) . ',';
-        }
-
-        $addressLookup = rtrim($addressLookup, ',');
-
-        // Address has not changed since the last geocode, do not lookup now
-        if (trim($addressLookup) === trim($this->getGeocodedString())) {
-            return;
-        }
-
-        if ($addressLookup) {
-
-            $url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' . urlencode($addressLookup) . '&key=' . getenv('GOOGLE_MAPS_API_KEY');
-
-            $json = file_get_contents($url);
-
-            $details = json_decode($json);
-
-            if ($details) {
-
-                if (isset($details->results[0])) {
-
-                    $geometry = $details->results[0]->geometry->location;
-
-                    $lat = $geometry->lat;
-                    $lng = $geometry->lng;
-
-                }
-
-            }
-
-        }
-
-        $this->setLat($lat);
-        $this->setLng($lng);
-        $this->setGeocodedString($addressLookup);
     }
 }
 
