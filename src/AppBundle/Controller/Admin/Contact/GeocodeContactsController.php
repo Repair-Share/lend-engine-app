@@ -16,88 +16,102 @@ class GeocodeContactsController extends Controller
      */
     public function geocodeContactsAction(Request $request)
     {
-        $geocodedOK     = 0;
-        $geocodedFailed = 0;
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->container->get('service.tenant');
 
-        $this->em = $this->getDoctrine()->getManager();
+        if (!$tenantService->isMapsAllowed()) {
 
-        $builder = $this->em->getRepository('AppBundle:Contact')->createQueryBuilder('c')
-            ->where('c.geocodedString is null')
-            ->andWhere('c.latitude is null')
-            ->andWhere('c.longitude is null')
-            ->andWhere('c.addressLine1 is not null')
-            ->andWhere('c.addressLine4 is not null') // Postcode
-        ;
+            $this->addFlash(
+                'error',
+                'Geocoding feature is not allowed to you.'
+            );
 
-        $builder->setMaxResults(50);
+        } else {
 
-        $query    = $builder->getQuery();
-        $contacts = $query->getResult();
+            $geocodedOK     = 0;
+            $geocodedFailed = 0;
 
-        foreach ($contacts as $contact) {
+            $this->em = $this->getDoctrine()->getManager();
 
-            /** @var \AppBundle\Entity\Contact $contact */
-            if ((!$contact->getLatitude() || !$contact->getLongitude()) && $contact->getAddressLine1()) {
+            $builder = $this->em->getRepository('AppBundle:Contact')->createQueryBuilder('c')
+                ->where('c.geocodedString is null')
+                ->andWhere('c.latitude is null')
+                ->andWhere('c.longitude is null')
+                ->andWhere('c.addressLine1 is not null')
+                ->andWhere('c.addressLine4 is not null') // Postcode
+            ;
 
-                try {
+            $builder->setMaxResults(50);
 
-                    $geo = GoogleMaps::geocodeAddressLines(
-                        $contact->getAddressLine1(),
-                        $contact->getAddressLine2(),
-                        $contact->getAddressLine3(),
-                        $contact->getAddressLine4(),
-                        $contact->getCountryIsoCode(),
-                        $contact->getGeocodedString()
-                    );
+            $query    = $builder->getQuery();
+            $contacts = $query->getResult();
 
-                    if ($geo && $geo['lat'] && $geo['lng']) {
+            foreach ($contacts as $contact) {
 
-                        $contact->setLatitude($geo['lat']);
-                        $contact->setLongitude($geo['lng']);
+                /** @var \AppBundle\Entity\Contact $contact */
+                if ((!$contact->getLatitude() || !$contact->getLongitude()) && $contact->getAddressLine1()) {
 
-                        $geocodedOK++;
+                    try {
 
-                    } else {
+                        $geo = GoogleMaps::geocodeAddressLines(
+                            $contact->getAddressLine1(),
+                            $contact->getAddressLine2(),
+                            $contact->getAddressLine3(),
+                            $contact->getAddressLine4(),
+                            $contact->getCountryIsoCode(),
+                            $contact->getGeocodedString()
+                        );
 
-                        $geocodedFailed++;
+                        if ($geo && $geo['lat'] && $geo['lng']) {
+
+                            $contact->setLatitude($geo['lat']);
+                            $contact->setLongitude($geo['lng']);
+
+                            $geocodedOK++;
+
+                        } else {
+
+                            $geocodedFailed++;
+
+                        }
+
+                        $contact->setGetGeocodedString($geo['lookedUpAddress']);
+
+                        $this->em->persist($contact);
+                        $this->em->flush();
+
+                    } catch (\Exception $e) {
+
+                        $this->addFlash(
+                            'error',
+                            'Geocoding service error. ' . $e->getMessage()
+                        );
+
+                        break;
 
                     }
-
-                    $contact->setGetGeocodedString($geo['lookedUpAddress']);
-
-                    $this->em->persist($contact);
-                    $this->em->flush();
-
-                } catch (\Exception $e) {
-
-                    $this->addFlash(
-                        'error',
-                        'Geocoding service error. ' . $e->getMessage()
-                    );
-
-                    break;
 
                 }
 
             }
 
-        }
+            if ($geocodedOK) {
 
-        if ($geocodedOK) {
+                $this->addFlash(
+                    'success',
+                    $geocodedOK . ' contact' . ($geocodedOK > 1 ? 's are' : ' is') . ' geocoded'
+                );
 
-            $this->addFlash(
-                'success',
-                $geocodedOK . ' contact' . ($geocodedOK > 1 ? 's are' : ' is') . ' geocoded'
-            );
+            }
 
-        }
+            if ($geocodedFailed) {
 
-        if ($geocodedFailed) {
+                $this->addFlash(
+                    'error',
+                    $geocodedFailed . ' geocoding failed'
+                );
 
-            $this->addFlash(
-                'error',
-                $geocodedFailed . ' geocoding failed'
-            );
+            }
 
         }
 

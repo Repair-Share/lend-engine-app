@@ -165,6 +165,7 @@
         </div>
     </div>
 
+    {% if tenantInformation.isMapsAllowed %}
     <div class="row">
         <div class="col-md-12">
             <style type="text/css">
@@ -172,9 +173,19 @@
                 {
                     height:350px;
                     width:100%;
-                    display:block;
+                    display:none;
                 }
             </style>
+            <div id="maps-display">
+                <h4>Contact Map</h4>
+                <p>
+                    <button type="button"
+                            class="btn btn-default"
+                            data-dismiss="modal"
+                            onclick="displayMap()"
+                    >Display the map</button>
+                </p>
+            </div>
             <div id="map"></div>
         </div>
     </div>
@@ -210,14 +221,22 @@
             }
         }
 
-        window.onload = () => {
+        function displayMap()
+        {
+            $('#map').show();
+            $('#maps-display').hide();
+
+            window.scrollTo(0, window.outerHeight);
+
+            initMap();
 
             window.setTimeout(() => {
                 add_markers();
             }, 1000)
-
         }
+
     </script>
+    {% endif %}
 
 {% endblock %}
 

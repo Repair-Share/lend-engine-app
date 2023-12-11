@@ -9,77 +9,86 @@
             <h2>{% trans %}public_footer.find_us{% endtrans %}</h2>
         </div>
 
-        <div class="col-sm-6">
+        {% if tenantInformation.isMapsAllowed %}
+            <div class="col-sm-6">
 
-            <style type="text/css">
-                .sites_map
-                {
-                    height:400px;
-                    width:100%;
-                    display:block;
-                }
-            </style>
+                <style type="text/css">
+                    .sites_map
+                    {
+                        height:400px;
+                        width:100%;
+                        display:block;
+                    }
+                </style>
 
-            <div class="sites_map" id="map"></div>
+                <div class="sites_map" id="sites-map"></div>
 
-            {{ include('partials/google-maps.html.twig', {initMapElement: true}) }}
+                {{ include('partials/google-maps.html.twig', {initMapElement: false}) }}
 
-            <script type="text/javascript">
+                <script type="text/javascript">
 
-                let marker;
-                let sites = [];
+                    initMap();
 
-                window.onload = () => {
-                    window.bounds = new google.maps.LatLngBounds();
+                    let marker;
+                    let sites = [];
 
-                    addMap();
-                };
+                    window.onload = () => {
+                        window.bounds = new google.maps.LatLngBounds();
 
-                function addMap()
-                {
-                    let location = {};
-                    {% for site in sites %}
+                        addMap();
+                    };
+
+                    function addMap()
+                    {
+                        map = new google.maps.Map(document.getElementById('sites-map'), {
+                            zoom: 8
+                        });
+
+                        let location = {};
+                        {% for site in sites %}
 
                         {% if site.isActive %}
 
-                            {% if site.lat and site.lng %}
+                        {% if site.lat and site.lng %}
 
-                                location = {};
-                                location.lat = {{ site.lat }};
-                                location.lng = {{ site.lng }};
-                                sites.push(location);
+                        location = {};
+                        location.lat = {{ site.lat }};
+                        location.lng = {{ site.lng }};
+                        sites.push(location);
 
-                            {% else %}
+                        {% else %}
 
-                                location = {};
-                                sites.push(location);
-
-                            {% endif %}
+                        location = {};
+                        sites.push(location);
 
                         {% endif %}
 
-                    {% endfor %}
+                        {% endif %}
 
-                    window.setTimeout(setBounds, 1000);
-                }
+                        {% endfor %}
 
-                function setBounds()
-                {
-                    console.log("sites:");
-                    for (i = 0; i < sites.length; i++) {
-                        marker = new google.maps.Marker({
-                            position: new google.maps.LatLng(sites[i].lat, sites[i].lng),
-                            map:      map
-                        });
-                        console.log("Adding site at " + sites[i].lat + ", " + sites[i].lng);
-                        window.bounds.extend(marker.position);
+                        window.setTimeout(setBounds, 1000);
                     }
-                    map.fitBounds(window.bounds);
-                }
-            </script>
 
-        </div>
-        <div class="col-sm-6">
+                    function setBounds()
+                    {
+                        console.log("sites:");
+                        for (i = 0; i < sites.length; i++) {
+                            marker = new google.maps.Marker({
+                                position: new google.maps.LatLng(sites[i].lat, sites[i].lng),
+                                map:      map
+                            });
+                            console.log("Adding site at " + sites[i].lat + ", " + sites[i].lng);
+                            window.bounds.extend(marker.position);
+                        }
+                        map.fitBounds(window.bounds);
+                    }
+                </script>
+
+            </div>
+        {% endif %}
+
+        <div {% if tenantInformation.isMapsAllowed %}class="col-sm-6"{% else %}style="margin-left: 30px" {% endif %}">
 
             <style>
                 .site-header {

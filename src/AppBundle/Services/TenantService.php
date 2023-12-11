@@ -157,6 +157,15 @@ class TenantService
         }
     }
 
+    public function isMapsAllowed()
+    {
+        if ($this->getPlan() === 'plus' || $this->getPlan() === 'business') {
+            return true;
+        }
+
+        return false;
+    }
+
     public function getAccountDomain($withHttp = false)
     {
         return $this->tenant->getDomain($withHttp);

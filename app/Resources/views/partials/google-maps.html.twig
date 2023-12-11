@@ -1,3 +1,4 @@
+{% if tenantInformation.isMapsAllowed %}
 <script type="text/javascript">
     let map;
 
@@ -23,6 +24,5 @@
 
         {% endif %}
     }
-
-    initMap();
 </script>
+{% endif %}
