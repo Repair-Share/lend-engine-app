@@ -30,6 +30,7 @@ class EventListController extends Controller
             Event::STATUS_DRAFT => 'Draft',
             Event::STATUS_PUBLISHED => 'Live',
             Event::STATUS_PAST => 'Past',
+            Event::STATUS_ARCHIVED => 'Archived'
         ];
 
         if (!$selectedStatuses = $request->get('filterStatus')) {
@@ -106,6 +107,10 @@ class EventListController extends Controller
                     $css = 'e-past';
                     $status = '<div class="e-status e-past label">PAST</div>';
                     break;
+                case Event::STATUS_ARCHIVED:
+                    $css = 'e-archived';
+                    $status = '<div class="e-status e-archived label">ARCHIVED</div>';
+                    break;
             }
 
             $day      = $event->getDate()->format("d");
@@ -145,6 +150,10 @@ class EventListController extends Controller
 
             $publishLink   = $this->generateUrl('event_publish', ['eventId' => $event->getId()]);
             $unpublishLink = $this->generateUrl('event_unpublish', ['eventId' => $event->getId()]);
+
+            $archiveLink = $this->generateUrl('event_archive', ['eventId' => $event->getId()]);
+            $unArchiveLink = $this->generateUrl('event_unarchive', ['eventId' => $event->getId()]);
+
             if (!$event->getStatus() || $event->getStatus() == Event::STATUS_DRAFT) {
                 $publishLink = '<a href="'.$publishLink.'">Publish</a>';
             } else if ($event->getStatus() == Event::STATUS_PUBLISHED) {
@@ -160,6 +169,14 @@ class EventListController extends Controller
 
             $links = '<li>'.$publishLink.'</li>';
             $links .= '<li><a href="'.$cloneLink.'">Clone to new event</a></li>';
+
+            $links .= '<li role="separator" class="divider"></li>';
+            if ($event->getStatus() == Event::STATUS_ARCHIVED) {
+                $links .= '<li><a href="' . $unArchiveLink . '">Unarchive</a></li>';
+            }elseif ($event->getStatus() !== Event::STATUS_ARCHIVED) {
+                $links .= '<li><a href="' . $archiveLink . '">Archive</a></li>';
+            }
+
             $links .= '<li role="separator" class="divider"></li>';
             $links .= '<li><a href="'.$deleteLink.'" class="delete-link">Delete</a></li>';
 

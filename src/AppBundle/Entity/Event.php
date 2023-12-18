@@ -18,6 +18,7 @@ class Event
     const STATUS_DRAFT      = 'DRAFT';
     const STATUS_PUBLISHED  = 'PUBLISHED';
     const STATUS_PAST       = 'PAST';
+    const STATUS_ARCHIVED   = 'ARCHIVED';
 
     /**
      * @var int
