@@ -84,7 +84,10 @@
 
 {% block pagejs %}
 <script>
+
+    {% if tenantInformation.isMapsAllowed %}
     initMap();
+    {% endif %}
 
     $(document).ready(function() {
 
