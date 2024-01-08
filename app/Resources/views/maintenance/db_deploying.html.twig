@@ -1,4 +1,4 @@
-{% extends 'simple.html.twig' %}
+{% extends 'maintenance.html.twig' %}
 
 {% block body %}
     Database deploying is still in progress. Please give us a few minutes to finish it.
@@ -10,7 +10,7 @@
         function reloader()
         {
             window.setTimeout(() => {
-                window.location.reload();
+                window.location = 'deploy?poll'
                 reloader();
             }, 30000);
         }

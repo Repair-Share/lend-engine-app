@@ -92,6 +92,20 @@ class UpdateController extends Controller
     {
         try {
 
+            if (isset($_GET['poll'])) {
+
+                /** @var \AppBundle\Services\TenantService $tenantService */
+                $tenantService = $this->container->get('service.tenant');
+
+                // Check that the db schema is still deploying
+                // Note: $tenantService->getSchemaVersion() uses cached version, so we use
+                //       $tenantService->getTenant()->getSchemaVersion() to refresh the cache
+                if ($tenantService->getTenant()->getStatus() === Tenant::STATUS_DEPLOYING) {
+                    throw new \Exception('DB is still deploying');
+                }
+
+            }
+
             // We should already have an empty database created from the marketing site
             // CREATE DATABASE xxx CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
             // Run any migrations that need running
