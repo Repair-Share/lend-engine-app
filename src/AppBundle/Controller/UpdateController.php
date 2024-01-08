@@ -9,6 +9,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Contact;
 use AppBundle\Entity\Membership;
 use AppBundle\Entity\Tenant;
+use AppBundle\Services\Schedule\DBMigrations;
 use Doctrine\DBAL\Driver\PDOConnection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Migrations\Configuration\Configuration;
@@ -81,7 +82,7 @@ class UpdateController extends Controller
         $eventService = $this->get('service.event');
         $eventService->removePastEvents();
 
-        return $this->redirect($this->generateUrl('home'));
+        return $this->redirect($this->generateUrl('home', ['auto_updated' => true]));
     }
 
     /**
@@ -89,42 +90,48 @@ class UpdateController extends Controller
      */
     public function deployNewDatabase(Request $request)
     {
-        // We should already have an empty database created from the marketing site
-        // CREATE DATABASE xxx CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
-        // Run any migrations that need running
-        $this->updateSchema();
+        try {
 
-        /** @var \AppBundle\Services\SettingsService $settingsService */
-        $settingsService = $this->get('settings');
-        $tenant = $settingsService->getTenant();
+            // We should already have an empty database created from the marketing site
+            // CREATE DATABASE xxx CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+            // Run any migrations that need running
+            $this->updateSchema(true);
 
-        // Complete the deployment and activate the trial
-        // We can hit this URL multiple times, so don't re-set the trial
-        if ($tenant->getStatus() == Tenant::STATUS_DEPLOYING) {
-            $em = $this->getDoctrine()->getManager();
+            /** @var \AppBundle\Services\SettingsService $settingsService */
+            $settingsService = $this->get('settings');
+            $tenant = $settingsService->getTenant();
 
-            $this->addAdminUser();
-            $this->addUser();
-            $this->setOrganisationDetails();
+            // Complete the deployment and activate the trial
+            // We can hit this URL multiple times, so don't re-set the trial
+            if ($tenant->getStatus() == Tenant::STATUS_DEPLOYING) {
+                $em = $this->getDoctrine()->getManager();
 
-            $tenant->setStatus("TRIAL");
-            $trialExpiresAt = new \DateTime();
-            $trialExpiresAt->modify("+30 days");
-            $tenant->setTrialExpiresAt($trialExpiresAt);
-            $em->persist($tenant);
-            $em->flush();
+                $this->addAdminUser();
+                $this->addUser();
+                $this->setOrganisationDetails();
 
-            $name  = $tenant->getOwnerName();
-            $email = $tenant->getOwnerEmail();
-            $org   = $tenant->getName();
-            $accountCode = $settingsService->getTenant()->getStub();
+                $tenant->setStatus("TRIAL");
+                $trialExpiresAt = new \DateTime();
+                $trialExpiresAt->modify("+30 days");
+                $tenant->setTrialExpiresAt($trialExpiresAt);
+                $em->persist($tenant);
+                $em->flush();
 
-            $this->subscribeToMailchimp($name, $email, $org, $accountCode);
+                $name  = $tenant->getOwnerName();
+                $email = $tenant->getOwnerEmail();
+                $org   = $tenant->getName();
+                $accountCode = $settingsService->getTenant()->getStub();
 
-            $this->notifyOfNewAccount($tenant->getName(), $tenant->getDomain());
+                $this->subscribeToMailchimp($name, $email, $org, $accountCode);
+
+                $this->notifyOfNewAccount($tenant->getName(), $tenant->getDomain());
+            }
+
+            return $this->redirect($this->generateUrl('homepage'));
+
+        } catch (\Exception $e) {
+            return $this->render('maintenance/db_deploying.html.twig');
         }
-
-        return $this->redirect($this->generateUrl('homepage'));
     }
 
     /**
@@ -258,7 +265,7 @@ class UpdateController extends Controller
     /**
      * @return bool
      */
-    public function updateSchema()
+    public function updateSchema($throwError = false)
     {
         $to = null;
         $nl = '<br>';
@@ -276,8 +283,14 @@ class UpdateController extends Controller
 
         try {
             $migration->migrate($to);
+            DBMigrations::updateMigrationCompleted($this->getDoctrine()->getManager(), $db->getDatabase());
             return true;
         } catch (\Exception $ex) {
+
+            if ($throwError) {
+                throw new \Exception($ex->getMessage());
+            }
+
             echo 'ERROR: ' . $ex->getMessage() . $nl;
             die();
         }

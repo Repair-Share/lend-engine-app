@@ -16,6 +16,8 @@ use \Doctrine\DBAL\Connection;
 
 class DBMigrations
 {
+    const LATEST_MIGRATION_VERSION = '20231204150335';
+
     /** @var \Twig_Environment */
     private $twig;
 
@@ -70,7 +72,7 @@ class DBMigrations
     public function migrate($server)
     {
         // Help https://symfony.com/doc/3.4/console.html
-        $expectedMigrationVersion = '20231204150335';
+        $expectedMigrationVersion = DBMigrations::LATEST_MIGRATION_VERSION;
 
         $resultString = '';
 
@@ -161,26 +163,7 @@ class DBMigrations
                 $resultString .= 'Migrated ' . $tenantDbSchema . ' schema to ' . $latestVersion . PHP_EOL;
             }
 
-            // Update the tenant's schema version and migration_completed
-            $raw = '
-                update 
-                    _core.account 
-                     
-                set
-                    schema_version = :version,
-                    migration_completed = now()
-                     
-                where
-                    db_schema = :schemap
-                    
-            ';
-
-            $s = $this->em->getConnection()->prepare($raw);
-
-            $s->execute([
-                ':version' => $latestVersion,
-                ':schemap' => $tenantDbSchema
-            ]);
+            DBMigrations::updateMigrationCompleted($this->em, $tenantDbSchema);
         }
 
         return $resultString;
@@ -207,6 +190,30 @@ class DBMigrations
 
         $statement->execute([
             ':id' => $id
+        ]);
+    }
+
+    public static function updateMigrationCompleted($em, $tenantDbSchema)
+    {
+        // Update the tenant's schema version and migration_completed
+        $raw = '
+                update 
+                    _core.account 
+                     
+                set
+                    schema_version = :version,
+                    migration_completed = now()
+                     
+                where
+                    db_schema = :schemap
+                    
+            ';
+
+        $s = $em->getConnection()->prepare($raw);
+
+        $s->execute([
+            ':version' => DBMigrations::LATEST_MIGRATION_VERSION,
+            ':schemap' => $tenantDbSchema
         ]);
     }
 

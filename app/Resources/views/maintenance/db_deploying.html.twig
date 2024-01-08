@@ -1,0 +1,19 @@
+{% extends 'simple.html.twig' %}
+
+{% block body %}
+    Database deploying is still in progress. Please give us a few minutes to finish it.
+    We will auto-redirect you when it's ready.
+
+    <script type="text/javascript">
+        reloader();
+
+        function reloader()
+        {
+            window.setTimeout(() => {
+                window.location.reload();
+                reloader();
+            }, 30000);
+        }
+    </script>
+
+{% endblock %}

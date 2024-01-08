@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\MemberSite;
 
+use AppBundle\Services\Schedule\DBMigrations;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,16 @@ class MemberSiteController extends Controller
     public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->container->get('service.tenant');
+
+        // Check that the db schema is required to update/deploy
+        // Note: $tenantService->getSchemaVersion() uses cached version, so we use
+        //       $tenantService->getTenant()->getSchemaVersion() to refresh the cache
+        /*if (!isset($_GET['auto_updated']) && $tenantService->getTenant()->getSchemaVersion() !== DBMigrations::LATEST_MIGRATION_VERSION) {
+            return $this->redirect($this->generateUrl('auto_update'));
+        }*/
 
         /** @var \AppBundle\Repository\ContactRepository $contactRepo */
         $contactRepo = $em->getRepository('AppBundle:Contact');

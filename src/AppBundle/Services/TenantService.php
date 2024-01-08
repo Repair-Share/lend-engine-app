@@ -101,6 +101,11 @@ class TenantService
         return $this->tenant->getDbSchema();
     }
 
+    public function getSchemaVersion()
+    {
+        return $this->tenant->getSchemaVersion();
+    }
+
     public function getTrialExpiresAt()
     {
         return $this->tenant->getTrialExpiresAt();

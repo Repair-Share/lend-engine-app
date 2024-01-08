@@ -18,6 +18,7 @@ class ReleaseNotesController extends Controller
         $gitHubIssueLink = 'https://github.com/lend-engine/lend-engine-app/issues/';
 
         $bugfixes = [
+            '271' => 'Improve the db deployment page',
             '179' => "Events - Managing and archiving",
             '266' => "Google maps plug in doesn't display correctly",
             '144' => 'Admin and Staff to be able to override buffer hours',
