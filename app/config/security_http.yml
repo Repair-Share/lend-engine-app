@@ -30,6 +30,7 @@ security:
                 always_remember_me: true
 
     access_control:
+        - { path: ^/admin/membership, role: ROLE_NONE, requires_channel: https }
         - { path: ^/admin, role: ROLE_ADMIN }
         - { path: ^/member, role: ROLE_USER }
         - { path: ^/, role: IS_AUTHENTICATED_ANONYMOUSLY }
