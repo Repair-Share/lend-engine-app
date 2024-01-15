@@ -92,10 +92,10 @@ class UpdateController extends Controller
     {
         try {
 
-            if (isset($_GET['poll'])) {
+            /** @var \AppBundle\Services\TenantService $tenantService */
+            $tenantService = $this->container->get('service.tenant');
 
-                /** @var \AppBundle\Services\TenantService $tenantService */
-                $tenantService = $this->container->get('service.tenant');
+            if (isset($_GET['poll'])) {
 
                 // Check that the db schema is still deploying
                 // Note: $tenantService->getSchemaVersion() uses cached version, so we use
@@ -104,6 +104,10 @@ class UpdateController extends Controller
                     throw new \Exception('DB is still deploying');
                 }
 
+            }
+
+            if ($tenantService->getTenant()->isMigrationInProgress()) {
+                throw new \Exception('DB migration is still in progress');
             }
 
             // We should already have an empty database created from the marketing site
@@ -284,6 +288,13 @@ class UpdateController extends Controller
         $to = null;
         $nl = '<br>';
 
+        /** @var \AppBundle\Services\TenantService $tenantService */
+        $tenantService = $this->container->get('service.tenant');
+
+        if ($tenantService->getTenant()->isMigrationInProgress()) {
+            throw new \Exception('DB migration is still in progress');
+        }
+
         $db = $this->get('database_connection');
 
         $config = new Configuration($db);
@@ -296,6 +307,7 @@ class UpdateController extends Controller
         $migration = new Migration($config);
 
         try {
+            DBMigrations::updateMigrationStarted($this->getDoctrine()->getManager(), $db->getDatabase());
             $migration->migrate($to);
             DBMigrations::updateMigrationCompleted($this->getDoctrine()->getManager(), $db->getDatabase());
             return true;

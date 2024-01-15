@@ -129,12 +129,10 @@ class DBMigrations
 
         foreach ($schemas as $schema) {
 
-            $id = $schema['id'];
-
-            $this->updateMigrationStarted($id);
-
             $tenantDbSchema        = $schema['db_schema'];
             $tenantDbSchemaVersion = $schema['schema_version'];
+
+            DBMigrations::updateMigrationStarted($this->em, $tenantDbSchema);
 
             $driver = new Driver();
             $params = [
@@ -170,26 +168,26 @@ class DBMigrations
 
     }
 
-    private function updateMigrationStarted($id)
+    public static function updateMigrationStarted($em, $tenantDbSchema)
     {
-        $sql = '
-        
-            update
-                _core.account
-                
-            set
-                migration_started = now(),
-                migration_completed = null
-                
-            where
-                id = :id
-        
-        ';
+        // Update the tenant's schema version and migration_completed
+        $raw = '
+                update 
+                    _core.account 
+                     
+                set
+                    migration_started = now(),
+                    migration_completed = null
+                     
+                where
+                    db_schema = :schemap
+                    
+            ';
 
-        $statement = $this->em->getConnection()->prepare($sql);
+        $s = $em->getConnection()->prepare($raw);
 
-        $statement->execute([
-            ':id' => $id
+        $s->execute([
+            ':schemap' => $tenantDbSchema
         ]);
     }
 
