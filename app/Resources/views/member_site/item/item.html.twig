@@ -246,13 +246,13 @@
                     right:  'prev,next'
                 },
                 dateClick: function(info) {
-
                     {% if product.isReservable %}
 
                     if (currentUserId) {
                         if (sitesLoaded == false) {
                             loadSiteOpeningTimes();
                             borrowModal.modal();
+                            showModalContentForManualBooking();
                         } else {
                             alert("{% trans %}public_item.alert_click_time_slot{% endtrans %}");
                         }
