@@ -127,12 +127,24 @@ class DBMigrations
 
         $schemas = $stmt->fetchAll();
 
+        // Include the _skeleton to keep it up to date
+        $skeleton = [
+            'id'             => null,
+            'db_schema'      => '_skeleton',
+            'schema_version' => null
+        ];
+
+        $schemas = array_merge($schemas, [$skeleton]);
+
         foreach ($schemas as $schema) {
 
+            $accountID             = $schema['id'];
             $tenantDbSchema        = $schema['db_schema'];
             $tenantDbSchemaVersion = $schema['schema_version'];
 
-            DBMigrations::updateMigrationStarted($this->em, $tenantDbSchema);
+            if ($accountID) {
+                DBMigrations::updateMigrationStarted($this->em, $tenantDbSchema);
+            }
 
             $driver = new Driver();
             $params = [
@@ -161,7 +173,9 @@ class DBMigrations
                 $resultString .= 'Migrated ' . $tenantDbSchema . ' schema to ' . $latestVersion . PHP_EOL;
             }
 
-            DBMigrations::updateMigrationCompleted($this->em, $tenantDbSchema);
+            if ($accountID) {
+                DBMigrations::updateMigrationCompleted($this->em, $tenantDbSchema);
+            }
         }
 
         return $resultString;

@@ -92,6 +92,128 @@ class UpdateController extends Controller
     {
         try {
 
+            $debug = false;
+
+            /** @var \Doctrine\ORM\EntityManager $em */
+            $em = $this->getDoctrine()->getManager();
+
+            /** @var \AppBundle\Services\TenantService $tenantService */
+            $tenantService = $this->container->get('service.tenant');
+
+            /** @var \AppBundle\Services\SettingsService $settingsService */
+            $settingsService = $this->get('settings');
+            $tenant          = $settingsService->getTenant();
+
+            if (isset($_GET['poll'])) {
+
+                // Check that the db schema is still deploying
+                // Note: $tenantService->getSchemaVersion() uses cached version, so we use
+                //       $tenantService->getTenant()->getSchemaVersion() to refresh the cache
+                if ($tenantService->getTenant()->getStatus() === Tenant::STATUS_DEPLOYING) {
+                    throw new \Exception('DB is still deploying');
+                }
+
+            }
+
+            // Already deployed
+            if ($tenant->getStatus() !== Tenant::STATUS_DEPLOYING) {
+                return $this->redirect($this->generateUrl('homepage'));
+            }
+
+            $sourceDbName      = '_skeleton';
+            $destinationDbName = $tenantService->getTenant()->getDbSchema();
+
+            $em->getConnection()->prepare('USE ' . $sourceDbName)->execute();
+            $stmt = $em->getConnection()->prepare('SHOW TABLES');
+            $stmt->execute();
+
+            $tables = $stmt->fetchAll();
+
+            // Create the destination database and select it
+            $em->getConnection()->prepare('CREATE DATABASE IF NOT EXISTS ' . $destinationDbName)->execute();
+            $em->getConnection()->prepare('USE ' . $destinationDbName)->execute();
+            $em->getConnection()->prepare('SET FOREIGN_KEY_CHECKS=0;')->execute();
+
+            foreach ($tables as $table) {
+
+                $tableName = $table['Tables_in_' . $sourceDbName];
+
+                // Create the table
+                $createCommand        = $em->getConnection()->query("SHOW CREATE TABLE `{$sourceDbName}`.`{$tableName}`")->fetchColumn(1);
+                $carefulCreateCommand = str_replace("CREATE TABLE", "CREATE TABLE IF NOT EXISTS", $createCommand);
+
+                $em->getConnection()->prepare($carefulCreateCommand)->execute();
+
+                if ($debug) {
+                    echo "Table <strong>`{$tableName}`</strong> created<br/>" . PHP_EOL;
+                }
+
+                // Truncate the existing data
+                $em->getConnection()->prepare(
+                    "TRUNCATE TABLE `{$destinationDbName}`.`{$tableName}`;"
+                )->execute();
+
+                if ($debug) {
+                    echo "Data truncated<br/>" . PHP_EOL;
+                }
+
+                // Copy data
+                $em->getConnection()->prepare(
+                    "INSERT INTO `{$destinationDbName}`.`{$tableName}` SELECT * FROM `{$sourceDbName}`.`{$tableName}`"
+                )->execute();
+
+                if ($debug) {
+
+                    echo "Data copied<br/>" . PHP_EOL;
+
+                    echo '<hr/>';
+
+                }
+            }
+
+            // Complete the deployment and activate the trial
+            // We can hit this URL multiple times, so don't re-set the trial
+            if ($tenant->getStatus() === Tenant::STATUS_DEPLOYING) {
+
+                $this->addAdminUser();
+                $this->addUser();
+                $this->setOrganisationDetails();
+
+                $tenant->setStatus('TRIAL');
+                $trialExpiresAt = new \DateTime();
+                $trialExpiresAt->modify('+30 days');
+                $tenant->setTrialExpiresAt($trialExpiresAt);
+                $em->persist($tenant);
+                $em->flush();
+
+                $name        = $tenant->getOwnerName();
+                $email       = $tenant->getOwnerEmail();
+                $org         = $tenant->getName();
+                $accountCode = $settingsService->getTenant()->getStub();
+
+                $this->subscribeToMailchimp($name, $email, $org, $accountCode);
+
+                $this->notifyOfNewAccount($tenant->getName(), $tenant->getDomain());
+            }
+
+            return $this->redirect($this->generateUrl('homepage'));
+
+        } catch (\Exception $e) {
+            return $this->render('maintenance/db_deploying.html.twig');
+        } finally {
+           $em->getConnection()->prepare('SET FOREIGN_KEY_CHECKS=1;')->execute();
+        }
+    }
+
+    /**
+     * @Route("deployArchived", name="deployArchived")
+     */
+    public function deployNewDatabaseArchived(Request $request)
+    {
+        return $this->redirect($this->generateUrl('homepage'));
+
+        try {
+
             /** @var \AppBundle\Services\TenantService $tenantService */
             $tenantService = $this->container->get('service.tenant');
 
