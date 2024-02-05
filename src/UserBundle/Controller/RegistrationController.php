@@ -51,6 +51,9 @@ class RegistrationController extends BaseController
         /** @var \AppBundle\Services\Apps\RecaptchaService $recaptcha */
         $recaptcha = $this->get('service.recaptcha');
 
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
+
         $recaptchaActive = $recaptcha->installedConfiguredAndActive();
 
         $user = $this->userManager->createUser();
@@ -102,6 +105,10 @@ class RegistrationController extends BaseController
                         FOSUserEvents::REGISTRATION_COMPLETED,
                         new FilterUserResponseEvent($user, $request, $response)
                     );
+
+                    if (!$settingsService->getSettingValue('registration_require_email_confirmation')) {
+                        $this->get('session')->getFlashBag()->clear();
+                    }
 
                     return $response;
 
