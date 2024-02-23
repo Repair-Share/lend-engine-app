@@ -451,6 +451,18 @@ services:
             - "@doctrine.orm.entity_manager"
             - "@logger"
 
+    service.cleanup_closed_loans:
+        class: AppBundle\Services\Schedule\CleanUpClosedLoans
+        arguments:
+            - "@twig"
+            - "@service_container"
+            - "@settings"
+            - "@service.contact"
+            - "@service.loan"
+            - "@service.email"
+            - "@doctrine.orm.entity_manager"
+            - "@logger"
+
     service.schedule_maintenance:
         class: AppBundle\Services\Schedule\UpdateMaintenance
         arguments:
