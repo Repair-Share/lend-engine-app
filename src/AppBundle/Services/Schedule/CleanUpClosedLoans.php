@@ -124,96 +124,43 @@ class CleanUpClosedLoans
                 $replyToEmail   = $tenantService->getReplyToEmail();
                 $postmarkApiKey = $tenantService->getSetting('postmark_api_key');
 
-                // $sendEmailReminders = $this->settings->getSettingValue('automate_email_membership');
+                $loanRepo = $tenantEntityManager->getRepository('AppBundle:Loan');
 
-                // $membershipTypeRepo = $tenantEntityManager->getRepository('AppBundle:MembershipType');
-                // $selfServeMemberships = $membershipTypeRepo->findBy(['isSelfServe' => true]);
+                $closedLoans = $loanRepo->findLoans(0, 10, [
+                    'status' => 'CLOSED', 
+                    'date_to' => '2022-12-31', 
+                    'date_type' => 'date_in'
+                ]);
+                if (is_array($closedLoans) && isset($closedLoans['totalResults'])) {
+                    $resultString .= "INFO: Found CLOSED loans : " . $closedLoans['totalResults'] . PHP_EOL;;
+                } else {
+                    $resultString .= "ERROR: Find loans query for CLOSED loans failed" . PHP_EOL;;
+                    continue;
+                }
 
-                // // Determine whether this account has self-serve memberships
-                // $canSelfRenew = false;
-                // if (count($selfServeMemberships) > 0) {
-                //     $canSelfRenew = true;
-                // }
-
-                // /** @var \AppBundle\Repository\MembershipRepository $membershipRepo */
-                // $membershipRepo = $tenantEntityManager->getRepository('AppBundle:Membership');
-
-                // // Get all memberships which have an expiry date in the past but are still active
-                // if ($expiredMemberships = $membershipRepo->getExpiredMemberships()) {
-
-                //     /** @var $membership \AppBundle\Entity\Membership */
-                //     foreach ($expiredMemberships AS $membership) {
-
-                //         // Save the contact
-                //         try {
-
-                //             $resultString .= '  Contact: '.$membership->getContact()->getEmail(). PHP_EOL;
-                //             $resultString .= '  Expires: '.$membership->getExpiresAt()->format("Y-m-d").PHP_EOL;
-
-                //             // Expire the membership
-                //             $membership->setStatus(Membership::SUBS_STATUS_EXPIRED);
-                //             $tenantEntityManager->persist($membership);
-
-                //             $contact = $membership->getContact();
-                //             $toEmail = $contact->getEmail();
-
-                //             // Remove active membership from contact
-                //             $contact->setActiveMembership(null);
-                //             $tenantEntityManager->persist($contact);
-
-                //             $resultString .= '  Expired membership for '.$membership->getContact()->getEmail(). PHP_EOL;
-
-                //             $tenantEntityManager->flush($contact);
-                //             $tenantEntityManager->flush($membership);
-
-                //             if ($toEmail && $sendEmailReminders == 1) {
-
-                //                 try {
-
-                //                     // Save and switch locale for sending the email
-                //                     $sessionLocale = $this->container->get('translator')->getLocale();
-                //                     $this->container->get('translator')->setLocale($contact->getLocale());
-
-                //                     $this->contactService->setTenant($tenant, $tenantEntityManager);
-                //                     $token = $this->contactService->generateAccessToken($contact);
-
-                //                     $loginUri = $tenant->getDomain(true);
-                //                     $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
-                //                     $loginUri .= '&r=/choose_membership';
-
-                //                     $message = $this->twig->render(
-                //                         'emails/membership_expiry.html.twig',
-                //                         [
-                //                             'expiresAt' => $membership->getExpiresAt(),
-                //                             'canSelfRenew' => $canSelfRenew,
-                //                             'tenant' => $tenant,
-                //                             'loginUri' => $loginUri
-                //                         ]
-                //                     );
-
-                //                     $subject = $this->container->get('translator')->trans('le_email.membership_expired.subject', [], 'emails', $contact->getLocale());
-
-                //                     $this->emailService->postmarkApiKey = $postmarkApiKey;
-                //                     $this->emailService->senderName = $senderName;
-                //                     $this->emailService->fromEmail = $fromEmail;
-                //                     $this->emailService->replyToEmail = $replyToEmail;
-                //                     $this->emailService->send(
-                //                         $contact->getEmail(), $contact->getName(), $subject, $message
-                //                     );
-
-                //                     // Revert locale for the UI
-                //                     $this->container->get('translator')->setLocale($sessionLocale);
-
-                //                 } catch (\Exception $generalException) {
-                //                     $resultString .= "ERROR: Failed to send email : " . $generalException->getMessage();
-                //                 }
-                //             }
-                //         } catch (\Exception $e2) {
-                //             $resultString .= "ERROR 235: ".$e2->getMessage().PHP_EOL;
-                //         }
-
-                //     }
-                // }
+                $outdatedReservations = $loanRepo->findLoans(0, 10, [
+                    'status' => 'RESERVED', 
+                    'date_to' => '2022-12-31', 
+                    'date_type' => 'date_in'
+                ]);
+                if (is_array($outdatedReservations) && isset($outdatedReservations['totalResults'])) {
+                    $resultString .= "Found outdated reservations (status RESERVED) : " . $outdatedReservations['totalResults'] . PHP_EOL;
+                } else {
+                    $resultString .= "ERROR: Find loans query for outdated reservations failed" . PHP_EOL;
+                    continue;
+                }
+                try {
+                    foreach($outdatedReservations as $reservation){
+                        $resultString .= "Removing outdated reservation with id : " . $reservation->id . PHP_EOL;
+                        $loanService->deleteLoan($reservation->id);
+                    }
+                    foreach($closedLoans as $closedLoan){
+                        $resultString .= "Removing closed loan with id : " . $closedLoan->id . PHP_EOL;
+                        $loanService->deleteLoan($closedLoan->id);
+                    }
+                } catch (\Exception $e2) {
+                    $resultString .= "ERROR 235: ".$e2->getMessage().PHP_EOL;
+                }                    
 
                 $tenantEntityManager->getConnection()->close();
 
