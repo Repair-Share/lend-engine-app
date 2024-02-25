@@ -46,7 +46,7 @@ class MembershipService
                      count(*) AS c
                      FROM membership m";
         if (isset($where['status'])) {
-          $sql .= "    WHERE status = " . $where['status'];
+          $sql .= "    WHERE status = '" . $where['status'] . "'";
         }
         $sql .= "    GROUP BY DATE(m.created_at)";
         // --- KB-MAN 2024/02/25 only count active memberships
