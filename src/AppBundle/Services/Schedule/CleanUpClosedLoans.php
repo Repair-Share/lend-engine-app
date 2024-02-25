@@ -1,4 +1,5 @@
 <?php
+// +++ KB-MAN 2024/02/25 Clean up closed loans and outdated reservations
 /**
  * Addon for Digibank Mechelen
  */
@@ -118,6 +119,7 @@ class CleanUpClosedLoans
                 // Set the settings class to get data from the right DB
                 $this->settings->setTenant($tenant, $tenantEntityManager);
                 $tenantService->setTenant($tenant);
+                $this->loanService->setTenant($tenant, $tenantEntityManager);
 
                 $senderName     = $tenantService->getSetting('org_name');
                 $fromEmail      = $tenantService->getSenderEmail();
@@ -132,9 +134,11 @@ class CleanUpClosedLoans
                     'date_type' => 'date_in'
                 ]);
                 if (is_array($closedLoans) && isset($closedLoans['totalResults'])) {
-                    $resultString .= "INFO: Found CLOSED loans : " . $closedLoans['totalResults'] . PHP_EOL;;
+                    $this->logger->info("Found CLOSED loans : " . $closedLoans['totalResults']);
+                    $resultString .= "INFO: Found CLOSED loans : " . $closedLoans['totalResults'] . PHP_EOL;
                 } else {
-                    $resultString .= "ERROR: Find loans query for CLOSED loans failed" . PHP_EOL;;
+                    $this->logger->error("Find loans query for CLOSED loans failed");
+                    $resultString .= "ERROR: Find loans query for CLOSED loans failed" . PHP_EOL;
                     continue;
                 }
 
@@ -144,19 +148,21 @@ class CleanUpClosedLoans
                     'date_type' => 'date_in'
                 ]);
                 if (is_array($outdatedReservations) && isset($outdatedReservations['totalResults'])) {
+                    $this->logger->info("Found outdated reservations (status RESERVED) : " . $outdatedReservations['totalResults']);
                     $resultString .= "Found outdated reservations (status RESERVED) : " . $outdatedReservations['totalResults'] . PHP_EOL;
                 } else {
+                    $this->logger->error("Find loans query for outdated reservations failed");
                     $resultString .= "ERROR: Find loans query for outdated reservations failed" . PHP_EOL;
                     continue;
                 }
                 try {
-                    foreach($outdatedReservations as $reservation){
-                        $resultString .= "Removing outdated reservation with id : " . $reservation->id . PHP_EOL;
-                        $loanService->deleteLoan($reservation->id);
+                    foreach($outdatedReservations['data'] as $reservation){
+                        $resultString .= "Removing outdated reservation with id : " . $reservation->getId() . PHP_EOL;
+                        $this->loanService->deleteLoan($reservation->getId());
                     }
-                    foreach($closedLoans as $closedLoan){
-                        $resultString .= "Removing closed loan with id : " . $closedLoan->id . PHP_EOL;
-                        $loanService->deleteLoan($closedLoan->id);
+                    foreach($closedLoans['data'] as $closedLoan){
+                        $resultString .= "Removing closed loan with id : " . $closedLoan->getId() . PHP_EOL;
+                        $this->loanService->deleteLoan($closedLoan->getId());
                     }
                 } catch (\Exception $e2) {
                     $resultString .= "ERROR 235: ".$e2->getMessage().PHP_EOL;
@@ -230,3 +236,4 @@ class CleanUpClosedLoans
     }
 
 }
+// --- KB-MAN 2024/02/25 Clean up closed loans and outdated reservations

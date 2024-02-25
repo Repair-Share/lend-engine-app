@@ -1,4 +1,8 @@
 <?php
+// +++ KB-MAN 2024/02/25 Clean up closed loans and outdated reservations
+/**
+ * Addon for Digibank Mechelen
+ */
 
 namespace AppBundle\Command;
 
@@ -26,3 +30,4 @@ class CleanUpClosedLoansCommand extends ContainerAwareCommand
     }
 
 }
+// --- KB-MAN 2024/02/25 Clean up closed loans and outdated reservations

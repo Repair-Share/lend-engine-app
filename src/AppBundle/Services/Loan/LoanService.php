@@ -5,6 +5,9 @@ namespace AppBundle\Services\Loan;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\Note;
 use AppBundle\Entity\Payment;
+// +++ KB-MAN 2024/02/25
+use AppBundle\Entity\Tenant;
+// --- KB-MAN 2024/02/25
 use AppBundle\Services\SettingsService;
 use AppBundle\Services\TenantService;
 use Doctrine\ORM\EntityManager;
@@ -30,6 +33,22 @@ class LoanService
         $this->settings  = $settings;
     }
 
+    // +++ KB-MAN 2024/02/25 Allow update of tenant / entity manager for use in schedule/CleanUpClosedLoans (cfr ContactService, SettingsService)
+    /**
+     * Override the active tenant (used in a scheduled loop eg cleanup closed loans)
+     * @param Tenant $tenant
+     * @param EntityManager $em
+     */
+    public function setTenant(Tenant $tenant, EntityManager $em = null)
+    {
+        $this->tenant = $tenant;
+        if ($em) {
+            $this->em = $em;
+            $this->db = $this->em->getConnection()->getDatabase();
+        }
+    }
+    // --- KB-MAN 2024/02/25
+    
     /**
      * @param $loanId
      * @return \AppBundle\Entity\Loan|null
