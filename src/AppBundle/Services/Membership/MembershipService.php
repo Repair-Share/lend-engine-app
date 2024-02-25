@@ -32,12 +32,24 @@ class MembershipService
      * @return array
      * @throws DBALException
      */
-    public function membershipsAddedByMonth()
+    // +++ KB-MAN 2024/02/25 only count active memberships
+    //public function membershipsAddedByMonth()
+    public function membershipsAddedByMonth($where = array())
+    // --- KB-MAN 2024/02/25 only count active memberships
     {
+        // +++ KB-MAN 2024/02/25 only count active memberships
+        // $sql = "SELECT DATE(m.created_at) AS d,
+        //           count(*) AS c
+        //           FROM membership m
+        //           GROUP BY DATE(m.created_at)";
         $sql = "SELECT DATE(m.created_at) AS d,
-                  count(*) AS c
-                  FROM membership m
-                  GROUP BY DATE(m.created_at)";
+                     count(*) AS c
+                     FROM membership m";
+        if (isset($where['status'])) {
+          $sql .= "    WHERE status = " . $where['status'];
+        }
+        $sql .= "    GROUP BY DATE(m.created_at)";
+        // --- KB-MAN 2024/02/25 only count active memberships
 
         $stmt = $this->em->getConnection()->prepare($sql);
         $stmt->execute();

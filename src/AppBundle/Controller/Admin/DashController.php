@@ -64,7 +64,10 @@ class DashController extends Controller
 
         /** @var \AppBundle\Services\Membership\MembershipService $membershipService */
         $membershipService = $this->get('service.membership');
-        $membershipsAdded = $membershipService->membershipsAddedByMonth();
+        // +++ KB-MAN 2024/02/25 only count active memberships
+        //$membershipsAdded = $membershipService->membershipsAddedByMonth();
+        $membershipsAdded = $membershipService->membershipsAddedByMonth(['status' => 'ACTIVE']);
+        // --- KB-MAN 2024/02/25 only count active memberships
 
         /** @var \AppBundle\Services\Item\ItemService $itemService */
         $itemService = $this->get('service.item');
