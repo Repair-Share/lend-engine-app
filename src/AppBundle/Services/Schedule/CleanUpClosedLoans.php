@@ -7,7 +7,6 @@ namespace AppBundle\Services\Schedule;
 
 use AppBundle\Entity\Membership;
 use AppBundle\Entity\Note;
-use AppBundle\Services\Contact\ContactService;
 use AppBundle\Services\Loan\LoanService;
 use AppBundle\Services\EmailService;
 use AppBundle\Services\SettingsService;
@@ -30,9 +29,6 @@ class CleanUpClosedLoans
     /** @var \AppBundle\Services\SettingsService */
     private $settings;
 
-    /** @var \AppBundle\Services\Contact\ContactService */
-    private $contactService;
-
     /** @var \AppBundle\Services\Loan\LoanService */
     private $loanService;
 
@@ -48,10 +44,14 @@ class CleanUpClosedLoans
     /** @var LoggerInterface */
     private $logger;
 
+    // Max date_in value for loan with status 'RESERVED' for loan to be removed
+    private $maxReservedDateInDate;
+    // Min date_in value for loan with status 'CLOSED' for loan to be removed
+    private $maxClosedLoanDateInDate;
+
     public function __construct(\Twig_Environment $twig,
                                 Container $container,
                                 SettingsService $settings,
-                                ContactService $contactService,
                                 LoanService $loanService,
                                 EmailService $emailService,
                                 EntityManager $em, LoggerInterface $logger)
@@ -59,11 +59,15 @@ class CleanUpClosedLoans
         $this->twig = $twig;
         $this->container = $container;
         $this->settings = $settings;
-        $this->contactService = $contactService;
         $this->loanService = $loanService;
         $this->emailService = $emailService;
         $this->em = $em;
         $this->logger = $logger;
+        // Get the current year
+        $currentYear = date("Y");
+
+        $this->maxReservedDateInDate = ($currentYear - 2) . "-12-31";
+        $this->maxClosedLoanDateInDate = ($currentYear - 2) . "-12-31";
 
         if (!$this->serverName = getenv('LE_SERVER_NAME')) {
             throw new \Exception("LE_SERVER_NAME is not defined");
@@ -130,7 +134,7 @@ class CleanUpClosedLoans
 
                 $closedLoans = $loanRepo->findLoans(0, 10, [
                     'status' => 'CLOSED', 
-                    'date_to' => '2022-12-31', 
+                    'date_to' => $this->maxClosedLoanDateInDate, 
                     'date_type' => 'date_in'
                 ]);
                 if (is_array($closedLoans) && isset($closedLoans['totalResults'])) {
@@ -144,7 +148,7 @@ class CleanUpClosedLoans
 
                 $outdatedReservations = $loanRepo->findLoans(0, 10, [
                     'status' => 'RESERVED', 
-                    'date_to' => '2022-12-31', 
+                    'date_to' => $this->maxReservedDateInDate, 
                     'date_type' => 'date_in'
                 ]);
                 if (is_array($outdatedReservations) && isset($outdatedReservations['totalResults'])) {
