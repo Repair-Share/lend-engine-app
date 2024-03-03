@@ -296,6 +296,8 @@
 {% block pagejs %}
     <script>
 
+        Dropzone.autoDiscover = false;
+
         $(document).ready(function () {
 
             $('.ajax-contact').select2({
@@ -343,7 +345,7 @@
 
             var itemId = {% if item.id %}{{ item.id }}{% else %}null{% endif %};
 
-            Dropzone.autoDiscover = false;
+
             var filelist = [];
             var resizeImgList = [];
 

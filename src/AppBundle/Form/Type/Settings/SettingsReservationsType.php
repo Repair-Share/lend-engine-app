@@ -61,6 +61,18 @@ class SettingsReservationsType extends AbstractType
             )
         ));
 
+        $builder->add('reservation_buffer_override', ToggleType::class, array(
+            'expanded' => true,
+            'multiple' => false,
+            'label' => 'Allow Admin and Staff to override the buffer hours',
+            'data' => (int)$dbData['reservation_buffer_override'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100 toggle-switch',
+                'data-help' => 'Admin and Staff is able to bypass the buffer hours and the system allows booking at any time where buffer hours exist or change bookings to enable overriding of buffer hours.'
+            ]
+        ));
+
         $builder->add('default_loan_fee', TextType::class, array(
             'label' => 'Loan fee',
             'data' => $dbData['default_loan_fee'],
@@ -115,6 +127,25 @@ EOH;
             'multiple' => false,
             'label' => 'OR ... prices are fixed per borrow',
             'data' => (int)$dbData['fixed_fee_pricing'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100 toggle-switch',
+                'data-help' => $helpText
+            ]
+        ));
+
+        $helpText = <<<EOH
+<strong>On the item page</strong>: Auto-add items to an existing basket when clicking "borrow" if there are no date conflicts. 
+For the first item added to a basket, the user needs to choose dates.<br>
+<strong>On the item listing</strong>: Adds an "add to basket" button which adds to the basket in the background, if 
+a basket exists and there is no clash with dates, locations or membership restrictions.
+EOH;
+
+        $builder->add('basket_quick_add', ToggleType::class, array(
+            'expanded' => true,
+            'multiple' => false,
+            'label' => 'Quick add basket mode (beta)',
+            'data' => (int)$dbData['basket_quick_add'],
             'required' => true,
             'attr' => [
                 'class' => 'input-100 toggle-switch',
@@ -181,6 +212,19 @@ EOH;
             'attr' => [
                 'class' => '',
                 'data-help' => ''
+            ]
+        ));
+
+        $builder->add('forward_picking', ToggleType::class, array(
+            'expanded' => true,
+            'multiple' => false,
+            'label' => 'Enable reservation forward picking locations at sites. Setup location and edit site to include a forward picking location',
+            'data' => (int)$dbData['forward_picking'],
+            'required' => true,
+            'disabled'=>true,
+            'attr' => [
+                'class' => 'input-100 toggle-switch',
+                'disabled'=>true
             ]
         ));
 

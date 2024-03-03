@@ -1,10 +1,10 @@
 # Loco yaml export: Simple YAML object
 # Project: Lend Engine
 # Release: Working copy
-# Locale: cy-GB, Welsh (Wales)
+# Locale: cy-GB, Cymraeg (Wales)
 # Tagged: FOSUserBundle
-# Exported by: Chris
-# Exported at: Wed, 23 May 2018 10:19:01 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 15:23:17 +0100
 ---
 group.edit.submit: Diweddaru grwp
 group.show.name: 'Enw grŵp '
@@ -32,10 +32,10 @@ registration.flash.user_created: Mae e-bost wedi cael ei yrru atoch. Mae'n cynnw
 registration.email.subject: Croeso!
 registration.email.message: |-
   I orffen actifadu eich cyfrif, ewch i <br> >br>
-  %cadarnhadUrl%
+  %confirmationUrl%
 resetting.password_already_requested: Mae'r cyfrinair ar gyfer y defnyddiwr yma eisoes wedi cael ei ofyn amdano yn y 24 awr diwethaf.
 resetting.check_email: "Mae e-bost wedi cael ei anfon. Mae'n cynnwys dolen mae'n rhaid i chi bwyso i ailosod eich cyfrinair.\nOs na ydych yn cael e-bost, gwiriwch eich ffolder sbam neu disgwyl 5 munud ac yna trïo eto. "
-resetting.request.invalid_username: Dydi'r enw defnyddiwr neu e-bost ''%enwdefnyddiwr%'' ddim yn bodoli.
+resetting.request.invalid_username: Dydi'r enw defnyddiwr neu e-bost ''%username%'' ddim yn bodoli.
 resetting.request.username: 'Enw defnyddiwr neu e-bost:'
 resetting.request.submit: Ailosod cyfrinair
 resetting.reset.submit: Newid cyfrinair
@@ -44,11 +44,11 @@ resetting.email.subject: Ailosod Cyfrinair
 resetting.email.message: |-
   <br>
   I ailosod eich cyfrinair, pwyswch y ddolen isod:<br><br>
-  <a href=''%cadarnhadUrl%''>%cadarnhadUrl%</a>
+  <a href=''%confirmationUrl%''>%confirmationUrl%</a>
 layout.logout: Allgofnodi
 layout.login: Mewngofnodi
 layout.register: Cofrestru
-layout.logged_in_as: Wedi mewngofnodi fel %enwdefnyddiwr%
+layout.logged_in_as: Wedi mewngofnodi fel %username%
 form.group_name: 'Enw grŵp:'
 form.username: 'Enw defnyddiwr:'
 form.current_password: 'Cyfrinair presennol:'
@@ -56,4 +56,5 @@ form.password: 'Cyfrinair:'
 form.password_confirmation: 'Ailadrodd cyfrinair:'
 form.new_password: 'Cyfrinair newydd:'
 form.new_password_confirmation: 'Ailadrodd cyfrinair newydd:'
-security.login.forgot_password: ""
+security.login.forgot_password: Anghofiais fy nghyfrinair
+...

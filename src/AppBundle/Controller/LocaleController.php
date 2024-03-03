@@ -14,25 +14,33 @@ class LocaleController extends Controller
      */
     public function chooseContactAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
+        $em      = $this->getDoctrine()->getManager();
         $session = $request->getSession();
+
+        $tenantService      = $this->get('service.tenant');
+        $availableLanguages = $tenantService->getLanguages();
 
         if ($locale = $request->get('loc')) {
 
-            if (!$user = $this->getUser()) {
-                $session->set('_locale', $locale);
-                return $this->redirectToRoute('home');
+            if (in_array($locale, $availableLanguages)) {
+
+                if (!$user = $this->getUser()) {
+                    $session->set('_locale', $locale);
+                    return $this->redirectToRoute('home');
+                }
+
+                $user->setLocale($locale);
+                $em->persist($user);
+
+                try {
+                    $em->flush();
+                    $session->set('_locale', $user->getLocale());
+                } catch (\Exception $e) {
+
+                }
+
             }
 
-            $user->setLocale($locale);
-            $em->persist($user);
-
-            try {
-                $em->flush();
-                $session->set('_locale', $user->getLocale());
-            } catch (\Exception $e) {
-
-            }
         }
 
         return $this->redirectToRoute('home');

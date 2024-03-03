@@ -3,20 +3,19 @@
 # Release: Working copy
 # Locale: fr-FR, French (France)
 # Tagged: Emails
-# Status: Translated
-# Exported by: Chris
-# Exported at: Wed, 19 Jul 2017 10:19:03 +0100
+# Exported by: Andor Tamas
+# Exported at: Sat, 09 Jul 2022 13:45:39 +0200
 ---
 le_email:
   item_description: Description
   item_contains: Contient
   see_attachment: Voir la pièce jointe
-  return_sites: S’il vous plaît retourner cet article à (aux) l'emplacement(s) suivant(s)
+  return_sites: S’il vous plaît veuillez retourner cet article à (aux) l'emplacement(s) suivant(s)
   th_item: Article
   th_fee: Frais
   th_due_back: Doit être retourné
   url: URL de connexion
-  email: Courriel
+  email: E-mail
   password: Mot de passe
   assign:
     title: Un article vous a été assigné
@@ -32,24 +31,42 @@ le_email:
     title: Nous avons changé la date de retour d’un article
     due_back: est désormais dû en retour le
   reminder:
-    subject: Votre emprunt loanId est attendu de retour demain
-    title: Votre (vos) article (s) est (sont) dû de retour bientôt
+    subject: Votre emprunt %loanId% est attendu de retour demain
+    title: Votre emprunt doit bientôt être retourné
   reservation_reminder:
     subject: Passez prendre votre réservation demain
     title: Passez prendre votre réservation demain
   membership_expired:
     subject: Votre abonnement a expiré
     title: Votre abonnement a expiré
+    renew_button: Cliquer ici pour renouveler l'abonnement
   login_details:
     subject: Vos informations de connexion pour %accountName%
     title: Informations de connexion
     message: Voici vos identifiants pour notre système de prêt
   new_password:
     title: Votre nouveau mot de passe
-    message: Il s’agit de votre nouveau mot de passe pour %accountName%
+    message: Voici votre nouveau mot de passe pour %accountName%
   reservation_confirm:
     subject: Votre confirmation de réservation
     title: Confirmation de réservation
   site_welcome:
     subject: Bienvenue sur %accountName%
     title: Bienvenue
+  login_to_view_this_loan: Voir ce prêt en ligne
+  booking_confirmation:
+    title: Confirmation d'inscription à l'événement
+    subject: 'Confirmation d''inscription à l''événement :'
+  donor_notify:
+    subject: L'objet que vous avez donné a été prêté
+  overdue:
+    subject: Un article est en retard
+    title: Merci de retourner cet article
+  th_cost: Prix
+  login_now_button: Identifiez-vous maintenant
+  checkin:
+    subject: Votre article a été enregistré
+    title: Votre article a été enregistré
+    checked_in_at: Enregistré à
+    checked_in_by: Enregistré par
+...

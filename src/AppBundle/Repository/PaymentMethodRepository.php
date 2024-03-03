@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\PaymentMethod;
+
 /**
  * PaymentMethodRepository
  *
@@ -17,9 +19,9 @@ class PaymentMethodRepository extends \Doctrine\ORM\EntityRepository
     public function findAllOrderedByName($includeInactive = false)
     {
         if ($includeInactive) {
-            $q = 'SELECT pm FROM AppBundle:PaymentMethod pm ORDER BY pm.name ASC';
+            $q = "SELECT pm FROM AppBundle:PaymentMethod pm where pm.name <> '" . PaymentMethod::PAYMENT_METHOD_DEBIT_ACCOUNT . "' ORDER BY pm.name ASC";
         } else {
-            $q = 'SELECT pm FROM AppBundle:PaymentMethod pm WHERE pm.isActive = true ORDER BY pm.name ASC';
+            $q = "SELECT pm FROM AppBundle:PaymentMethod pm WHERE pm.isActive = true and pm.name <> '" . PaymentMethod::PAYMENT_METHOD_DEBIT_ACCOUNT . "' ORDER BY pm.name ASC";
         }
 
         return $this->getEntityManager()

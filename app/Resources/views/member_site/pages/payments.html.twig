@@ -53,6 +53,14 @@
                     <td>
                         {% if payment.paymentMethod %}
                             {{ payment.paymentMethod.name }}
+                            {% if app.environment == "test" %}
+                                <span class="unit-test-details">
+                                    <span class="payment-method">{{ payment.paymentMethod.name }}</span>
+                                    <span class="payment-amount">{{ payment.amount }}</span>
+                                    <span class="payment-note">{{ payment.note }}</span>
+                                    <span class="payment-date">{{ payment.createdAt|date("Y-m-d H:i:s") }}</span>
+                                </span>
+                            {% endif %}
                             {% if is_granted("ROLE_ADMIN") %}
                                 <div style="font-size: 11px; color: #ccc;">{{ payment.pspCode }}</div>
                             {% endif %}
@@ -77,7 +85,16 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if is_granted('ROLE_ADMIN') and (payment.type == 'PAYMENT' or payment.type == 'DEPOSIT') %}
+                        {% if is_granted('ROLE_ADMIN')
+                            and (payment.type == 'PAYMENT' or payment.type == 'DEPOSIT')
+                            and (
+                                not payment.paymentMethod
+                                or (
+                                    payment.paymentMethod
+                                    and payment.paymentMethod.name != 'Debit LE account'
+                                )
+                            )
+                        %}
                             <a href="{{ path('refund', {id: payment.id, amount: payment.amount}) }}" class="modal-link" style="font-size: 11px">Refund</a>
                         {% endif %}
                     </td>

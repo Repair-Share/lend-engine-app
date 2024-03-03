@@ -25,6 +25,7 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Translation\Translator;
 use Twig\Environment;
 
 class CheckInService
@@ -57,6 +58,9 @@ class CheckInService
     /** @var TenantService  */
     private $tenantService;
 
+    /** @var Translator */
+    private $translator;
+
     /** @var array  */
     public $errors = [];
 
@@ -78,7 +82,8 @@ class CheckInService
         TokenStorageInterface $tokenStorage,
         EmailService $emailService,
         Environment $twig,
-        TenantService $tenantService)
+        TenantService $tenantService,
+        Translator $translator)
     {
         $this->em        = $em;
         $this->contactService = $contactService;
@@ -89,6 +94,7 @@ class CheckInService
         $this->twig = $twig;
         $this->emailService = $emailService;
         $this->tenantService = $tenantService;
+        $this->translator = $translator;
 
         $this->user = $this->tokenStorage->getToken()->getUser();
     }
@@ -185,7 +191,7 @@ class CheckInService
         $token = $this->contactService->generateAccessToken($contact);
         $user = $this->tokenStorage->getToken()->getUser();
 
-        $loginUri = $this->tenantService->getTenant()->getDomain(true);
+        $loginUri = $this->tenantService->getTenant(false)->getDomain(true);
         $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
         $loginUri .= '&r=/loan/'.$loanRow->getLoan()->getId();
 
@@ -199,7 +205,9 @@ class CheckInService
             ]
         );
 
-        $subject = "Check in confirmation : ".$loanRow->getLoan()->getId();
+        $subject = $this->translator->trans('le_email.checkin.subject', [], 'emails')
+                   . ': ' . $loanRow->getLoan()->getId();
+
         $toEmail = $loanRow->getLoan()->getContact()->getEmail();
         $toName  = $loanRow->getLoan()->getContact()->getName();
 

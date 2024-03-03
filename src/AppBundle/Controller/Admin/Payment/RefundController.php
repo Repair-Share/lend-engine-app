@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Admin\Payment;
 
 use AppBundle\Entity\Payment;
+use AppBundle\Entity\PaymentMethod;
 use AppBundle\Form\Type\RefundType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -77,6 +78,41 @@ class RefundController extends Controller
             // Create it (including talking to the PSP if relevant)
             if ($paymentService->refund($refund, $chargeID)) {
                 $this->addFlash('success', "Refunded {$chargeID} OK");
+
+                // Debit account with the refund
+                $allowDebit = $form->has('debitAccount');
+                if ($allowDebit && !$form->get('debitAccount')->getData()) {
+
+                    $em = $this->getDoctrine()->getManager();
+
+                    $debitAccount = $em->getRepository("AppBundle:PaymentMethod")->findOneBy(['name' => PaymentMethod::PAYMENT_METHOD_DEBIT_ACCOUNT]);
+
+                    // Create the debit account if it doesn't exist yet
+                    if (!$debitAccount) {
+
+                        $debitAccount = new PaymentMethod();
+                        $debitAccount->setName(PaymentMethod::PAYMENT_METHOD_DEBIT_ACCOUNT);
+                        $debitAccount->setIsActive(false);
+
+                        $em->persist($debitAccount);
+                        $em->flush($debitAccount);
+
+                    }
+
+                    $debit = new Payment();
+                    $debit->setType(Payment::PAYMENT_TYPE_PAYMENT);
+                    $debit->setAmount($amount);
+                    $debit->setCreatedBy($this->getUser());
+                    $debit->setContact($p->getContact());
+                    $debit->setPaymentMethod($debitAccount);
+                    $debit->setNote('Refund: Debit to LE Account');
+                    $debit->setLoan($p->getLoan());
+
+                    $em->persist($debit);
+                    $em->flush($debit);
+
+                }
+
             } else {
                 foreach ($paymentService->errors AS $e) {
                     $this->addFlash('error', $e);

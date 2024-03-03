@@ -95,7 +95,10 @@ class SettingsReservationsController extends Controller
         $shippingItemName = '';
         if ($shippingItemId = $this->settings->getSettingValue('postal_shipping_item')) {
             $shippingItem = $itemService->find($shippingItemId);
-            $shippingItemName = $shippingItem->getName();
+
+            if ($shippingItem) {
+                $shippingItemName = $shippingItem->getName();
+            }
         }
 
         return $this->render('settings/settings_reservations.html.twig', array(

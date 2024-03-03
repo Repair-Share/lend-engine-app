@@ -155,6 +155,13 @@ class Contact extends BaseUser
     /**
      * @var string
      *
+     * @ORM\Column(name="geocodedString", type="string", nullable=true)
+     */
+    private $geocodedString;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="gender", type="string", length=1, nullable=true)
      */
     private $gender;
@@ -284,6 +291,18 @@ class Contact extends BaseUser
      * @ORM\Column(name="subscriber", type="boolean")
      */
     private $subscriber = false;
+
+    /**
+     * @var boolean
+     * @ORM\Column(name="prevent_borrowing", type="boolean")
+     */
+    private $preventBorrowing = false;
+
+    /**
+     * @var boolean
+     * @ORM\Column(name="charge_reservation_fee", type="boolean")
+     */
+    private $chargeReservationFee = true;
 
     public function __construct()
     {
@@ -948,6 +967,48 @@ class Contact extends BaseUser
     }
 
     /**
+     * @return boolean
+     */
+    public function getPreventBorrowing()
+    {
+        return $this->preventBorrowing;
+    }
+
+    /**
+     * @param $preventBorrowing
+     * @return $this
+     */
+    public function setPreventBorrowing($preventBorrowing)
+    {
+        $this->preventBorrowing = $preventBorrowing;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getChargeReservationFee()
+    {
+        if ($this->chargeReservationFee !== false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $chargeReservationFee
+     * @return $this
+     */
+    public function setChargeReservationFee($chargeReservationFee)
+    {
+        $this->chargeReservationFee = $chargeReservationFee;
+
+        return $this;
+    }
+
+    /**
      * @return float
      */
     public function getBalance()
@@ -1151,6 +1212,30 @@ class Contact extends BaseUser
     public function getLongitude()
     {
         return $this->longitude;
+    }
+
+    /**
+     * Set geocodedString
+     *
+     * @param string $geocodedString
+     *
+     * @return Contact
+     */
+    public function setGetGeocodedString($geocodedString)
+    {
+        $this->geocodedString = $geocodedString;
+
+        return $this;
+    }
+
+    /**
+     * Get geocodedString
+     *
+     * @return string
+     */
+    public function getGeocodedString()
+    {
+        return $this->geocodedString;
     }
 
     /**

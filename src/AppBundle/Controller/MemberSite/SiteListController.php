@@ -22,17 +22,32 @@ class SiteListController extends Controller
      */
     public function publicSiteListAction(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
+
         /** @var $waitingListRepo \AppBundle\Repository\SiteRepository */
         $siteRepo = $this->getDoctrine()->getRepository('AppBundle:Site');
         $sites = $siteRepo->findAll();
 
-        foreach ($sites AS $site) {
+        foreach ($sites as $site) {
+
+            // Time to look up the address
+            if ((!$site->getLng() || !$site->getLat()) && !$site->getGeocodedString()) {
+
+                $site->geoCodeAddress();
+
+                $em->persist($site);
+                $em->flush();
+
+            }
+
             /** @var $site \AppBundle\Entity\Site */
             $site->setAddress(preg_replace('/\s+/', ' ', $site->getAddress()));
+
         }
 
         return $this->render('member_site/pages/sites.html.twig', [
-            'sites' => $sites
+            'sites'  => $sites,
+            'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY_JS'))
         ]);
     }
 

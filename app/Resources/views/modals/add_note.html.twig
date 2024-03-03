@@ -6,7 +6,7 @@
 
 {% block modalBody %}
 
-    <form method="POST" action="{{ path('add_note') }}">
+    <form method="POST" action="{{ path('add_note') }}" onsubmit="return submitForm()">
 
     <input type="hidden" name="contactId" value="{{ app.request.get('contactId') }}">
     <input type="hidden" name="loanId" value="{{ app.request.get('loanId') }}">
@@ -14,14 +14,41 @@
 
     <div class="row">
         <div class="col-md-12">
+            {% if flag == 'preventBorrowing' %}
+                <div class="form-group">
+                    <label for="preventBorrowingNo" style="margin-right: 1em;">
+                        <input type="radio"
+                               name="preventBorrowing"
+                               id="preventBorrowingNo"
+                               value="2"
+                               {% if preventBorrowing == false %}checked{% endif %}
+                        > Allow borrowing
+                    </label>
+                    <label for="preventBorrowingYes">
+                        <input type="radio"
+                               name="preventBorrowing"
+                               id="preventBorrowingYes"
+                               value="1"
+                               {% if preventBorrowing == true %}checked{% endif %}
+                        > Prevent borrowing
+                    </label>
+                </div>
+            {% endif %}
             <div class="form-group">
-                <textarea name="note_text" id="note_text" rows="6" class=form-control></textarea>
+                <textarea name="note_text"
+                          id="note_text"
+                          rows="6"
+                          class=form-control
+                          placeholder="{% if flag == 'preventBorrowing' %}Reason to change the flag{% endif %}"
+                ></textarea>
             </div>
-            <div class="form-group" {% if is_granted('ROLE_SUPER_USER') != true %}style="display:none"{% endif %}>
-                <label>
-                    <input type="checkbox" name="adminOnly" value="1"> Show only for administrators
-                </label>
-            </div>
+            {% if flag != 'preventBorrowing' %}
+                <div class="form-group" {% if is_granted('ROLE_SUPER_USER') != true %}style="display:none"{% endif %}>
+                    <label>
+                        <input type="checkbox" name="adminOnly" value="1"> Show only for administrators
+                    </label>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -34,6 +61,28 @@
     <button class="modal-submit btn bg-green">Add note</button>
 
     <script>
+        function submitForm()
+        {
+            {% if flag == 'preventBorrowing' %}
+            if (!$('#note_text').val()) {
+
+                window.setTimeout(function () {
+                    $('#spinner').remove();
+                    $('.modal-submit.btn')
+                        .attr('disabled', false)
+                        .addClass('bg-green')
+                    ;
+                }, 100);
+
+                alert('Please provide the reason to change the borrowing flag!');
+
+                return false;
+            }
+            {% endif %}
+
+            return true;
+        }
+
         $(document).ready(function () {
             setUpSelectMenus();
         });

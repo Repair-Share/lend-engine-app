@@ -1,10 +1,10 @@
 # Loco yaml export: Simple YAML object
 # Project: Lend Engine
 # Release: Working copy
-# Locale: sl-SI, Slovenian (Slovenia)
+# Locale: sl-SI, Slovenščina (Slovenia)
 # Tagged: Member site
 # Exported by: Andor Tamas
-# Exported at: Mon, 26 Apr 2021 11:52:20 +0200
+# Exported at: Mon, 28 Feb 2022 16:01:52 +0100
 ---
 Loan: Izposoja
 Loans: Izposoje
@@ -135,7 +135,7 @@ public_basket.total: Skupaj
 public_basket.balance: Dolg
 public_basket.no_items: V košarici ni predmetov. Poiščite predmet in ga dodajte.
 public_basket.full_charge: bo zaračunano vašemu uporabniškemu računu.
-public_basket.delay_charge: 'morate plačati sedaj, ob prevzemu pa še: '
+public_basket.delay_charge: 'morate plačati sedaj, ob prevzemu pa še:'
 public_loan.title: Izposoja
 public_user_menu.contact_info: Profil
 text_borrow_with_membership: Kot uporabnik pridobite možnost rezervacije in izposoje tega predmeta. Obiščite "Moj račun" za ogled možnosti.
@@ -217,4 +217,25 @@ events.check_in_help: S potrditvijo udeležbe postanete udeleženec dogodka (bre
 events.contact_us_to_book: Kontaktirajte nas za rezervacijo
 events.not_bookable: Ta dogodek ne omogoča rezervacije.
 events.log_in_to_book: Prijavite se za rezervacijo
+public_misc.search: Iskanje
+public_item.stock_item: Predmet na voljo
+public_item.service_item: Storitev
+public_item.each: vsak
+public_item.alert_click_time_slot: Izberite časovno okno
+public_basket.button_checkout: Potrdi
+public_basket.shipping: Pošiljanje
+public_basket.remove_stock_items: Če želite rezervirati izposojen predmet, najprej iz košarice odstranite predmete, ki so na voljo.
+shipping.title: Dostava
+shipping.per_item: na kos
+shipping.per_loan: na izposojo
+shipping.collect: Prevzemno mesto
+shipping.post: Dostava / pošiljanje
+shipping.ship_to: Predmeti bodo dostavljeni na
+shipping.edit_address: Posodobi naslov
+shipping.delivery_options: Možnosti dostave
+public_loan.quantity: Količina
+public_add_credit.text_info: Znesek bo dodan na vaš račun.
+public_registration.login_page_new_account: Registracija (nov račun)
+public_registration.check_email_title: Prosimo, preverite vašo elektronsko pošto.
+public_registration.check_email_body: Prejeli ste elektronsko sporočilo s povezavo za dokončanje registracije.
 ...

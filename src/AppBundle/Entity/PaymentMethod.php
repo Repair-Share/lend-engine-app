@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PaymentMethod
 {
+    const PAYMENT_METHOD_DEBIT_ACCOUNT = 'Debit LE account';
+
     /**
      * @var integer
      *
@@ -91,5 +93,18 @@ class PaymentMethod
     public function getIsActive()
     {
         return $this->isActive;
+    }
+
+    /**
+     * Get the debug array
+     *
+     * @return array
+     */
+    public function getDebug()
+    {
+        return [
+            'id'   => $this->getId(),
+            'name' => $this->getName()
+        ];
     }
 }

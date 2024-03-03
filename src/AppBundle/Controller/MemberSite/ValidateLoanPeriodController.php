@@ -61,7 +61,7 @@ class ValidateLoanPeriodController extends Controller
         // Includes any buffer period added
         /** @var \AppBundle\Services\Loan\CheckoutService $checkoutService */
         $checkoutService = $this->get("service.checkout");
-        if ($checkoutService->isItemReserved($item, $timeFrom, $timeTo, $loanId)) {
+        if ($checkoutService->isItemReserved($item, $timeFrom, $timeTo, $loanId, $this->getUser())) {
             $errors = [];
             foreach ($checkoutService->errors AS $error) {
                 $errors[] = $error;

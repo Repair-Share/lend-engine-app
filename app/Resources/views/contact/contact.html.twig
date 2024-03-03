@@ -11,7 +11,8 @@
 {% endblock %}
 
 {% block pageCss %}
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>
+    {% if tenantInformation.isMapsAllowed %}
+    {{ include('partials/google-maps.html.twig', {initMapElement: false}) }}
     <script type="text/javascript">
         function getLatLong() {
             var geocoder = new google.maps.Geocoder();
@@ -32,6 +33,7 @@
             });
         }
     </script>
+    {% endif %}
 {% endblock %}
 {% block body %}
 
@@ -211,10 +213,12 @@
             });
         }
 
-        $("#tab_1").on('change', "#contact_addressLine1, #contact_addressLine2, #contact_addressLine3, #contact_addressLine4", function() {
-            console.log("Getting location from Google ...");
-            getLatLong();
-        });
+        {% if tenantInformation.isMapsAllowed %}
+            $("#tab_1").on('change', "#contact_addressLine1, #contact_addressLine2, #contact_addressLine3, #contact_addressLine4", function() {
+                console.log("Getting location from Google ...");
+                getLatLong();
+            });
+        {% endif %}
 
     </script>
 {% endblock %}

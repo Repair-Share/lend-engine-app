@@ -3,10 +3,11 @@
 # Release: Working copy
 # Locale: nl-NL, Dutch (Netherlands)
 # Tagged: FOSUserBundle
-# Exported by: Chris
-# Exported at: Wed, 23 May 2018 10:18:27 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 15:53:27 +0100
 ---
-group.edit.submit: Groep bijwerken
+group.edit.submit: |
+  Groep bijwerken
 group.show.name: Naam groep
 group.new.submit: Maak groep aan
 group.flash.updated: De groep werd bijgewerkt
@@ -23,7 +24,7 @@ profile.show.email: Email
 profile.edit.submit: Bijwerken
 profile.flash.updated: Uw profiel werd bijgewerkt
 change_password.submit: Wijzig wachtwoord
-change_password.flash.success: Uw wachtwoord werd gewijzigd
+change_password.flash.success: Uw wachtwoord is gewijzigd
 registration.check_email: '... ga naar uw inbox en kijk of het er is.'
 registration.confirmed: Uw account is geactiveerd en u bent ingelogd!
 registration.back: Verdergaan
@@ -35,13 +36,13 @@ registration.email.message: |-
   %confirmationUrl%
 resetting.password_already_requested: Het wachtwoord voor deze gebruiker werd al opgevraagd in de laatste 24 uur.
 resetting.check_email: |-
-  Er werd een mail verstuurd. Deze bevat een link waarop u moet klikken om uw wachtwoord opnieuw in te stellen.
-  Als u geen mail ontvangt, controleer uw spamfolder of wacht 5 minuten en probeer het opnieuw.
+  Er is een mail verstuurd. Deze bevat een link waarop u moet klikken om uw wachtwoord opnieuw in te stellen.
+  Als u geen mail heeft ontvangen, controleer uw spamfolder of wacht 5 minuten en probeer het opnieuw.
 resetting.request.invalid_username: De gebruikersnaam of het mailadres "% username%" bestaat niet.
 resetting.request.username: 'Gebruikersnaam of mailadres:'
 resetting.request.submit: Stel wachtwoord opnieuw in
 resetting.reset.submit: Wijzig wachtwoord
-resetting.flash.success: Het wachtwoord werd succesvol hernieuwd
+resetting.flash.success: Het wachtwoord werd succesvol vernieuwd
 resetting.email.subject: Stel wachtwoord opnieuw in
 resetting.email.message: |
   <br>
@@ -58,4 +59,6 @@ form.password: 'Wachtwoord:'
 form.password_confirmation: 'Herhaal wachtwoord:'
 form.new_password: Nieuw wachtwoord
 form.new_password_confirmation: 'Herhaal nieuw wachtwoord:'
-security.login.forgot_password: ""
+security.login.forgot_password: Ik ben mijn wachtwoord vergeten
+security.login.email: E-mail adres
+...

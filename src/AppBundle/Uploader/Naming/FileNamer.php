@@ -23,7 +23,7 @@ class FileNamer implements NamerInterface
      */
     public function name(FileInterface $file)
     {
-        $directory = $this->settings->getTenant()->getDbSchema();
+        $directory = $this->settings->getTenant(false)->getDbSchema();
         $newFileName = strtolower(trim($file->getClientOriginalName()));
         $newFileName = str_replace(' ', '-', $newFileName);
         $newFileName = preg_replace('/[^0-9a-zA-Z\-\.\d\s:]/', '', $newFileName);

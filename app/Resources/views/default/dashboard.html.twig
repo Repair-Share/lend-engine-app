@@ -1,57 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{% block pageCss %}
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>
-    <script type="text/javascript">
-
-        function add_markers() {
-
-            var geocoder = new google.maps.Geocoder();
-            var marker;
-
-            geocoder.geocode({'address': '{{ tenantInformation.orgPostcode }}, {{ tenantInformation.country }}'}, function(results, status)
-            {
-                if (status == google.maps.GeocoderStatus.OK) {
-
-                    var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
-                    var mapOptions = {
-                        zoom: 12,
-                        center: _position
-                    };
-                    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-
-                    {% for location in contactLocations %}
-                    addMarker(map, {{ location.lat }}, {{ location.lng }});
-                    {% endfor %}
-                } else {
-                    console.log(status);
-                }
-            });
-
-            function addMarker(map, lat, long) {
-                var position = {lat: lat, lng: long};
-                console.log(position);
-                marker = new google.maps.Marker({
-                    position: position,
-                    map: map,
-                    icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 6,
-                        strokeColor: '#CC0000',
-                        strokeWeight: 1,
-                        fillColor: '#CC0000',
-                        fillOpacity: 0.2
-                    }
-                });
-            }
-        }
-
-        window.onload = function() {
-            add_markers();
-        }
-    </script>
-{% endblock %}
-
 {% block pageTitle %}Dashboard{% endblock %}
 
 {% block body %}
@@ -217,6 +165,7 @@
         </div>
     </div>
 
+    {% if tenantInformation.isMapsAllowed %}
     <div class="row">
         <div class="col-md-12">
             <style type="text/css">
@@ -224,12 +173,70 @@
                 {
                     height:350px;
                     width:100%;
-                    display:block;
+                    display:none;
                 }
             </style>
+            <div id="maps-display">
+                <h4>Contact Map</h4>
+                <p>
+                    <button type="button"
+                            class="btn btn-default"
+                            data-dismiss="modal"
+                            onclick="displayMap()"
+                    >Display the map</button>
+                </p>
+            </div>
             <div id="map"></div>
         </div>
     </div>
+
+    {{ include('partials/google-maps.html.twig', {initMapElement: true}) }}
+    <script type="text/javascript">
+        function add_markers() {
+            map.setZoom(12);
+            map.setCenter({
+                lat: {{ tenantLat }},
+                lng: {{ tenantLng }}
+            });
+
+            {% for location in contactLocations %}
+            addMarker(map, {{ location.lat }}, {{ location.lng }});
+            {% endfor %}
+
+            function addMarker(map, lat, long) {
+                var position = {lat: lat, lng: long};
+                console.log(position);
+                marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 6,
+                        strokeColor: '#CC0000',
+                        strokeWeight: 1,
+                        fillColor: '#CC0000',
+                        fillOpacity: 0.2
+                    }
+                });
+            }
+        }
+
+        function displayMap()
+        {
+            $('#map').show();
+            $('#maps-display').hide();
+
+            window.scrollTo(0, window.outerHeight);
+
+            initMap();
+
+            window.setTimeout(() => {
+                add_markers();
+            }, 1000)
+        }
+
+    </script>
+    {% endif %}
 
 {% endblock %}
 

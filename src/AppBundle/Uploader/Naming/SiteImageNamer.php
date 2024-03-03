@@ -24,7 +24,7 @@ class SiteImageNamer implements NamerInterface
      */
     public function name(FileInterface $file)
     {
-        $directory = $this->settings->getTenant()->getDbSchema();
+        $directory = $this->settings->getTenant(false)->getDbSchema();
         return $directory.'/site_images/'.uniqid().'-'.$file->getClientOriginalName();
     }
 }

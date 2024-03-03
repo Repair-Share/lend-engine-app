@@ -103,14 +103,49 @@ class ItemService
             $builder->andWhere('item.name = :string');
             $builder->setParameter('string', trim($filter['search']));
         } else if (isset($filter['search']) && $filter['search']) {
-            $builder->andWhere('item.name LIKE :string
-                    OR item.sku LIKE :string
-                    OR item.id = :exact
-                    OR item.serial LIKE :string
-                    OR item.brand LIKE :string
-                    OR item.keywords LIKE :string');
-            $builder->setParameter('string', '%'.trim($filter['search']).'%');
-            $builder->setParameter('exact', trim($filter['search']));
+
+            $searchTerms = $this->container->get('settings')->getSettingValue('search_terms');
+
+            if ($searchTerms === '0') {
+                $searchOperator = 'AND';
+            } else {
+                $searchOperator = 'OR';
+            }
+
+            $words = explode(' ', $filter['search']);
+
+            $where = '';
+
+            for ($i = 0; $i < sizeof($words); $i++) {
+
+                $word = $words[$i];
+
+                if (!trim($word)) {
+                    continue;
+                }
+
+                if ($where && $i > 0) {
+                    $where .= ' ' . $searchOperator . ' ';
+                }
+
+                $where .= "(
+                        item.name LIKE :string{$i}
+                        OR item.sku LIKE :string{$i}
+                        OR item.id = :exact{$i}
+                        OR item.serial LIKE :string{$i}
+                        OR item.brand LIKE :string{$i}
+                        OR item.keywords LIKE :string{$i}
+                    )";
+
+                $builder->setParameter('string' . $i, '%' . trim($word) . '%');
+                $builder->setParameter('exact' . $i, trim($word));
+
+            }
+
+            if ($where) {
+                $builder->andWhere($where);
+            }
+
         }
 
         if (isset($filter['barcode']) && $filter['barcode']) {

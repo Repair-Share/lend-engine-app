@@ -15,6 +15,11 @@
     #calendar { display:none }
     #calendar-key { display:none }
     {% endif %}
+    #modalWait {
+        width: 100%;
+        height: 100%;
+        padding: 50px;
+    }
 </style>
 
     <div class="row" id="item-title">
@@ -120,7 +125,15 @@
         var dailyFee = {{ dailyFee|number_format(6) }};
         var itemFee = {{ itemFee|number_format(6) }};
         var fixedFeePricing = "{{ tenantInformation.fixedFeePricing }}";
+        var basketQuickAdd = "{{ tenantInformation.setting('basket_quick_add') }}";
         var bufferHours = {{ tenantInformation.setting('reservation_buffer')|number_format(0) }};
+
+        {% if is_granted("ROLE_SUPER_USER") or is_granted("ROLE_ADMIN") %}
+            var bufferHoursOverride = {{ tenantInformation.setting('reservation_buffer_override')|number_format(0) }};
+        {% else %}
+            var bufferHoursOverride = false;
+        {% endif %}
+
         var itemType = "{{ product.itemType }}";
         var itemLocationIsAvailable = "{{ product.inventoryLocation.isAvailable }}";
 
@@ -143,6 +156,7 @@
         var basketPickupTime, basketReturnTime, basketSiteFromId, basketSiteFromName;
         var page = $("#productMain");
         var borrowModal = $("#borrowModal");
+        var waitModal   = $("#waitModal");
         var extendModal = $("#extendModal");
         var bookings = [];
         var loanUrl = "{{ path('public_loan', {loanId: 99}) }}";
@@ -158,6 +172,7 @@
         var openingTimesByDate = [];
         var closingTimesByDate = [];
 
+        var alertClash = false;
 
         $(document).ready(function() {
 
@@ -231,13 +246,13 @@
                     right:  'prev,next'
                 },
                 dateClick: function(info) {
-
                     {% if product.isReservable %}
 
                     if (currentUserId) {
                         if (sitesLoaded == false) {
                             loadSiteOpeningTimes();
                             borrowModal.modal();
+                            showModalContentForManualBooking();
                         } else {
                             alert("{% trans %}public_item.alert_click_time_slot{% endtrans %}");
                         }
@@ -306,6 +321,7 @@
                 viewRender: function() {
                     if (basketPickupTime) {
                         // User has a basket
+                        console.log("Rendering cal");
                         setPickup(basketPickupTime, null, null, basketSiteFromId, basketSiteFromName);
                     }
                 },
@@ -343,7 +359,9 @@
                     } else{
                         // loaded, render a preset pickup time
                         if (basketPickupTime) {
-                            setPickup(basketPickupTime, null, null, basketSiteFromId, basketSiteFromName);
+                            console.log("Cal loaded");
+                            setPickup(basketPickupTime, null, null, basketSiteFromId, basketSiteFromName, true, false, alertClash);
+                            alertClash = true;
                         }
                     }
                 }
@@ -383,8 +401,14 @@
             });
 
             page.on('click', '.button-borrow', function(event) {
-                loadSiteOpeningTimes();
                 borrowModal.modal();
+                if (hasBasket == 1) {
+                    $("#modalContent").hide();
+                    $("#modalWait").show();
+                } else {
+                    showModalContentForManualBooking();
+                }
+                loadSiteOpeningTimes();
             });
 
             borrowModal.on('click', '.borrowModalCancel', function () {
@@ -508,6 +532,7 @@
                 }
             }
 
+            // Prepare the underlying page for interaction when modal closes
             function loadSiteOpeningTimes() {
                 sitesLoaded = true;
                 addSitesToCal();
@@ -561,6 +586,12 @@
 
                 if (calendarMode == 'extend') {
 
+                    let eventEndOriginal = eventEnd;
+
+                    if (calEvent.extendedProps.changeover) { // Use changeover on extending (it it has)
+                        eventEnd = moment(calEvent.extendedProps.changeover);
+                    }
+
                     console.log("Extending a loan");
                     if (!validateBookingPeriod(eventStart, eventEnd, siteId)) {
                         return false;
@@ -584,8 +615,8 @@
                     $(".extend_days").html(days);
 
                     // Set the valid times on the time picker, if we are setting pickup from a time slot
-                    if (eventStart && eventEnd) {
-                        newTimeToPicker.timepicker('option', { 'minTime': eventStart.format("h:mma"), 'maxTime': eventEnd.format("h:mma") });
+                    if (eventStart && eventEndOriginal) {
+                        newTimeToPicker.timepicker('option', { 'minTime': eventStart.format("h:mma"), 'maxTime': eventEndOriginal.format("h:mma") });
                     }
 
                     if (dailyFee > 0) {
@@ -649,6 +680,7 @@
                 // Return site ID could be different than pick up siteID, therefore check only the return time with
                 // the return site ID
                 if (!validateBookingPeriod(null, selectedTime, siteId)) {
+                    showModalContentForManualBooking();
                     return false;
                 }
 
@@ -728,17 +760,38 @@
                 $("#chooseReturnButton").hide();
                 $(".borrow-modal-confirm").show();
 
+                console.log("Auto-add ready");
+                if (basketQuickAdd == 1 && hasBasket == 1) {
+                    $("#borrowModalConfirm").click(); // click the hidden button
+                } else {
+                    showModalContentForManualBooking();
+                }
+
             }
 
-            function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName, autoSetReturn, changeOver) {
+            function setPickup(selectedTime, clickedSlotFrom, clickedSlotTo, siteId, siteName, autoSetReturn, changeOver, alertClash) {
 
                 console.log("Setting pickup time to "+selectedTime.format("YYYY-MM-DD HH:mm"));
                 $("#booking-help").show();
 
+                if (typeof alertClash === 'undefined') {
+                    alertClash = false;
+                }
+
                 if (!validatePickupDate(selectedTime)) {
-                    $("#button-borrow").remove();
-                    alert(text_clash_date);
-                    return false;
+
+                    if (bufferHoursOverride) { // Alert, but allow
+
+                        if (alertClash) {
+                            alert(text_clash_date);
+                        }
+
+                    } else {
+                        alert(text_clash_date);
+                        $("#button-borrow").remove();
+                        return false;
+                    }
+
                 }
 
                 if (!validatePickupSite(siteId)) {
@@ -775,7 +828,6 @@
                 var pickupCell = $(".fc-bg").find("[data-date='"+selectedTime.format("YYYY-MM-DD")+"']");
                 pickupCell.html('<div class="label label-xs label-default pickup-day">'+text_pickup_day+'</div>');
 
-
                 var returnTime;
                 if (basketPickupTime) {
                     autoSetReturn = true;
@@ -802,10 +854,13 @@
                 if (selectedTime && itemLoanDays > 1 && autoSetReturn == true) {
                     if (!isValidBookingTime(returnTime, siteId)) {
                         console.log("Cannot auto-set end date as there is no opening hour slot for T+"+itemLoanDays);
+                        showModalContentForManualBooking();
                     } else {
                         console.log("Auto-setting return time based on item loan period.");
                         setReturn(returnTime, null, null, siteId, siteName, false);
                     }
+                } else {
+                    console.log("Not setting return");
                 }
             }
 
@@ -1066,6 +1121,7 @@
 
             // Used for selectAllow logic (create greyed-out days outside of site hours)
             function setBookableDays(events) {
+                console.log("Setting bookable days");
                 var date;
 
                 // remove all existing greyed out events
@@ -1140,6 +1196,11 @@
             pickupCell.css('backgroundColor', '#d9edf7');
             pickupCell.html('<div style="padding: 5px; font-size: 10px;">Due back</div>');
             {% endif %}
+
+            function showModalContentForManualBooking() {
+                $("#modalWait").hide();
+                $("#modalContent").show();
+            }
 
         });
     </script>

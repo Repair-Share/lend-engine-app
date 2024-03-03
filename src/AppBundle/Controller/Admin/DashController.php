@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Entity\Setting;
+use AppBundle\Helpers\GoogleMaps;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,12 +20,14 @@ class DashController extends Controller
 
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
-        $tenant = $settingsService->getTenant();
+        $tenant = $settingsService->getTenant(false);
 
         // Update Core (_core DB)
         $settingsService->updateCore($tenant->getStub());
 
         /** END UPDATE OF CORE */
+
+        $em = $this->getDoctrine()->getManager();
 
         /** @var \AppBundle\Repository\ContactRepository $contactRepo */
         $contactRepo = $this->getDoctrine()->getRepository('AppBundle:Contact');
@@ -36,7 +40,7 @@ class DashController extends Controller
             'pending'   => $loanService->countLoans('PENDING'),
             'active'    => $loanService->countLoans('ACTIVE'),
             'overdue'   => $loanService->countLoans('OVERDUE'),
-            'closed'    => $loanService->countLoans('CLOSED'),
+            //'closed'    => $loanService->countLoans('CLOSED'),
             'reserved'  => $loanService->countLoans('RESERVED'),
         ];
 
@@ -54,6 +58,57 @@ class DashController extends Controller
                     'lng' => $contact->getLongitude()
                 ];
             }
+        }
+
+        // Get the tenant geocodes
+        $tenantLat = $tenantLng = 0;
+        if ($this->get('settings')->getSettingValue('org_postcode') && $this->get('settings')->getSettingValue('org_country')) {
+
+            $geo = GoogleMaps::geocodeAddress(
+                null,
+                $this->get('settings')->getSettingValue('org_postcode'),
+                $this->get('settings')->getSettingValue('org_country'),
+                $this->get('settings')->getSettingValue('org_lookedUpAddress')
+            );
+
+            if ($geo) { // New lat and lng details
+
+                $settingRepo = $em->getRepository('AppBundle:Setting');
+
+                foreach (['org_lookedUpAddress', 'org_lat', 'org_long'] as $setupKey) {
+
+                    if (!$setting = $settingRepo->findOneBy(['setupKey' => $setupKey])) {
+                        $setting = new Setting();
+                        $setting->setSetupKey($setupKey);
+                    }
+
+                    switch ($setupKey) {
+                        case 'org_lookedUpAddress':
+                            $setting->setSetupValue($geo['lookedUpAddress']);
+                            break;
+                        case 'org_lat':
+                            $setting->setSetupValue($geo['lat']);
+                            break;
+                        case 'org_long':
+                            $setting->setSetupValue($geo['lng']);
+                            break;
+                    }
+
+                    $em->persist($setting);
+                    $em->flush();
+
+                }
+
+                $tenantLat = $geo['lat'];
+                $tenantLng = $geo['lng'];
+
+            } else {
+
+                $tenantLat = $this->get('settings')->getSettingValue('org_lat');
+                $tenantLng = $this->get('settings')->getSettingValue('org_long');
+
+            }
+
         }
 
         // Get data for the dashboard charts
@@ -186,7 +241,10 @@ class DashController extends Controller
             'eventFeesByMonth' => implode(',', $eventFeesByMonth),
             'otherFeesByMonth' => implode(',', $otherFeesByMonth),
             'isMultiSite' => $isMultiSite,
-            'activeSite' => $activeSite
+            'activeSite' => $activeSite,
+            'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY_JS')),
+            'tenantLat' => $tenantLat,
+            'tenantLng' => $tenantLng
         ));
     }
 }

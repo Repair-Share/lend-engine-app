@@ -91,7 +91,7 @@
                     {% if tenantInformation.fixedFeePricing %}
                         {% trans %}per_borrow{% endtrans %}
                     {% else %}
-                        {% if product.maxLoanDays == 1 %}
+                        {% if product.maxLoanDays <= 1 %}
                             {% trans %}per_day{% endtrans %}
                         {% else %}
                             {% trans with {'%count%': product.maxLoanDays } %}per_n_days{% endtrans %}

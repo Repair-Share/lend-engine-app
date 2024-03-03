@@ -5,6 +5,7 @@ namespace AppBundle\Services\Loan;
 use AppBundle\Entity\Loan;
 use AppBundle\Entity\Note;
 use AppBundle\Entity\Payment;
+use AppBundle\Helpers\DateTimeHelper;
 use AppBundle\Services\SettingsService;
 use AppBundle\Services\TenantService;
 use Doctrine\ORM\EntityManager;
@@ -162,24 +163,20 @@ class LoanService
      */
     public function countLoans($status = '', \DateTime $dateTo = null)
     {
-        $repository = $this->em->getRepository('AppBundle:Loan');
-        $builder = $repository->createQueryBuilder('l');
-        $builder->add('select', 'COUNT(l) AS qty');
-        if ($status) {
-            $builder->andWhere('l.status LIKE :status');
-            $builder->setParameter('status', '%'.$status.'%');
-        }
-        if ($dateTo) {
-            $builder->andWhere("l.createdAt < :dateTo");
-            $builder->setParameter('dateTo', $dateTo->format("Y-m-01"));
-        }
-        $query = $builder->getQuery();
-        if ( $results = $query->getResult() ) {
-            $total = $results[0]['qty'];
-        } else {
-            $total = 0;
-        }
-        return $total;
+        /** @var $repo \AppBundle\Repository\LoanRowRepository */
+        $repo = $this->em->getRepository('AppBundle:LoanRow');
+
+        $tz = $this->settings->getSettingValue('org_timezone');
+
+        $filter = [
+            'status'            => $status,
+            'excludeStockItems' => true
+        ];
+
+        // Use the same repo search like on the admin list
+        $loanData = $repo->search(0, null, $filter, null, $tz, true);
+
+        return $loanData['totalResults'];
     }
 
     /**

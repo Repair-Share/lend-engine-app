@@ -5,7 +5,29 @@
     {{ include('member_site/themes/widgets/account_menu.html.twig') }}
 {% endblock %}
 
-{% block pageCss %}{% endblock %}
+{% block pageCss %}
+<style>
+    @media(max-width:767px){
+        .fixed-footer {
+            background-color: #fff;
+            border-top: 1px solid #aaa;
+            bottom: 0;
+            box-sizing: border-box;
+            height: 60px;
+            padding: 10px;
+            position: fixed;
+            right: 0;
+            width: 100%;
+            z-index: 99999;
+        }
+    }
+    @media(min-width:768px){
+        .fixed-footer {
+            padding-bottom: 10px;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block body %}
 
@@ -153,35 +175,41 @@
                             <button type="button" class="btn btn-success" id="buttonSave" style="display:none">Save changes</button>
                         {% endif %}
 
-                        {% if tenantInformation.selfCheckout %}
-                            <button type="button" class="btn btn-success hideOnFormChange" id="buttonCheckOut">
-                                {% trans %}public_basket.button_checkout{% endtrans %}
-                            </button>
+                        {% if basketContainsStockItems == true %}
+                            <div class="help-block">
+                                {% trans %}public_basket.remove_stock_items{% endtrans %}
+                            </div>
                         {% endif %}
 
-                        <div style="margin-top: 40px; border-top:1px solid #efefef; padding-top: 10px;">
+                        <div class="fixed-footer">
 
-                            {% if tenantInformation.basket.reservationFee > 0 %}
-                                {% trans %}note_reservation_fee{% endtrans %}
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    <input type="text" class="basket-amount fee-amount save-on-change" name="booking_fee" value="{{ tenantInformation.basket.reservationFee|number_format(2) }}">
-                                {% else %}
-                                    {{ tenantInformation.currencySymbol }} {{ tenantInformation.basket.reservationFee|number_format(2) }}
-                                    <input type="hidden" class="fee-amount" value="{{ tenantInformation.basket.reservationFee|number_format(2) }}">
-                                {% endif %}
+                            <a href="/products?show=recent" class="btn btn-default">
+                                {% trans %}public_basket.add_items{% endtrans %}
+                            </a>
+
+                            {% if tenantInformation.selfCheckout %}
+                                <button type="button" class="btn btn-success hideOnFormChange" id="buttonCheckOut">
+                                    {% trans %}public_basket.button_checkout{% endtrans %}
+                                </button>
                             {% endif %}
 
-                            {% if basketContainsStockItems == true %}
-                                <div class="help-block">
-                                    {% trans %}public_basket.remove_stock_items{% endtrans %}
-                                </div>
-                            {% else %}
+                            {% if basketContainsStockItems != true %}
                                 <button type="button" class="btn btn-success hideOnFormChange" style="margin-left: 20px;" id="buttonConfirm">
                                     {% trans %}public_basket.confirm_reservation{% endtrans %}
                                 </button>
                             {% endif %}
 
                         </div>
+
+                        {% if tenantInformation.basket.reservationFee > 0 %}
+                            {% trans %}note_reservation_fee{% endtrans %}
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <input type="text" class="basket-amount fee-amount save-on-change" name="booking_fee" value="{{ tenantInformation.basket.reservationFee|number_format(2) }}">
+                            {% else %}
+                                {{ tenantInformation.currencySymbol }} {{ tenantInformation.basket.reservationFee|number_format(2) }}
+                                <input type="hidden" class="fee-amount" value="{{ tenantInformation.basket.reservationFee|number_format(2) }}">
+                            {% endif %}
+                        {% endif %}
 
                         <button type="button" id="addCreditButton" class="btn btn-success" style="margin-top:10px; display:none">
                             {% trans %}button_add_credit{% endtrans %}
@@ -191,7 +219,7 @@
 
                 </div>
 
-                <div id="basket-account-balance" style="margin-top: 10px; padding-top: 10px; border-top:1px solid #efefef; text-align: right">
+                <div id="basket-account-balance" style="margin-top: 10px; padding-top: 10px; text-align: right">
                     {% trans %}public_item.account_balance_is{% endtrans %} {{ tenantInformation.currencySymbol }} {{ contactBalance|number_format(2) }}
 
                     {% if user.activeMembership.membershipType.creditLimit is not null %}

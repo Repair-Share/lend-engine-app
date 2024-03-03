@@ -69,6 +69,11 @@ class ItemController extends Controller
             return $this->redirectToRoute('home');
         }
 
+        if (!$security->isGranted('ROLE_ADMIN') && !$security->isGranted('ROLE_SUPER_USER') && !$product->getIsActive()) {
+            $this->addFlash("error", "Item with ID {$productId} is not available.");
+            return $this->redirectToRoute('home');
+        }
+
         // If browsing as someone else, use their prices
         $sessionUserId = $this->get('session')->get('sessionUserId');
         if ($sessionUserId && $this->getUser()->getId() != $sessionUserId) {
@@ -94,7 +99,11 @@ class ItemController extends Controller
         $loanPeriod = $itemLoanDays;
 
         // Pro-rate to get a DAILY fee which is used on the calendar for bookings
-        $dailyFee = round($itemFee / $itemLoanDays, 6);
+        $dailyFee = 0;
+        if ($itemLoanDays) {
+            $dailyFee = round($itemFee / $itemLoanDays, 6);
+        }
+
         $itemFee = round($itemFee, 2);
 
         $product->setLoanFee($itemFee);

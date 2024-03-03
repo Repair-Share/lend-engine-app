@@ -146,6 +146,18 @@ class Tenant
     private $notes;
 
     /**
+     * @var \DateTime
+     * @ORM\Column(name="migration_started", type="datetime", nullable=false)
+     */
+    private $migrationStarted;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(name="migration_completed", type="datetime", nullable=false)
+     */
+    private $migrationCompleted;
+
+    /**
      * @var
      */
     private $age;
@@ -593,6 +605,68 @@ class Tenant
         $this->schemaVersion = $version;
 
         return $this;
+    }
+
+    /**
+     * Set migrationStarted
+     *
+     * @param \DateTime $migrationStarted
+     *
+     * @return $this
+     */
+    public function setMigrationStarted($migrationStarted)
+    {
+        $this->migrationStarted = $migrationStarted;
+
+        return $this;
+    }
+
+    /**
+     * Get migrationStarted
+     *
+     * @return \DateTime
+     */
+    public function getMigrationStarted()
+    {
+        return $this->migrationStarted;
+    }
+
+    /**
+     * Set migrationCompleted
+     *
+     * @param \DateTime $migrationCompleted
+     *
+     * @return $this
+     */
+    public function setMigrationCompleted($migrationCompleted)
+    {
+        $this->migrationCompleted = $migrationCompleted;
+
+        return $this;
+    }
+
+    /**
+     * Get migrationCompleted
+     *
+     * @return \DateTime
+     */
+    public function getMigrationCompleted()
+    {
+        return $this->migrationCompleted;
+    }
+
+    /**
+     * Check that the migration is started but not completed yet
+     *
+     * @return bool
+     */
+    public function isMigrationInProgress()
+    {
+        if ($this->migrationStarted && !$this->migrationCompleted) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

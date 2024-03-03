@@ -3,8 +3,8 @@
 # Release: Working copy
 # Locale: ro-RO, Romanian (Romania)
 # Tagged: Member site
-# Exported by: Chris
-# Exported at: Tue, 25 Jul 2017 22:24:13 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 15:59:41 +0100
 ---
 Loan: Împrumută
 Loans: Împrumuturi
@@ -163,3 +163,4 @@ msg_success.basket_item_exists: este deja în coșul tău.
 msg_fail.general_fail: Ne pare rău însă a apărut o eroare. Te rugăm să încerci din nou sau să iei legătura cu noi.
 msg_fail.reservation_create: Ceva nu a funcționat bine, nu am putut să creem rezervarea.
 msg_fail.reservation_cancel: Nu am putut anula rezervarea. Te rugăm să ne contactezi.
+...

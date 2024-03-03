@@ -12,11 +12,11 @@
     {% endif %}
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-7">
             {{ form_row(form.date) }}
             <div id="date-container"></div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
             {{ form_row(form.type) }}
             <div class="row">
                 <div class="col-md-4">
@@ -37,6 +37,7 @@
                 </div>
             </div>
             {{ form_row(form.site) }}
+            {{ form_row(form.repeat) }}
         </div>
     </div>
 
@@ -54,8 +55,8 @@
             datePickerField.dateRangePicker({
                 format: 'ddd MMM D YYYY',
                 autoClose: true,
-                singleDate: true,
-                singleMonth: true,
+                singleDate: false,
+                singleMonth: false,
                 showShortcuts: false,
                 inline: true,
                 alwaysOpen: true,

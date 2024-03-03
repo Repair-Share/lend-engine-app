@@ -140,7 +140,7 @@ EOT;
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
 
-        $accountCode = $settingsService->getTenant()->getStub();
+        $accountCode = $settingsService->getTenant(false)->getStub();
 
         if ($id) {
             $site = $this->getDoctrine()->getRepository('AppBundle:Site')->find($id);
@@ -202,9 +202,16 @@ EOT;
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            if (!$settingsService->getSettingValue('forward_picking')) {
+                $site->setDefaultForwardPickLocation(null);
+            }
+
             if (!$id && isset($inventoryLocation)) {
                 $em->persist($inventoryLocation);
             }
+
+            $site->geocodeAddress();
+
             $em->persist($site);
             $em->flush();
             $this->addFlash('success', 'Site saved.');
@@ -268,6 +275,7 @@ EOT;
                 'subTitle' => '',
                 'site' => $site,
                 'form' => $form->createView(),
+                'forwardPicking' => (bool)$settingsService->getSettingValue('forward_picking')
             )
         );
 

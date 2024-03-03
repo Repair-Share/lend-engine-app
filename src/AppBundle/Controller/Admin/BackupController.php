@@ -54,7 +54,7 @@ class BackupController extends Controller
 
         /** @var \AppBundle\Services\SettingsService $settingsService */
         $settingsService = $this->get('settings');
-        $tenant = $settingsService->getTenant();
+        $tenant = $settingsService->getTenant(false);
 
         $dbname = $tenant->getDbSchema();
 

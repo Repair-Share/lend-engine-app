@@ -1,4 +1,11 @@
-# Group
+# Loco yaml export: Symfony YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: en-GB, English (UK)
+# Tagged: FOSUserBundle
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 13:51:45 +0100
+---
 group:
     edit:
         submit: Update group
@@ -10,20 +17,16 @@ group:
         updated: The group has been updated
         created: The group has been created
         deleted: The group has been deleted
-
-# Security
-"Invalid credentials." : Invalid username or password
-
+Invalid credentials:
+    "": Invalid username or password
 security:
     login:
-        username: "Username:"
-        email: "Email address:"
-        password: "Password:"
+        username: 'Username:'
+        password: 'Password:'
         remember_me: Remember me
         submit: Login
         forgot_password: I forgot my password
-
-# Profile
+        email: 'Email address:'
 profile:
     show:
         firstName: First name
@@ -33,36 +36,30 @@ profile:
         submit: Update
     flash:
         updated: Your profile has been updated
-
-# Password change
 change_password:
     submit: Change password
     flash:
         success: Your password has been changed
-
-# Registration
 registration:
-    check_email: Check your inbox and see if it's there.
+    check_email: '... pop along to your inbox and see if it''s there.'
     confirmed: Your account is activated and you're logged in!
     back: Continue...
     submit: Register
     flash:
-        user_created: Your account has been created.
+        user_created: An email has been sent to you. It contains an activation link you must click to activate your account.
     email:
         subject: Welcome!
         message: |
             To finish activating your account, please visit <br><br>
-            <a href="%confirmationUrl%">%confirmationUrl%</a>
-
-# Password resetting
+            %confirmationUrl%
 resetting:
     password_already_requested: The password for this user has already been requested within the last 24 hours.
     check_email: |
-            An email has been sent. It contains a link you must click to reset your password.
-            If you don't get an email, check your spam folder or wait 5 minutes and then try again.
+        An email has been sent. It contains a link you must click to reset your password.
+        If you don't get an email, check your spam folder or wait 5 minutes and then try again.
     request:
         invalid_username: The username or email address "%username%" does not exist.
-        username: "Username or email address:"
+        username: 'Username or email address:'
         submit: Reset password
     reset:
         submit: Change password
@@ -74,21 +71,17 @@ resetting:
             <br>
             To reset your password - please click the link below:<br><br>
             <a href="%confirmationUrl%">%confirmationUrl%</a>
-
-# Global strings
 layout:
     logout: Logout
     login: Login
     register: Register
     logged_in_as: Logged in as %username%
-
-# Form field labels
 form:
-    group_name: "Group name:"
-    username: "Username:"
-    email: "Email:"
-    current_password: "Current password:"
-    password: "Password:"
-    password_confirmation: "Repeat password:"
-    new_password: "New password:"
-    new_password_confirmation: "Repeat new password:"
+    group_name: 'Group name:'
+    username: 'Username:'
+    current_password: 'Current password:'
+    password: 'Password:'
+    password_confirmation: 'Repeat password:'
+    new_password: 'New password:'
+    new_password_confirmation: 'Repeat new password:'
+...

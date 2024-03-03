@@ -22,6 +22,20 @@ class SiteType extends AbstractType
 
         $this->em = $options['em'];
 
+        /** @var $repo \AppBundle\Repository\SettingRepository */
+        $repo =  $this->em->getRepository('AppBundle:Setting');
+
+        $forwardPicking = false;
+        if ($setting = $repo->findOneBy(['setupKey' => 'forward_picking'])) {
+
+            if ($setting->getSetupValue()) {
+                $forwardPicking = true;
+            }
+
+        }
+
+
+
         $site = $builder->getData();
 
         $builder->add('name', TextType::class, array(
@@ -91,6 +105,22 @@ class SiteType extends AbstractType
                     'data-help' => "When checking items back in from a loan, we'll set this option for you.",
                 )
             ));
+
+            if ($forwardPicking) {
+
+                $builder->add('default_forward_pick_location', EntityType::class, array(
+                    'label' => 'Default forward pick location',
+                    'class' => 'AppBundle:InventoryLocation',
+                    'choices' => $locations,
+                    'placeholder' => 'Not set',
+                    'choice_label' => 'nameWithSite',
+                    'required' => false,
+                    'attr' => array(
+                        'data-help' => "When forward picking is enabled you can set the forward picking location here",
+                    )
+                ));
+
+            }
         }
 
     }

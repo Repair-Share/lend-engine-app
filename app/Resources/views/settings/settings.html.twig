@@ -71,6 +71,7 @@
             {{ form_row(form.automate_email_reservation_reminder) }}
             {{ form_row(form.automate_email_membership) }}
             {{ form_row(form.automate_email_overdue_days) }}
+            {{ form_row(form.automate_email_overdue_until_loan_returned) }}
 
             <h2>Payment processing</h2>
 
@@ -117,6 +118,7 @@
                     {{ form_row(form.stripe_minimum_payment) }}
                     {{ form_row(form.stripe_use_saved_cards) }}
                     {{ form_row(form.stripe_fee) }}
+                    {{ form_row(form.pay_membership_at_pickup) }}
                 </div>
             </div>
 

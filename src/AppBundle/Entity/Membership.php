@@ -342,4 +342,127 @@ class Membership
     {
         return $this->payments;
     }
+
+    public function calculateStartAndExpiryDates()
+    {
+        $duration = $this->getMembershipType()->getDuration();
+
+        // Work out how many days left on the existing membership
+        // If it's a renewal (same type) and less than 14 days to run, set end date based on end of current membership
+        $calculateExpiryBasedOnCurrentExpiryDate = false;
+        if ($activeMembership = $this->getContact()->getActiveMembership()) {
+            $dateDiff = $activeMembership->getExpiresAt()->diff(new \DateTime());
+            if ($dateDiff->days < 14 && $activeMembership->getMembershipType() == $this->getMembershipType()) {
+                $calculateExpiryBasedOnCurrentExpiryDate = true;
+            }
+        }
+
+        // Always start from now
+        // The previous will be expired so this one will start early
+        $startsAt = new \DateTime();
+        if ($calculateExpiryBasedOnCurrentExpiryDate == true) {
+            // A renewal created before previous membership expires
+            $expiresAt = $activeMembership->getExpiresAt();
+        } else {
+            // A new subscription
+            $expiresAt = clone $startsAt;
+        }
+
+        $expiresAt->modify("+ {$duration} days");
+
+        $this->setStartsAt($startsAt);
+        $this->setExpiresAt($expiresAt);
+    }
+
+    public function subscribe(
+        $em,
+        $contact,
+        $user,
+        $paymentService,
+        $price,
+        $amountPaid,
+        $paymentId,
+        $paymentMethod = 0,
+        $paymentNote = ''
+    ) {
+        $flashBag = [];
+
+        $activeMembership = $contact->getActiveMembership();
+
+        // Switch the contact to this new membership
+        $contact->setActiveMembership($this);
+
+        // If there was a previous one, expire it prematurely
+        if ($activeMembership) {
+            $activeMembership->setStatus(Membership::SUBS_STATUS_EXPIRED);
+            $em->persist($activeMembership);
+        }
+
+        // update the contact and save everything
+        $em->persist($contact);
+        $em->flush();
+
+        $note = new Note();
+        $note->setContact($contact);
+        $note->setCreatedBy($user);
+        $note->setCreatedAt(new \DateTime());
+        $note->setText("Subscribed to " . $this->getMembershipType()->getName() . " membership.");
+        $em->persist($note);
+
+        if ($price > 0) {
+            // The membership fee
+            $charge = new Payment();
+            $charge->setAmount(-$price);
+            $charge->setContact($contact);
+            $charge->setCreatedBy($user);
+            $charge->setMembership($this);
+
+            if ($contact == $user) {
+                $charge->setNote("Membership fee (self serve).");
+            } else {
+                $charge->setNote("Membership fee.");
+            }
+
+            if (!$paymentService->create($charge)) {
+                foreach ($paymentService->errors as $error) {
+                    $flashBag[] = [
+                        'type' => 'error',
+                        'msg'  => $error
+                    ];
+                }
+            }
+        }
+
+        if ($amountPaid > 0) {
+            // The payment for the charge
+
+            if ($paymentId) {
+                // We've created a payment via Stripe payment intent, link it to the credit
+                $payments = $paymentService->get(['id' => $paymentId]);
+                $payment  = $payments[0];
+            } else {
+                // No existing payment exists
+                $payment = new Payment();
+            }
+
+            $payment->setCreatedBy($user);
+            $payment->setPaymentMethod($paymentMethod);
+            $payment->setAmount($amountPaid);
+            $paymentNote = Payment::TEXT_PAYMENT_RECEIVED . '. ' . $paymentNote;
+            $payment->setNote($paymentNote);
+            $payment->setContact($contact);
+            $payment->setMembership($this);
+
+            if (!$paymentService->create($payment)) {
+                foreach ($paymentService->errors as $error) {
+                    $flashBag[] = [
+                        'type' => 'error',
+                        'msg'  => $error
+                    ];
+                }
+            }
+        }
+
+        return $flashBag;
+    }
 }

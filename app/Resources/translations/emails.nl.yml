@@ -1,51 +1,72 @@
-# Loco yaml export: Simple YAML object
+# Loco yaml export: Symfony YAML object
 # Project: Lend Engine
 # Release: Working copy
 # Locale: nl-NL, Dutch (Netherlands)
 # Tagged: Emails
-# Status: Translated
-# Exported by: Chris
-# Exported at: Wed, 13 Jan 2021 00:52:42 +0000
+# Exported by: Andor Tamas
+# Exported at: Mon, 16 May 2022 13:47:54 +0200
 ---
-le_email.item_description: Beschrijving
-le_email.item_contains: Bevat
-le_email.see_attachment: Zie bijlage
-le_email.return_sites: Gelieve dit artikel terug te brengen naar de volgende locatie
-le_email.th_item: Artikel
-le_email.th_fee: Prijs
-le_email.th_due_back: Moet teruggebracht worden
-le_email.url: Aanmelding via URL
-le_email.email: E-mail
-le_email.password: Wachtwoord
-le_email.assign.title: Er werd u een artikel toegewezen
-le_email.assign.message: '%firstName%, het artikel "%itemName%" werd u toegewezen door %assignorName%.'
-le_email.assign.added_note: heeft ook een opmerking toegevoegd
-le_email.assign.all_items: Bekijk alle artikelen die u gereserveerd heeft
-le_email.assign.current_location: Huidige locatie
-le_email.checkout.subject: Informatie over uw lening
-le_email.checkout.title: Informatie over uw lening
-le_email.extend.subject: De inleverdatum van uw lening is bijgewerkt
-le_email.extend.title: We hebben de inleverdatum van een artikel gewijzigd
-le_email.extend.due_back: moet nu teruggebracht worden op
-le_email.reminder.subject: Het geleende artikel %loanId% moet morgen teruggebracht worden
-le_email.reminder.title: Uw artikel(en) moet(en) spoedig teruggebracht worden
-le_email.reservation_reminder.subject: Haal uw reservering morgen op
-le_email.reservation_reminder.title: Haal uw reservering morgen op
-le_email.membership_expired.subject: Uw lidmaatschap is verlopen
-le_email.membership_expired.title: Uw lidmaatschap is verlopen
-le_email.login_details.subject: Uw inloggegevens voor %accountName%
-le_email.login_details.title: Inloggegevens
-le_email.login_details.message: Dit zijn uw inloggegevens voor ons uitleensysteem
-le_email.new_password.title: Uw nieuwe wachtwoord
-le_email.new_password.message: Dit is het nieuwe wachtwoord voor %accountName%
-le_email.reservation_confirm.subject: Bevestiging van uw reservering
-le_email.reservation_confirm.title: Bevestiging van reservering
-le_email.site_welcome.subject: Welkom bij %accountName%
-le_email.site_welcome.title: Welkom
-le_email.login_to_view_this_loan: Bekijk je lening online
-le_email.booking_confirmation.title: Bevestiging van inschrijving voor een evenement
-le_email.booking_confirmation.subject: 'Bevestiging van inschrijving voor een evenement :'
-le_email.donor_notify.subject: Je gedoneerde item wordt nu door iemand geleend
-le_email.overdue.subject: Een artikel is te laat
-le_email.overdue.title: Gelieve dit artikel zo spoedig mogelijk in te leveren
-le_email.membership_expired.renew_button: Klik hier om het lidmaatschap te verlengen
+le_email:
+  item_description: Beschrijving
+  item_contains: Bevat
+  see_attachment: Zie bijlage
+  return_sites: Gelieve dit artikel terug te brengen naar de volgende locatie
+  th_item: Artikel
+  th_fee: Prijs
+  th_due_back: Moet teruggebracht worden
+  url: Aanmelding via URL
+  email: E-mail
+  password: Wachtwoord
+  assign:
+    title: Er werd u een artikel toegewezen
+    message: '%firstName%, het artikel "%itemName%" werd u toegewezen door %assignorName%.'
+    added_note: heeft ook een opmerking toegevoegd
+    all_items: Bekijk alle artikelen die u gereserveerd heeft
+    current_location: Huidige locatie
+  checkout:
+    subject: Informatie over uw lening
+    title: Informatie over uw lening
+  extend:
+    subject: De inleverdatum van uw lening is bijgewerkt
+    title: We hebben de inleverdatum van een artikel gewijzigd
+    due_back: moet nu teruggebracht worden op
+  reminder:
+    subject: Het geleende artikel %loanId% moet morgen teruggebracht worden
+    title: Uw artikel(en) moet(en) spoedig teruggebracht worden
+  reservation_reminder:
+    subject: Haal uw reservering morgen op
+    title: Haal uw reservering morgen op
+  membership_expired:
+    subject: Uw lidmaatschap is verlopen
+    title: Uw lidmaatschap is verlopen
+    renew_button: Klik hier om het lidmaatschap te verlengen
+  login_details:
+    subject: Uw inloggegevens voor %accountName%
+    title: Inloggegevens
+    message: Dit zijn uw inloggegevens voor ons uitleensysteem
+  new_password:
+    title: Uw nieuwe wachtwoord
+    message: Dit is het nieuwe wachtwoord voor %accountName%
+  reservation_confirm:
+    subject: Bevestiging van uw reservering
+    title: Bevestiging van reservering
+  site_welcome:
+    subject: Welkom bij %accountName%
+    title: Welkom
+  login_to_view_this_loan: Bekijk je lening online
+  booking_confirmation:
+    title: Bevestiging van inschrijving voor een evenement
+    subject: 'Bevestiging van inschrijving voor een evenement :'
+  donor_notify:
+    subject: Je gedoneerde item wordt nu door iemand geleend
+  overdue:
+    subject: Een artikel is te laat
+    title: Gelieve dit artikel zo spoedig mogelijk in te leveren
+  th_cost: Kosten
+  login_now_button: Log in
+  checkin:
+    subject: Uw artikel is ingecheckt
+    title: Uw artikel is ingecheckt
+    checked_in_at: Ingecheckt in
+    checked_in_by: Ingecheckt door
+...

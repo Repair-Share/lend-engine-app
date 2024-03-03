@@ -33,22 +33,33 @@ class LoanRowDenormalizer implements DenormalizerInterface
         $loanRow->setProductQuantity($object['productQuantity']);
 
         $siteDenormalizer = new SiteDenormalizer();
-        /** @var Site $site */
-        $site = $siteDenormalizer->denormalize(
-            $object['siteFrom'],
-            Site::class,
-            $format,
-            $context
-        );
-        $loanRow->setSiteFrom($site);
 
-        $site = $siteDenormalizer->denormalize(
-            $object['siteTo'],
-            Site::class,
-            $format,
-            $context
-        );
-        $loanRow->setSiteTo($site);
+        // Site to is not provided for the service items
+        if (isset($object['siteFrom'])) {
+
+            /** @var Site $site */
+            $site = $siteDenormalizer->denormalize(
+                $object['siteFrom'],
+                Site::class,
+                $format,
+                $context
+            );
+            $loanRow->setSiteFrom($site);
+
+        }
+
+        // Site to is not provided for the stock items and for the service items
+        if (isset($object['siteTo'])) {
+
+            $site = $siteDenormalizer->denormalize(
+                $object['siteTo'],
+                Site::class,
+                $format,
+                $context
+            );
+            $loanRow->setSiteTo($site);
+
+        }
 
         if (isset($object['inventoryItem'])) {
             $inventoryItemDenormalizer = new InventoryItemDenormalizer();

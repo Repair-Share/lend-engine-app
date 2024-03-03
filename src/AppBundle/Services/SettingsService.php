@@ -11,6 +11,8 @@ use AppBundle\Entity\Setting;
 use AppBundle\Entity\Tenant;
 use AppBundle\Entity\TenantSite;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+
 
 class SettingsService
 {
@@ -30,10 +32,12 @@ class SettingsService
         $this->em = $em;
         $this->db = $this->em->getConnection()->getDatabase();
 
-        $tenant = $this->em->getRepository('AppBundle:Tenant')->findOneBy(['dbSchema' => $this->db]);
+        $tenant = $this->loadWithCache(false);
+
         if (!$tenant) {
             throw new \Exception("No tenant found when getting settings");
         }
+
         $this->setTenant($tenant);
     }
 
@@ -54,8 +58,11 @@ class SettingsService
     /**
      * @return Tenant
      */
-    public function getTenant()
+    public function getTenant($returnObject = true)
     {
+        if ($returnObject) {
+            $this->tenant = $this->loadWithCache($returnObject);
+        }
         return $this->tenant;
     }
 
@@ -111,6 +118,8 @@ class SettingsService
         // For new as-yet-unset values
         $defaultSettings = [
             'group_similar_items' => 1,
+            'basket_quick_add' => 0,
+            'search_terms' => '1',
             'org_locale' => 'en',
             'label_type' => '11355',
             'org_timezone' => 'Europe/London',
@@ -228,6 +237,7 @@ class SettingsService
             'default_checkin_location',
             'default_loan_fee',
             'default_loan_days',
+            'basket_quick_add',
             'min_loan_days',
             'max_loan_days',
             'daily_overdue_fee',
@@ -257,6 +267,7 @@ class SettingsService
             'automate_email_reservation_reminder',
             'automate_email_membership',
             'automate_email_overdue_days',
+            'automate_email_overdue_until_loan_returned',
 
             // Feature toggles
             'ft_events',
@@ -268,6 +279,7 @@ class SettingsService
             'show_events_online',
             'self_checkout',
             'self_extend',
+            'hide_ga',
 
             // Web page header text
             'page_event_header',
@@ -291,6 +303,10 @@ class SettingsService
 
             // Member site
             'site_domain',
+            'site_domain_provider',
+            'site_domain_req_name',
+            'site_domain_req_email',
+            'site_domain_req_time',
             'site_is_private',
             'site_welcome',
             'site_welcome_user',
@@ -307,6 +323,7 @@ class SettingsService
             'site_theme_name',
             'logo_image_name',
             'group_similar_items',
+            'search_terms',
 
             'registration_terms_uri',
             'auto_sku_stub',
@@ -359,11 +376,15 @@ class SettingsService
             'enable_waiting_list',
             'google_tracking_id',
 
+            'pay_membership_at_pickup',
+
             'reservation_fee',
             'reservation_buffer',
+            'reservation_buffer_override',
             'max_reservations',
             'charge_daily_fee',
             'fixed_fee_pricing',
+            'forward_picking',
 
             'open_days', // legacy, now done per site
 
@@ -371,6 +392,43 @@ class SettingsService
         );
 
         return $validKeys;
+    }
+
+    public function loadWithCache($returnObject = true, $refreshCache = false)
+    {
+        $tenant = null;
+
+        $cachePool = new FilesystemAdapter();
+
+        $cacheKey = 'tenant_' . $this->db;
+
+        if ($returnObject) {
+            $refreshCache = true;
+        }
+
+        if ($refreshCache) {
+            $cachePool->deleteItem($cacheKey);
+        }
+
+        $cache = $cachePool->getItem($cacheKey);
+
+        if (!$cache->isHit()) {
+            $tenant = $this->em->getRepository('AppBundle:Tenant')->findOneBy(['dbSchema' => $this->db]);
+            $cache->set(serialize($tenant));
+            $cache->expiresAfter(3600); // 1 hour
+            $cachePool->save($cache);
+        }
+
+        if ($returnObject) {
+            return $tenant;
+        }
+
+        if ($cachePool->hasItem($cacheKey)) {
+            $cacheObject = $cachePool->getItem($cacheKey);
+            $tenant      = unserialize($cacheObject->get());
+        }
+
+        return $tenant;
     }
 
 }

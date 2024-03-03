@@ -3,8 +3,8 @@
 # Release: Working copy
 # Locale: sv-SE, Swedish (Sweden)
 # Tagged: Member site
-# Exported by: Chris
-# Exported at: Wed, 24 Jun 2020 09:41:17 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 16:00:42 +0100
 ---
 Loan: Lån
 Loans: Lån
@@ -78,7 +78,8 @@ public_account.title: Mitt Konto
 public_account.contact_subtitle: Kontaktuppgifter
 public_account.membership_subtitle: Medlemskapsuppgifter
 public_account.button_edit_details: Ändra mina uppgifter
-public_account.button_change_password: Ändra mitt lösenord
+public_account.button_change_password: |
+  Ändra mitt lösenord
 public_item_list.pages: Visar %x% till %y% of %z% artiklar
 public_item.location: Plats
 public_item.brand: Varumärke
@@ -217,3 +218,25 @@ events.check_in_help: Incheckning lägger till dig som deltagare utan att en bok
 events.contact_us_to_book: Kontakta oss för att boka
 events.not_bookable: Det här eventet går inte att boka online
 events.log_in_to_book: Logga in för att boka
+public_misc.search: Sök
+public_item.stock_item: Mängdartikel
+public_item.service_item: Service
+public_item.each: varje
+public_item.alert_click_time_slot: vänligen välj ett tidsintervall
+public_basket.button_checkout: Checka ut nu
+public_basket.shipping: Frakt
+public_basket.remove_stock_items: För att skapa en reservation för en låneartikel, vänligen ta bort mängdartikeln från din varukorg först.
+shipping.title: Leverans
+shipping.per_item: per artikel
+shipping.per_loan: per lån
+shipping.collect: Hämtas från
+shipping.post: Leverera/skicka
+shipping.ship_to: Artiklarna kommer att levereras till
+shipping.edit_address: Uppdatera adress
+shipping.delivery_options: Leveransalternativ
+public_loan.quantity: Kvantitet
+public_add_credit.text_info: Summan kommer att debiteras ditt konto.
+public_registration.login_page_new_account: Registera ett nytt konto
+public_registration.check_email_title: Vänligen kolla ditt e-post.
+public_registration.check_email_body: Ett mail har skickat till dig med en länk för att göra färdigt din registering
+...

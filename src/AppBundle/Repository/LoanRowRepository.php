@@ -2,15 +2,17 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Helpers\DateTimeHelper;
+use AppBundle\Services\SettingsService;
+
 /**
  * LoanRowRepository
  *
  */
 class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 {
-
     /**
-     * @param int $days
+     * @param  int  $days
      * @return bool|mixed
      */
     public function getLoanRowsDueInXDays($days = 1)
@@ -19,7 +21,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
         $tomorrow->modify("+{$days} day");
 
         $repository = $this->getEntityManager()->getRepository('AppBundle:LoanRow');
-        $qb = $repository->createQueryBuilder('lr');
+        $qb         = $repository->createQueryBuilder('lr');
         $qb->select('lr')
             ->leftJoin('lr.loan', 'l')
             ->leftJoin('lr.inventoryItem', 'i')
@@ -35,7 +37,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 
         $query = $qb->getQuery();
 
-        if ( $results = $query->getResult() ) {
+        if ($results = $query->getResult()) {
             return $results;
         } else {
             return false;
@@ -45,33 +47,77 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
     /**
      * For the nightly scheduled reminders
      * @param $daysOverdue
+     * @param $overdueReminderRepeat
+     * @param $contactID
      * @return bool|mixed
      */
-    public function getOverdueItems($daysOverdue)
+    public function getOverdueItems($daysOverdue, $overdueReminderRepeat, $contactID = null)
     {
+        $daysOverdue = (int)$daysOverdue;
+        $overdueReminderRepeat = (int)$overdueReminderRepeat;
+
         $dueIn = new \DateTime();
         $dueIn->modify("-{$daysOverdue} days");
 
         $repository = $this->getEntityManager()->getRepository('AppBundle:LoanRow');
-        $qb = $repository->createQueryBuilder('lr');
+        $qb         = $repository->createQueryBuilder('lr');
+
         $qb->select('lr')
             ->leftJoin('lr.loan', 'l')
             ->leftJoin('lr.inventoryItem', 'i')
-            ->where('lr.dueInAt > :dateStart')
-            ->andWhere('lr.dueInAt < :dateEnd')
+            ->leftJoin('l.contact', 'c')
+        ;
+
+        if ($overdueReminderRepeat) {
+
+            $qb->where("
+                (
+                    (
+                        lr.dueInAt > :dateStart
+                        and lr.dueInAt < :dateEnd
+                        and l.reminderLastSentAt is null
+                    )
+                    or
+                    (
+                        :night >= date_add(l.reminderLastSentAt, :overdueReminderRepeat, 'day')
+                        and l.reminderLastSentAt is not null
+                    )
+                )
+            ")
+                ->setParameter('night', date('Y-m-d 23:59:59'))
+                ->setParameter('overdueReminderRepeat', $overdueReminderRepeat)
+                ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
+                ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"));
+
+        } else {
+
+            $qb->where('lr.dueInAt > :dateStart')
+                ->andWhere('lr.dueInAt < :dateEnd')
+                ->andWhere('l.reminderLastSentAt is null')
+                ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
+                ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"));
+
+        }
+
+        $qb
             ->andWhere('lr.checkedInAt IS NULL')
             ->andWhere('lr.checkedOutAt IS NOT NULL')
             ->andWhere('l.status != :statusReserved')
             ->andWhere('i.itemType = :itemType')
-            ->setParameter('dateStart', $dueIn->format("Y-m-d 00:00:00"))
-            ->setParameter('dateEnd', $dueIn->format("Y-m-d 23:59:59"))
             ->setParameter('itemType', 'loan')
-            ->setParameter('statusReserved', 'RESERVED')
-        ;
+            ->setParameter('statusReserved', 'RESERVED');
+
+        if ($contactID) {
+
+            $qb
+                ->andWhere('c.id = :contactID')
+                ->setParameter('contactID', $contactID);
+
+        }
 
         $query = $qb->getQuery();
 
-        if ( $results = $query->getResult() ) {
+        if ($results = $query->getResult()) {
             return $results;
         } else {
             return false;
@@ -79,12 +125,20 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
     }
 
 
-    public function search($start, $length, $filter = [], $sort = [])
+    public function search($start, $length, $filter = [], $sort = [], $tz = 'Europe/London', $countOnly = false)
     {
         $repository = $this->getEntityManager()->getRepository('AppBundle:LoanRow');
 
+        $localNow = DateTimeHelper::getLocalTime($tz);
+
         $builder = $repository->createQueryBuilder('lr');
-        $builder->select('lr');
+
+        if ($countOnly) {
+            $builder->select('count(l.id)');
+        } else {
+            $builder->select('lr');
+        }
+
         $builder->leftJoin('lr.loan', 'l');
         $builder->leftJoin('l.contact', 'c');
         $builder->leftJoin('lr.inventoryItem', 'i');
@@ -110,7 +164,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             $builder->orWhere('i.name LIKE :string');
             $builder->orWhere('i.sku LIKE :string');
 
-            $builder->setParameter('string', '%'.$filter['search'].'%');
+            $builder->setParameter('string', '%' . $filter['search'] . '%');
         }
 
         if (isset($filter['excludeStockItems']) && $filter['excludeStockItems'] == true) {
@@ -118,8 +172,30 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
         }
 
         if (isset($filter['status']) && $filter['status'] != '' && $filter['status'] != 'ALL') {
-            $builder->andWhere('l.status = :status');
-            $builder->setParameter('status', $filter['status']);
+
+            if ($filter['status'] === 'ACTIVE' || $filter['status'] === 'OVERDUE') { // Check the items statuses in loan rows
+
+                $builder->andWhere('lr.checkedInAt is null');
+
+                $builder->andWhere('l.status in (:status)');
+                $builder->setParameter('status', ['ACTIVE', 'OVERDUE']);
+
+                if ($filter['status'] === 'ACTIVE') {
+                    $builder->andWhere('lr.dueInAt > :now');
+                } else { // Overdue
+                    $builder->andWhere('lr.dueInAt <= :now');
+                }
+
+                $builder->setParameter('now', date('Y-m-d H:i:s', $localNow->getTimestamp()));
+
+            } else { // Check the loan status in the loan table
+                $builder->andWhere('l.status = :status');
+                $builder->setParameter('status', $filter['status']);
+            }
+
+            // excludeServiceItems
+            $builder->andWhere("i.itemType != 'service'");
+
         }
 
         if (isset($filter['current_site']) && $filter['current_site']) {
@@ -146,7 +222,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             } else {
                 $builder->andWhere('lr.dueInAt >= :date_from');
             }
-            $builder->setParameter('date_from', $filter['date_from'].' 00:00:00');
+            $builder->setParameter('date_from', $filter['date_from'] . ' 00:00:00');
         }
 
         if (isset($filter['date_to']) && $filter['date_to']) {
@@ -155,12 +231,21 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
             } else {
                 $builder->andWhere('lr.dueInAt <= :date_to');
             }
-            $builder->setParameter('date_to', $filter['date_to'].' 23:59:59');
+            $builder->setParameter('date_to', $filter['date_to'] . ' 23:59:59');
+        }
+
+        if ($countOnly) {
+            $queryTotalResults = $builder->getQuery()->getSingleScalarResult();
+
+            return [
+                'totalResults' => $queryTotalResults,
+                'data'         => []
+            ];
         }
 
         // Run without pages to get total results:
         $queryTotalResults = $builder->getQuery();
-        $totalResults = count($queryTotalResults->getResult());
+        $totalResults      = count($queryTotalResults->getResult());
 
         // Add pages:
         $builder->setFirstResult($start);
@@ -168,7 +253,7 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 
         // Add order by:
         if (is_array($sort) && count($sort) > 0 && $this->validateSort($sort)) {
-            $builder->addOrderBy("l.".$sort['column'], $sort['direction']);
+            $builder->addOrderBy("l." . $sort['column'], $sort['direction']);
         } else {
             $builder->addOrderBy("lr.id", "DESC");
         }
@@ -178,12 +263,12 @@ class LoanRowRepository extends \Doctrine\ORM\EntityRepository
 
         return [
             'totalResults' => $totalResults,
-            'data' => $query->getResult()
+            'data'         => $query->getResult()
         ];
     }
 
     /**
-     * @param array $sort
+     * @param  array  $sort
      * @return bool
      */
     private function validateSort($sort = [])

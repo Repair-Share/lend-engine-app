@@ -4,8 +4,11 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\Tenant;
 use AppBundle\Entity\Payment;
+use AppBundle\Services\Debug\DebugService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Stripe;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * Class StripeHandler
@@ -70,6 +73,9 @@ class StripeHandler
     /** @var SettingsService */
     private $settingsService;
 
+    /** @var DebugService */
+    private $debugService;
+
     public  $currency;
     private $apiKey;
 
@@ -77,10 +83,17 @@ class StripeHandler
 
     public $errors = [];
 
-    public function __construct(EntityManager $em, SettingsService $settings)
+    /**
+     * BasketService constructor.
+     * @param EntityManagerInterface $em
+     * @param SettingsService $settings
+     * @param DebugService $debugService
+     */
+    public function __construct(EntityManager $em, SettingsService $settings, DebugService $debugService)
     {
-        $this->em        = $em;
+        $this->em              = $em;
         $this->settingsService = $settings;
+        $this->debugService    = $debugService;
 
         $this->currency = $this->settingsService->getSettingValue('org_currency');
         $this->apiKey   = $this->settingsService->getSettingValue('stripe_access_token');
@@ -225,19 +238,32 @@ class StripeHandler
         }
 
         try {
-            $intent = \Stripe\PaymentIntent::create([
-                'payment_method' => $paymentMethodId,
-                'amount' => $amount,
-                'currency' => $this->currency,
+
+            $params = [
+                'payment_method'      => $paymentMethodId,
+                'amount'              => $amount,
+                'currency'            => $this->currency,
                 'confirmation_method' => 'manual',
-                'confirm' => true,
-                'customer' => $customer['id'],
-                'setup_future_usage' => 'off_session',
-                'metadata' => ['integration_check' => 'accept_a_payment']
-            ]);
+                'confirm'             => true,
+                'customer'            => $customer['id'],
+                'setup_future_usage'  => 'off_session',
+                'metadata'            => ['integration_check' => 'accept_a_payment']
+            ];
+
+            $this->debugService->stripeDebug('Creating intent', $params);
+
+            $intent = \Stripe\PaymentIntent::create($params);
+
+            $this->debugService->stripeDebug('Intent created', $intent);
+            $this->debugService->stripeDebug($this->debugService->getSeparator());
+
             return $intent;
         } catch (\Exception $e) {
             $this->errors[] = $e->getMessage();
+
+            $this->debugService->stripeDebug('Creating intent failed', $e->getMessage());
+            $this->debugService->stripeDebug($this->debugService->getSeparator());
+
             return false;
         }
     }
@@ -350,6 +376,8 @@ class StripeHandler
         $tenant->setPlan(null);
         $tenant->setStatus(Tenant::STATUS_CANCEL);
         $tenant->setSubscriptionId(null);
+        $tenant->setStripeCustomerId(null);
+
         $this->em->persist($tenant);
         try {
             $this->em->flush($tenant);

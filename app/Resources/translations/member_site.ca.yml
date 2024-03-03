@@ -4,7 +4,7 @@
 # Locale: ca-ES, Catalan (Spain)
 # Tagged: Member site
 # Exported by: Andor Tamas
-# Exported at: Mon, 26 Apr 2021 13:58:07 +0200
+# Exported at: Mon, 28 Feb 2022 15:12:56 +0100
 ---
 Loan: Préstec
 Loans: Préstecs
@@ -218,3 +218,25 @@ events.check_in_help: Fer el registre us afegeix com a participant sense enviar 
 events.contact_us_to_book: Contacti'ns per a reservar
 events.not_bookable: Aquest aconteixement no permet fer reserva en línia
 events.log_in_to_book: Inicieu sessió per a reservar
+public_misc.search: Cerca
+public_item.stock_item: Article d'estoc
+public_item.service_item: Servei
+public_item.each: cadascún
+public_item.alert_click_time_slot: Si us plau, faci clic a una franja horària
+public_basket.button_checkout: Agafar ara
+public_basket.shipping: Enviament
+public_basket.remove_stock_items: Per fer una reserva per agafar articles en préstec, primer elimina els articles de la cistella.
+shipping.title: Entrega
+shipping.per_item: per objecte
+shipping.per_loan: per lloguer
+shipping.collect: Recollir des de
+shipping.post: Lliurament / enviament
+shipping.ship_to: Els articles seràn entregats a
+shipping.edit_address: Actualitza l'adreça
+shipping.delivery_options: Opcions d'entrega
+public_loan.quantity: Quantitat
+public_add_credit.text_info: La quantitat serà afegida al balanç del seu compte.
+public_registration.login_page_new_account: Registrar un nou compte
+public_registration.check_email_title: Si us plau revisi el seu correu electrònic.
+public_registration.check_email_body: Un correu electrònic ha estat enviat per a acabar amb el procés de registre.
+...

@@ -36,7 +36,7 @@ class AddLoanItemController extends Controller
         }
 
         $this->get('session')->set('active-loan-type', $type);
-        $this->addFlash('success', "Choose an item to add to {$type} {$loanId}.");
+        //$this->addFlash('success', "Choose an item to add to {$type} {$loanId}.");
 
         return $this->redirectToRoute('public_products');
     }

@@ -1,0 +1,243 @@
+# Loco yaml export: Simple YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: uk-UA, Ukrainian (Ukraine)
+# Tagged: Member site
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 15:57:12 +0100
+---
+Loan: Позика
+Loans: Позики
+Reservation: Бронювання
+Reservations: Бронювання
+Brand: Торгова марка
+Payment: Оплата
+Payments: Платежі
+Fee: Плата
+loan_status.pending: В очікуванні
+loan_status.on_loan: Випозичено
+loan_status.reserved: Зарезервовано
+loan_status.cancelled: Скасовано
+loan_status.overdue: Заборгованість
+loan_status.closed: Зачинено
+note_reservation_fee: Плата за бронювання
+note_reservation_fee_will_be_added: плату буде додано під час бронювання
+th.date: Дата
+th.payment_method: Спосіб оплати
+th.fee: Плата
+th.payment: Платіж
+th.ref: Відгук
+th.items: Товар
+th.date_from: Від
+th.date_to: До
+th.status: Статус
+Reference: Відгук
+Items: Товар
+Status: Статус
+STATUS_PENDING: В очікуванні
+STATUS_ACTIVE: Випозичено
+STATUS_OVERDUE: Заборгованість
+STATUS_RESERVED: Зарезервовано
+STATUS_CANCELLED: Скасовано
+STATUS_CLOSED: Зачинено
+days: '{1}день|[2,Inf[дні'
+per_day: на день
+per_n_days: на %count% днів
+button_cancel: Скасувати
+button_cancel_reservation: Скасувати бронювання
+button_add_credit: Покласти гроші
+button_go: Перейти
+I forgot my password: Не пам'ятаю пароль
+Log out: Вийти
+My account: Мій профіль
+Login with Facebook: Зайти через Facebook
+Login with Google: Зайти через Google
+form.firstName: Ім'я
+form.lastName: Прізвище
+form.email: Адреса електронної скриньки
+form.telephone: Номер телефону
+form.address1: Номер будинку / вулиці
+form.address2: Місто
+form.address3: Країна
+form.postcode: Поштовий індекс
+form.country: Країна
+form.locale: Обрана вами мова
+public_misc.link_admin: Адміністратор
+public_misc.link_home: Головна
+public_misc.link_recent_items: Щойно додано
+public_misc.link_all_items: Все
+public_misc.search_items: Пошук
+public_misc.no_results: Нічого не знайдено
+public_misc.filter_items: Фільтр
+public_misc.any_site: Будь-яке місце
+public_footer.find_us: Знайти нас / робочі години
+public_footer.choose_lang: Вибрати мову
+public_footer.powered_by: Діє при підтримці
+public_footer.logged_in_as: Ви ввійшли як
+public_account.title: Мій Рахунок
+public_account.contact_subtitle: Контактні дані
+public_account.membership_subtitle: Інформація про членство
+public_account.button_edit_details: Редагувати
+public_account.button_change_password: Змінити пароль
+public_item_list.pages: Представлений товар
+public_item.location: Місце розташування
+public_item.brand: Торгова марка
+public_item.code: Код
+public_item.serial: Серійний номер
+public_item.condition: Стан
+public_item.contains: Містить
+public_item.downloads: Завантаження
+public_item.log_in_to_download: Увійти, щоб завантажити
+public_item.log_in_to_borrow: Увійти, щоб забронювати
+public_item.borrow_now: Бронювання
+public_item.not_available: Недоступний
+public_item.available: Доступний
+public_item.on_loan: Випозичено
+public_item.pickup_date_error: 'Дата отримання товару, який знаходиться у вашому кошику, суперечить даті бронювання цього товару. На жаль, ви не зможете отримати дану одиницю за тією ж позикою. '
+public_item.pickup_site_error: Даний товар недоступний на веб-сайті, оскільки інший товар вже збережений у вашому кошику. Ви не зможете позичити цей товар за тією ж позикою.
+public_item.basket_exists: Ви вже маєте товари у кошику / для позики, тому ми встановили для вас дати.
+public_item.account_balance_is: Баланс
+public_item.add_credit: Покласти гроші
+public_item.pickup_at: Від
+public_item.return_by: До
+public_item.choose_pickup_first: Оберіть "отримати" спочатку
+public_item.button_choose_pickup: Оберіть дату
+public_item.button_choose_return: Оберіть дату
+public_item.cancel: Скасувати
+public_item.basket_add: Додати до кошика
+public_item.locations: Доступні локації
+public_item.maps_link: Відкрити у Google карти
+public_item.similar_items: схожий товар
+public_item.see_all: Переглянути все
+public_item.not_reservable: Цей товар недоступний для бронювання онлайн. Будь ласка, зв'яжіться з нами.
+calendar.pickup_day: Отримання
+calendar.my_booking: МОЄ БРОНЮВАННЯ
+calendar.reserved: ЗАРЕЗЕРВОВАНО
+calendar.on_loan: ВИПОЗИЧЕНО
+calendar.text_clash_date: |
+  На жаль, товар уже заброньовано на цей період. Оберіть, будь ласка, іншу дату.
+calendar.text_return_after_pickup: Оберіть, будь ласка, дату повернення після дати отримання
+calendar.alert_already_booked: Ви не можете вибрати цю дату через інше бронювання.
+calendar.alert_not_your_booking: Ви можете бачити деталі лише ваших позик.
+calendar.alert_day_warning: Цей товар можна позичити лише на кратні itemLoanDays днів. /nВиберіть іншу дату повернення.
+calendar.alert_min_loan_days: Ви повинні позичити товар щонайменше на minLoanDays днів.
+calendar.alert_max_loan_days: Ви можете позичити товар щонайбільше на ... днів.
+public_basket.title: Кошик
+public_basket.name: Кошик
+public_basket.due_at: До
+public_basket.return_to: 'Повернути до '
+public_basket.pickup_after: Доступно після
+public_basket.from: від
+public_basket.add_credit_message: Поповніть, будь ласка, рахунок спочатку.
+public_basket.empty: Кошик порожній
+public_basket.confirm_reservation: Зарезервувати
+public_basket.remove_item: Видалити
+public_basket.total: Усього
+public_basket.balance: Згідно з оплатою
+public_basket.no_items: <h3>Кошик порожній</h3> Знайти товар, щоб додати у кошик.
+public_basket.full_charge: буде стягнено з вашого рахунку
+public_basket.delay_charge: буде стягнено з рахунку зараз, а залишок буде врахований під час оплати позики
+public_loan.title: Позика
+public_user_menu.contact_info: Обліковий запис
+text_borrow_with_membership: Будучи членом, ви матимете змогу позичати та резервувати даний товар онлайн. Перевірте "мій обліковий запис", щоб побачити доступні види членства.
+text_no_membership: На жаль, ми не маємо активованого виду членства для вас.
+public_add_credit.title: Покласти гроші
+public_add_credit.choose_card: 'Обрати існуючу картку або продовжити за використанням нової '
+public_add_credit.use_this_card: Скористайтесь даною карткою
+public_add_credit.amount_to_add: Додати суму
+public_add_credit.payment_method: Спосіб оплати
+public_add_credit.min_amount: Мінімальний баланс на картці
+public_add_credit.processing_fee: зняття комісія під час плати карткою
+public_loans.no_loans: Ви ще нічого не позичали
+public_payments.no_payment: Платежів ще не було
+public_payments.title: Збори та Платежі
+public_registration.newsletter: Підпишіться на нашу розсилку
+public_registration.terms_link: Ознайомтеся, будь ласка, з нашими правилами
+public_registration.terms_label: Ознайомлений(а) з правилами
+public_become_member.title: Стати членом
+msg_success.payment_ok: Операція пройшла успішно. Баланс на вашому рахунку змінено.
+msg_success.reservation_create: Зарезервовано! Підтвердження надіслано на електронну скриньку.
+msg_success.reservation_cancel: Ваше бронювання скасоване.
+msg_success.basket_item_removed: Одиницю вилучено з вашого кошика
+msg_success.basket_item_added: додано до вашого кошика.
+msg_success.basket_item_exists: вже у вашому кошику.
+msg_fail.general_fail: Вибачте, сталася помилка. Будь ласка, спробуйте ще раз або зв'яжіться з нами.
+msg_fail.reservation_create: Сталася помилка. Нам не вдалося зберегти ваше бронювання.
+msg_fail.reservation_cancel: Ми не змогли скасувати ваше бронювання. Будь ласка, зв'яжіться з нами.
+per-borrow: за кожну позику
+per_borrow: за кожну позику
+public_misc.log_in_first: Увійдіть, щоб переглянути товари
+public_account.button_subscribe_now: Підписатися зараз
+public_account.button_change_membership: Змінити вид членства / оновити
+public_account.current_member_type: Наразі ви є %type% членом
+public_account.membership_about_to_expire: Термін вашого членства добігає кінця.
+public_account.membership_expires_on: Термін дії вашого членства закінчується
+public_registration.email_confirmed: Адресу вашої електронної скриньки схвалено
+public_user.choose_membership_type: Обрати вид членства
+public_item.discount: знижка
+public_registration.membership_starts_today: Членство розпочинається сьогодні.
+public_registration.membership_deferred: Членство буде оновлене з
+public_registration.discount_on_fees: знижка за позику
+public_registration.button_renew: Оновити членство
+public_registration.button_subscribe: 'Підписатися '
+public_registration.no_self_serve_memberships: На жаль, немає жодного доступного виду членства для самостійної підписки. Будь ласка, відвідайте нас із документом, що посвідчує особу для того, щоб завершити вашу підписку.
+th.deposit: Завдаток
+public_misc.link_events: Події
+public_misc.show_items_from: Показати доступний товар від
+public_misc.credit_limit: Кредитний ліміт
+public_item.button_today: Сьогодні
+public_item.see_parts: Переглянути складові
+public_item.kit_containing: Даний товар включає набір
+public_item.borrow_help: Оберіть дату, час або місце, щоб змінити бронювання
+public_loan.charged: Стягнено з рахунку
+public_loan.check_in: Повернути
+public_loan.button_check_out: Сплатити
+public_loan.select_items_to_check_in: Оберіть товар для повернення
+public_loan.choose_new_date: Обрати нову дату повернення
+public_loan.button_complete_checks: Будь ласка, завершіть перевірку
+public_loan.button_choose_payment_method: 'Оберіть спосіб оплати '
+public_loan.button_deposits_require_payment: Завдаток потрібно сплатити зараз
+public_loan.cannot_check_out: Товар(и) не можна оплатити, перевірте місце/бронювання
+public_loan.no_payment_methods: Способи оплати не доступні для оплати
+public_loan.not_enough_credit: Недостатньо коштів на вашому рахунку.
+public_add_credit.remove_card: Видалити
+public_payments.no_payment_required: Плата не потрібна
+public_user.subscription_payment: Оплата підписки
+events.event: Подія
+events.page_title: Події
+events.bookings: Бронювання подій
+events.no_events: Цього місяця події не заплановані
+events.view_on_facebook: Слідкуйте за подією на Facebook
+events.location: Місце розташування
+events.time: Час
+events.cost: Ціна
+events.you_are_attending: Відвідаю
+events.book_now_button: Забронювати зараз
+events.check_in_button: Реєстрація
+events.check_in_help: Реєстрація додає вас як учасника без надсилання електронного листа з підтвердженням бронювання.
+events.contact_us_to_book: Зв'яжіться з нами, щоб забронювати
+events.not_bookable: Ця подія недоступна для бронювання онлайн
+events.log_in_to_book: Увійти, щоб забронювати
+public_misc.search: |
+  Пошук
+public_item.stock_item: Товар у наявності
+public_item.service_item: Послуги
+public_item.each: кожен
+public_item.alert_click_time_slot: Натисніть, будь ласка, на часовий проміжок
+public_basket.button_checkout: Додати до кошика
+public_basket.shipping: Доставка
+public_basket.remove_stock_items: Для того, щоб зарезервувати товар для позики, видаліть його з вашого кошика спочатку.
+shipping.title: Доставка
+shipping.per_item: за кожну одиницю товару
+shipping.per_loan: за кожну позику
+shipping.collect: Обрати з
+shipping.post: Доставити
+shipping.ship_to: Товар буде доставлений
+shipping.edit_address: Оновити адресу
+shipping.delivery_options: Варіанти доставки
+public_loan.quantity: Кількість
+public_add_credit.text_info: Залишок буде додано на ваш рахунок.
+public_registration.login_page_new_account: Зареєструватися для нового облікового запису
+public_registration.check_email_title: Перевірте, будь ласка, свою електронну скриньку.
+public_registration.check_email_body: На вашу електронну скриньку надіслано лист із посиланням для завершення реєстрації.
+...

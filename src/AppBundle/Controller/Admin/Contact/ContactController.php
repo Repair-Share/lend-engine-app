@@ -59,8 +59,9 @@ class ContactController extends Controller
         } else {
 
             // Check to see if user has exceeded contact count
-            $plan = $this->get('settings')->getTenant()->getPlan();
-            $maxContacts = $billingService->getMaxContacts($plan);
+            $tenant      = $this->get('settings')->getTenant(false);
+            $plan        = $tenant->getPlan();
+            $maxContacts = $billingService->getMaxContacts($plan, $tenant->getId());
 
             $count = $contactRepo->countActiveContacts();
             if ($count >= $maxContacts) {
@@ -267,7 +268,8 @@ class ContactController extends Controller
             'title' => $pageTitle,
             'customFieldsExist' => $customFieldsExist,
             'customFields' => $customFields,
-            'contact' => $contact
+            'contact' => $contact,
+            'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY'))
         ));
     }
 

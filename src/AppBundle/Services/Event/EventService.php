@@ -24,6 +24,11 @@ class EventService
         $this->settingService = $settingsService;
 
         $tz = $this->settingService->getSettingValue('org_timezone');
+
+        if (!$tz) {
+            $tz = 'Europe/London';
+        }
+
         $this->timezone = new \DateTimeZone($tz);
     }
 

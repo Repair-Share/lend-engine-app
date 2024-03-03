@@ -48,6 +48,12 @@ class SubscribeController extends Controller
             $contact = $this->getUser();
         }
 
+        $payMembershipAtPickupAllowed = false;
+
+        if ($this->get('settings')->getSettingValue('pay_membership_at_pickup')) {
+            $payMembershipAtPickupAllowed = true;
+        }
+
         // Create the form
         $form = $this->createForm(MembershipSubscribeType::class, null, [
             'em' => $em,
@@ -66,11 +72,13 @@ class SubscribeController extends Controller
                 $price = 0;
             }
 
-            $paymentMethod = $form->get('paymentMethod')->getData();
-
             if (!$membershipType = $form->get('membershipType')->getData()) {
                 $this->addFlash("error", "Please choose a membership type");
                 return $this->redirectToRoute('choose_membership');
+            }
+
+            if ($payMembershipAtPickupAllowed && $form->get('payMembershipAtPickup')->getData()) {
+                $amountPaid = 0;
             }
 
             $membership = new Membership();
@@ -78,102 +86,24 @@ class SubscribeController extends Controller
             $membership->setCreatedBy($user);
             $membership->setMembershipType($membershipType);
             $membership->setPrice($price);
-
-            $duration = $membership->getMembershipType()->getDuration();
-
-            // Work out how many days left on the existing membership
-            // If it's a renewal (same type) and less than 14 days to run, set end date based on end of current membership
-            $calculateExpiryBasedOnCurrentExpiryDate = false;
-            if ($activeMembership = $membership->getContact()->getActiveMembership()) {
-                $dateDiff = $activeMembership->getExpiresAt()->diff(new \DateTime());
-                if ($dateDiff->days < 14 && $activeMembership->getMembershipType() == $membership->getMembershipType()) {
-                    $calculateExpiryBasedOnCurrentExpiryDate = true;
-                }
-            }
-
-            // Always start from now
-            // The previous will be expired so this one will start early
-            $startsAt = new \DateTime();
-            if ($calculateExpiryBasedOnCurrentExpiryDate == true) {
-                // A renewal created before previous membership expires
-                $expiresAt = $activeMembership->getExpiresAt();
-            } else {
-                // A new subscription
-                $expiresAt = clone $startsAt;
-            }
-            $expiresAt->modify("+ {$duration} days");
-
-            $membership->setStartsAt($startsAt);
-            $membership->setExpiresAt($expiresAt);
+            $membership->calculateStartAndExpiryDates();
 
             $em->persist($membership);
 
-            // Switch the contact to this new membership
-            $contact->setActiveMembership($membership);
+            $flashBags = $membership->subscribe(
+                $em,
+                $contact,
+                $user,
+                $paymentService,
+                $price,
+                $amountPaid,
+                $request->get('paymentId'),
+                $form->get('paymentMethod')->getData(),
+                $form->get('paymentNote')->getData()
+            );
 
-            // If there was a previous one, expire it prematurely
-            if ($activeMembership) {
-                $activeMembership->setStatus(Membership::SUBS_STATUS_EXPIRED);
-                $em->persist($activeMembership);
-            }
-
-            // update the contact and save everything
-            $em->persist($contact);
-            $em->flush();
-
-            $note = new Note();
-            $note->setContact($contact);
-            $note->setCreatedBy($user);
-            $note->setCreatedAt(new \DateTime());
-            $note->setText("Subscribed to ".$membership->getMembershipType()->getName()." membership.");
-            $em->persist($note);
-
-            if ($price > 0) {
-                // The membership fee
-                $charge = new Payment();
-                $charge->setAmount(-$price);
-                $charge->setContact($contact);
-                $charge->setCreatedBy($user);
-                $charge->setMembership($membership);
-
-                if ($contact == $this->getUser()) {
-                    $charge->setNote("Membership fee (self serve).");
-                } else {
-                    $charge->setNote("Membership fee.");
-                }
-
-                if (!$paymentService->create($charge)) {
-                    foreach ($paymentService->errors AS $error) {
-                        $this->addFlash('error', $error);
-                    }
-                }
-            }
-
-            if ($amountPaid > 0) {
-                // The payment for the charge
-
-                if ($paymentId = $request->get('paymentId')) {
-                    // We've created a payment via Stripe payment intent, link it to the credit
-                    $payments = $paymentService->get(['id' => $paymentId]);
-                    $payment = $payments[0];
-                } else {
-                    // No existing payment exists
-                    $payment = new Payment();
-                }
-
-                $payment->setCreatedBy($user);
-                $payment->setPaymentMethod($paymentMethod);
-                $payment->setAmount($amountPaid);
-                $paymentNote = Payment::TEXT_PAYMENT_RECEIVED.'. '.$form->get('paymentNote')->getData();
-                $payment->setNote($paymentNote);
-                $payment->setContact($contact);
-                $payment->setMembership($membership);
-
-                if (!$paymentService->create($payment)) {
-                    foreach ($paymentService->errors AS $error) {
-                        $this->addFlash('error', $error);
-                    }
-                }
+            foreach ($flashBags as $flashBag) {
+                $this->addFlash($flashBag['type'], $flashBag['msg']);
             }
 
             $this->get('session')->set('pendingPaymentType', null);
@@ -213,7 +143,8 @@ class SubscribeController extends Controller
                 'user'    => $contact,
                 'contact' => $contact,
                 'itemId'  => $request->get('itemId'),
-                'membershipTypePrices' => $membershipTypePrices
+                'membershipTypePrices' => $membershipTypePrices,
+                'payMembershipAtPickup' => $payMembershipAtPickupAllowed
             ]
         );
 

@@ -4,6 +4,7 @@ namespace AppBundle\Form\Type\Settings;
 
 use AppBundle\Form\Type\ToggleType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -43,7 +44,8 @@ class SettingsMemberSiteType extends AbstractType
             'Slovak'      => 'sk',
             'Slovenščina' => 'sl',
             'Svenska'     => 'sv-SE',
-            'Cymraeg'     => 'cy'
+            'Cymraeg'     => 'cy',
+            'Ukrainian'   => 'uk-UA'
         ];
         $builder->add('org_locale', ChoiceType::class, array(
             'label' => 'Default language',
@@ -187,6 +189,36 @@ then the user will also be shown a button to continue to choose a membership.',
             ]
         ]);
 
+        $builder->add('site_domain_provider', TextType::class, [
+            'label' => 'Domain provider',
+            'data' => $dbData['site_domain_provider'],
+            'required' => false,
+            'attr' => [
+                'placeholder' => '',
+                'data-help' => 'eg GoDaddy, Amazon, 123 Reg, etc...',
+            ]
+        ]);
+
+        $builder->add('site_domain_req_name', TextType::class, [
+            'label' => 'Your Name',
+            'data' => $dbData['site_domain_req_name'],
+            'required' => false,
+            'attr' => [
+                'placeholder' => '',
+                'data-help' => '',
+            ]
+        ]);
+
+        $builder->add('site_domain_req_email', EmailType::class, [
+            'label' => 'Your E-mail',
+            'data' => $dbData['site_domain_req_email'],
+            'required' => false,
+            'attr' => [
+                'placeholder' => '',
+                'data-help' => '',
+            ]
+        ]);
+
         $builder->add('group_similar_items', ToggleType::class, array(
             'expanded' => true,
             'label' => 'Group items with the same name into one search result',
@@ -228,6 +260,17 @@ then the user will also be shown a button to continue to choose a membership.',
             'attr' => [
                 'class' => 'input-100',
                 'data-help' => "Any fees due will need to be paid using the Stripe integration."
+            ]
+        ));
+
+        $builder->add('hide_ga', ToggleType::class, array(
+            'expanded' => true,
+            'label' => 'Disable core Lend Engine Google Analytics',
+            'data' => (int)$dbData['hide_ga'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => "For GDPR compliance."
             ]
         ));
 
@@ -287,6 +330,18 @@ then the user will also be shown a button to continue to choose a membership.',
                 'placeholder' => 'eg UA-7133303-X',
                 'data-help' => 'Adds a Global Site Tag (gtag.js) to your member site for visitor analytics.',
             )
+        ));
+
+        // Search options
+        $builder->add('search_terms', ToggleType::class, array(
+            'expanded' => true,
+            'label' => 'Allow all search terms to match',
+            'data' => $dbData['search_terms'],
+            'required' => true,
+            'attr' => [
+                'class' => 'input-100',
+                'data-help' => 'Yes will increase results displayed with more search terms used.',
+            ]
         ));
 
     }

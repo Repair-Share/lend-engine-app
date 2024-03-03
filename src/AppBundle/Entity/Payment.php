@@ -554,4 +554,29 @@ class Payment
     {
         return $this->event;
     }
+
+    /**
+     * Get the debug array
+     *
+     * @return array
+     */
+    public function getDebug()
+    {
+        $paymentDebug = [];
+
+        if ($this->getPaymentMethod()) {
+            $paymentDebug = $this->getPaymentMethod()->getDebug();
+        }
+
+        return [
+            'id'            => $this->getId(),
+            'paymentMethod' => $paymentDebug,
+            'amount'        => $this->getAmount(),
+            'note'          => $this->getNote(),
+            'type'          => $this->getType(),
+            'loanId'        => ($this->getLoan() ? $this->getLoan()->getId() : null),
+            'loanRowId'     => ($this->getLoanRow() ? $this->getLoanRow()->getId() : null),
+            'pspCode'       => $this->getPspCode()
+        ];
+    }
 }

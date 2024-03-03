@@ -6,7 +6,16 @@
 
 <h2>{{ categoryTitle|raw }}</h2>
 
-<div id="item-list-filter">
+{% if app.session.get('active-loan') %}
+    <div class="alert alert-success">
+        Choose an item to add to {{ app.session.get('active-loan-type') }} {{ app.session.get('active-loan') }}
+        <a href="{{ path("unset_active_loan", { loanId : app.session.get('active-loan') }) }}"
+           class="btn btn-xs btn-default pull-right"
+        >Cancel</a>
+    </div>
+{% endif %}
+
+<div id="item-list-filter" style="overflow: scroll">
     {% if filter.sites|length > 1 %}
         <div class="multi-site">
             <ul>
@@ -32,7 +41,7 @@
         </div>
     {% endif %}
 
-    <form method="GET">
+    <form method="GET" id="filterForm">
         <input type="hidden" name="tagId" value="{{ app.request.get('tagId') }}">
         <input type="hidden" name="section" value="{{ app.request.get('section') }}">
         <input type="hidden" name="search" value="{{ app.request.get('search') }}">
@@ -41,17 +50,30 @@
         <input type="hidden" name="from" id="from-date" value="{{ app.request.get('from') }}">
         <input type="hidden" name="to" id="to-date" value="{{ app.request.get('to') }}">
 
-        <div class="row item-filter-dates hidden-xs">
-            <div class="col-md-10">
+        <div class="item-filter-dates">
+            <div style="padding-bottom: 6px;">
                 {% trans %}public_misc.show_items_from{% endtrans %}
                 <a href="javascript:void(0);" id="from-date-picker">{% if dateFrom %}{{ dateFrom|date("l j F") }}{% else %}[ choose ]{% endif %}</a>
                 -
                 <a href="javascript:void(0);" id="to-date-picker">{% if dateTo %}{{ dateTo|date("l j F") }}{% else %}[ choose ]{% endif %}</a>
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-default btn-sm pull-right">{% trans %}public_misc.filter_items{% endtrans %}</button>
+            <div class="row">
+                <div class="col-xs-4">
+                    <button type="button" id="clearDateFilter" class="btn btn-default btn-sm pull-left">{% trans %}public_misc.clear_filter_items{% endtrans %}</button>
+                </div>
+                <div class="col-xs-4">
+                    {% if tenantInformation.basket.loanRows is defined
+                    and tenantInformation.basket.loanRows|length > 0
+                    and tenantInformation.basket.collectFromSite %}
+                        <button type="button" id="useBasketDates" class="btn btn-default btn-sm">{% trans %}public_misc.use_basket_dates{% endtrans %}</button>
+                    {% endif %}
+                </div>
+                <div class="col-xs-4">
+                    <button type="submit" class="btn btn-default btn-sm pull-right">{% trans %}public_misc.filter_items{% endtrans %}</button>
+                </div>
             </div>
         </div>
+
     </form>
 
 </div>
@@ -66,6 +88,8 @@
         display:none;
     }
 </style>
+
+{% include('member_site/partials/modal_item_added.html.twig') %}
 
 {% if products|length > 0 %}
     <div class="row products" id="site-item-list">
@@ -100,7 +124,7 @@
                         </span>
                     </div>
 
-                    <div class="text" style="min-height: 120px">
+                    <div class="text" style="min-height: 140px">
 
                         <div style="padding: 10px 0">
 
@@ -129,14 +153,14 @@
                                     {% trans %}public_item.each{% endtrans %}
                                 </span>
 
-                            {% elseif product.loanFee > 0 %}
+                            {% else %}
 
                                 <span class="item-list-fee">
                                     {{ tenantInformation.currencySymbol }} {{ product.loanFee|number_format(2) }}
                                     {% if tenantInformation.fixedFeePricing %}
                                         {#{% trans %}per_borrow{% endtrans %}#}
                                     {% else %}
-                                        {% if product.maxLoanDays == 1 %}
+                                        {% if product.maxLoanDays <= 1 %}
                                             {% trans %}per_day{% endtrans %}
                                         {% else %}
                                             {% trans with {'%count%': product.maxLoanDays } %}per_n_days{% endtrans %}
@@ -159,12 +183,34 @@
                                     {{ product.quantityAvailable }} of {{ product.quantity }} {% trans %}public_item.available{% endtrans %}
                                 </div>
                             {% endif %}
+
                             <div class="item-list-serial">
                                 {% if product.serial and product.quantity == 1 %}
                                     {% trans %}public_item.serial{% endtrans %}: {{ product.serial }}
                                 {% endif %}
                             </div>
                         </strong>
+
+                        {% if product.inBasket %}
+                            {#in basket already#}
+                        {% elseif product.inventoryLocation and product.inventoryLocation.id == 1 %}
+                            {#on loan#}
+                        {% elseif tenantInformation.basket is defined
+                        and tenantInformation.basket
+                        and tenantInformation.basket.loanRows|length > 0
+                        and tenantInformation.setting('basket_quick_add') == 1
+                        and product.inventoryLocation
+                        and product.itemType != 'stock'
+                        and not app.session.get('active-loan')
+                        and product.inventoryLocation.isAvailable == 1 %}
+                            <div class="item-list-quickadd">
+                                <button id="addButton{{ product.id }}" data-id="{{ product.id }}" class="btn btn-xs btn-primary btn-quickadd">{% trans %}public_item.basket_add{% endtrans %}</button>
+                            </div>
+                        {% elseif not product.inventoryLocation %}
+                            {#see parts#}
+                        {% else %}
+                            {#not available#}
+                        {% endif %}
                     </div>
                     <!-- /.text -->
                 </div>
@@ -292,6 +338,41 @@
 <script>
     $(document).ready(function () {
 
+        var itemAddedModal = $("#itemAddedModal");
+
+        $("#clearDateFilter").on("click", function() {
+            $("#from-date").val("");
+            $("#to-date").val("");
+            $("#filterForm").submit();
+        });
+
+        $(".btn-quickadd").on('click', function() {
+            $.getJSON("/basket/add/"+$(this).data('id')+"?qa=1", function(data) {
+                if (data.status == "OK") {
+                    $("#modalItemSuccess").html(data.message).show();
+                    $("#modalItemDanger").hide();
+                    $("#addButton"+data.itemId).text("Added").css('backgroundColor', "#5cb85c").css("borderColor", "#5cb85c");
+                    $("#basketItemCount").text(data.items); // update the menu at top of page
+                } else {
+                    $("#modalItemSuccess").hide();
+                    $("#modalItemDanger").html(data.status).show();
+                }
+                itemAddedModal.modal();
+            });
+        });
+
+        $("#useBasketDates").on("click", function() {
+            {% if tenantInformation.basket.loanRows is defined
+            and tenantInformation.basket.loanRows|length > 0
+            and tenantInformation.basket.collectFromSite %}
+            $("#from-date-picker").text("{{ tenantInformation.basket.loanRows|first.dueOutAt|date("D d M") }}");
+            $("#from-date").val("{{ tenantInformation.basket.loanRows|first.dueOutAt|date("Y-m-d") }}");
+            $("#to-date-picker").text("{{ tenantInformation.basket.loanRows|first.dueInAt|date("D d M") }}");
+            $("#to-date").val("{{ tenantInformation.basket.loanRows|first.dueInAt|date("Y-m-d") }}");
+            $("#filterForm").submit();
+            {% endif %}
+        });
+
         var fromDate = $("#from-date-picker");
         fromDate.dateRangePicker({
             format: 'YYYY-MM-DD',
@@ -301,7 +382,7 @@
             showShortcuts: true
         }).bind('datepicker-change', function (event, obj) {
             $("#from-date").val(moment(obj.date1).format('YYYY-MM-DD'));
-            $("#from-date-picker").text(moment(obj.date1).format('dddd D MMMM'));
+            $("#from-date-picker").text(moment(obj.date1).format('ddd D MMM'));
         });
 
         var toDate = $("#to-date-picker");
@@ -313,9 +394,18 @@
             showShortcuts: true
         }).bind('datepicker-change', function (event, obj) {
             $("#to-date").val(moment(obj.date1).format('YYYY-MM-DD'));
-            $("#to-date-picker").text(moment(obj.date1).format('dddd D MMMM'));
+            $("#to-date-picker").text(moment(obj.date1).format('ddd D MMM'));
         });
 
-        {#dateExtendField.data('dateRangePicker').setDateRange('{{ membership.expiresAt|date('D M d Y') }}', '{{ membership.expiresAt|date('D M d Y') }}', true);#}
+        // Set the pickup time and location if we already have a basket
+        {% if app.request.get('from') %}
+            $("#from-date").val(moment("{{ app.request.get('from') }}").format('YYYY-MM-DD'));
+            $("#from-date-picker").text(moment("{{ app.request.get('from') }}").format('ddd D MMM'));
+            $("#to-date").val(moment("{{ app.request.get('to') }}").format('YYYY-MM-DD'));
+            $("#to-date-picker").text(moment("{{ app.request.get('to') }}").format('ddd D MMM'));
+        {% else %}
+
+        {% endif %}
+
     });
 </script>

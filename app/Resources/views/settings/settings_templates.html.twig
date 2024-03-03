@@ -1,6 +1,7 @@
 {# app/Resources/views/settings/settings_templates.html.twig #}
 
 {% extends 'base.html.twig' %}
+{% trans_default_domain 'emails' %}
 
 {% block title %}Email templates{% endblock %}
 
@@ -50,11 +51,11 @@
             {{ form_row(form.email_welcome_foot) }}
 
             <h2>Loan reminder</h2>
-            <p>Sent the day before a loan is due to be returned.</p>
+            <p>Sent x day(s) before a loan is due to be returned. (configure in General Settings)</p>
             <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "reminder"}) }}">Send me a test email</a></p>
 
             <strong>Subject: </strong>
-            "Your loan is due tomorrow"<br><br>
+            "{{ 'le_email.reminder.subject'|trans({'%loanId%': '{loanID}'}) }}"<br><br>
 
             {{ form_row(form.email_loan_reminder_head) }}
             {{ form_row(form.email_loan_reminder_foot) }}
@@ -95,7 +96,7 @@
             {{ form_row(form.email_reserve_confirmation_foot) }}
 
             <h2>Reservation reminder</h2>
-            <p>Sent the day before a reservation is due to be picked up.</p>
+            <p>Sent x day(s) before a reservation is due to be picked up. (configure in General Settings)</p>
             <p><a class="btn btn-xs btn-default send-email" href="{{ path('settings_email_test', {template: "reservation_reminder"}) }}">Send me a test email</a></p>
 
             {{ form_row(form.email_reservation_reminder_subject) }}

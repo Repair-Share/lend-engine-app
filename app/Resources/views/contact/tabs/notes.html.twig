@@ -10,6 +10,17 @@
         {% endfor %}
     </div>
     <div class="col-md-4">
+        <h4>Flags</h4>
+        {% if contact.preventBorrowing %}
+            Prevent
+        {% else %}
+            Allow
+        {% endif %}
+        borrowing &nbsp;
+        <a href="{{ path('add_note') }}?&contactId={{ contact.id }}&flag=preventBorrowing&goto=contact"
+           class="modal-link btn btn-xs btn-default"
+        >Change</a>
+
         <h4>Donated items</h4>
         <style>
             .item-fee { display: none }

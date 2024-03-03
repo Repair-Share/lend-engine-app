@@ -60,7 +60,7 @@ class TenantService
         $this->postmarkApiKey = $postmarkApiKey;
         
         // Tenant is set in settings when first constructed
-        $this->tenant = $this->settings->getTenant();
+        $this->tenant = $this->settings->getTenant(false);
 
     }
 
@@ -77,8 +77,11 @@ class TenantService
     /**
      * @return \AppBundle\Entity\Tenant
      */
-    public function getTenant()
+    public function getTenant($returnObject = true)
     {
+        if ($returnObject) {
+            $this->tenant = $this->settings->getTenant($returnObject);
+        }
         return $this->tenant;
     }
 
@@ -96,6 +99,11 @@ class TenantService
     public function getSchema()
     {
         return $this->tenant->getDbSchema();
+    }
+
+    public function getSchemaVersion()
+    {
+        return $this->tenant->getSchemaVersion();
     }
 
     public function getTrialExpiresAt()
@@ -138,6 +146,29 @@ class TenantService
     public function getServerName()
     {
         return $this->tenant->getServer();
+    }
+
+    public function getShortServerName()
+    {
+        switch ($this->tenant->getServer()) {
+            case 'lend-engine-staging':
+                return 'Beta';
+            case 'lend-engine-eu':
+                return 'Standard';
+            case 'lend-engine-eu-plus':
+                return 'Plus 1';
+            case 'lend-engine-3':
+                return 'Plus 2';
+        }
+    }
+
+    public function isMapsAllowed()
+    {
+        if ($this->getPlan() === 'plus' || $this->getPlan() === 'business') {
+            return true;
+        }
+
+        return false;
     }
 
     public function getAccountDomain($withHttp = false)
@@ -194,6 +225,11 @@ class TenantService
     public function getCompanyName()
     {
         return $this->getSetting('org_name');
+    }
+
+    public function getCompanyNameAsSender()
+    {
+        return str_replace(',', '', $this->getSetting('org_name'));
     }
 
     public function getCompanyEmail()
@@ -502,6 +538,7 @@ class TenantService
         /** @var $basket \AppBundle\Entity\Loan */
         if ($basket = $this->session->get('basket')) {
             // Two parameters added, which we have to deal with for in-flight baskets
+            // I think this was here to deal with the params added and then released while users had baskets in session
             if (!isset($basket['collectFrom'])) {
                 $pickupSiteId = null;
                 foreach ($basket['loanRows'] AS $loanRow) {
@@ -532,6 +569,11 @@ class TenantService
     public function getFeature($feature)
     {
         return $this->billingService->isEnabled($this->getPlan(), $feature);
+    }
+
+    public function getHideGA()
+    {
+        return (int)$this->settings->getSettingValue('hide_ga');
     }
 
     /**

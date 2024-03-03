@@ -99,7 +99,7 @@ class ValidateLoanPeriodControllerTest extends AuthenticatedControllerTest
         $this->helpers->subscribeContact($this->client, $contactId2);
         $this->helpers->addCredit($this->client, $contactId2);
         $loanId2 = $this->helpers->createLoan($this->client, $contactId2, [$itemId], 'reserve', 2);
-        $this->helpers->checkoutLoan($this->client, $loanId2);
+        //$this->helpers->checkoutLoan($this->client, $loanId2);
 
         // Try to extend the first loan to t+5 -> Expect an error
         $time = new \DateTime();
@@ -138,5 +138,122 @@ class ValidateLoanPeriodControllerTest extends AuthenticatedControllerTest
         $responseContent = $response->getContent();
 
         $this->assertContains('["ok"]', $responseContent);
+    }
+
+    public function testExtendingLoanChangeOverTime()
+    {
+        $itemId = $this->helpers->createItem($this->client, 'Item 1 / ' . rand(1, 10000));
+
+        // Loan #1 from today (t) to t+1
+        $contactId1 = $this->helpers->createContact($this->client);
+        $this->helpers->subscribeContact($this->client, $contactId1);
+        $this->helpers->addCredit($this->client, $contactId1);
+        $loanId1 = $this->helpers->createLoan($this->client, $contactId1, [$itemId], 'reserve', 0);
+        $this->helpers->checkoutLoan($this->client, $loanId1);
+
+        // Loan #2 from t+2 to t+3
+        $contactId2 = $this->helpers->createContact($this->client);
+        $this->helpers->subscribeContact($this->client, $contactId2);
+        $this->helpers->addCredit($this->client, $contactId2);
+        $loanId2 = $this->helpers->createLoan($this->client, $contactId2, [$itemId], 'reserve', 2);
+        //$this->helpers->checkoutLoan($this->client, $loanId2);
+
+        // Try to extend the first loan to t+2
+        $time = new \DateTime();
+        $time = $time->modify('2 days');
+
+        $uri = '/validate-loan-period?itemId=' . $itemId
+               . '&timeFrom=' . $time->format('Y-m-d 09:00:00')
+               . '&timeTo=' . $time->format('Y-m-d 09:00:00')
+               . '&loanId=' . $loanId1;
+
+        $this->client->request('GET', $uri);
+        $response = $this->client->getResponse();
+
+        $this->assertSame(200, $response->getStatusCode());
+
+        // At this stage we only search in the response content and don't decode the JSON data to array
+        $responseContent = $response->getContent();
+
+        $this->assertContains('["ok"]', $responseContent);
+    }
+
+    public function testAdjacentBooking()
+    {
+        // Create a contact
+        $contactId = $this->helpers->createContact($this->client);
+
+        // Subscribe him
+        $this->helpers->subscribeContact($this->client, $contactId);
+
+        // Add credit
+        $this->helpers->addCredit($this->client, $contactId);
+
+        $itemId = $this->helpers->createItem($this->client, 'Adjacent Item ' . rand(1, 10000));
+
+        // Make a site with a changeover time
+        $siteID = $this->helpers->createSite($this->client);
+
+        $this->helpers->clearSiteOpening($this->client, $siteID);
+
+        // Monday
+        $this->helpers->addDbSiteOpeningHours(
+            $this->client,
+            $siteID,
+            1,
+            '1000',
+            '1700',
+            '1000'
+        );
+
+        // Tuesday
+        $this->helpers->addDbSiteOpeningHours(
+            $this->client,
+            $siteID,
+            2,
+            '1000',
+            '1700',
+            '1000'
+        );
+
+        // Makes three loans with adjacent times
+        $this->helpers->createLoan(
+            $this->client,
+            $contactId,
+            [$itemId],
+            'reserve',
+            0,
+            7,
+            '10:00:00',
+            '10:00:00'
+        );
+
+        $loanId2 = $this->helpers->createLoan(
+            $this->client,
+            $contactId,
+            [$itemId],
+            'reserve',
+            -7,
+            7,
+            '10:00:00',
+            '10:00:00'
+        );
+
+        $this->helpers->createLoan(
+            $this->client,
+            $contactId,
+            [$itemId],
+            'reserve',
+            -14,
+            7,
+            '10:00:00',
+            '10:00:00'
+        );
+
+        // Tries to checkout the second one
+        $this->helpers->checkoutLoan($this->client, $loanId2);
+        $crawler = $this->client->followRedirect();
+
+        $this->assertContains('Items are now checked out.', $crawler->html());
     }
 }

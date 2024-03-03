@@ -2,7 +2,7 @@
 
 var paymentInitiated = false;
 
-if (stripePublicApiKey) {
+if (stripePublicApiKey && typeof Stripe !== 'undefined') {
     var stripe = Stripe(stripePublicApiKey);
     var elements = stripe.elements();
     var card = elements.create('card');
@@ -14,6 +14,11 @@ $(document).delegate(".payment-method", "change", function() {
 
 $(document).delegate(".payment-submit", "click", function(e) {
     return processPaymentForm(e);
+});
+
+$(document).delegate(".pay-membership-at-pickup", "click", function(e) {
+    $('#membership_subscribe_payMembershipAtPickup').val(1);
+    return $("#paymentForm").submit();
 });
 
 // Show the card fields when a user (or onLoad) selects the Stripe payment method.
@@ -65,8 +70,6 @@ function processPaymentForm(e) {
         // Deal with double clicks
         return false;
     }
-
-    paymentInitiated = true;
 
     if ( paymentMethod.val() == stripePaymentMethodId
         && paymentMethod.val()
@@ -136,15 +139,18 @@ function handleServerResponse(response) {
     console.log("handleServerResponse:");
     console.log(response);
     if (response.error) {
+        paymentInitiated = false;
         $("#paymentErrorMessage").html(response.error);
         $("#paymentError").show();
         unWaitButton($('.payment-submit'));
     } else if (response.requires_action) {
         // Use Stripe.js to handle required card action
+        paymentInitiated = true;
         handleAction(response);
     } else {
         // Add the charge and payment ID into the form and submit it
         // The form POST controller will update the payment with loan/membership/event info
+        paymentInitiated = true;
         $("#chargeId").val(response.charge_id);
         $("#paymentId").val(response.payment_id);
         $("#paymentForm").submit();
@@ -175,7 +181,9 @@ function handleAction(response) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    paymentIntentId: result.paymentIntent.id
+                    paymentIntentId: result.paymentIntent.id,
+                    amount: $(".payment-amount").val() * 100,
+                    contactId: $("#contactId").val()
                 })
             }).then(function(confirmResult) {
                 return confirmResult.json();

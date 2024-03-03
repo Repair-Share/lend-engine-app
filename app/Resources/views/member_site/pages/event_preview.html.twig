@@ -6,26 +6,23 @@
 {% endblock %}
 
 {% block modalBody %}
+    {% if tenantInformation.isMapsAllowed %}
     <script type="text/javascript">
+
         function add_markers() {
-            var geocoder = new google.maps.Geocoder();
+
             var marker;
 
-            geocoder.geocode({'address': '{{ event.site.address|replace({"\r\n": ", "}) }}, {{ event.site.postcode }}, {{ tenantInformation.country }}'}, function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    var _position = {lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
-                    var mapOptions = {
-                        zoom: 12,
-                        center: _position,
-                        controlSize: 32
-                    };
-                    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+            var _position = {lat: {{ event.site.lat }}, lng: {{ event.site.lng }}};
+            var mapOptions = {
+                zoom: 12,
+                center: _position,
+                controlSize: 32
+            };
 
-                    addMarker(map, _position);
-                } else {
-                    console.log(status);
-                }
-            });
+            var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+            addMarker(map, _position);
 
             function addMarker(map, position) {
                 marker = new google.maps.Marker({
@@ -45,6 +42,7 @@
             {% endif %}
         });
     </script>
+    {% endif %}
 
     <style>
         .modal-mini-header {
@@ -80,6 +78,7 @@
     {% endif %}
 
     <div class="row" id="event-info">
+        {% if tenantInformation.isMapsAllowed %}
         <div class="col-md-7" id="map-column">
             <style type="text/css">
                 #map {
@@ -91,7 +90,8 @@
             </style>
             <div id="map"></div>
         </div>
-        <div class="col-md-5" id="info-column">
+        {% endif %}
+        <div class="{% if tenantInformation.isMapsAllowed %}col-md-5{% else %}col-md-12{% endif %}" id="info-column">
             <div class="modal-mini-header">{% trans %}events.location{% endtrans %}</div>
             {{ event.site.name }}<br>
             {{ event.site.address|nl2br }}<br>

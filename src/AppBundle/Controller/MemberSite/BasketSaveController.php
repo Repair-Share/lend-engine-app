@@ -25,6 +25,9 @@ class BasketSaveController extends Controller
         /** @var \AppBundle\Services\BasketService $basketService */
         $basketService = $this->get('service.basket');
 
+        /** @var $contactService \AppBundle\Services\Contact\ContactService */
+        $contactService = $this->get('service.contact');
+
         /** @var $basket \AppBundle\Entity\Loan */
         if (!$basket = $basketService->getBasket()) {
             $this->addFlash('error', "Basket not found. Perhaps your session has timed out.");
@@ -41,8 +44,15 @@ class BasketSaveController extends Controller
             }
         }
 
+        $contactId = $basket->getContact()->getId();
+
+        if (!$contact = $contactService->get($contactId)) {
+            $this->addFlash('error', "Couldn't find a contact with ID {$contactId}.");
+            return $this->redirectToRoute('basket_show');
+        }
+
         $reservationFee = $request->request->get('booking_fee');
-        $basket->setReservationFee($reservationFee);
+        $basket->setReservationFee($reservationFee, $contact);
 
         $collectFrom = $request->request->get('collect_from');
         $basket->setCollectFrom($collectFrom);

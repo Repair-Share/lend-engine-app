@@ -9,6 +9,7 @@ use AppBundle\Helpers\DateTimeHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -52,18 +53,10 @@ class BasketAddItemController extends Controller
         /** @var \AppBundle\Entity\InventoryItem $product */
         $product = $itemRepo->find($itemId);
 
-        // Validate sites
-        if (!$request->get('from_site') || !$request->get('to_site')) {
-            $this->addFlash('error', "There was an error trying to find the site you chose. Please log out/in and try again.");
-            return $this->redirectToRoute('home');
-        }
-
-        if (!$request->get('date_from') || !$request->get('date_to')) {
-            $this->addFlash('error', "Sorry, we couldn't determine loan dates. Please log out/in and try again.");
-            return $this->redirectToRoute('home');
-        }
-
         if (!$this->getUser()) {
+            if ($request->get('qa')) {
+                return new JsonResponse(["status" => "You're not logged in"]);
+            }
             $this->addFlash('error', "You're not logged in. Please log in and try again.");
             return $this->redirectToRoute('home');
         }
@@ -84,16 +77,78 @@ class BasketAddItemController extends Controller
             }
 
             if (!$basket = $basketService->createBasket($basketContactId)) {
-                $this->addFlash('error', "You don't have an active membership. Please check your account.");
+                $msg = "You don't have an active membership. Please check your account.";
+                if ($request->get('qa')) {
+                    return new JsonResponse(["status" => $msg]);
+                }
+                $this->addFlash('error', $msg);
                 return $this->redirectToRoute('home');
             }
+        }
+
+        if ($request->get('from_site') && $request->get('to_site')) {
+            // Request from item page
+            if (!$siteFrom = $siteRepo->find($request->get('from_site'))) {
+                throw new \Exception("Cannot find site " . $request->get('from_site'));
+            }
+
+            if (!$siteTo = $siteRepo->find($request->get('to_site'))) {
+                throw new \Exception("Cannot find site " . $request->get('to_site'));
+            }
+        } else if ($basket->getCollectFromSite()) {
+            // Fail over to existing basket site
+            $siteFrom = $basket->getCollectFromSite();
+            $siteTo   = $basket->getCollectFromSite(); // return to same site
+        } else {
+            $msg = "There was an error trying to find the site you chose. Please log out/in and try again.";
+            if ($request->get('qa')) {
+                return new JsonResponse(["status" => $msg]);
+            }
+            $this->addFlash('error', $msg);
+            return $this->redirectToRoute('home');
+        }
+
+        // Validate dates
+
+        if (!$tz = $settingsService->getSettingValue('org_timezone')) {
+            $tz = 'Europe/London';
+        }
+        $timeZone = new \DateTimeZone($tz);
+
+        if ($request->get('date_from') && $request->get('date_to')) {
+            // Request from item page
+            // Local time
+            $dFrom = new \DateTime($request->get('date_from').' '.$request->get('time_from'), $timeZone);
+            $dTo   = new \DateTime($request->get('date_to').' '.$request->get('time_to'), $timeZone);
+        } else if ($rows = $basket->getLoanRows()) {
+            $dFrom = $rows[0]->getDueOutAt();
+            $dTo   = $rows[0]->getDueInAt();
+        } else {
+            $msg = "Sorry, we couldn't determine loan dates. Please log out/in and try again.";
+            if ($request->get('qa')) {
+                return new JsonResponse(["status" => $msg]);
+            }
+            $this->addFlash('error', $msg);
+            return $this->redirectToRoute('home');
         }
 
         // The basket only stores partial [serialized] contact info so get the full contact
         $contact = $contactService->get($basket->getContact()->getId());
         if (!$contact->getActiveMembership()) {
-            $this->addFlash('error', "You don't have an active membership. Please check your account.");
+            $msg = "You don't have an active membership. Please check your account.";
+            if ($request->get('qa')) {
+                return new JsonResponse(["status" => $msg]);
+            }
+            $this->addFlash('error', $msg);
             return $this->redirectToRoute('home');
+        }
+
+        if (in_array(strtolower($basket->getStatus()), ['active', 'closed', 'cancelled', 'overdue'])) {
+            $errorStr = "You can't add an item to a loan when it's " . strtolower($basket->getStatus()) . ".";
+            $this->addFlash('error', $errorStr);
+            $this->get('session')->set('active-loan', null);
+            $this->get('session')->set('active-loan-type', null);
+            return $this->redirectToRoute('public_loan', ['loanId' => $loanId]);
         }
 
         // Verify user can borrow more items, if there's a limit on their membership type
@@ -124,14 +179,22 @@ class BasketAddItemController extends Controller
 
             $totalQty = $itemsOnLoan + $itemOverdue + $countLoanItemsInBasket;
             if ($totalQty >= $maxItems) {
-                $this->addFlash('error', "You've already got {$totalQty} items on loan and in basket. The maximum for your membership is {$maxItems}.");
+                $msg = "You've already got {$totalQty} items on loan and in basket. The maximum for your membership is {$maxItems}.";
+                if ($request->get('qa')) {
+                    return new JsonResponse(["status" => $msg]);
+                }
+                $this->addFlash('error', $msg);
                 return $this->redirectToRoute('home');
             }
 
         }
 
         if (!$basket) {
-            $this->addFlash('error', "There was an error trying to create you a basket, sorry. Please check you have an active membership.");
+            $msg = "There was an error trying to create you a basket, sorry. Please check you have an active membership.";
+            if ($request->get('qa')) {
+                return new JsonResponse(["status" => $msg]);
+            }
+            $this->addFlash('error', $msg);
             return $this->redirectToRoute('home');
         }
 
@@ -144,6 +207,9 @@ class BasketAddItemController extends Controller
         foreach ($basket->getLoanRows() AS $row) {
             if ($row->getInventoryItem()->getId() == $itemId) {
                 $msg = $this->get('translator')->trans('msg_success.basket_item_exists', [], 'member_site');
+                if ($request->get('qa')) {
+                    return new JsonResponse(["status" => $product->getName().' '.$msg]);
+                }
                 $this->addFlash('success', $product->getName().' '.$msg);
                 if ($qtyRequired > 1) {
                     $this->addFlash("error", "Please remove this item from basket before adding multiple quantities.");
@@ -153,7 +219,6 @@ class BasketAddItemController extends Controller
                 } else {
                     return $this->redirectToRoute('basket_show');
                 }
-
             }
         }
 
@@ -161,21 +226,19 @@ class BasketAddItemController extends Controller
 
         // Reservation fee
         $reservationFee = $request->get('booking_fee');
-        $basket->setReservationFee($reservationFee);
+        $basket->setReservationFee($reservationFee, $contact);
 
-        if (!$siteFrom = $siteRepo->find($request->get('from_site'))) {
-            throw new \Exception("Cannot find site ".$request->get('from_site'));
+        if ($basket->getId()) { // Adding to the existing loan doesn't run the set basket service with time corrections
+            $dFrom = DateTimeHelper::changeLocalTimeToUtc($settingsService->getSettingValue('org_timezone'), $dFrom);
+            $dTo   = DateTimeHelper::changeLocalTimeToUtc($settingsService->getSettingValue('org_timezone'), $dTo);
         }
 
-        if (!$siteTo   = $siteRepo->find($request->get('to_site'))) {
-            throw new \Exception("Cannot find site ".$request->get('to_site'));
-        }
-
-        $dFrom = new \DateTime($request->get('date_from').' '.$request->get('time_from'));
-        $dTo   = new \DateTime($request->get('date_to').' '.$request->get('time_to'));
-
-        if ($checkoutService->isItemReserved($product, $dFrom, $dTo, null)) {
-            $this->addFlash('error', "This item is reserved or on loan for your selected dates");
+        if ($checkoutService->isItemReserved($product, $dFrom, $dTo, null, $this->getUser())) {
+            $msg = "This item is reserved or on loan for your selected dates";
+            if ($request->get('qa')) {
+                return new JsonResponse(["status" => $msg]);
+            }
+            $this->addFlash('error', $msg);
             foreach ($checkoutService->errors AS $error) {
                 $this->addFlash('error', $error);
             }
@@ -232,7 +295,7 @@ class BasketAddItemController extends Controller
                 if ($qtyFulfilled == $qtyRequired) {
                     continue;
                 }
-                if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null)) {
+                if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null, $this->getUser())) {
                     $row = new LoanRow();
                     $row->setLoan($basket);
                     $row->setInventoryItem($item);
@@ -264,7 +327,15 @@ class BasketAddItemController extends Controller
             $basket->setShippingFee(0);
         }
 
-        if ($basket->getId()) {
+        if ($request->get('qa')) {
+            $basketService->setBasket($basket);
+            return new JsonResponse([
+                'status' => 'OK',
+                'message' => $product->getName().' '.$this->get('translator')->trans('msg_success.basket_item_added', [], 'member_site'),
+                'itemId' => $product->getId(),
+                'items' => sizeof($basket->getLoanRows())
+            ]);
+        } else if ($basket->getId()) {
             // We added to an existing loan
             $em->persist($basket);
             $em->flush();
@@ -298,7 +369,7 @@ class BasketAddItemController extends Controller
 
         /** @var \AppBundle\Entity\InventoryItem $item */
         foreach ($itemRepo->findBy(['name' => $name]) AS $item) {
-            if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null)) {
+            if (!$checkoutService->isItemReserved($item, $dFrom, $dTo, null, $this->getUser())) {
                 return $item;
             }
         }

@@ -77,6 +77,22 @@ class OpeningHoursType extends AbstractType
             )
         ));
 
+        $builder->add('repeat', ChoiceType::class, array(
+            'label' => 'Repeat?',
+
+            'choices' => [
+                'No repeat'  => '1',
+                'Repeat yearly for 2 years' => '2',
+                'Repeat yearly for 3 years' => '3',
+                'Repeat yearly for 4 years' => '4',
+                'Repeat yearly for 5 years' => '5'
+            ],
+
+            'attr' => array(
+                'data-help' => 'Repeat the closing status for the same day(s) in the next years'
+            )
+        ));
+
     }
 
 }

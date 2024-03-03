@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\MemberSite\Event;
 
 use AppBundle\Entity\Event;
+use AppBundle\Helpers\DateTimeHelper;
 use Doctrine\DBAL\DBALException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,6 +30,7 @@ class SiteEventListController extends Controller
             'member_site/pages/event_list.html.twig',
             [
                 'user' => $user,
+                'apiKey' => base64_encode(getenv('GOOGLE_MAPS_API_KEY_JS'))
             ]
         );
     }
@@ -45,8 +47,8 @@ class SiteEventListController extends Controller
         /** @var $eventService \AppBundle\Services\Event\EventService */
         $eventService = $this->get('service.event');
 
-        $dFrom = new \DateTime($dateFrom);
-        $dTo   = new \DateTime($dateTo);
+        $dFrom = DateTimeHelper::parseDateTime($dateFrom);
+        $dTo   = DateTimeHelper::parseDateTime($dateTo);
         $filter = [
             'from'    => $dFrom->format("Y-m-d"),
             'to'      => $dTo->format("Y-m-d"),
@@ -58,8 +60,8 @@ class SiteEventListController extends Controller
         foreach ($results['data'] AS $event) {
             /** @var $event \AppBundle\Entity\Event */
 
-            $s_start = $event->getDate()->format("Y-m-d").' '.substr($event->getTimeFrom(), 0, 2).':'.substr($event->getTimeFrom(), 2, 2).':00';
-            $s_end   = $event->getDate()->format("Y-m-d").' '.substr($event->getTimeTo(), 0, 2).':'.substr($event->getTimeTo(), 2, 2).':00';
+            $s_start = $event->getDate()->format("Y-m-d").' '.substr($event->getTimeFrom(), 0, 2).':'.substr($event->getTimeFrom(), 3, 2).':00';
+            $s_end   = $event->getDate()->format("Y-m-d").' '.substr($event->getTimeTo(), 0, 2).':'.substr($event->getTimeTo(), 3, 2).':00';
             $site = $event->getSite();
 
             if ($event->getType() != 'c') {

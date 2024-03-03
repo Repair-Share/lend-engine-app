@@ -17,7 +17,6 @@ class PaymentMethodListController extends Controller
      */
     public function listAction(Request $request)
     {
-
         $tableRows = array();
         $em   = $this->getDoctrine()->getManager();
         $paymentMethods = $em->getRepository('AppBundle:PaymentMethod')->findAllOrderedByName(true);

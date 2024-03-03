@@ -8,6 +8,8 @@ use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\Payment;
 use AppBundle\Form\Type\LoanCheckOutType;
+use AppBundle\Helpers\UnitTestHelper;
+use phpDocumentor\Reflection\Types\True_;
 use Postmark\Models\PostmarkAttachment;
 use Postmark\PostmarkClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -46,6 +48,9 @@ class LoanController extends Controller
 
         /** @var \AppBundle\Services\Contact\ContactService $contactService */
         $contactService = $this->get('service.contact');
+
+        /** @var \AppBundle\Services\Debug\DebugService $debugService */
+        $debugService = $this->get('service.debug');
 
         /** @var \AppBundle\Repository\LoanRepository $repo */
         $repo = $em->getRepository('AppBundle:Loan');
@@ -115,14 +120,7 @@ class LoanController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // pre-check before we start creating payments
-            if (!$checkoutService->validateCheckout($loan)) {
-                $this->addFlash('error', "We can't check out:");
-                foreach ($checkoutService->errors AS $error) {
-                    $this->addFlash('error', $error);
-                }
-                return $this->redirectToRoute('public_loan', ['loanId' => $loan->getId()]);
-            }
+            $debugService->stripeDebug('Payment form submitted', print_r($_REQUEST, true));
 
             // Until we have a fail, assume payment is OK
             $paymentOk = true;
@@ -163,10 +161,16 @@ class LoanController extends Controller
                     } else {
                         // No existing payment exists
                         $payment = new Payment();
+
+                        $debugService->stripeDebug('Payment() initialized with empty (No psp code)');
                     }
 
                     $payment->setCreatedBy($user);
-                    $payment->setPaymentMethod($paymentMethod);
+
+                    if ($paymentMethod !== null) {
+                        $payment->setPaymentMethod($paymentMethod);
+                    }
+
                     $payment->setAmount($loanAmount);
                     $paymentNote = Payment::TEXT_PAYMENT_RECEIVED.'. '.$form->get('paymentNote')->getData();
                     $payment->setNote($paymentNote);
@@ -184,6 +188,13 @@ class LoanController extends Controller
 
                 // Create the deposits as separate payments
                 if ($paymentOk == true) {
+
+                    $debugService->stripeDebug(
+                        'Create the deposits as separate payments',
+                        [
+                            'deposits' => $request->request->get('deposits')
+                        ]
+                    );
 
                     if ($deposits = $request->request->get('deposits')) {
 
@@ -219,6 +230,32 @@ class LoanController extends Controller
                     }
                 }
 
+            }
+
+            // pre-check before we start creating payments
+            if (!$checkoutService->validateCheckout($loan)) {
+
+                // Return error only for the unit test because it doesn't support flash bags
+                if (UnitTestHelper::isUnitTestEnvironment() && UnitTestHelper::isCommandLine()) {
+
+                    $message = "We can't check out:" . PHP_EOL;
+
+                    foreach ($checkoutService->errors as $error) {
+                        $message .= $error . PHP_EOL;
+                    }
+
+                    return $this->render('unit_test/display_message.html.twig', [
+                            'message' => $message
+                        ]
+                    );
+
+                }
+
+                $this->addFlash('error', "We can't check out:");
+                foreach ($checkoutService->errors AS $error) {
+                    $this->addFlash('error', $error);
+                }
+                return $this->redirectToRoute('public_loan', ['loanId' => $loan->getId()]);
             }
 
             // We either have a successful charge, or no payment amount
@@ -281,7 +318,7 @@ class LoanController extends Controller
             /** @var \AppBundle\Services\SettingsService $settingsService */
             $settingsService = $this->get('settings');
 
-            if ($tenant = $settingsService->getTenant()) {
+            if ($tenant = $settingsService->getTenant(false)) {
                 foreach ($loan->getLoanRows() AS $row) {
                     /** @var $row \AppBundle\Entity\LoanRow */
                     $item = $row->getInventoryItem();
@@ -377,7 +414,7 @@ class LoanController extends Controller
 
         $token = $contactService->generateAccessToken($loan->getContact());
 
-        $loginUri = $tenantService->getTenant()->getDomain(true);
+        $loginUri = $tenantService->getTenant(false)->getDomain(true);
         $loginUri .= '/access?t='.$token.'&e='.urlencode($loan->getContact()->getEmail());
         $loginUri .= '&r=/loan/'.$loan->getId();
 

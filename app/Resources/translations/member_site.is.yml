@@ -3,8 +3,8 @@
 # Release: Working copy
 # Locale: is-IS, Icelandic (Iceland)
 # Tagged: Member site
-# Exported by: Chris
-# Exported at: Wed, 23 May 2018 10:12:00 +0100
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 15:52:31 +0100
 ---
 Loan: lán
 Loans: Lán
@@ -163,3 +163,4 @@ msg_success.basket_item_exists: er nú þegar komið í körfuna þína.
 msg_fail.general_fail: Afsakið, eitthvað fór útskeiðis.  Vinsamlegast reyndu aftur eða hafðu samband.
 msg_fail.reservation_create: Eitthvað fór úrskeiðis, ekki var hægt að ganga frá pöntun þinni.
 msg_fail.reservation_cancel: Við gátum því miður ekki fellt niður pöntun þína.  Vinsamlegast hafðu samband.
+...

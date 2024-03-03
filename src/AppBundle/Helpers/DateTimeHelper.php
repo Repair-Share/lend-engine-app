@@ -2,11 +2,41 @@
 
 namespace AppBundle\Helpers;
 
+use DateTime;
+use Exception;
+
 class DateTimeHelper
 {
     public static function leadingZero($string)
     {
         return str_pad($string, 2, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * @param $string
+     * @return DateTime (Default fallback is the current datetime)
+     */
+    public static function parseDateTime($string)
+    {
+        // Tries to parse in a standard way, if it's ok, yay
+        try {
+            return new DateTime($string);
+        } catch (Exception $e) {
+        }
+
+        // Error on the given param, tries to sanitize
+        try {
+
+            // Expected format YYYY-MM-DDThh:mm:ss
+            $dString = substr($string, 0, 19);
+            if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$/', $dString, $matches)) {
+                return new DateTime($dString);
+            }
+
+        } catch (Exception $e) {
+        }
+
+        return new DateTime();
     }
 
     /**
@@ -73,5 +103,92 @@ class DateTimeHelper
         }
 
         return self::leadingZero($hours) . ':' . self::leadingZero($minutes);
+    }
+
+    /**
+     * Change local time to UTC
+     */
+    public static function changeLocalTimeToUtc($settingsTimeZone, DateTime $time)
+    {
+        if (!$settingsTimeZone) {
+            $settingsTimeZone = 'Europe/London';
+        }
+
+        $tz = new \DateTimeZone($settingsTimeZone);
+
+        $utc    = new DateTime($time->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
+        $offSet = $tz->getOffset($utc) / 3600 * -1;
+
+        $time->modify("{$offSet} hours");
+
+        return $time;
+    }
+
+    /**
+     * @param  string  $settingsTimeZone
+     * @param  DateTime  $time
+     *
+     * @return DateTime
+     * @throws Exception
+     */
+    public static function changeUtcTimeToLocal($settingsTimeZone, DateTime $time)
+    {
+        if (!$settingsTimeZone) {
+            $settingsTimeZone = 'Europe/London';
+        }
+
+        $tz = new \DateTimeZone($settingsTimeZone);
+
+        $utc      = new DateTime($time->format('Y-m-d H:i:s'), new \DateTimeZone('UTC'));
+        $offSet   = $tz->getOffset($utc) / 3600;
+
+        $localTime = $time;
+        $localTime->modify("{$offSet} hours");
+
+        return $localTime;
+    }
+
+    /**
+     * @param  string  $settingsTimeZone
+     *
+     * @return DateTime
+     * @throws Exception
+     */
+    public static function getLocalTime($settingsTimeZone)
+    {
+        if (!$settingsTimeZone) {
+            $settingsTimeZone = 'Europe/London';
+        }
+
+        $time = new \DateTime();
+
+        $tz = new \DateTimeZone($settingsTimeZone);
+
+        $utc      = new DateTime('now', new \DateTimeZone('UTC'));
+        $offSet   = $tz->getOffset($utc) / 3600;
+
+        $localTime = $time;
+        $localTime->modify("{$offSet} hours");
+
+        return $localTime;
+    }
+
+    /**
+     * Format date with handling the empty or invalid date formats
+     *
+     * @param $date
+     * @param $format
+     *
+     * @return string
+     */
+    public static function formatDate($date, $format)
+    {
+        if (!$date) {
+            return '';
+        }
+
+        $d = new DateTime($date);
+
+        return $d->format($format);
     }
 }

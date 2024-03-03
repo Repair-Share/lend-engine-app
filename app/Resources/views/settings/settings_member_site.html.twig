@@ -51,89 +51,39 @@
                     </p>
                 </div>
 
-                <div style="display: {% if tenantInformation.feature('CustomDomain') %}block{% else %}none{% endif %}">
-                    {{ form_row(form.site_domain) }}
-
-                    {% if domainOk == true and tenantInformation.accountDomain() == tenantInformation.setting('site_domain') %}
-                        <i class="fa fa-check"></i> Domain is set up OK.
-                    {% else %}
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label>Step 1</label>
-                            <div class="help-block">
-                                Enter your custom domain and save settings.
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <label>Step 2</label>
-                            <div class="help-block">
-                                Create a CNAME record in your domain control panel.
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <label>Step 3</label>
-                            <div class="help-block">
-                                Switch to the new domain.
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                </div>
-
                 {% if tenantInformation.setting('site_domain') and tenantInformation.accountDomain() != tenantInformation.setting('site_domain') %}
 
-                    {% if domainStatus %}
+                    <div class="alert alert-warning">
+                        Your request is pending. Setting up a domain could take for 1-2 weeks, depending on
+                        your domain provider and on you.
+                    </div>
 
-                        <div class="alert alert-info">
-                            We've set up your domain on our servers.<br>
-                            Enter the CNAME details below into your hosting provider's domain control panel.
-                        </div>
-
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>TTL</th>
-                                <th>Value</th>
-                            </tr>
-                            <tr>
-                                <td>{{ domainParts[0] }}</td>
-                                <td>CNAME</td>
-                                <td>600</td>
-                                <td>{{ domainStatus.cname }}.</td>
-                            </tr>
-                        </table>
-
-                        {% if domainStatus.acm_status == 'cert issued' %}
-                            <a class="btn btn-primary btn-xs" href="{{ path('settings_member_site', {customDomain: 'activate'}) }}">
-                                Switch to https://{{ tenantInformation.setting('site_domain') }}
-                            </a>
-                            <div class="help-block">
-                                Our systems show your CNAME is ready! <br>
-                                Click to activate the domain.
-                                You'll be redirected and will need to log in again.
-                            </div>
-                        {% else %}
-                            <div class="alert alert-warning">
-                                It doesn't look like the CNAME is ready:
-                                "{{ domainStatus.acm_status_reason }}"<br>
-                                If you think it's OK, please contact us.<br>
-                                When the CNAME is ready, you'll be able to switch to the domain.
-                            </div>
-                        {% endif %}
-
-                    {% else %}
-                        <br>
-                        <div class="alert alert-warning">
-                            Your requested domain is being set up on our servers.
-                            Wait a short while, then refresh.<br>
-                            If this message is still here in a few minutes, please get in touch.
-                        </div>
-                    {% endif %}
+                    <div class="text-right margin-bottom">
+                        <button class="btn btn-warning btn-sm"
+                                type="button"
+                                onclick="if(confirm('Are you sure?')){ window.location = '/admin/settings/member_site?customDomainCancel'; }"
+                        >Cancel Request
+                        </button>
+                    </div>
 
                 {% endif %}
+
+                <div style="display: {% if tenantInformation.feature('CustomDomain') %}block{% else %}none{% endif %}">
+                    <div class="form-group">
+                        {{ form_label(form.site_domain) }}
+                        <div style="position: absolute;margin-top: 0.5em;">
+                            https://
+                        </div>
+                        <div style="padding-left: 4em;">
+                            {{ form_widget(form.site_domain) }}
+                        </div>
+                    </div>
+                    {{ form_row(form.site_domain) }}
+                    {{ form_row(form.site_domain_provider) }}
+                    {{ form_row(form.site_domain_req_name) }}
+                    {{ form_row(form.site_domain_req_email) }}
+
+                </div>
 
             </div>
             <br>
@@ -143,9 +93,11 @@
 
             {{ form_row(form.site_description) }}
             {{ form_row(form.group_similar_items) }}
+            {{ form_row(form.search_terms) }}
             {{ form_row(form.self_checkout) }}
             {{ form_row(form.self_extend) }}
             {{ form_row(form.google_tracking_id) }}
+            {{ form_row(form.hide_ga) }}
 
             <h2>Logo</h2>
 
@@ -282,6 +234,25 @@
         function finishFilesUploading() {
             $("#save-item").attr('disabled', false).html("Save item");
         }
+
+        $('form[name=settings_member_site]').on('submit', function () {
+
+            if ($('#settings_member_site_site_domain').val()) {
+
+                if (!$('#settings_member_site_site_domain_req_name').val()) {
+                    alert('Please provide your name if you request a custom domain!');
+                    $('#settings_member_site_site_domain_req_name').focus();
+                    return false;
+                }
+
+                if (!$('#settings_member_site_site_domain_req_email').val()) {
+                    alert('Please provide your email if you request a custom domain!');
+                    $('#settings_member_site_site_domain_req_email').focus();
+                    return false;
+                }
+
+            }
+        });
 
     </script>
 {% endblock %}

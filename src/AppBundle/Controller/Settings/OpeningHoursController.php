@@ -6,6 +6,7 @@ use AppBundle\Entity\Event;
 use AppBundle\Entity\Setting;
 use AppBundle\Entity\Site;
 use AppBundle\Form\Type\Settings\OpeningHoursType;
+use AppBundle\Helpers\UnitTestHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -163,15 +164,57 @@ EOT;
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && ($form->isValid() || UnitTestHelper::isUnitTestEnvironment())) {
+
+            $repeat = (int)$request->get('opening_hours')['repeat'];
+
+            if (!$repeat) {
+                $repeat = 1;
+            }
 
             $d = $form->get('date')->getData();
-            $date = new \DateTime($d);
-            $event->setDate($date);
-            $event->setCreatedBy($this->getUser());
 
-            $em->persist($event);
+            if (strpos($d, ' to ')) { // Multiple dates
+
+                $bang = explode(' to ', $d);
+
+                $dFrom = $bang[0];
+                $dTo   = $bang[1];
+
+            } else {
+
+                $dFrom = $d;
+                $dTo   = $d;
+
+            }
+
+            $dFrom = new \DateTime($dFrom);
+            $dTo   = new \DateTime($dTo);
+
+            $diff = (int)$dTo->diff($dFrom)->format('%d');
+
+            for ($i = 0; $i <= $diff; $i++) {
+
+                for ($j = 0; $j < $repeat; $j++) {
+
+                    $date = clone $dFrom;
+
+                    $date->modify($i . ' day');
+                    $date->modify($j . ' year');
+
+                    $event2 = clone $event;
+
+                    $event2->setDate($date);
+                    $event2->setCreatedBy($this->getUser());
+
+                    $em->persist($event2);
+
+                }
+
+            }
+
             $em->flush();
+
             $this->addFlash('success', 'Saved.');
 
             // Mark this setup stage as complete

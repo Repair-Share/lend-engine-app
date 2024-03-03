@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -16,6 +17,11 @@ class RefundType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->em = $options['em'];
+
+        $allowDebit = false;
+        if (strpos($options['action'], 'goToCheckInItem') === false) {
+            $allowDebit = true;
+        }
 
         $activePaymentMethods = $this->em->getRepository("AppBundle:PaymentMethod")->findAllOrderedByName();
         $builder->add('paymentMethod', EntityType::class, array(
@@ -45,6 +51,19 @@ class RefundType extends AbstractType
                 'rows' => 2
             ]
         ));
+
+        if ($allowDebit) {
+
+            $builder->add('debitAccount', CheckboxType::class, array(
+                'label'    => 'Create Debit to LE account',
+                'required' => false,
+
+                'attr' => [
+                    'checked' => true
+                ]
+            ));
+
+        }
 
         $builder->add('paymentId', HiddenType::class, array(
             'label' => 'paymentId',

@@ -45,7 +45,7 @@ class SettingsController extends Controller
         $repo =  $em->getRepository('AppBundle:Setting');
 
         /** @var \AppBundle\Entity\Tenant $tenant */
-        $tenant = $settingsService->getTenant();
+        $tenant = $settingsService->getTenant(false);
 
         if ($form->isSubmitted()) {
 

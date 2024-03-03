@@ -8,6 +8,7 @@ use AppBundle\Entity\Loan;
 use AppBundle\Entity\LoanRow;
 use AppBundle\Entity\Note;
 use AppBundle\Entity\Payment;
+use AppBundle\Helpers\DateTimeHelper;
 use AppBundle\Serializer\Denormalizer\ContactDenormalizer;
 use AppBundle\Serializer\Denormalizer\InventoryItemDenormalizer;
 use AppBundle\Serializer\Denormalizer\LoanDenormalizer;
@@ -132,7 +133,7 @@ class BasketService
         // Only add reservation fee if not admin
         if (!$this->user->hasRole('ROLE_ADMIN')) {
             $bookingFee = $this->settings->getSettingValue('reservation_fee');
-            $basket->setReservationFee($bookingFee);
+            $basket->setReservationFee($bookingFee, $contact);
         }
 
         $this->setSessionUser($basketContactId);
@@ -149,33 +150,6 @@ class BasketService
      */
     public function setBasket(Loan $basket)
     {
-        // ----- Change times from local to UTC ----- //
-        if (!$tz = $this->settings->getSettingValue('org_timezone')) {
-            $tz = 'Europe/London';
-        }
-        $timeZone = new \DateTimeZone($tz);
-        $utc = new \DateTime('now', new \DateTimeZone("UTC"));
-        $offSet = -$timeZone->getOffset($utc)/3600;
-
-        foreach ($basket->getLoanRows() AS $row) {
-
-            /** @var $row \AppBundle\Entity\LoanRow */
-            if (in_array($row->getInventoryItem()->getItemType(), [InventoryItem::TYPE_STOCK, InventoryItem::TYPE_SERVICE])) {
-                // No dates for stock or service items
-                continue;
-            }
-
-            $i = clone $row->getDueInAt();
-            $i->modify("{$offSet} hours");
-            $row->setDueInAt($i);
-
-            $o = clone $row->getDueOutAt();
-            $o->modify("{$offSet} hours");
-            $row->setDueOutAt($o);
-
-        }
-        // ----- Change times from local to UTC ----- //
-
         $json = $this->serializer->normalize($basket, null, ['groups' => ['basket']]);
         $this->session->set('basket', $json);
     }
@@ -207,22 +181,6 @@ class BasketService
             }
 
             $basket = $serializer->denormalize($data, Loan::class, 'json');
-
-            // ----- Change times from UTC to local ----- //
-            if (!$tz = $this->settings->getSettingValue('org_timezone')) {
-                $tz = 'Europe/London';
-            }
-            $timeZone = new \DateTimeZone($tz);
-            $utc = new \DateTime('now', new \DateTimeZone("UTC"));
-            $offSet = $timeZone->getOffset($utc)/3600;
-            foreach ($basket->getLoanRows() AS $r => $row) {
-                /** @var $row \AppBundle\Entity\LoanRow */
-                $i = $row->getDueInAt()->modify("{$offSet} hours");
-                $row->setDueInAt($i);
-                $o = $row->getDueOutAt()->modify("{$offSet} hours");
-                $row->setDueOutAt($o);
-            }
-            // ----- Change times from UTC to local ----- //
 
             return $basket;
         } else {
@@ -282,14 +240,10 @@ class BasketService
         $basket->setContact($contact);
         $basket->setCreatedBy($this->user);
 
-        // ----- Change times from local to UTC ----- //
+        // Get the client's time zone from the db
         if (!$tz = $this->settings->getSettingValue('org_timezone')) {
             $tz = 'Europe/London';
         }
-        $timeZone = new \DateTimeZone($tz);
-        $utc = new \DateTime('now', new \DateTimeZone("UTC"));
-        $offSet = -$timeZone->getOffset($utc)/3600;
-        // ----- Change times from local to UTC ----- //
 
         // Add a row for the shipping fee
         $postalFee = $this->calculateShippingFee($basket);
@@ -311,12 +265,16 @@ class BasketService
         foreach ($basket->getLoanRows() AS $row) {
             /** @var $row \AppBundle\Entity\LoanRow */
 
-            // Update time zone
-            if ($row->getDueInAt() && $row->getDueOutAt() ) {
-                $i = $row->getDueInAt()->modify("{$offSet} hours");
-                $row->setDueInAt($i);
-                $o = $row->getDueOutAt()->modify("{$offSet} hours");
-                $row->setDueOutAt($o);
+            // Set the time to UTC
+            if ($row->getDueOutAt() ) {
+                $i = DateTimeHelper::changeLocalTimeToUtc($tz, $row->getDueOutAt());
+                $row->getDueOutAt($i);
+            }
+
+            // Set the time to UTC
+            if ($row->getDueInAt() ) {
+                $i = DateTimeHelper::changeLocalTimeToUtc($tz, $row->getDueInAt());
+                $row->getDueInAt($i);
             }
 
             // Get the DB entity
@@ -463,7 +421,7 @@ class BasketService
         $contact = $loan->getContact();
         $token = $this->contactService->generateAccessToken($contact);
 
-        $loginUri = $this->tenantService->getTenant()->getDomain(true);
+        $loginUri = $this->tenantService->getTenant(false)->getDomain(true);
         $loginUri .= '/access?t='.$token.'&e='.urlencode($contact->getEmail());
         $loginUri .= '&r=/loan/'.$loan->getId();
 
@@ -481,6 +439,27 @@ class BasketService
             // Save and switch locale for sending the email (it should be the same as the UI anyway)
             $sessionLocale = $this->translator->getLocale();
             $this->translator->setLocale($locale);
+
+            // Get the client's time zone from the db
+            if (!$tz = $this->settings->getSettingValue('org_timezone')) {
+                $tz = 'Europe/London';
+            }
+
+            foreach ($loan->getLoanRows() AS $row) {
+
+                // Set the time back to local
+                if ($row->getDueOutAt() ) {
+                    $i = DateTimeHelper::changeUtcTimeToLocal($tz, $row->getDueOutAt());
+                    $row->getDueOutAt($i);
+                }
+
+                // Set the time back to local
+                if ($row->getDueInAt() ) {
+                    $i = DateTimeHelper::changeUtcTimeToLocal($tz, $row->getDueInAt());
+                    $row->getDueInAt($i);
+                }
+
+            }
 
             // Build the message content
             $message = $this->twig->render(

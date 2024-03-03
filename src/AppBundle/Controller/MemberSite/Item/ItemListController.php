@@ -113,7 +113,7 @@ class ItemListController extends Controller
         if ($searchString = $request->get('search')) {
             $filter['search'] = $searchString;
             $searchText = $this->container->get('translator')->trans("public_misc.search", [], 'member_site');
-            $pageTitle = $searchText.': "'.$searchString.'"';
+            $pageTitle = $searchText.': "'.htmlspecialchars($searchString).'"';
         }
 
         if ($type = $request->get('type')) {

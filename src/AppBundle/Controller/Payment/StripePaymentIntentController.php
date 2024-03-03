@@ -123,6 +123,7 @@ class StripePaymentIntentController extends Controller
             $chargeId = $intent->charges->data[0]->id;
 
             $savePaymentAmount = $amount - $deposits;
+
             if ($savePaymentAmount > 0 && $paymentId = $this->savePendingPayment($data['contactId'], $savePaymentAmount/100, $chargeId, $paymentType)) {
                 // Tell the form to complete which updates the payment in the DB
                 return new JsonResponse([
@@ -191,6 +192,8 @@ class StripePaymentIntentController extends Controller
 
             // When the payment is linked to the request, the pendingPaymentType is cleared
             $this->get('session')->set('pendingPaymentType', $paymentType);
+        } else {
+            $payment->setNote("Pending payment");
         }
 
         try  {

@@ -67,7 +67,9 @@
         <div style="padding: 10px">
             <i class="fa fa-clock" style="color: #5cb85c"></i>
             {% trans %}public_basket.pickup_after{% endtrans %} <strong>{{ loan.loanRows|first.dueOutAt|date("d F g:i a") }}</strong>
-            {% trans %}public_basket.from{% endtrans %} <strong>{{ loan.collectFromSite.name }}</strong>
+            {% if loan.collectFromSite %}
+                {% trans %}public_basket.from{% endtrans %} <strong>{{ loan.collectFromSite.name }}</strong>
+            {% endif %}
         </div>
     {% endif %}
 
@@ -114,9 +116,11 @@
                         {% endif %}
                     </div>
 
-                    {% if not row.isCheckedOut and row.inventoryItem.inventoryLocation %}
                     {#A field checked via validateCheckout to prevent checkout for non-available items#}
-                    <input type="hidden" class="item-location" value="{{ row.inventoryItem.inventoryLocation.isAvailable }}">
+                    {% if not row.isCheckedOut and row.itemLocation %}
+                        <input type="hidden" class="item-location" value="{{ row.itemLocation.isAvailable }}">
+                    {% elseif not row.isCheckedOut and row.inventoryItem.inventoryLocation %}
+                        <input type="hidden" class="item-location" value="{{ row.inventoryItem.inventoryLocation.isAvailable }}">
                     {% endif %}
 
                     {% if row.inventoryItem.sku %}
@@ -138,7 +142,7 @@
                     {% if row.inventoryItem.itemType == 'loan' %}
                         <div>
                             <i class="far fa-clock"></i>
-                            {% trans %}public_basket.due_at{% endtrans %} <strong>{{ row.dueInAt|date("d F g:i a") }}</strong>
+                            {% trans %}public_basket.due_at{% endtrans %} <strong data-id-time="{{ row.inventoryItem.id }} {{ row.dueInAt|date("g:i a") }}">{{ row.dueInAt|date("d F g:i a") }}</strong>
                             ( {{ row.duration }} {% transchoice row.duration %}days{% endtranschoice %} )
                         </div>
                         <div class="multi-site">
@@ -227,20 +231,21 @@
                     {% endif %}
 
                     {# CHECK OUT PROMPT #}
-                    {% if loan.status in ['RESERVED', 'PENDING'] %}
-                        {% if row.inventoryItem.checkOutPrompts|length > 0 %}
-                            {% for prompt in row.inventoryItem.checkOutPrompts %}
-                                {% set promptsExist = 1 %}
-                                <div>
-                                    <label style="padding: 10px 0 4px 0; font-weight: normal;">
-                                        <input type="checkbox" class="confirm-checkout">&nbsp;
-                                        {{ prompt.name }}
-                                    </label>
-                                </div>
-                            {% endfor %}
+                    {% if (tenantInformation.setting('self_checkout') or (app.user.hasRole('ROLE_ADMIN') or app.user.hasRole('ROLE_SUPER_USER'))) %}
+                        {% if loan.status in ['RESERVED', 'PENDING'] %}
+                            {% if row.inventoryItem.checkOutPrompts|length > 0 %}
+                                {% for prompt in row.inventoryItem.checkOutPrompts %}
+                                    {% set promptsExist = 1 %}
+                                    <div>
+                                        <label style="padding: 10px 0 4px 0; font-weight: normal;">
+                                            <input type="checkbox" class="confirm-checkout">&nbsp;
+                                            {{ prompt.name }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                         {% endif %}
                     {% endif %}
-
                 </td>
                 <td style="text-align: right">
 
@@ -257,7 +262,7 @@
                         <br>{% trans %}public_item.each{% endtrans %}
                     {% endif %}
 
-                    {% if not row.isCheckedOut and loan.status in ['RESERVED', 'PENDING'] and is_granted('ROLE_ADMIN')%}
+                    {% if not row.isCheckedOut and loan.status in ['RESERVED', 'PENDING']%}
                         <a href="{{ path('loan_item_remove', {rowId: row.id}) }}" style="margin-top: 4px; display: block">
                             {% trans %}public_basket.remove_item{% endtrans %}
                         </a>
@@ -299,13 +304,11 @@
 
         {% if tenantInformation.feature('StockItems') and loan.status in ['RESERVED', 'PENDING']%}
             <tr>
-                <td class="hidden-xs"></td>
-                <td>
+                <td colspan="3">
                     <a class="btn btn-xs btn-primary" href="{{ path('add_stock_item', {loanId: loan.id}) }}" id="add-stock-item">Add stock item</a>
                     <a class="btn btn-xs btn-primary" href="{{ path('add_loan_item', {loanId: loan.id}) }}" id="add-loan-item">Add loan item</a>
                     <a class="btn btn-xs btn-primary" href="{{ path('add_service_item', {loanId: loan.id}) }}" id="add-service-item">Add service item</a>
                 </td>
-                <td></td>
             </tr>
         {% endif %}
 
@@ -422,9 +425,11 @@
                             {% trans %}shipping.post{% endtrans %}
                         </button>
                     {% else %}
-                        <button type="button" class="btn btn-default active" id="chooseWarehouse">
-                            {% trans %}shipping.collect{% endtrans %} {{ loan.collectFromSite.name }}
-                        </button>
+                        {% if loan.collectFromSite %}
+                            <button type="button" class="btn btn-default active" id="chooseWarehouse">
+                                {% trans %}shipping.collect{% endtrans %} {{ loan.collectFromSite.name }}
+                            </button>
+                        {% endif %}
                         <button type="button" class="btn btn-default" id="choosePostal">
                             {% trans %}shipping.post{% endtrans %}
                         </button>
@@ -474,11 +479,6 @@
     {% if loan.status == 'RESERVED' or loan.status == 'PENDING' %}
     <div class="row well" id="checkoutButtonRow">
         <div class="col-md-12">
-            {% if loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_PENDING') and is_granted('ROLE_ADMIN') %}
-                <a class="btn btn-xs btn-danger buttonDelete pull-left" href="{{ path('loan_delete', {id: loan.id}) }}">
-                    Delete this loan
-                </a>
-            {% endif %}
             {% if loan.status == 'RESERVED' %}
                 <a href="{{ path('reservation_cancel', {id: loan.id}) }}" id="buttonCancelReservation" class="btn btn-xs btn-danger pull-left">
                     {% trans %}button_cancel_reservation{% endtrans %}
@@ -566,6 +566,13 @@
                 </div>
 
             </form>
+
+            {% if loan.status == constant('\\AppBundle\\Entity\\Loan::STATUS_PENDING') and is_granted('ROLE_ADMIN') %}
+                <br><br><br>
+                <a class="btn btn-xs btn-danger buttonDelete pull-left" href="{{ path('loan_delete', {id: loan.id}) }}">
+                    Delete this loan
+                </a>
+            {% endif %}
         </div>
     </div>
 

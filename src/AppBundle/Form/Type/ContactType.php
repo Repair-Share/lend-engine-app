@@ -60,7 +60,8 @@ class ContactType extends AbstractType
             'Slovak'      => 'sk',
             'Slovenščina' => 'sl',
             'Svenska'     => 'sv-SE',
-            'Cymraeg'     => 'cy'
+            'Cymraeg'     => 'cy',
+            'Ukrainian'   => 'uk-UA'
         ];
         $builder->add('locale', ChoiceType::class, array(
             'label' => 'Preferred language',
@@ -280,6 +281,14 @@ class ContactType extends AbstractType
                 'attr' => [
                     'data-help' => 'All users can log in and create reservations, if you allow online reservations.'
                 ]
+            ));
+
+            $builder->add('chargeReservationFee', CheckboxType::class, array(
+                'label' => 'Charge reservation fee',
+                'required' => false,
+                'attr' => array(
+                    "autocomplete" => "off"
+                )
             ));
         }
 

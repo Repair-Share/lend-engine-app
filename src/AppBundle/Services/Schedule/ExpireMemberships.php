@@ -111,7 +111,7 @@ class ExpireMemberships
                 $this->settings->setTenant($tenant, $tenantEntityManager);
                 $tenantService->setTenant($tenant);
 
-                $senderName     = $tenantService->getSetting('org_name');
+                $senderName     = $tenantService->getCompanyNameAsSender();
                 $fromEmail      = $tenantService->getSenderEmail();
                 $replyToEmail   = $tenantService->getReplyToEmail();
                 $postmarkApiKey = $tenantService->getSetting('postmark_api_key');

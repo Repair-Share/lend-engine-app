@@ -3,9 +3,8 @@
 # Release: Working copy
 # Locale: nl-NL, Dutch (Netherlands)
 # Tagged: Member site
-# Status: Translated
-# Exported by: Chris
-# Exported at: Wed, 13 Jan 2021 00:53:53 +0000
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 15:53:44 +0100
 ---
 Loan: Lening
 Loans: Leningen
@@ -121,7 +120,7 @@ calendar.alert_already_booked: U kan deze datum niet selecteren vanwege een ande
 calendar.alert_not_your_booking: U kunt alleen de details van uw eigen boekingen bekijken.
 calendar.alert_day_warning: Dit artikel kan enkel geleend worden voor veelvouden van itemLoanDays dagen. \nGraag een andere inleverdatum te kiezen.
 calendar.alert_min_loan_days: U moet dit artikel voor minimum minLoanDays dagen lenen.
-calendar.alert_max_loan_days: U kunt dit item lenen voor maximaal maximaal dagen.
+calendar.alert_max_loan_days: U kunt dit item lenen voor maximaal maxLoanDays dagen.
 public_basket.title: Winkelmandje
 public_basket.name: Winkelmandje
 public_basket.due_at: Terug te brengen op
@@ -218,3 +217,26 @@ events.check_in_help: Inchecken zorgt ervoor dat u toegevoegd wordt als deelneme
 events.contact_us_to_book: Neem contact met ons op om te boeken
 events.not_bookable: Dit evenement is niet online te boeken
 events.log_in_to_book: Log in om te boeken
+public_misc.search: Zoeken
+public_item.stock_item: Product
+public_item.service_item: Service
+public_item.each: elke
+public_item.alert_click_time_slot: Kies een tijdslot
+public_basket.button_checkout: Check nu uit
+public_basket.shipping: Bezorging
+public_basket.remove_stock_items: U kunt in 1 reservering enkel artikelen lenen, of enkel producten kopen. Verwijder alle artikelen of  alle producten uit uw winkelmandje.
+shipping.title: Bezorging
+shipping.per_item: per artikel
+shipping.per_loan: per reservering
+shipping.collect: Ophalen bij
+shipping.post: Bezorgen / versturen
+shipping.ship_to: Artikelen zullen bezorgd worden op het volgende adres
+shipping.edit_address: Adresgegevens bijwerken
+shipping.delivery_options: Bezorg mogelijkheden
+public_loan.quantity: Aantal
+public_add_credit.text_info: Het bedrag zal op uw account in rekening gebracht worden.
+public_registration.login_page_new_account: Inschrijven / een account aanmaken
+public_registration.check_email_title: Controleer uw e-mail
+public_registration.check_email_body: Er is een e-mail naar u verzonden met daarin een link om de inschrijving te voltooien
+public_item.in_basket: In winkelmandje
+...

@@ -36,6 +36,9 @@
 
         {% if is_granted('ROLE_SUPER_USER') %}
             {{ form_row(form.roles) }}
+
+            <p><strong>Payment settings</strong></p>
+            {{ form_row(form.chargeReservationFee) }}
         {% endif %}
 
     </div>

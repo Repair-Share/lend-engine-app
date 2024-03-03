@@ -56,6 +56,12 @@
             payload: {
                 environment: "{{ app.environment }}",
                 tenant: "{{ tenantInformation.accountCode }}"
+            },
+            checkIgnore: function(isUncaught, args, payload) {
+                // Code here to determine whether or not to send the payload
+                // to the Rollbar API
+                // return true to ignore the payload
+                return true;
             }
         };
         // Rollbar Snippet
@@ -74,7 +80,7 @@
         var stripePaymentFee = "{{ tenantInformation.stripeFee|number_format(2) }}";
         var currencyIsoCode = "{{ tenantInformation.currency }}";
         var currencySymbol = "{{ tenantInformation.currencySymbol }}";
-        var minimumPaymentAmount = {{ tenantInformation.minimumPaymentAmount|number_format(2) }};
+        var minimumPaymentAmount = {{ tenantInformation.minimumPaymentAmount|number_format(2, '.', '')  }};
         var orgName = "{{ tenantInformation.companyName }}";
         var pendingPaymentType = "{{ app.session.get('pendingPaymentType') }}";
     </script>
@@ -206,7 +212,7 @@
 </div>
 
 {% javascripts
-'@AppBundle/Resources/js/jQuery-2.1.4.min.js'
+'@AppBundle/Resources/js/jQuery-3.6.0.min.js'
 '@AppBundle/Resources/js/bootstrap.js'
 '@AppBundle/Resources/js/jquery.slimscroll.js'
 '@AppBundle/Resources/admin/js/plugins/adminlte.2.4.15.js'
@@ -226,7 +232,7 @@ filter='uglifyjs2'
 <script src="{{ asset_url }}"></script>
 {% endjavascripts %}
 
-{% if tenantInformation.stripeAccessToken|length > 0 %}
+{% if server_name != 'lend-engine-eu' and tenantInformation.stripeAccessToken|length > 0 %}
 <script src="https://js.stripe.com/v3/"></script>
 {% endif %}
 
@@ -237,7 +243,7 @@ filter='uglifyjs2'
 <script src="{{ asset_url }}"></script>
 {% endjavascripts %}
 
-<script src="/js/payment.js"></script>
+<script src="/js/payment.js?4bd4a281f4024271ce3d6e11ae20b0e9"></script>
 
 {% block pagejs %}{% endblock %}
 

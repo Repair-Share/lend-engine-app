@@ -39,6 +39,12 @@ class SiteEventBookingController extends Controller
             $user = $this->getUser();
         }
 
+        // Check that the user is provided correctly
+        if (!$user) {
+            $this->addFlash("error", "You must log in to book or check in the event.");
+            return $this->redirectToRoute('event_list');
+        }
+
         /** @var $event \AppBundle\Entity\Event */
         if (!$event = $eventService->get($eventId)) {
             $this->addFlash("error", "No event found with ID {$eventId}");

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Admin\Loan;
 
+use AppBundle\Helpers\DateTimeHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +20,8 @@ class AdminLoanListDataController extends Controller
     {
         /** @var $settingsService \AppBundle\Services\SettingsService */
         $settingsService = $this->get('settings');
+
+        $forwardPicking = $settingsService->getSettingValue('forward_picking');
 
         $em = $this->getDoctrine()->getManager();
         $data = array();
@@ -75,10 +78,6 @@ class AdminLoanListDataController extends Controller
             $filter['to_site'] = $request->get('to_site');
         }
 
-        $sort = [
-            'column'    => 'id',
-            'direction' => 'DESC'
-        ];
         if ($sortData = $request->get('order')) {
             $sortByColumnId = $sortData[0]['column']; // assumes single column sort
             $sort['direction'] = $sortData[0]['dir'];
@@ -93,18 +92,40 @@ class AdminLoanListDataController extends Controller
                     $sort['column'] = 'timeIn';
                     break;
             }
+        } else { // Default sorting options by the status
+
+            switch ($statusFilter) {
+                case 'ACTIVE': // On loan
+                    $sort = [
+                        'column'    => 'timeIn',
+                        'direction' => 'ASC'
+                    ];
+                    break;
+                case 'RESERVED': // Reservations
+                case 'PENDING': // Pending
+                case 'OVERDUE': // Overdue
+                    $sort = [
+                        'column'    => 'timeOut',
+                        'direction' => 'ASC'
+                    ];
+                    break;
+                default:
+                    $sort = [
+                        'column'    => 'id',
+                        'direction' => 'DESC'
+                    ];
+            }
+
         }
 
         $filter['excludeStockItems'] = true;
 
-        $loanData = $repo->search($start, $length, $filter, $sort);
-
         // Modify times to match local time for UI
         // Not sure why DateTime format() here is not working
-        $tz = $settingsService->getSettingValue('org_timezone');
-        $timeZone = new \DateTimeZone($tz);
-        $utc = new \DateTime('now', new \DateTimeZone("UTC"));
-        $offSet = $timeZone->getOffset($utc)/3600;
+        $tz       = $settingsService->getSettingValue('org_timezone');
+        $localNow = DateTimeHelper::getLocalTime($tz);
+
+        $loanData = $repo->search($start, $length, $filter, $sort, $tz);
 
         /** @var \AppBundle\Entity\LoanRow $loanRow */
         foreach ($loanData['data'] AS $loanRow) {
@@ -116,11 +137,11 @@ class AdminLoanListDataController extends Controller
 
             $editUrl   = $this->generateUrl('public_loan', array('loanId' => $loan->getId()));
 
-            if ($loan->getStatus() == Loan::STATUS_CLOSED || $loanRow->getCheckedInAt()) {
+            if (($loan->getStatus() == Loan::STATUS_CLOSED && $localNow > $loanRow->getDueInAt()) || $loanRow->getCheckedInAt()) {
                 $status = '<span class="label bg-dim">'.Loan::STATUS_CLOSED.'</span>';
             } else if ($loan->getStatus() == Loan::STATUS_PENDING) {
                 $status = '<span class="label bg-gray">'.Loan::STATUS_PENDING.'</span>';
-            } else if ($loan->getStatus() == Loan::STATUS_ACTIVE) {
+            } else if ($loan->getStatus() == Loan::STATUS_ACTIVE && $localNow < $loanRow->getDueInAt()) {
                 $status = '<span class="label bg-teal">ON LOAN</span>';
             } else if ($loan->getStatus() == Loan::STATUS_RESERVED) {
                 $status = '<span class="label bg-orange">'.Loan::STATUS_RESERVED.'</span>';
@@ -135,17 +156,44 @@ class AdminLoanListDataController extends Controller
             }
 
             // Modify UTC database times to match local time
-            $i = $loanRow->getDueInAt()->modify("{$offSet} hours");
+            $i = DateTimeHelper::changeUtcTimeToLocal($tz, $loanRow->getDueInAt());
             $loanRow->setDueInAt($i);
-            $o = $loanRow->getDueOutAt()->modify("{$offSet} hours");
+            $o = DateTimeHelper::changeUtcTimeToLocal($tz, $loanRow->getDueOutAt());
             $loanRow->setDueOutAt($o);
 
             $loanInfo = '<a href="'.$editUrl.'">'.$loanRow->getInventoryItem()->getName().'</a>';
             $loanInfo .= '<div class="sub-text">'.$loan->getContact()->getFirstName().' '.$loan->getContact()->getLastName().' : '.$loan->getContact()->getEmail().'</div>';
 
+            $needsMoving     = false;
+            $isOnForwardPick = false;
+
             if ($loan->getStatus() == Loan::STATUS_RESERVED && $loanRow->getInventoryItem()->getInventoryLocation()) {
                 if ($loanRow->getInventoryItem()->getInventoryLocation()->getSite() != $loanRow->getSiteFrom()) {
+
                     $loanInfo .= '<span style="color: #de7c34">Item needs moving from ' .$loanRow->getInventoryItem()->getInventoryLocation()->getSite()->getName().'</span>';
+                    $needsMoving = true;
+
+                } elseif ($forwardPicking) {
+
+                    $inventoryLocationID = $loanRow->getInventoryItem()->getInventoryLocation()->getId();
+
+                    // Get the site's default forward pick location
+                    $siteRepo = $em->getRepository('AppBundle:Site');
+
+                    $site = $siteRepo->findOneBy([
+                        'id' => $loanRow->getInventoryItem()->getInventoryLocation()->getSite()->getId()
+                    ]);
+
+                    if ($site) {
+
+                        $defaultForwardPickLocationID = $site->getDefaultForwardPickLocation()->getId();
+
+                        if ($defaultForwardPickLocationID && $inventoryLocationID === $defaultForwardPickLocationID) {
+                            $loanInfo        .= '<span style="color: #408233">Forward picked to ' . $site->getDefaultForwardPickLocation()->getName() . '</span>';
+                            $isOnForwardPick = true;
+                        }
+
+                    }
                 }
             }
 
@@ -174,6 +222,12 @@ class AdminLoanListDataController extends Controller
                 $deleteUrl = $this->generateUrl('loan_delete', array('id' => $loan->getId()));
                 $links .= '<li role="separator" class="divider"></li>';
                 $links .= '<li><a href="'.$deleteUrl.'" class="delete-link">Delete</a></li>';
+            }
+
+            if ($forwardPicking && !$needsMoving && !$isOnForwardPick) {
+                $forwardPickConfirmUrl = $this->generateUrl('forward_pickup_move_confirm', array('id' => $loanRow->getId()));
+                $links .= '<li role="separator" class="divider"></li>';
+                $links .= '<li><a href="'.$forwardPickConfirmUrl.'" class="modal-link">Forward pick</a></li>';
             }
 
             $linkHtml = '

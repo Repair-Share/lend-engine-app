@@ -31,7 +31,31 @@ class FileAttachmentController extends Controller
         }
 
         $path = $schema.'/files/'.$fileName;
+
         if ($fileContent = $filesystem->read($path)) {
+
+            $pathInfo = pathinfo($path);
+            $mimeType = '';
+
+            if (array_key_exists('extension', $pathInfo)) {
+
+                $fileExtension = $pathInfo['extension'];
+
+                switch ($fileExtension) {
+                    case 'pdf':
+                        $mimeType = 'application/pdf';
+                        break;
+
+                    case 'jpg':
+                    case 'jpeg':
+                    case 'png':
+                    case 'gif':
+                        $mimeType = 'image/' . $fileExtension;
+                        break;
+                }
+
+            }
+
             // Return a response with a specific content
             $response = new Response($fileContent);
 
@@ -43,6 +67,11 @@ class FileAttachmentController extends Controller
 
             // Set the content disposition
             $response->headers->set('Content-Disposition', $disposition);
+
+            // Set the content type
+            if ($mimeType) {
+                $response->headers->set('Content-Type', $mimeType);
+            }
 
             // Dispatch request
             return $response;

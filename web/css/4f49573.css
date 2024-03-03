@@ -14220,6 +14220,12 @@ ul.children select { width: 100%; }
     color: #aaa
 }
 
+.admin-tools-highlight {
+    background: yellow;
+    display: inline-block;
+    padding: 0.5em;
+}
+
 .note-head {
     padding: 5px 0;
     color: #c0c0c0;

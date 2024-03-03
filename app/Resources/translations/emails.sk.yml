@@ -1,44 +1,72 @@
-# Loco yaml export: Simple YAML object
+# Loco yaml export: Symfony YAML object
 # Project: Lend Engine
 # Release: Working copy
 # Locale: sk-SK, Slovak (Slovakia)
 # Tagged: Emails
-# Status: Translated
-# Exported by: Chris
-# Exported at: Wed, 13 Jan 2021 00:56:38 +0000
+# Exported by: Andor Tamas
+# Exported at: Mon, 16 May 2022 13:49:37 +0200
 ---
-le_email.item_description: Popis
-le_email.item_contains: Obsahuje
-le_email.see_attachment: Viď prílohu
-le_email.return_sites: Vec prosíme vrátiť na nasledovné miesto
-le_email.th_item: Vec
-le_email.th_fee: Poplatok
-le_email.th_due_back: Vrátiť do
-le_email.url: Prihlasovacia URL
-le_email.email: Email
-le_email.password: Heslo
-le_email.assign.title: Bola ti pridelená vec
-le_email.assign.message: '%firstName%, bola ti pridelená vec "%itemName%" používateľom %assignorName%.'
-le_email.assign.added_note: pridal poznámku
-le_email.assign.all_items: Pozri tvoje vypožičané veci
-le_email.assign.current_location: Súčasné miesto uloženia
-le_email.checkout.subject: Informácie o výpožičke
-le_email.checkout.title: Informácie o výpožičke
-le_email.extend.subject: Výpožičná lehota bola zmenená
-le_email.extend.title: Zmenili sme výpožičnú lehotu
-le_email.extend.due_back: je potrebné vrátiť do
-le_email.reminder.subject: Výpožičná lehota %loanId% končí zajtra
-le_email.reminder.title: Výpožičná lehota sa blíži ku koncu
-le_email.reservation_reminder.subject: Vyzdvihni si svoju rezerváciu zajtra
-le_email.reservation_reminder.title: Vyzdvihni si svoju rezerváciu zajtra
-le_email.membership_expired.subject: Platnosť členského vypršala
-le_email.membership_expired.title: Platnosť členského vypršala
-le_email.login_details.subject: Prihlasovacie údaje pre %accountName%
-le_email.login_details.title: Prihlasovacie údaje
-le_email.login_details.message: Tu sú tvoje prihlasovacie údaje do nášho výpožičného systému
-le_email.new_password.title: Nové heslo
-le_email.new_password.message: Toto je nové heslo pre %accountName%
-le_email.reservation_confirm.subject: Potvrdenie tvojej rezervácie
-le_email.reservation_confirm.title: Potvrdenie rezervácie
-le_email.site_welcome.subject: Vitaj v %accountName%
-le_email.site_welcome.title: Vitaj
+le_email:
+  item_description: Popis
+  item_contains: Obsahuje
+  see_attachment: Viď prílohu
+  return_sites: Vec prosíme vrátiť na nasledovné miesto
+  th_item: Vec
+  th_fee: Poplatok
+  th_due_back: Vrátiť do
+  url: Prihlasovacia URL
+  email: Email
+  password: Heslo
+  assign:
+    title: Bola ti pridelená vec
+    message: '%firstName%, bola ti pridelená vec "%itemName%" používateľom %assignorName%.'
+    added_note: pridal poznámku
+    all_items: Pozri tvoje vypožičané veci
+    current_location: Súčasné miesto uloženia
+  checkout:
+    subject: Informácie o výpožičke
+    title: Informácie o výpožičke
+  extend:
+    subject: Výpožičná lehota bola zmenená
+    title: Zmenili sme výpožičnú lehotu
+    due_back: je potrebné vrátiť do
+  reminder:
+    subject: Výpožičná lehota %loanId% končí zajtra
+    title: Výpožičná lehota sa blíži ku koncu
+  reservation_reminder:
+    subject: Vyzdvihni si svoju rezerváciu zajtra
+    title: Vyzdvihni si svoju rezerváciu zajtra
+  membership_expired:
+    subject: Platnosť členského vypršala
+    title: Platnosť členského vypršala
+    renew_button: Klikni sem pre obnovenie členstva
+  login_details:
+    subject: Prihlasovacie údaje pre %accountName%
+    title: Prihlasovacie údaje
+    message: Tu sú tvoje prihlasovacie údaje do nášho výpožičného systému
+  new_password:
+    title: Nové heslo
+    message: Toto je nové heslo pre %accountName%
+  reservation_confirm:
+    subject: Potvrdenie tvojej rezervácie
+    title: Potvrdenie rezervácie
+  site_welcome:
+    subject: Vitaj v %accountName%
+    title: Vitaj
+  login_to_view_this_loan: Ukáž výpožičku online
+  booking_confirmation:
+    title: Potvrdenie rezervácie podujatia
+    subject: 'Potvrdenie rezervácie podujatia:'
+  donor_notify:
+    subject: Tebou darovaný predmet bol vypožičaný
+  overdue:
+    subject: Doba výpožičky položky vypršala
+    title: Prosím, vráť tento predmet
+  th_cost: Cena
+  login_now_button: Prihlás sa
+  checkin:
+    subject: Tvoja položka bola vložená do košíka
+    title: Tvoja položka bola vložená do košíka
+    checked_in_at: Rezervované v
+    checked_in_by: Rezervované od
+...

@@ -8,7 +8,11 @@
             {% trans %}public_item.not_reservable{% endtrans %}
         </div>
     {% else %}
-        {% if is_granted('ROLE_ADMIN') %}
+        {% if user.preventBorrowing %}
+            <div class="alert alert-warning" id="pickup-date-error" >
+                {% trans %}public_item.borrowing_prevented{% endtrans %}
+            </div>
+        {% elseif is_granted('ROLE_ADMIN') %}
             <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>
         {% else %}
             <a href="#" class="btn btn-success button-borrow" id="button-borrow">{% trans %}public_item.borrow_now{% endtrans %}</a>

@@ -7,4 +7,12 @@
         Working at <strong>{{ app.user.activeSite.name }}</strong>
         <a href="{{ path('choose_site') }}" class="modal-link">Change</a>
     {% endif %}
+
+    {% if app.user.hasRole("ROLE_SUPER_USER") %}
+        <p style="margin-top: 0.5em;">
+            <small>
+                Server: {{ tenantInformation.getShortServerName }}
+            </small>
+        </p>
+    {% endif %}
 {% endif %}

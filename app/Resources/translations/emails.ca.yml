@@ -1,50 +1,72 @@
-# Loco yaml export: Simple YAML object
+# Loco yaml export: Symfony YAML object
 # Project: Lend Engine
 # Release: Working copy
 # Locale: ca-ES, Catalan (Spain)
 # Tagged: Emails
 # Exported by: Andor Tamas
-# Exported at: Mon, 26 Apr 2021 13:57:48 +0200
+# Exported at: Mon, 16 May 2022 13:44:14 +0200
 ---
-le_email.item_description: Descripción
-le_email.item_contains: Consta de
-le_email.see_attachment: Ver adjunto
-le_email.return_sites: Por favor devuelve este objeto a
-le_email.th_item: Objeto
-le_email.th_fee: Tarifa
-le_email.th_due_back: Vence
-le_email.url: URL de inicio de sesión
-le_email.email: Correo electrónico
-le_email.password: Contraseña
-le_email.assign.title: Se te ha asignado un objeto
-le_email.assign.message: '%firstName%, %assignorName% te ha asignado el objeto "%itemName%".'
-le_email.assign.added_note: también ha añadido una nota
-le_email.assign.all_items: Ver todos los objetos asignados
-le_email.assign.current_location: Localización actual
-le_email.checkout.subject: Información de tu prestamo
-le_email.checkout.title: Información de tu préstamo
-le_email.extend.subject: Se ha actualizado la fecha de devolución de tu préstamo
-le_email.extend.title: Se ha modificado la fecha de devolución de un objeto
-le_email.extend.due_back: ahora vence el
-le_email.reminder.subject: Tu préstamos loanId vence mañana
-le_email.reminder.title: Tienes algún préstamo que vence pronto
-le_email.reservation_reminder.subject: Recoge tu reserva mañana
-le_email.reservation_reminder.title: Recoge tu reserva mañana
-le_email.membership_expired.subject: Tu suscripción se ha terminado.
-le_email.membership_expired.title: 'Tu suscripción se ha terminado. '
-le_email.login_details.subject: Información de inicio de sesión para %accountName%
-le_email.login_details.title: Detalles de inicio de sesión
-le_email.login_details.message: Ésta es la información para el inicio de sesión en nuestro sistema de préstamo
-le_email.new_password.title: Nueva contraseña
-le_email.new_password.message: La nueva contraseña para %accountName% es
-le_email.reservation_confirm.subject: Confirmación de tu reserva
-le_email.reservation_confirm.title: Confirmación de la reserva
-le_email.site_welcome.subject: Te damos la bienvenida a %accountName%
-le_email.site_welcome.title: Te damos la bienvenida!
-le_email.login_to_view_this_loan: Veure aquest lloguer en línia
-le_email.booking_confirmation.title: Confirmació de reserva d'aconteixement
-le_email.booking_confirmation.subject: 'Confirmació de reserva d''aconteixement :'
-le_email.donor_notify.subject: L'article que vostè ha donat ha estat llogat
-le_email.overdue.subject: Un article té endarreriment
-le_email.overdue.title: Si us plau, retorni aquest article
-le_email.membership_expired.renew_button: Faci clic aquí per a renovar com a sòcia
+le_email:
+  item_description: Descripción
+  item_contains: Consta de
+  see_attachment: Ver adjunto
+  return_sites: Por favor devuelve este objeto a
+  th_item: Objeto
+  th_fee: Tarifa
+  th_due_back: Vence
+  url: URL de inicio de sesión
+  email: Correo electrónico
+  password: Contraseña
+  assign:
+    title: Se te ha asignado un objeto
+    message: '%firstName%, %assignorName% te ha asignado el objeto "%itemName%".'
+    added_note: también ha añadido una nota
+    all_items: Ver todos los objetos asignados
+    current_location: Localización actual
+  checkout:
+    subject: Información de tu prestamo
+    title: Información de tu préstamo
+  extend:
+    subject: Se ha actualizado la fecha de devolución de tu préstamo
+    title: Se ha modificado la fecha de devolución de un objeto
+    due_back: ahora vence el
+  reminder:
+    subject: Tu préstamos %loanId% vence mañana
+    title: Tienes algún préstamo que vence pronto
+  reservation_reminder:
+    subject: Recoge tu reserva mañana
+    title: Recoge tu reserva mañana
+  membership_expired:
+    subject: Tu suscripción se ha terminado.
+    title: Tu suscripción se ha terminado.
+    renew_button: Faci clic aquí per a renovar com a sòcia
+  login_details:
+    subject: Información de inicio de sesión para %accountName%
+    title: Detalles de inicio de sesión
+    message: Ésta es la información para el inicio de sesión en nuestro sistema de préstamo
+  new_password:
+    title: Nueva contraseña
+    message: La nueva contraseña para %accountName% es
+  reservation_confirm:
+    subject: Confirmación de tu reserva
+    title: Confirmación de la reserva
+  site_welcome:
+    subject: Te damos la bienvenida a %accountName%
+    title: Te damos la bienvenida!
+  login_to_view_this_loan: Veure aquest lloguer en línia
+  booking_confirmation:
+    title: Confirmació de reserva d'aconteixement
+    subject: 'Confirmació de reserva d''aconteixement :'
+  donor_notify:
+    subject: L'article que vostè ha donat ha estat llogat
+  overdue:
+    subject: Un article té endarreriment
+    title: Si us plau, retorni aquest article
+  th_cost: Preu
+  login_now_button: Inicia la sessió ara
+  checkin:
+    subject: S'ha registrat el seu article
+    title: S'ha registrat el seu article
+    checked_in_at: Registrat a
+    checked_in_by: Registrat per
+...

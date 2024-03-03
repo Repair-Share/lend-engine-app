@@ -116,6 +116,9 @@ class AppService
                 case "twilio":
                     $appData = $this->getTwilio();
                     break;
+                case "recaptcha":
+                    $appData = $this->getRecaptcha();
+                    break;
                 default:
                     throw new \Exception("App {$code} not found");
             }
@@ -164,6 +167,7 @@ class AppService
         $apps = [];
         $apps['mailchimp'] = $this->getMailChimp();
         $apps['twilio'] = $this->getTwilio();
+        $apps['recaptcha'] = $this->getRecaptcha();
 //        $apps['stripe'] = $this->getStripe();
 
         return $apps;
@@ -323,6 +327,37 @@ EOT;
                     'data' => '',
                     'help' => 'How many hours before the reservation is due to be collected.'
                 ],
+            ]
+        ];
+    }
+
+
+
+    private function getRecaptcha()
+    {
+        $description = <<<EOT
+reCAPTCHA protects your website from fraud and abuse without creating friction.
+EOT;
+
+        return [
+            'code' => 'recaptcha',
+            'status' => $this->getStatus('recaptcha'),
+            'type' => 'recaptcha',
+            'name' => "reCAPTCHA",
+            'description' => $description,
+            'settings' => [
+                'site_key' => [
+                    'title' => 'Site key',
+                    'type' => 'text',
+                    'data' => '',
+                    'help' => 'In Recaptcha page: copy the site key when registering a new site. It appears only once on Google\'s page!'
+                ],
+                'secret_key' => [
+                    'title' => 'Secret key',
+                    'type' => 'text',
+                    'data' => '',
+                    'help' => 'In Recaptcha page: copy the secret key when registering a new site. It appears only once on Google\'s page!'
+                ]
             ]
         ];
     }

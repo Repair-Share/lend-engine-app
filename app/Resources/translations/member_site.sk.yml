@@ -3,9 +3,8 @@
 # Release: Working copy
 # Locale: sk-SK, Slovak (Slovakia)
 # Tagged: Member site
-# Status: Translated
-# Exported by: Chris
-# Exported at: Wed, 13 Jan 2021 00:55:05 +0000
+# Exported by: Andor Tamas
+# Exported at: Mon, 28 Feb 2022 15:55:25 +0100
 ---
 Loan: Výpožička
 Loans: Výpožičky
@@ -135,7 +134,7 @@ public_basket.remove_item: Odstráň
 public_basket.total: Spolu
 public_basket.balance: Na zaplatenie
 public_basket.no_items: <h3>Prázdny košík</h3> Použi vyhľadávanie pre pridanie veci do košíka.
-public_basket.full_charge: bude účtovaný na tvoj účet
+public_basket.full_charge: bude stiahnuté z tvojho účtu
 public_basket.delay_charge: bude odrátaný z tvojho účtu, zvyšok bude splatný pri odovzdaní položiek
 public_loan.title: Výpožička
 public_user_menu.contact_info: Profil
@@ -167,3 +166,79 @@ msg_success.basket_item_exists: sa už nachádza v tvojom košíku.
 msg_fail.general_fail: Prepáč, niečo sa pokazilo. Skús to znovu alebo nás kontaktuj.
 msg_fail.reservation_create: Nepodarilo sa vytvoriť rezerváciu.
 msg_fail.reservation_cancel: Nepodarilo sa zrušiť rezerváciu. Kontaktuj nás, prosím.
+per-borrow: za výpožičku
+per_borrow: za výpožičku
+public_misc.log_in_first: Prosím, prihlás na pre prezeranie položiek
+public_account.button_subscribe_now: Prihlás sa teraz
+public_account.button_change_membership: Zmena / obnova členského
+public_account.current_member_type: Aktuálne máš %type% členské.
+public_account.membership_about_to_expire: Tvoje členstvo zachvílľu vyprší
+public_account.membership_expires_on: Tvoje členstvo vyprší
+public_registration.email_confirmed: Tvoja emailová adresa bola potvrdená
+public_user.choose_membership_type: Vyber si typ členstva
+public_item.discount: zľava
+public_registration.membership_starts_today: Členstvo začína oddnes.
+public_registration.membership_deferred: Členstvo bude obnovené od
+public_registration.discount_on_fees: zľava na výpožičné poplatky
+public_registration.button_renew: Obnov členstvo
+public_registration.button_subscribe: Odoberaj
+public_registration.no_self_serve_memberships: K dispozícií nie sú žiadne členstvá na samovýpožičku. Prosím, navštív nás s dokladom totožnosti pre dokončenie členstva.
+th.deposit: Záloha
+public_misc.link_events: Podujatia
+public_misc.show_items_from: Ukáž položky len dostupné od
+public_misc.credit_limit: Kredit limit
+public_item.button_today: Dnes
+public_item.see_parts: Pozri súčasti
+public_item.kit_containing: Tento predmet je súčasťou súpravy
+public_item.borrow_help: Vyber dátum, čas alebo miesto na zmenu Tvojej rezervácie
+public_loan.charged: Nabiť konto
+public_loan.check_in: Vložiť do košíka
+public_loan.button_check_out: Vyplatiť
+public_loan.select_items_to_check_in: Vyber položky na vloženie
+public_loan.choose_new_date: Vyber nový dátum vrátenia
+public_loan.button_complete_checks: Prosím, vyplň všetky polia
+public_loan.button_choose_payment_method: Vyber typ platby
+public_loan.button_deposits_require_payment: Zálohy vyžadujú okamžitú platbu
+public_loan.cannot_check_out: Položka nemôže byť vložená, skontroluj miesto/rezerváciu
+public_loan.no_payment_methods: Žiadny typ platoby nie je dostupné k úhrade
+public_loan.not_enough_credit: Nemáš dosť kreditu na účte pre vyplatenie
+public_add_credit.remove_card: Odstrániť
+public_payments.no_payment_required: Nevyžaduje sa platba
+public_user.subscription_payment: Platba členského
+events.event: Podujatie
+events.page_title: Podujatia
+events.bookings: Rezervácia podujatia
+events.no_events: Tento mesiac nie sú žiadne podujatia
+events.view_on_facebook: Ukáž toto podujatie na Facebooku
+events.location: Miesto
+events.time: Čas
+events.cost: Cena
+events.you_are_attending: Si zúčastnený
+events.book_now_button: Rezervuj teraz
+events.check_in_button: Vložiť
+events.check_in_help: Vloženie ťa pridá ako záujemcu bez odoslania potvrdzujúceho emailu rezervácie
+events.contact_us_to_book: Pre rezerváciu nás kontaktuj
+events.not_bookable: Toto podujatie nie je rezervovateľné online
+events.log_in_to_book: Prihlás sa pre rezerváciu
+public_misc.search: Hľadať
+public_item.stock_item: Položka na sklade
+public_item.service_item: Servis
+public_item.each: každý
+public_item.alert_click_time_slot: Prosím, vyber časový údaj
+public_basket.button_checkout: Vložiť do košíka
+public_basket.shipping: Doprava
+public_basket.remove_stock_items: Na vytvorenie rezervácie pre zvolené položky, najprv  odstráňte položky zo svojho košíka.
+shipping.title: Doručenie
+shipping.per_item: na položku
+shipping.per_loan: na výpožičku
+shipping.collect: Vybrať z
+shipping.post: Doručenie / dodanie
+shipping.ship_to: Položky budú doručené na
+shipping.edit_address: Aktualizuj adresu
+shipping.delivery_options: Možnosti dodania
+public_loan.quantity: Množstvo
+public_add_credit.text_info: Čiastka bude pridaná na Tvoj účet
+public_registration.login_page_new_account: Registrácia nového účtu
+public_registration.check_email_title: Prosím, skontroluj si email
+public_registration.check_email_body: Na email Ti bol poslaný link na dokončenie registrácie.
+...

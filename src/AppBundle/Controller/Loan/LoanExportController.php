@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Loan;
 
+use AppBundle\Entity\Loan;
+use AppBundle\Helpers\DateTimeHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -18,9 +20,12 @@ class LoanExportController extends Controller
      */
     public function exportLoansAction(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
 
-        $container = $this->container;
-        $response = new StreamedResponse(function() use($container) {
+        /** @var \AppBundle\Services\SettingsService $settingsService */
+        $settingsService = $this->get('settings');
+
+        $response  = new StreamedResponse(function () use ($em, $settingsService) {
 
             $handle = fopen('php://output', 'r+');
 
@@ -42,59 +47,110 @@ class LoanExportController extends Controller
 
             fputcsv($handle, $header);
 
-            $em = $this->getDoctrine()->getManager();
+            // Modify times to match local time
+            $tz       = $settingsService->getSettingValue('org_timezone');
+            $localNow = DateTimeHelper::getLocalTime($tz);
 
-            /** @var \AppBundle\Entity\LoanRepository $loanRepo */
-            $loanRepo = $em->getRepository('AppBundle:Loan');
-            $loans = $loanRepo->findAll();
+            $sql = "
+                select
+                    l.id,
+                    l.status,
+                    l.created_at,
+                    
+                    lr.due_out_at,
+                    lr.checked_out_at,
+                    lr.due_in_at,
+                    lr.checked_in_at,
+                    lr.fee,
+                    
+                    ii.name as inventoryItemName,
+                    ii.sku as inventoryItemSku,
+                    
+                    c.first_name,
+                    c.last_name,
+                    c.email
+                    
+                from
+                    loan as l
+                    inner join loan_row lr on l.id = lr.loan_id
+                    inner join inventory_item ii on lr.inventory_item_id = ii.id
+                    inner join contact c on c.id = l.contact_id
+                
+                where
+                    ii.item_type <> 'stock' -- excludeStockItems
+    
+                order by
+                    l.id
+            ";
 
-            foreach ($loans AS $loan) {
-                /** @var $loan \AppBundle\Entity\Loan */
-                foreach ($loan->getLoanRows() AS $row) {
-                    /** @var $row \AppBundle\Entity\LoanRow */
+            $stmt = $em->getConnection()->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetchAll();
 
-                    if ($row->getDueOutAt()) {
-                        $dueOut = $row->getDueOutAt()->format("Y-m-d");
-                    } else {
-                        $dueOut = '-';
-                    }
+            foreach ($result as $row) {
 
-                    if ($row->getCheckedOutAt()) {
-                        $checkedOutAt = $row->getCheckedOutAt()->format("Y-m-d");
-                    } else {
-                        $checkedOutAt = '-';
-                    }
+                $dDueIn = $dCheckedInAt = null;
 
-                    if ($row->getDueInAt()) {
-                        $dueIn = $row->getDueInAt()->format("Y-m-d");
-                    } else {
-                        $dueIn = '-';
-                    }
-
-                    if ($row->getCheckedInAt()) {
-                        $checkedInAt = $row->getCheckedInAt()->format("Y-m-d");
-                    } else {
-                        $checkedInAt = '-';
-                    }
-
-                    $loanArray = [
-                        $loan->getId(),
-                        $loan->getStatus(),
-                        $loan->getCreatedAt()->format("Y-m-d"),
-                        $loan->getContact()->getFirstName(),
-                        $loan->getContact()->getLastName(),
-                        $loan->getContact()->getEmail(),
-                        $row->getInventoryItem()->getName(),
-                        $row->getInventoryItem()->getSku(),
-                        $row->getFee(),
-                        $dueOut,
-                        $checkedOutAt,
-                        $dueIn,
-                        $checkedInAt
-                    ];
-
-                    fputcsv($handle, $loanArray);
+                if ($row['due_out_at']) {
+                    $dueOut = DateTimeHelper::formatDate($row['due_out_at'], 'Y-m-d');
+                } else {
+                    $dueOut = '-';
                 }
+
+                if ($row['checked_out_at']) {
+                    $checkedOutAt = DateTimeHelper::formatDate($row['checked_out_at'], 'Y-m-d');
+                } else {
+                    $checkedOutAt = '-';
+                }
+
+                if ($row['due_in_at']) {
+                    $dueIn  = DateTimeHelper::formatDate($row['due_in_at'], 'Y-m-d');
+                    $dDueIn = new \DateTime($row['due_in_at']);
+                } else {
+                    $dueIn = '-';
+                }
+
+                if ($row['checked_in_at']) {
+                    $checkedInAt  = DateTimeHelper::formatDate($row['checked_in_at'], 'Y-m-d');
+                    $dCheckedInAt = new \DateTime($row['checked_in_at']);
+                } else {
+                    $checkedInAt = '-';
+                }
+
+                // Check the items statuses in loan row
+                $status = $row['status'];
+                if (($status == Loan::STATUS_CLOSED && $dDueIn && $localNow > $dDueIn) || $dCheckedInAt) {
+                    $loanStatus = Loan::STATUS_CLOSED;
+                } elseif ($status == Loan::STATUS_PENDING) {
+                    $loanStatus = Loan::STATUS_PENDING;
+                } elseif ($status == Loan::STATUS_ACTIVE && $dDueIn && $localNow < $dDueIn) {
+                    $loanStatus = Loan::STATUS_ACTIVE;
+                } elseif ($status == Loan::STATUS_RESERVED) {
+                    $loanStatus = Loan::STATUS_RESERVED;
+                } elseif ($status == Loan::STATUS_CANCELLED) {
+                    $loanStatus = Loan::STATUS_CANCELLED;
+                } else {
+                    $loanStatus = Loan::STATUS_OVERDUE;
+                }
+
+                $loanArray = [
+                    $row['id'],
+                    $loanStatus,
+                    DateTimeHelper::formatDate($row['created_at'], 'Y-m-d'),
+                    $row['first_name'],
+                    $row['last_name'],
+                    $row['email'],
+                    $row['inventoryItemName'],
+                    $row['inventoryItemSku'],
+                    $row['fee'],
+                    $dueOut,
+                    $checkedOutAt,
+                    $dueIn,
+                    $checkedInAt
+                ];
+
+                fputcsv($handle, $loanArray);
+
             }
 
             fclose($handle);
@@ -102,10 +158,9 @@ class LoanExportController extends Controller
 
         $response->setStatusCode(200);
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition','attachment; filename="loans.csv"');
+        $response->headers->set('Content-Disposition', 'attachment; filename="loans.csv"');
 
         return $response;
-
     }
 
 }

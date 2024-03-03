@@ -1,0 +1,72 @@
+# Loco yaml export: Symfony YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: uk-UA, Ukrainian (Ukraine)
+# Tagged: Emails
+# Exported by: Andor Tamas
+# Exported at: Mon, 16 May 2022 13:50:31 +0200
+---
+le_email:
+  item_description: Опис
+  item_contains: Містить
+  see_attachment: Переглянути файл
+  return_sites: Будь ласка, поверніть цей товар до наступних місць
+  th_item: Товар
+  th_fee: Плата
+  th_due_back: Певернути до
+  url: URL-адреса для входу
+  email: Адреса електронної скриньки
+  password: Пароль
+  assign:
+    title: Вам призначено товар(и)
+    message: '%firstName%, вам призначений товар(и) %assignorName% : %itemName%'
+    added_note: додана примітка
+    all_items: Переглянути зарезервований товар
+    current_location: Поточне місцерозташування
+  checkout:
+    subject: Інформація про вашу позику
+    title: Інформація про вашу позику
+  extend:
+    subject: Дата повернення позики оновлена
+    title: Ми змінили дату повернення товару
+    due_back: повернення
+  reminder:
+    subject: Термін вашої %loanId% незабаром закінчується
+    title: Час, відведений на використання взятої вами позики (позик), спливає
+  reservation_reminder:
+    subject: Заберіть ваше бронювання завтра
+    title: Заберіть ваше бронювання завтра
+  membership_expired:
+    subject: Термін дії вашої підписки закінчився
+    title: Термін дії вашої підписки закінчився
+    renew_button: Натисніть тут, щоб оновити членство
+  login_details:
+    subject: Ваші дані для входу %accountName%
+    title: Деталі для входу
+    message: Це ваші дані для входу в систему позичання
+  new_password:
+    title: Ваш новий пароль
+    message: Це ваш новий пароль для %accountName%
+  reservation_confirm:
+    subject: Підтвердження бронювання
+    title: Підтвердження бронювання
+  site_welcome:
+    subject: Вітаємо у/на %accountName%
+    title: Ласкаво просимо!
+  login_to_view_this_loan: Перегляньте цю позику онлайн
+  booking_confirmation:
+    title: Підтвердження бронювання події
+    subject: 'Підтвердження бронювання події:'
+  donor_notify:
+    subject: 'Подарований вами товар був випозичений '
+  overdue:
+    subject: Одиниця прострочена
+    title: Будь ласка, поверніть дану позику
+  th_cost: Ціна
+  login_now_button: Увійти зараз
+  checkin:
+    subject: Ваша позика повернена
+    title: Ваша позика повернена
+    checked_in_at: Перевірено
+    checked_in_by: Перевірено
+...

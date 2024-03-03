@@ -17,9 +17,10 @@
                         <img style="width:60px; float: left; margin-right: 10px;" src="{{ tenantInformation.s3Bucket }}{{ tenantInformation.schema }}/thumbs/{{ row.inventoryItem.imageName }}">
                     {% endif %}
                 </td>
-
-                <strong style="font-size:1.2em">{{ row.inventoryItem.name }}</strong>
-                <br>{{ 'le_email.th_due_back'|trans() }} : {{ row.dueInAt|date('d F') }}
+                <td>
+                    <strong style="font-size:1.2em">{{ row.inventoryItem.name }}</strong>
+                    <br>{{ 'le_email.th_due_back'|trans() }} : {{ row.dueInAt|date('d F') }}
+                </td>
             </tr>
             {% endif %}
         {% endfor %}

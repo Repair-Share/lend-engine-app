@@ -82,9 +82,10 @@ class ContactService
      */
     public function contactSearch($start, $length, $filter, $sort = [])
     {
+        $joinMembership = false;
+
         $builder = $this->repository->createQueryBuilder('c');
 
-        $builder->leftJoin('c.memberships', 'm');
         $builder->select('c');
         $builder->where('c.id > 1');
         $builder->andWhere('c.isActive = 1');
@@ -104,6 +105,7 @@ class ContactService
         }
 
         if (isset($filter['hasMembership']) && $filter['hasMembership'] == 1) {
+            $joinMembership = true;
             $builder->andWhere('m.expiresAt > :date');
             $builder->andWhere('m.status != :statusCancelled');
             $builder->setParameter('date', date("Y-m-d H:i:s"));
@@ -111,6 +113,7 @@ class ContactService
         }
 
         if (isset($filter['membershipType']) && $filter['membershipType']) {
+            $joinMembership = true;
             $builder->andWhere('m.membershipType = '.(int)$filter['membershipType']);
         }
 
@@ -122,6 +125,10 @@ class ContactService
         if (isset($filter['date_to']) && $filter['date_to']) {
             $builder->andWhere('c.createdAt <= :date_to');
             $builder->setParameter('date_to', $filter['date_to'].' 23:59:59');
+        }
+
+        if ($joinMembership) {
+            $builder->innerJoin('c.memberships', 'm');
         }
 
         // Run without pages to get total results:

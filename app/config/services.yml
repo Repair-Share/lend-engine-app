@@ -8,6 +8,11 @@ parameters:
 
 services:
 
+    ## Register EventListener onKernelResponse
+    AppBundle\EventListener\RequestListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
     ## RABBITMQ / QUEUE RELATED ##
 
     AppBundle\Services\Queue\MailQueueProducer: '@old_sound_rabbit_mq.mail_queue_producer'
@@ -124,6 +129,16 @@ services:
             - "@twig"
             - "@router"
             - "@settings"
+
+    # If email confirmation is enabled, this is used when email address is confirmed:
+    # User registration handler
+    fos_user.registration.controller:
+        class: UserBundle\Controller\RegistrationController
+        arguments:
+            - "@event_dispatcher"
+            - "@fos_user.registration.form.factory"
+            - "@fos_user.user_manager"
+            - "@security.token_storage"
 
     # If email confirmation is enabled, this is used when email address is confirmed:
     fos_user.registration_complete:
@@ -257,6 +272,7 @@ services:
             - "@settings"
             - "@service.stripe"
             - "@service.contact"
+            - "@service.debug"
 
     service.checkout:
         class: AppBundle\Services\Loan\CheckOutService
@@ -280,6 +296,7 @@ services:
             - "@service.email"
             - "@twig"
             - "@service.tenant"
+            - "@translator.default"
             - "@settings"
 
     service.waiting_list:
@@ -302,6 +319,7 @@ services:
         arguments:
             - "@doctrine.orm.entity_manager"
             - "@settings"
+            - "@service.debug"
 
     service.mailchimp:
         class: AppBundle\Services\Apps\MailchimpService
@@ -312,6 +330,17 @@ services:
         class: AppBundle\Services\Apps\TwilioService
         arguments:
             - "@service.apps"
+            - "@settings"
+
+    service.recaptcha:
+        class: AppBundle\Services\Apps\RecaptchaService
+        arguments:
+            - "@service.apps"
+
+    service.debug:
+        class: AppBundle\Services\Debug\DebugService
+        arguments:
+            - "@doctrine.orm.entity_manager"
             - "@settings"
 
     ## REPORT SERVICES
@@ -433,6 +462,17 @@ services:
             - "@twig"
             - "@service_container"
             - "@settings"
+            - "@doctrine.orm.entity_manager"
+            - "@logger"
+
+    service.schedule_db_migrations:
+        class: AppBundle\Services\Schedule\DBMigrations
+        arguments:
+            - "@twig"
+            - "@service_container"
+            - "@settings"
+            - "@service.contact"
+            - "@service.email"
             - "@doctrine.orm.entity_manager"
             - "@logger"
 

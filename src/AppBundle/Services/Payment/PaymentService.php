@@ -6,6 +6,7 @@ use AppBundle\Entity\Contact;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\PaymentMethod;
 use AppBundle\Services\Contact\ContactService;
+use AppBundle\Services\Debug\DebugService;
 use AppBundle\Services\StripeHandler;
 use AppBundle\Services\SettingsService;
 use AppBundle\Entity\ItemMovement;
@@ -53,6 +54,9 @@ class PaymentService
     /** @var ContactService */
     private $contactService;
 
+    /** @var DebugService */
+    private $debugService;
+
     /** @var PaymentRepository */
     private $repo;
 
@@ -62,12 +66,14 @@ class PaymentService
     public function __construct(EntityManager $em,
                                 SettingsService $settings,
                                 StripeHandler $stripeService,
-                                ContactService $contactService)
+                                ContactService $contactService,
+                                DebugService $debugService)
     {
         $this->em        = $em;
         $this->settings  = $settings;
         $this->stripeService = $stripeService;
         $this->contactService = $contactService;
+        $this->debugService = $debugService;
         $this->repo = $em->getRepository('AppBundle:Payment');
     }
 
@@ -110,9 +116,17 @@ class PaymentService
             $feeAmount = 0;
         }
 
+        $this->debugService->stripeDebug(
+            'Create payment service',
+            $p->getDebug()
+        );
+
         $stripePaymentMethodId = $this->settings->getSettingValue('stripe_payment_method');
 
         if ($p->getPaymentMethod() && $stripePaymentMethodId == $p->getPaymentMethod()->getId()) {
+
+            $this->debugService->stripeDebug('Stripe payment detected');
+
             if ($feeAmount > 0) {
                 // Increase the amount of this payment
                 $p->setAmount($feeAmount + $basePaymentAmount);
@@ -124,6 +138,10 @@ class PaymentService
                 $fee->setLoan($p->getLoan());
                 $fee->setNote("Card fee.");
                 $this->em->persist($fee);
+
+                $this->debugService->stripeDebug('Increased the amount of this payment', $p->getDebug());
+                $this->debugService->stripeDebug('Added a fee to reduce the customer balance by the fee amount', $fee->getDebug());
+
             }
         }
 
@@ -135,6 +153,8 @@ class PaymentService
             $deposit->setContact($p->getContact());
             $deposit->setAmount($basePaymentAmount); // Exclude any Stripe payment fee
 
+            $this->debugService->stripeDebug('Created a deposit entity as well as a payment', $deposit->getDebug());
+
             if (!$p->getLoanRow()) {
                 throw new \Exception("A loanRow is required when creating a deposit payment");
             }
@@ -145,6 +165,11 @@ class PaymentService
             $p->setDeposit($deposit);
 
             $this->em->persist($deposit);
+
+            $this->debugService->stripeDebug(
+                'Linked payments, deposits and loan row for a transactional write',
+                $p->getDebug()
+            );
 
         }
 
@@ -158,6 +183,10 @@ class PaymentService
             $this->em->flush($fee);
         }
         $this->em->flush($p);
+
+        $this->debugService->stripeDebug(
+            $this->debugService->getSeparator()
+        );
 
         return $p;
 

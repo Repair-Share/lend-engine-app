@@ -1,10 +1,6 @@
 {% extends 'member_site/themes/loader.html.twig' %}
 {% trans_default_domain 'member_site' %}
 
-{% block pageCss %}
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>
-{% endblock %}
-
 {% block body %}
 
     <div class="row" id="site-list">
@@ -13,79 +9,86 @@
             <h2>{% trans %}public_footer.find_us{% endtrans %}</h2>
         </div>
 
-        <div class="col-sm-6">
+        {% if tenantInformation.isMapsAllowed %}
+            <div class="col-sm-6">
 
-            <style type="text/css">
-                .sites_map
-                {
-                    height:400px;
-                    width:100%;
-                    display:block;
-                }
-            </style>
+                <style type="text/css">
+                    .sites_map
+                    {
+                        height:400px;
+                        width:100%;
+                        display:block;
+                    }
+                </style>
 
-            <div class="sites_map" id="sites_map"></div>
+                <div class="sites_map" id="sites-map"></div>
 
-            <script>
-                window.onload = function() {
-                    addMap();
-                };
+                {{ include('partials/google-maps.html.twig', {initMapElement: false}) }}
 
-                var sites = [];
+                <script type="text/javascript">
 
-                window.map = new google.maps.Map(document.getElementById('sites_map'), { zoom: 12 });
+                    initMap();
 
-                var geocoder = new google.maps.Geocoder();
-                window.bounds = new google.maps.LatLngBounds();
-                var marker;
+                    let marker;
+                    let sites = [];
 
-                function addMap () {
-                    geocoder.geocode({'address': '{{ sites[0].address }}, {{ sites[0].postCode }}, {{ sites[0].country }}'}, function(results, status) {
+                    window.onload = () => {
+                        window.bounds = new google.maps.LatLngBounds();
 
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            //var _position = { lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng()};
-                            console.log(status);
-                        } else {
-                            console.log(status);
-                        }
+                        addMap();
+                    };
 
-                        {% for site in sites %}
-                        {% if site.isActive %}
-                        geocoder.geocode({'address': '{{ site.address }}, {{ site.postCode }}, {{ site.country }}'}, function(results, status) {
-                            if (status == google.maps.GeocoderStatus.OK) {
-                                var location = {};
-                                location.lat = results[0].geometry.location.lat();
-                                location.lng = results[0].geometry.location.lng();
-                                sites.push(location);
-                            } else {
-                                console.log(status);
-                            }
+                    function addMap()
+                    {
+                        map = new google.maps.Map(document.getElementById('sites-map'), {
+                            zoom: 8
                         });
+
+                        let location = {};
+                        {% for site in sites %}
+
+                        {% if site.isActive %}
+
+                        {% if site.lat and site.lng %}
+
+                        location = {};
+                        location.lat = {{ site.lat }};
+                        location.lng = {{ site.lng }};
+                        sites.push(location);
+
+                        {% else %}
+
+                        location = {};
+                        sites.push(location);
+
                         {% endif %}
+
+                        {% endif %}
+
                         {% endfor %}
 
-
-                    });
-                    window.setTimeout(setBounds, 1000);
-                }
-
-                function setBounds() {
-                    console.log("sites:");
-                    for (i = 0; i < sites.length; i++) {
-                        marker = new google.maps.Marker({
-                            position: new google.maps.LatLng(sites[i].lat, sites[i].lng),
-                            map: window.map
-                        });
-                        console.log("Adding site at "+sites[i].lat+", "+sites[i].lng);
-                        window.bounds.extend(marker.position);
+                        window.setTimeout(setBounds, 1000);
                     }
-                    window.map.fitBounds(window.bounds);
-                }
 
-            </script>
+                    function setBounds()
+                    {
+                        console.log("sites:");
+                        for (i = 0; i < sites.length; i++) {
+                            marker = new google.maps.Marker({
+                                position: new google.maps.LatLng(sites[i].lat, sites[i].lng),
+                                map:      map
+                            });
+                            console.log("Adding site at " + sites[i].lat + ", " + sites[i].lng);
+                            window.bounds.extend(marker.position);
+                        }
+                        map.fitBounds(window.bounds);
+                    }
+                </script>
 
-        </div>
-        <div class="col-sm-6">
+            </div>
+        {% endif %}
+
+        <div {% if tenantInformation.isMapsAllowed %}class="col-sm-6"{% else %}style="margin-left: 30px" {% endif %}">
 
             <style>
                 .site-header {

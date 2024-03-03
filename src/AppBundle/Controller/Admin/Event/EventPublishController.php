@@ -32,7 +32,7 @@ class EventPublishController extends Controller
         /** @var \AppBundle\Entity\Event $event */
         if ($event = $eventRepo->find($eventId)) {
 
-            $plan = $settingsService->getTenant()->getPlan();
+            $plan = $settingsService->getTenant(false)->getPlan();
             $maxLiveEvents = $billingService->getMaxEvents($plan);
 
             $count = $eventService->countLiveEvents();

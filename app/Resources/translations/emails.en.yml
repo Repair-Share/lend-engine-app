@@ -1,4 +1,11 @@
-# Automated emails:
+# Loco yaml export: Symfony YAML object
+# Project: Lend Engine
+# Release: Working copy
+# Locale: en-GB, English (UK)
+# Tagged: Emails
+# Exported by: Andor Tamas
+# Exported at: Mon, 16 May 2022 13:56:23 +0200
+---
 le_email:
   item_description: Description
   item_contains: Contains
@@ -6,76 +13,60 @@ le_email:
   return_sites: Please return this item to the following location(s)
   th_item: Item
   th_fee: Fee
-  th_cost: Cost
   th_due_back: Due back
   url: Login URL
   email: Email
   password: Password
-  login_to_view_this_loan: View this loan online
-  login_now_button: Log in now
-
-  booking_confirmation:
-    title: Event booking confirmation
-    subject: Event booking confirmation :
-
-  assign: # When a team member is assigned an item (eg for repair)
-    subject:
+  assign:
     title: You've been assigned item(s)
-    message: "%firstName%, you have been assigned item(s) by %assignorName% : %itemName%"
+    message: '%firstName%, you have been assigned item(s) by %assignorName% : %itemName%'
     added_note: also added a note
     all_items: See all items assigned to you
     current_location: Current location
-
-  checkout: # when a loan is checked out
+  checkout:
     subject: Your loan information
     title: Your loan information
-
+  extend:
+    subject: Your loan return date has been updated
+    title: We've changed the return date of an item
+    due_back: is now due back on
+  reminder:
+    subject: Your loan %loanId% is due back soon
+    title: Your item(s) are due back soon
+  reservation_reminder:
+    subject: Pick up your reservation tomorrow
+    title: Pick up your reservation tomorrow
+  membership_expired:
+    subject: Your membership has expired
+    title: Your membership has expired
+    renew_button: Click here to renew membership
+  login_details:
+    subject: Your login details for %accountName%
+    title: Login details
+    message: Here are your login details for our lending system
+  new_password:
+    title: Your new password
+    message: This is your new password for %accountName%
+  reservation_confirm:
+    subject: Your reservation confirmation
+    title: Reservation confirmation
+  site_welcome:
+    subject: Welcome to %accountName%
+    title: Welcome
+  login_to_view_this_loan: View this loan online
+  booking_confirmation:
+    title: Event booking confirmation
+    subject: 'Event booking confirmation :'
+  donor_notify:
+    subject: Your donated item has been lent out
+  overdue:
+    subject: An item is overdue
+    title: Please return this item
+  th_cost: Cost
+  login_now_button: Log in now
   checkin:
     subject: Your item has been checked in
     title: Your item has been checked in
     checked_in_at: Checked in at
     checked_in_by: Checked in by
-
-  donor_notify:
-    subject: Your donated item has been lent out
-
-  extend:
-    subject: Your loan return date has been updated
-    title: We've changed the return date of an item
-    due_back: is now due back on
-
-  reminder:
-    subject: Your loan loanId is due soon
-    title: Your item(s) are due back soon
-
-  overdue:
-    subject: An item is overdue
-    title: Please return this item
-
-  reservation_reminder:
-    subject: "Pick up your reservation tomorrow"
-    title: "Pick up your reservation tomorrow"
-
-  membership_expired:
-    subject: "Your membership has expired"
-    title: "Your membership has expired"
-    renew_button: Click here to renew membership
-
-  login_details:
-    subject: Your login details for %accountName%
-    title: Login details
-    message: Here are your login details for our lending system
-
-  new_password:
-    title: Your new password
-    message: This is your new password for %accountName%
-
-  reservation_confirm:
-    subject: Your reservation confirmation
-    title: Reservation confirmation
-
-  site_welcome:
-    subject: Welcome to %accountName%
-    title: Welcome
-
-
+...

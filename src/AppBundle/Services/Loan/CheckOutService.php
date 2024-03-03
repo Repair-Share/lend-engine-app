@@ -2,6 +2,7 @@
 
 namespace AppBundle\Services\Loan;
 
+use AppBundle\Entity\Contact;
 use AppBundle\Entity\Deposit;
 use AppBundle\Entity\InventoryItem;
 use AppBundle\Entity\ItemMovement;
@@ -249,14 +250,33 @@ class CheckOutService
             if ($item->getItemType() == InventoryItem::TYPE_STOCK) {
 
                 // validate that the qty requested is actually in stock
+                $qtyChecked = false;
+                $qtyCheckedLocation = '';
+
                 $inventory = $this->itemService->getInventory($item);
                 foreach ($inventory AS $i) {
+                    $qtyCheckedLocation = $loanRow->getItemLocation()->getName();
+
                     if ($i['locationId'] == $loanRow->getItemLocation()->getId()) {
                         if ($i['qty'] < $loanRow->getProductQuantity()) {
                             $this->errors[] = 'Not enough stock of "'.$item->getName().'" in '.$i['locationName'];
                             return false;
+                        } else {
+                            $qtyChecked = true;
                         }
                     }
+                }
+
+                if (!$qtyChecked) {
+
+                    if ($qtyCheckedLocation) {
+                        $this->errors[] = 'No stock of "' . $item->getName() . '" in ' . $qtyCheckedLocation;
+                    } else {
+                        $this->errors[] = '"' . $item->getName() . '" is not in stock';
+                    }
+
+                    return false;
+
                 }
 
             } else {
@@ -291,8 +311,13 @@ class CheckOutService
      * @param $loanId
      * @return bool
      */
-    public function isItemReserved(InventoryItem $item, $from, $to, $loanId = null)
+    public function isItemReserved(InventoryItem $item, $from, $to, $loanId = null, Contact $user = null)
     {
+        $adminRole = false;
+        if ($user && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_SUPER_USER'))) {
+            $adminRole = true;
+        }
+
         // Extend the booking in both directions to validate against other bookings
         $bufferPeriod = (int)$this->settings->getSettingValue('reservation_buffer'); // hours
         $fromWithBuffer = clone($from);
@@ -353,6 +378,11 @@ class CheckOutService
                 }
             }
 
+            // Delivery 'product' doesn't need a reservation check
+            if ((int)$reservation->getInventoryItem()->getId() === (int)($this->settings->getSettingValue('postal_shipping_item'))) {
+                continue;
+            }
+
             $dueOutAt = $reservation->getDueOutAt()->setTimezone($tz);
 
             if ($reservation->getCheckedInAt()) {
@@ -368,11 +398,16 @@ class CheckOutService
             $requestTo   = $to->format("Y-m-d H:i:s");
 
             $reservedItemId = $reservation->getInventoryItem()->getId();
-            $errorMsg = '"'.$reservation->getInventoryItem()->getName().'" (#'.$reservedItemId.') is reserved by '.$reservation->getLoan()->getContact()->getName();
-            $errorMsg .= ' (ref '.$reservation->getLoan()->getId().', '.$dueOutAt->format("d M H:i").' - '.$dueInAt->format("d M H:i").')';
+            $errorMsg       = '"' . $reservation->getInventoryItem()->getName() . '" (#' . $reservedItemId . ') is reserved';
+
+            if ($adminRole) {
+                $errorMsg .= ' by ' . $reservation->getLoan()->getContact()->getName();
+            }
+
+            $errorMsg .= ' (ref ' . $reservation->getLoan()->getId() . ', ' . $dueOutAt->format("d M H:i") . ' - ' . $dueInAt->format("d M H:i") . ')';
 
             // The requested START date is during another reservation
-            if ($requestFrom >= $dueOutAt_f && $requestFrom < $dueInAt_f) {
+            if (!$extendingLoan && $requestFrom >= $dueOutAt_f && $requestFrom < $dueInAt_f) {
                 $this->errors[] = $errorMsg;
                 $this->errors[] = "Requested {$from->format("d M H:i")} - {$to->format("d M H:i")} (STARTS)";
                 return true;
@@ -398,39 +433,45 @@ class CheckOutService
                 $extendingLoanFrom = $extendingLoanDueOutAt->format("Y-m-d H:i:s");
                 $extendingLoanTo   = $requestTo;
 
-                if ($dueOutAt_f >= $extendingLoanFrom && $dueOutAt_f <= $extendingLoanTo) {
+                if ($dueOutAt_f > $extendingLoanFrom && $dueOutAt_f < $extendingLoanTo) {
                     $this->errors[] = $errorMsg;
                     return true;
-                } elseif ($dueInAt_f >= $extendingLoanFrom && $dueInAt_f <= $extendingLoanTo) {
+                } elseif ($dueInAt_f > $extendingLoanFrom && $dueInAt_f < $extendingLoanTo) {
                     $this->errors[] = $errorMsg;
                     return true;
                 }
 
             }
 
+            $reservationBufferOverride = false;
+
+            if ($adminRole && $this->settings->getSettingValue('reservation_buffer_override')) {
+                $reservationBufferOverride = true;
+            }
+
             // Now add buffer and try again
-            if ($bufferPeriod > 0) {
+            if ($bufferPeriod > 0 && !$reservationBufferOverride) {
                 $requestFromWithBuffer = $fromWithBuffer->format("Y-m-d H:i:s");
                 $requestToWithBuffer   = $toWithBuffer->format("Y-m-d H:i:s");
 
                 // The requested START date is during another reservation
                 if ($requestFromWithBuffer >= $dueOutAt_f && $requestFromWithBuffer < $dueInAt_f) {
                     $this->errors[] = $errorMsg;
-                    $this->errors[] = "Buffer clash : Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (STARTS)";
+                    $this->errors[] = "Buffer clash: Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (STARTS)";
                     return true;
                 }
 
                 // The requested END date is during or matches the end of another reservation
                 if ($requestToWithBuffer > $dueOutAt_f && $requestToWithBuffer <= $dueInAt_f) {
                     $this->errors[] = $errorMsg;
-                    $this->errors[] = "Buffer clash : Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (ENDS)";
+                    $this->errors[] = "Buffer clash: Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (ENDS)";
                     return true;
                 }
 
                 // The requested date period CONTAINS a reservation
                 if ($requestFromWithBuffer < $dueOutAt_f && $requestToWithBuffer > $dueInAt_f) {
                     $this->errors[] = $errorMsg;
-                    $this->errors[] = "Buffer clash : Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (CONTAINS)";
+                    $this->errors[] = "Buffer clash: Requested {$fromWithBuffer->format("d M H:i")} - {$toWithBuffer->format("d M H:i")} (CONTAINS)";
                     return true;
                 }
             }

@@ -1,10 +1,10 @@
 # Loco yaml export: Symfony YAML object
 # Project: Lend Engine
 # Release: Working copy
-# Locale: cy-GB, Welsh (Wales)
+# Locale: cy-GB, Cymraeg (Wales)
 # Tagged: Emails
 # Exported by: Andor Tamas
-# Exported at: Mon, 21 Jun 2021 10:41:35 +0200
+# Exported at: Mon, 16 May 2022 13:47:40 +0200
 ---
 le_email:
   item_description: Disgrifiad
@@ -62,4 +62,11 @@ le_email:
   overdue:
     subject: Mae'n hen bryd eitem
     title: Dychwelwch yr eitem hon
+  th_cost: Cost
+  login_now_button: Mewngofnodi nawr
+  checkin:
+    subject: Mae'ch eitem wedi'i gwirio i mewn
+    title: Mae'ch eitem wedi'i gwirio i mewn
+    checked_in_at: Wedi'i wirio yn
+    checked_in_by: Wedi'i wirio gan
 ...

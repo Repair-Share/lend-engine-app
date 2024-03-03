@@ -32,6 +32,10 @@
 
             <h2>Loans</h2>
 
+            <div style="display: none;">
+                {{ form_row(form.basket_quick_add) }}
+            </div>
+
             {{ form_row(form.default_checkin_location) }}
 
             <div class="form-group">
@@ -72,6 +76,7 @@
             {{ form_row(form.min_loan_days) }}
             {{ form_row(form.max_loan_days) }}
             {{ form_row(form.reservation_buffer) }}
+            {{ form_row(form.reservation_buffer_override) }}
 
             <div class="form-group">
                 <label class="control-label" for="">
@@ -119,6 +124,8 @@
             </div>
 
             {{ form_row(form.charge_daily_fee) }}
+
+            {{ form_row(form.forward_picking) }}
 
             <h2>Postal loans</h2>
 

@@ -25,7 +25,7 @@
                 <strong>{{ row.inventoryItem.name }}</strong>
                 <div>
                     {{ row.dueOutAt|date('d F g:i a') }} - {{ row.dueInAt|date('d F g:i a') }}<br>
-                    Loan #{{ row.loan.id }} : {{ row.loan.contact.name }}
+                    {{ 'Loan'|trans([], 'member_site') }} #{{ row.loan.id }} : {{ row.loan.contact.name }}
                 </div>
             </td>
         </tr>

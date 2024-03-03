@@ -2,7 +2,7 @@
 {% trans_default_domain 'member_site' %}
 
 {% block pageCss %}
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgbkO6VOtnvsh1aqEExrv6HSQzSDsO2Ik"></script>
+    {{ include('partials/google-maps.html.twig', {initMapElement: false}) }}
 {% endblock %}
 
 {% block accountNav %}
